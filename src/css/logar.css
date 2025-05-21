@@ -1,0 +1,314 @@
+/* logar.css */
+:root {
+    /* Herda variáveis de header_footer.css */
+    --auth-bg: rgba(15, 10, 5, 0.85); /* Fundo escuro para o container do form */
+    --auth-form-bg: #1f160f; /* Fundo do formulário em si, um pouco mais claro */
+    --input-bg: #2c1d10;
+    --input-border: var(--border-color);
+    --input-text-color: var(--text-color);
+    --btn-submit-bg: var(--accent-color);
+    --btn-submit-text: var(--dark-bg);
+    --btn-submit-hover-bg: var(--hover-accent-color);
+    --link-color-auth: var(--accent-color);
+    --link-hover-auth: var(--hover-accent-color);
+    --form-max-width: 500px; /* Largura máxima do formulário */
+}
+
+#main-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinha no topo se o conteúdo for maior que a tela */
+    min-height: calc(100vh - 160px); /* Considera altura aproximada do header e footer */
+    padding: 3rem 1rem;
+    background-image: 
+        linear-gradient(rgba(26, 18, 11, 0.85), rgba(26, 18, 11, 0.95)),
+        url('https://images.unsplash.com/photo-1542623047-24523ac7669a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem temática de portal ou entrada misteriosa */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.auth-container {
+    background-color: var(--auth-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    width: 100%;
+    max-width: var(--form-max-width);
+    animation: fadeInForm 0.8s ease-out;
+}
+
+@keyframes fadeInForm {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.auth-form-wrapper {
+    background-color: var(--auth-form-bg);
+    padding: 2rem 2.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent-color);
+}
+
+.form-toggle-buttons {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--accent-color);
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
+    font-family: var(--primary-font);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.toggle-btn:not(.active):hover {
+    background-color: rgba(200, 155, 60, 0.1);
+}
+
+.toggle-btn.active {
+    background-color: var(--accent-color);
+    color: var(--dark-bg);
+    font-weight: bold;
+}
+
+.auth-form {
+    display: none; /* Escondido por padrão, mostrado por JS */
+    flex-direction: column;
+}
+
+.auth-form.active-form {
+    display: flex;
+    animation: switchForm 0.5s ease-in-out;
+}
+
+@keyframes switchForm {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-form h2 {
+    font-family: var(--primary-font);
+    color: var(--accent-color);
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.auth-form .form-subtitle {
+    font-family: var(--secondary-font);
+    color: var(--text-secondary-mundo);
+    text-align: center;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label,
+.checkbox-label {
+    display: block;
+    font-family: var(--secondary-font);
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--input-text-color);
+    font-family: var(--secondary-font);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px rgba(200, 155, 60, 0.5);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.85rem; /* Herda de form-options, mas pode ser redefinido */
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 0.5rem;
+    accent-color: var(--accent-color); /* Estiliza o checkbox moderno */
+}
+
+.forgot-password,
+.terms-group a,
+.form-switch-text a {
+    color: var(--link-color-auth);
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.forgot-password:hover,
+.terms-group a:hover,
+.form-switch-text a:hover {
+    color: var(--link-hover-auth);
+    text-decoration: underline;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    background-color: var(--btn-submit-bg);
+    color: var(--btn-submit-text);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--primary-font);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 0.5rem; /* Espaço antes do botão */
+}
+
+.btn-submit:hover,
+.btn-submit:focus {
+    background-color: var(--btn-submit-hover-bg);
+    transform: translateY(-2px);
+}
+
+.social-auth {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.social-auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-secondary-mundo);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.social-auth-divider span {
+    padding: 0 0.8rem;
+    font-family: var(--secondary-font);
+}
+
+.social-auth-divider::before,
+.social-auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--input-border);
+}
+
+.social-buttons {
+    display: flex;
+    flex-direction: column; /* Empilha no mobile */
+    gap: 0.8rem;
+}
+
+.btn-social {
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font-family: var(--secondary-font);
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-social i {
+    margin-right: 0.7rem;
+    font-size: 1.1em; /* Tamanho do ícone relativo ao texto */
+}
+
+.btn-social.facebook {
+    background-color: #3b5998; color: white; border-color: #3b5998;
+}
+.btn-social.facebook:hover { background-color: #324b7f; }
+
+.btn-social.google {
+    background-color: #ffffff; color: #444; border-color: #ddd;
+}
+.btn-social.google:hover { background-color: #f7f7f7; }
+
+.btn-social.github {
+    background-color: #333; color: white; border-color: #333;
+}
+.btn-social.github:hover { background-color: #222; }
+
+.error-message {
+    color: #e74c3c; /* Vermelho para erros */
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+
+.terms-group {
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.terms-group label {
+    font-size: 0.8rem; /* Ajusta tamanho do label do checkbox */
+}
+
+.form-switch-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary-mundo);
+}
+
+
+@media (min-width: 500px) { /* Ajusta botões sociais para lado a lado em telas um pouco maiores */
+    .social-buttons {
+        flex-direction: row;
+    }
+    .btn-social {
+        flex: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-form-wrapper {
+        padding: 1.5rem;
+    }
+    .auth-form h2 {
+        font-size: 1.6rem;
+    }
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
