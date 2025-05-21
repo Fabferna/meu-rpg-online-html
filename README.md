@@ -57,7 +57,9 @@
 ## 🖼️ Preview
 
 <p align="center">
-  <img src="src/asstes/capa_readme.png" alt="Preview do Meu RPG Online" width="600" />
+  <img src="https://raw.githubusercontent.com/Fabferna/meu-rpg-online-html/main/capa_readme.png" alt="Preview do Meu RPG Online" width="600" />
+
+
 </p>
 
 ---
