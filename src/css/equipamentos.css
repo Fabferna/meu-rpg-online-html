@@ -1,0 +1,333 @@
+/* equipamentos.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap'); /* Fonte para descrições e atributos */
+
+:root {
+    /* Herda variáveis de header_footer.css */
+    --equipment-card-bg: #2a211a;
+    --equipment-card-border: var(--border-color);
+    --equipment-text-secondary: #b0a08f;
+    --filter-bg: #1f160f;
+
+    /* Cores de Raridade */
+    --rarity-comum-bg: #7f8c8d;         /* Cinza (Clouds) */
+    --rarity-comum-text: #ffffff;
+    --rarity-incomum-bg: #2ecc71;       /* Verde (Emerald) */
+    --rarity-incomum-text: #ffffff;
+    --rarity-raro-bg: #3498db;          /* Azul (Peter River) */
+    --rarity-raro-text: #ffffff;
+    --rarity-epico-bg: #9b59b6;         /* Roxo (Amethyst) */
+    --rarity-epico-text: #ffffff;
+    --rarity-lendario-bg: #e67e22;      /* Laranja (Carrot) / Dourado */
+    --rarity-lendario-text: #ffffff;
+    --card-shadow: rgba(0,0,0,0.4);
+}
+
+/* Estilo da fonte para descrições de itens */
+.equipment-description, .equipment-attributes p, .equipment-races {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Seção Hero da Página Equipamentos */
+.equipment-hero {
+    background-image: 
+        linear-gradient(rgba(20, 15, 10, 0.75), rgba(20, 15, 10, 0.9)),
+        url('https://images.unsplash.com/photo-1604028033970-952419d80939?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem temática de forja, tesouro ou arsenal */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-color);
+    padding: 5rem 0;
+    text-align: center;
+    animation: fadeInComponentEquip 1.2s ease-out;
+}
+
+@keyframes fadeInComponentEquip {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.equipment-hero h2 {
+    font-family: var(--primary-font);
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    color: var(--accent-color);
+}
+
+.equipment-hero p {
+    font-size: 1.3rem;
+    font-family: var(--secondary-font);
+    font-style: italic;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Navegador de Equipamentos e Filtros */
+.equipment-browser {
+    padding: 2.5rem 0;
+}
+
+.filters-toolbar {
+    background-color: var(--filter-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-wrap: wrap; /* Permite que os filtros quebrem linha em telas menores */
+    gap: 1.5rem; /* Espaço entre os grupos de filtro */
+    align-items: center;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.filters-toolbar h3 {
+    font-family: var(--primary-font);
+    color: var(--accent-color);
+    font-size: 1.4rem;
+    margin-right: 1rem; /* Espaço após o título "Filtrar Arsenal" */
+    flex-basis: 100%; /* Faz o título ocupar toda a primeira linha em telas pequenas */
+    margin-bottom: 0.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column; /* Label em cima do select */
+    gap: 0.3rem;
+}
+
+.filter-group label {
+    font-family: var(--secondary-font);
+    color: var(--text-secondary-mundo);
+    font-size: 0.85rem;
+}
+
+.filter-group select {
+    padding: 0.6rem 0.8rem;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    color: var(--input-text-color);
+    font-family: var(--secondary-font);
+    font-size: 0.9rem;
+    min-width: 150px; /* Largura mínima para os selects */
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 5px rgba(200, 155, 60, 0.4);
+}
+
+.btn-reset-filters {
+    background-color: transparent;
+    color: var(--text-secondary-mundo);
+    border: 1px solid var(--text-secondary-mundo);
+    padding: 0.6rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--secondary-font);
+    font-size: 0.9rem;
+    transition: color 0.3s, border-color 0.3s, background-color 0.3s;
+    margin-left: auto; /* Empurra para a direita se houver espaço */
+}
+.btn-reset-filters:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: rgba(200, 155, 60, 0.1);
+}
+.btn-reset-filters i {
+    margin-right: 0.4rem;
+}
+
+
+/* Grid de Equipamentos */
+.equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.equipment-card {
+    background-color: var(--equipment-card-bg);
+    border: 1px solid var(--equipment-card-border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Para o banner de raridade */
+    opacity: 0; /* Para animação de entrada */
+}
+@keyframes fadeInCard {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+.equipment-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px var(--card-shadow);
+}
+
+.card-rarity-banner {
+    position: absolute;
+    top: 10px;
+    right: -30px; /* Para o efeito de fita */
+    padding: 0.3rem 2.5rem; /* Padding horizontal maior para a fita */
+    font-family: var(--primary-font);
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    transform: rotate(45deg);
+    transform-origin: top left;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    text-align: center;
+    z-index: 2;
+}
+
+/* Cores do Banner de Raridade */
+.rarity-comum    { background-color: var(--rarity-comum-bg); color: var(--rarity-comum-text); }
+.rarity-incomum  { background-color: var(--rarity-incomum-bg); color: var(--rarity-incomum-text); }
+.rarity-raro     { background-color: var(--rarity-raro-bg); color: var(--rarity-raro-text); }
+.rarity-epico    { background-color: var(--rarity-epico-bg); color: var(--rarity-epico-text); }
+.rarity-lendario { background-color: var(--rarity-lendario-bg); color: var(--rarity-lendario-text); }
+
+
+.equipment-image-container {
+    width: 100%;
+    height: 220px;
+    background-color: #1a120b; /* Fundo para a imagem */
+    overflow: hidden;
+}
+
+.equipment-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Para ver o item inteiro, 'cover' se preferir preencher */
+    transition: transform 0.3s ease;
+}
+
+.equipment-card:hover .equipment-image-container img {
+    transform: scale(1.08);
+}
+
+.equipment-info {
+    padding: 1.2rem 1.5rem;
+    flex-grow: 1; /* Para que o conteúdo ocupe o espaço e o botão fique no final */
+    display: flex;
+    flex-direction: column;
+}
+
+.equipment-name {
+    font-family: var(--primary-font);
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+    min-height: 3em; /* Para alinhar cards com nomes de tamanhos diferentes */
+}
+
+.equipment-type {
+    font-family: var(--secondary-font);
+    font-size: 0.85rem;
+    color: var(--text-secondary-mundo);
+    margin-bottom: 0.8rem;
+    font-style: italic;
+}
+.equipment-type i {
+    margin-right: 0.3rem;
+    color: var(--accent-color);
+}
+
+
+.equipment-description {
+    color: var(--equipment-text-secondary);
+    margin-bottom: 1rem;
+    flex-grow: 1; /* Empurra atributos e raças para baixo se a descrição for curta */
+}
+
+.equipment-attributes {
+    margin-bottom: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--input-border);
+}
+.equipment-attributes p, .equipment-races {
+    margin-bottom: 0.3rem;
+    color: var(--text-color);
+}
+.equipment-attributes p strong, .equipment-races strong {
+    color: var(--accent-color);
+    font-family: var(--secondary-font);
+}
+
+.equipment-races {
+    font-size: 0.85rem;
+    color: var(--text-secondary-mundo);
+    margin-top: auto; /* Alinha na parte inferior se for o último elemento */
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--input-border);
+}
+
+.no-results-message {
+    grid-column: 1 / -1; /* Faz a mensagem ocupar todas as colunas do grid */
+    text-align: center;
+    padding: 3rem 1rem;
+    font-family: var(--secondary-font);
+    color: var(--text-secondary-mundo);
+    font-size: 1.2rem;
+}
+.no-results-message i {
+    font-size: 2rem;
+    color: var(--accent-color);
+    display: block;
+    margin-bottom: 1rem;
+}
+
+
+/* Responsividade para Filtros e Grid */
+@media (max-width: 992px) {
+    .filters-toolbar h3 {
+        flex-basis: auto; /* Título não ocupa mais a linha toda */
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .equipment-hero h2 {
+        font-size: 2.5rem;
+    }
+    .equipment-hero p {
+        font-size: 1.1rem;
+    }
+    .filters-toolbar {
+        flex-direction: column; /* Empilha os filtros verticalmente */
+        align-items: stretch; /* Faz os filtros ocuparem a largura */
+        gap: 1rem;
+    }
+    .filters-toolbar h3 {
+        text-align: center;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    .filter-group select {
+        width: 100%; /* Selects ocupam toda a largura */
+    }
+    .btn-reset-filters {
+        margin-left: 0; /* Remove margem automática */
+        width: 100%;
+        text-align: center;
+    }
+    .equipment-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+    .equipment-name {
+        font-size: 1.3rem;
+        min-height: auto;
+    }
+    .equipment-image-container {
+        height: 200px;
+    }
+}
