@@ -1,0 +1,201 @@
+/* racas.css */
+:root {
+    /* Herda variáveis de header_footer.css */
+    --race-card-bg: #261d15; /* Um pouco diferente dos outros cards */
+    --race-card-border: var(--border-color);
+    --race-title-color: var(--accent-color);
+}
+
+/* Seção Hero da Página Raças */
+.races-hero {
+    background-image: 
+        linear-gradient(rgba(20, 15, 10, 0.7), rgba(20, 15, 10, 0.9)),
+        url('https://images.unsplash.com/photo-1519791883288-dc8bd696e667?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem de fundo temática - Substitua! */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    color: var(--text-color);
+    padding: 5rem 0;
+    text-align: center;
+    animation: fadeInComponentRaces 1.2s ease-out; /* Reutilizando animação similar */
+}
+
+@keyframes fadeInComponentRaces { /* Pode ser o mesmo que fadeInComponent de personagens.css */
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.races-hero h2 {
+    font-family: var(--primary-font);
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    color: var(--accent-color);
+}
+
+.races-hero p {
+    font-size: 1.3rem;
+    font-family: var(--secondary-font);
+    font-style: italic;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Diretório de Raças */
+.races-directory {
+    padding: 3rem 0;
+}
+
+.races-directory h3 { /* Título "Conheça as Linhagens" */
+    font-family: var(--primary-font);
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.races-directory .races-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-secondary-mundo); /* Reutilizando cor */
+    margin-bottom: 3.5rem;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.race-entry {
+    background-color: var(--race-card-bg);
+    border: 1px solid var(--race-card-border);
+    border-radius: 10px;
+    margin-bottom: 3.5rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column; /* Padrão para mobile */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    opacity: 0; /* Para animação de fade-in */
+    transform: translateY(50px); /* Para animação de fade-in */
+}
+
+.race-entry.visible { /* Classe JS para animação */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out .1s; /* Pequeno delay na transição do transform */
+}
+
+.race-entry:hover {
+    transform: scale(1.015);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+
+.race-image-container {
+    width: 100%; /* Ocupa toda a largura no mobile */
+    max-height: 450px; /* Limita a altura da imagem */
+    overflow: hidden;
+    background-color: #1a120b; /* Cor de fundo caso a imagem demore ou falhe */
+}
+
+.race-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top; /* Tenta focar no topo/centro da imagem */
+    transition: transform 0.4s ease-out;
+}
+
+.race-entry:hover .race-image {
+    transform: scale(1.07);
+}
+
+.race-details {
+    padding: 2rem 2.5rem;
+    width: 100%; /* Ocupa toda a largura no mobile */
+}
+
+.race-name {
+    font-family: var(--primary-font);
+    font-size: 2rem;
+    color: var(--race-title-color);
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--section-divider-color);
+    padding-bottom: 0.5rem;
+}
+
+.race-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary-mundo);
+}
+
+.race-details h5 { /* Título "Atributos e Vantagens" */
+    font-family: var(--primary-font);
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.race-attributes {
+    list-style: square; /* Pode ser 'disc', 'circle', ou uma imagem customizada */
+    padding-left: 1.5rem; /* Espaço para o marcador */
+    margin-bottom: 1rem;
+}
+
+.race-attributes li {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: var(--text-secondary-mundo);
+}
+
+.race-attributes li strong {
+    color: var(--text-color); /* Destaca o nome do atributo */
+}
+
+/* Layout alternado para telas maiores */
+@media (min-width: 992px) {
+    .race-entry {
+        flex-direction: row;
+    }
+
+    .race-entry.alt-layout {
+        flex-direction: row-reverse;
+    }
+
+    .race-image-container {
+        width: 40%; /* Largura da imagem */
+        max-height: none; /* Permite que a altura se ajuste ao conteúdo */
+    }
+    
+    .race-image {
+        min-height: 500px; /* Garante uma boa altura para a imagem */
+    }
+
+    .race-details {
+        width: 60%; /* Largura do conteúdo */
+        padding: 2.5rem 3rem;
+    }
+}
+
+/* Ajustes Responsivos Menores */
+@media (max-width: 768px) {
+    .races-hero h2 {
+        font-size: 2.5rem;
+    }
+    .races-hero p, .races-directory .races-intro {
+        font-size: 1.1rem;
+    }
+    .race-name {
+        font-size: 1.8rem;
+    }
+    .race-image-container {
+        max-height: 380px;
+    }
+     .race-details {
+        padding: 1.5rem;
+    }
+}

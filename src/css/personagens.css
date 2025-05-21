@@ -1,0 +1,223 @@
+/* personagens.css */
+:root {
+    /* Herda variáveis de header_footer.css */
+    --card-bg-character: #2a211a; /* Um pouco mais escuro para os cards de personagem */
+    --card-border-character: #4a3f35;
+    --title-color-character: var(--accent-color); /* Dourado para nomes */
+    --hero-card-glow: rgba(200, 155, 60, 0.7); /* Brilho para heróis */
+    --villain-card-glow: rgba(142, 68, 173, 0.7); /* Brilho para vilões */
+    --neutral-card-glow: rgba(127, 140, 141, 0.7); /* Brilho para neutros */
+}
+
+/* Seção Hero da Página Personagens */
+.characters-hero {
+    background-image: 
+        linear-gradient(rgba(15, 10, 5, 0.7), rgba(15, 10, 5, 0.9)),
+        url('https://images.unsplash.com/photo-1534790566855-4cb788d389ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem de fundo temática - Substitua! */
+    background-size: cover;
+    background-position: center 30%;
+    background-attachment: fixed;
+    color: var(--text-color);
+    padding: 5rem 0;
+    text-align: center;
+    animation: fadeInComponent 1.2s ease-out;
+}
+
+@keyframes fadeInComponent {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.characters-hero h2 {
+    font-family: var(--primary-font);
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    color: var(--accent-color);
+}
+
+.characters-hero p {
+    font-size: 1.3rem;
+    font-family: var(--secondary-font);
+    font-style: italic;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Galeria de Personagens */
+.characters-gallery {
+    padding: 3rem 0;
+}
+
+.characters-gallery h3 { /* Título "Figuras Notáveis" */
+    font-family: var(--primary-font);
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+}
+
+.character-card {
+    background-color: var(--card-bg-character);
+    border: 1px solid var(--card-border-character);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    opacity: 0; /* Para animação de fade-in */
+    transform: translateY(40px); /* Para animação de fade-in */
+}
+
+.character-card.visible { /* Classe JS para animação */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.character-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+}
+
+/* Efeitos de brilho específicos por tipo de card */
+.character-card.hero-card:hover { box-shadow: 0 0 25px var(--hero-card-glow); }
+.character-card.hero-support-card:hover { box-shadow: 0 0 25px var(--hero-card-glow); } /* Mesmo brilho para suporte heróico */
+.character-card.villain-card:hover { box-shadow: 0 0 25px var(--villain-card-glow); }
+.character-card.neutral-card:hover { box-shadow: 0 0 25px var(--neutral-card-glow); }
+
+
+.character-image-container {
+    width: 100%;
+    height: 400px; /* Altura fixa para consistência */
+    overflow: hidden; /* Garante que a imagem não ultrapasse */
+}
+
+.character-image {
+    width: 100%;
+    height:100%;
+    object-fit: cover; /* Cobre o container, pode cortar um pouco */
+    object-position: top center; /* Foca no topo da imagem */
+    transition: transform 0.4s ease;
+    border-bottom: 2px solid var(--card-border-character);
+}
+
+.character-card:hover .character-image {
+    transform: scale(1.08);
+}
+
+.character-info {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Faz o conteúdo preencher o card */
+}
+
+.character-name {
+    font-family: var(--primary-font);
+    font-size: 1.9rem;
+    color: var(--title-color-character);
+    margin-bottom: 0.25rem;
+    text-align: center;
+}
+
+.character-title {
+    font-family: var(--secondary-font);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text-secondary-mundo); /* Reutilizando cor de texto secundário */
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.character-bio {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1; /* Empurra as habilidades e botão para baixo se a bio for curta */
+}
+
+.character-info h5 { /* Título "Habilidades Principais" */
+    font-family: var(--primary-font);
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    border-top: 1px solid var(--card-border-character);
+    padding-top: 1rem;
+}
+
+.character-abilities {
+    list-style: none; /* Remove marcadores padrão */
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+}
+
+.character-abilities li {
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+    color: var(--text-secondary-mundo);
+}
+
+.character-abilities .ability-name {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.btn-character-details {
+    display: inline-block;
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    font-family: var(--primary-font);
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    margin-top: auto; /* Alinha o botão na parte inferior do flex container */
+    align-self: center; /* Centraliza o botão */
+}
+
+.btn-character-details:hover,
+.btn-character-details:focus {
+    background-color: var(--accent-color);
+    color: var(--dark-bg);
+    transform: scale(1.05);
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+    .characters-hero h2 {
+        font-size: 2.5rem;
+    }
+    .characters-hero p {
+        font-size: 1.1rem;
+    }
+    .character-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+        gap: 2rem;
+    }
+    .character-image-container {
+        height: 350px; /* Ajusta altura da imagem no mobile */
+    }
+    .character-name {
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .character-image-container {
+        height: 300px;
+    }
+}

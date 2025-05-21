@@ -1,0 +1,248 @@
+/* home.css */
+:root {
+    /* Reutilizando variáveis de cores e fontes de header_footer.css se necessário, 
+       ou definindo novas específicas para o conteúdo da home. */
+    --section-bg-light: rgba(44, 29, 16, 0.3); /* Um fundo levemente translúcido para seções */
+    --card-bg: #2c1d10; /* Mesma cor do header para consistência nos cards */
+    --card-border: #4a3f35;
+    --title-accent-font: 'Cinzel', serif;
+}
+
+/* Estilos para o Conteúdo Principal da Home */
+#main-content {
+    padding-top: 1rem; /* Espaço para o header fixo */
+}
+
+/* Seção Hero */
+.hero {
+    background-image: 
+        linear-gradient(rgba(26, 18, 11, 0.7), rgba(26, 18, 11, 0.9)), /* Overlay escuro */
+        url('https://images.unsplash.com/photo-1549200605-02dfita5e4e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem de fundo temática - Substitua por uma de Aethelgard! */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed; /* Efeito parallax sutil */
+    color: var(--text-color);
+    padding: 6rem 0; /* Aumentar padding para mais impacto */
+    text-align: center;
+    animation: fadeInHero 1.5s ease-out;
+}
+
+@keyframes fadeInHero {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero h2 {
+    font-family: var(--title-accent-font);
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.hero p {
+    font-size: 1.4rem;
+    font-family: var(--secondary-font);
+    font-style: italic;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+}
+
+/* Seção de Notícias e Atualizações */
+.news-updates {
+    padding: 3rem 0;
+    background-color: transparent; /* Ou uma textura sutil de pergaminho/pedra */
+}
+
+.news-updates h3 {
+    font-family: var(--title-accent-font);
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative; /* Para o pseudo-elemento decorativo */
+}
+
+.news-updates h3::after { /* Linha decorativa abaixo do título */
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background-color: var(--accent-color);
+    margin: 0.5rem auto 0;
+    opacity: 0.7;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Grid responsivo */
+    gap: 2rem;
+}
+
+.news-item {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    overflow: hidden; /* Para o efeito da imagem */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.news-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+
+.news-image {
+    width: 100%;
+    height: 600px; /* Altura fixa para as imagens */
+    object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+    border-bottom: 2px solid var(--accent-color);
+    transition: transform 0.4s ease-out;
+}
+
+.news-item:hover .news-image {
+    transform: scale(1.05); /* Efeito de zoom sutil na imagem */
+}
+
+.news-content {
+    padding: 1.5rem;
+    flex-grow: 1; /* Faz o conteúdo ocupar o espaço restante */
+    display: flex;
+    flex-direction: column;
+}
+
+.news-content h4 {
+    font-family: var(--title-accent-font);
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    margin-bottom: 0.75rem;
+}
+
+.news-content p {
+    font-family: var(--secondary-font);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex-grow: 1; /* Empurra o link "Leia Mais" para baixo */
+}
+
+.read-more {
+    display: inline-block;
+    font-family: var(--primary-font);
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 0; /* Aumenta área clicável */
+    transition: color 0.3s ease, letter-spacing 0.3s ease;
+    align-self: flex-start; /* Alinha o botão à esquerda */
+}
+
+.read-more:hover,
+.read-more:focus {
+    color: var(--hover-accent-color);
+    letter-spacing: 0.5px; /* Efeito sutil ao passar o mouse */
+}
+
+/* Seção de Introdução ao Mundo */
+.world-intro {
+    padding: 4rem 0;
+    background-color: var(--section-bg-light); /* Um fundo um pouco diferente */
+    text-align: center;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.world-intro h3 {
+    font-family: var(--title-accent-font);
+    font-size: 2.2rem;
+    color: var(--text-color); /* Cor de texto normal aqui para contraste */
+    margin-bottom: 1rem;
+}
+
+.world-intro p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+    line-height: 1.7;
+}
+
+.btn-explore {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: var(--dark-bg);
+    font-family: var(--primary-font);
+    font-size: 1.1rem;
+    padding: 0.8rem 2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.btn-explore:hover,
+.btn-explore:focus {
+    background-color: var(--hover-accent-color);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+
+/* Animações sutis para elementos ao carregar/scroll (requer JS para scroll ou pode ser via :hover) */
+.news-item, .world-intro {
+    opacity: 0;
+    animation: fadeInItem 0.8s ease-out forwards;
+    animation-delay: 0.2s; /* Pequeno delay para escalonar a entrada */
+}
+
+.news-item:nth-child(2) { animation-delay: 0.4s; }
+.news-item:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes fadeInItem {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ajustes de Responsividade para o conteúdo da home */
+@media (max-width: 992px) {
+    .hero h2 {
+        font-size: 3rem;
+    }
+    .hero p {
+        font-size: 1.2rem;
+    }
+    .news-updates h3 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 4rem 0;
+    }
+    .hero h2 {
+        font-size: 2.5rem;
+    }
+    .hero p {
+        font-size: 1.1rem;
+    }
+    .news-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+    .news-content h4 {
+        font-size: 1.3rem;
+    }
+    .world-intro h3 {
+        font-size: 1.8rem;
+    }
+    .world-intro p {
+        font-size: 1rem;
+    }
+}

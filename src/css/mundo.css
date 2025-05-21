@@ -1,0 +1,226 @@
+/* mundo.css */
+:root {
+    /* Reutilizando variáveis de cores e fontes de header_footer.css */
+    /* Adicionar novas variáveis se necessário */
+    --section-divider-color: rgba(200, 155, 60, 0.3); /* Um dourado translúcido para divisórias */
+    --card-bg-mundo: #251a0f; /* Um tom um pouco diferente do card da home */
+    --card-shadow-mundo: rgba(0,0,0, 0.6);
+    --text-secondary-mundo: #c5b8a3; /* Um pouco mais claro para descrições */
+}
+
+/* Estilos Gerais para o Conteúdo de Mundo */
+#main-content {
+    padding-top: 0; /* Ajustar se o header não for sticky ou conforme layout */
+}
+
+/* Seção Hero da Página Mundo */
+.world-hero {
+    background-image: 
+        linear-gradient(rgba(26, 18, 11, 0.6), rgba(26, 18, 11, 0.8)),
+        url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem de fundo temática - Substitua! */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    color: var(--text-color);
+    padding: 5rem 0;
+    text-align: center;
+    animation: fadeInHeroMundo 1.5s ease-out;
+}
+
+@keyframes fadeInHeroMundo {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.world-hero h2 {
+    font-family: var(--primary-font);
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    color: var(--accent-color);
+}
+
+.world-hero p {
+    font-size: 1.3rem;
+    font-family: var(--secondary-font);
+    font-style: italic;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Seção de Introdução ao Mundo */
+.world-introduction {
+    padding: 3rem 0;
+    text-align: center;
+    background-color: rgba(0,0,0,0.1); /* Fundo sutil */
+}
+
+.world-introduction h3 {
+    font-family: var(--primary-font);
+    font-size: 2.2rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.world-introduction p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary-mundo);
+    max-width: 900px;
+    margin: 0 auto 2rem auto;
+}
+
+.world-overview-image {
+    width: 100%;
+    max-width: 900px; /* Limita a largura da imagem */
+    height: auto;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    border: 3px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Seção de Vitrine das Regiões */
+.regions-showcase {
+    padding: 3rem 0;
+}
+
+.regions-showcase h2 {
+    font-family: var(--primary-font);
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.regions-showcase .regions-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-secondary-mundo);
+    margin-bottom: 3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.region-card {
+    background-color: var(--card-bg-mundo);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-bottom: 3rem;
+    overflow: hidden; /* Para arredondamento da imagem e efeitos */
+    box-shadow: 0 5px 20px var(--card-shadow-mundo);
+    display: flex;
+    flex-direction: column; /* Default para mobile */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0; /* Para animação de fade-in */
+    transform: translateY(30px); /* Para animação de fade-in */
+}
+
+.region-card.visible { /* Classe adicionada pelo JS para animação */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+
+.region-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 10px 30px var(--card-shadow-mundo);
+}
+
+.region-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.region-card:hover .region-image {
+    transform: scale(1.05);
+}
+
+.region-content {
+    padding: 2rem;
+}
+
+.region-content h3 {
+    font-family: var(--primary-font);
+    font-size: 1.8rem;
+    color: var(--accent-color);
+    margin-bottom: 0.75rem;
+}
+
+.region-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary-mundo);
+    margin-bottom: 1.5rem;
+}
+
+.btn-explore-region {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: var(--dark-bg); /* Contraste com o botão */
+    font-family: var(--primary-font);
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-explore-region:hover,
+.btn-explore-region:focus {
+    background-color: var(--hover-accent-color);
+    transform: scale(1.05);
+}
+
+/* Layout alternado para cards de região em telas maiores */
+@media (min-width: 769px) {
+    .region-card {
+        flex-direction: row;
+        align-items: stretch; /* Faz com que a imagem e o conteúdo tenham a mesma altura */
+    }
+
+    .region-card.region-card-alt {
+        flex-direction: row-reverse;
+    }
+
+    .region-card .region-image {
+        width: 45%; /* Largura da imagem no layout lado a lado */
+        height: auto; /* Permite que a altura se ajuste */
+        min-height: 300px; /* Garante uma altura mínima */
+    }
+
+    .region-card .region-content {
+        width: 55%; /* Largura do conteúdo no layout lado a lado */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centraliza o conteúdo verticalmente */
+    }
+}
+
+/* Ajustes Responsivos Adicionais */
+@media (max-width: 768px) {
+    .world-hero h2 {
+        font-size: 2.5rem;
+    }
+    .world-hero p {
+        font-size: 1.1rem;
+    }
+    .world-introduction h3 {
+        font-size: 1.8rem;
+    }
+    .regions-showcase h2 {
+        font-size: 2rem;
+    }
+    .region-content h3 {
+        font-size: 1.5rem;
+    }
+    .region-image {
+        height: 220px; /* Ajusta altura da imagem no mobile */
+    }
+}

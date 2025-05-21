@@ -1,0 +1,229 @@
+/* header_footer.css */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+    --primary-font: 'Cinzel', serif; /* Para títulos e elementos de destaque */
+    --secondary-font: 'Lora', serif; /* Para texto corrido */
+    
+    --dark-bg: #1a120b; /* Um marrom bem escuro, quase preto, como terra antiga */
+    --header-bg: #2c1d10; /* Um tom mais claro de marrom para o header */
+    --footer-bg: #2c1d10;
+    --text-color: #e0ccab; /* Cor de pergaminho claro para texto */
+    --accent-color: #c89b3c; /* Dourado envelhecido para links e destaques */
+    --hover-accent-color: #e6bf6a; /* Dourado mais brilhante para hover */
+    --border-color: #4a3f35; /* Cor para bordas sutis */
+
+    --container-width: 90%;
+    --max-container-width: 1200px;
+}
+
+/* Reset básico e estilos globais */
+body, h1, h2, h3, p, ul, li, a {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--secondary-font);
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 16px; /* Base para REM units */
+}
+
+.container {
+    width: var(--container-width);
+    max-width: var(--max-container-width);
+    margin: 0 auto;
+    padding: 0 15px; /* Espaçamento lateral */
+}
+
+/* Estilos do Header */
+header {
+    background-color: var(--header-bg);
+    padding: 1rem 0;
+    border-bottom: 2px solid var(--accent-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    position: sticky; /* Faz o header fixo no topo ao rolar */
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title a {
+    font-family: var(--primary-font);
+    font-size: 2.5rem; /* Ajuste conforme necessário */
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    transition: color 0.3s ease;
+}
+
+.site-title a:hover,
+.site-title a:focus {
+    color: var(--hover-accent-color);
+}
+
+.main-menu ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.main-menu li {
+    margin-left: 1.5rem; /* Espaçamento entre itens do menu */
+}
+
+.main-menu a {
+    font-family: var(--primary-font);
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Para pseudo-elementos */
+}
+
+.main-menu a::after { /* Efeito de sublinhado sutil */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: var(--accent-color);
+    transition: width 0.3s ease;
+}
+
+.main-menu a:hover::after,
+.main-menu a:focus::after,
+.main-menu a.active::after {
+    width: 100%;
+}
+
+
+.main-menu a:hover,
+.main-menu a:focus,
+.main-menu a.active {
+    color: var(--hover-accent-color);
+    /* background-color: rgba(200, 155, 60, 0.1); */ /* Um brilho sutil */
+    /* box-shadow: 0 0 10px rgba(200, 155, 60, 0.3); */
+}
+
+.main-menu a.login-link {
+    border: 1px solid var(--accent-color);
+    padding: 0.4rem 1rem;
+}
+
+.main-menu a.login-link:hover,
+.main-menu a.login-link:focus {
+    background-color: var(--accent-color);
+    color: var(--header-bg);
+}
+
+/* Menu Hamburguer (Mobile) */
+.menu-toggle {
+    display: none; /* Escondido por padrão em telas maiores */
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* Estilos do Footer */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--text-color);
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem; /* Espaçamento acima do footer */
+    border-top: 2px solid var(--accent-color);
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsividade para o Header/Menu */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .site-title a {
+        font-size: 2rem;
+        margin-bottom: 0.5rem; /* Espaço abaixo do título no mobile */
+    }
+    
+    .main-menu {
+        width: 100%; /* Ocupa toda a largura para alinhar o botão */
+    }
+
+    .menu-toggle {
+        display: block; /* Mostra o botão hamburguer */
+        position: absolute; /* Para posicionar no canto superior direito */
+        top: 1.5rem; /* Ajuste conforme padding do header */
+        right: var(--container-width) / 20; /* Ajuste conforme padding do container */
+        transform: translateY(-25%); /* Centraliza verticalmente com o título */
+    }
+
+    .main-menu ul {
+        flex-direction: column;
+        width: 100%;
+        display: none; /* Escondido por padrão, mostrado com JS */
+        background-color: var(--header-bg); /* Fundo para o menu dropdown */
+        padding: 1rem 0;
+        border-top: 1px solid var(--border-color); /* Linha separadora */
+    }
+
+    .main-menu ul.active {
+        display: flex; /* Mostra o menu quando a classe 'active' é aplicada */
+        position: absolute;
+        top: 100%; /* Abaixo do header */
+        left: 0;
+        right: 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .main-menu li {
+        margin: 0.5rem 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    .main-menu a {
+        display: block; /* Para ocupar toda a largura do li */
+        padding: 0.8rem;
+    }
+
+    .main-menu a.login-link {
+        margin-top: 0.5rem;
+        border-width: 2px; /* Torna o botão um pouco mais proeminente */
+    }
+}
+
+/* Classe para leitores de tela, acessibilidade */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
