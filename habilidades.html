@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aethelgard - Habilidades Raciais</title>
+        <meta name="description" content="Descubra as habilidades únicas e os poderes ancestrais das diversas raças que habitam o mundo de Aethelgard.">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link rel="stylesheet" href="src/css/header_footer.css">
+        <link rel="stylesheet" href="src/css/habilidades.css">
+
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <header>
+            <div class="container header-container">
+                <h1 class="site-title"><a href="index.html">Aethelgard</a></h1>
+                <nav class="main-menu" aria-label="Navegação Principal">
+                    <button class="menu-toggle" aria-expanded="false" aria-controls="menu-list">
+                        <span class="sr-only">Abrir Menu</span>
+                        ☰
+                    </button>
+                    <ul id="menu-list">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="mundo.html">Mundo</a></li>
+                        <li><a href="personagens.html">Personagens</a></li>
+                        <li><a href="racas.html">Raças</a></li>
+                        <li><a href="equipamentos.html">Equipamentos</a></li>
+                        <li><a href="habilidades.html" class="active">Habilidades</a></li>
+                        <li><a href="logar.html">Logar</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <section class="skills-hero">
+                <div class="container">
+                    <h2>Dons e Poderes de Aethelgard</h2>
+                    <p>Cada linhagem carrega consigo a essência de seus ancestrais, manifestada em habilidades que definem seu caminho e seu legado.</p>
+                </div>
+            </section>
+
+            <section class="racial-skills-directory">
+                <div class="container">
+                    <div class="race-skills-group">
+                        <h3 class="race-name-title">Humanos: A Centelha da Adaptabilidade</h3>
+                        <div class="skills-grid">
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="src/asstes/icone_diplomacia_persuasiva.png" alt="Ícone Diplomacia Persuasiva">
+                                </div>
+                                <h4 class="skill-name">Diplomacia Persuasiva</h4>
+                                <p class="skill-difficulty difficulty-basica">Dificuldade: Básica</p>
+                                <p class="skill-description">Capacidade inata de encontrar as palavras certas, facilitando acordos, obtendo melhores preços ou informações cruciais em diálogos.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="src/asstes/icone_ ataque_adaptavel.png" alt="Ícone Ataque Adaptável">
+                                </div>
+                                <h4 class="skill-name">Ataque Adaptável</h4>
+                                <p class="skill-difficulty difficulty-intermediaria">Dificuldade: Intermediária</p>
+                                <p class="skill-description">Após alguns momentos de combate, o humano analisa o oponente, adaptando sua tática para ganhar um bônus temporário de precisão ou dano contra aquele tipo específico de inimigo.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="src/asstes/estandarte_inspirador.png" alt="Ícone Liderança Inspiradora">
+                                </div>
+                                <h4 class="skill-name">Liderança Inspiradora</h4>
+                                <p class="skill-difficulty difficulty-avancada">Dificuldade: Avançada</p>
+                                <p class="skill-description">Com um discurso fervoroso ou um ato de bravura, inspira aliados próximos, concedendo-lhes bônus temporários de moral, ataque e resistência ao medo.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="race-skills-group">
+                        <h3 class="race-name-title">Elfos de Sylvandell: O Sussurro da Floresta</h3>
+                        <div class="skills-grid">
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="src/asstes/passo_silencioso_icone.png" alt="Ícone Passo Silencioso">
+                                </div>
+                                <h4 class="skill-name">Passo Silencioso</h4>
+                                <p class="skill-difficulty difficulty-basica">Dificuldade: Básica</p>
+                                <p class="skill-description">Movimentação naturalmente furtiva, permitindo que se movam por florestas e sombras sem serem facilmente detectados.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="src/asstes/flecha_enfeitiçada_icone.png" alt="Ícone Flecha Enfeitiçada">
+                                </div>
+                                <h4 class="skill-name">Flecha Enfeitiçada (Natureza)</h4>
+                                <p class="skill-difficulty difficulty-intermediaria">Dificuldade: Intermediária</p>
+                                <p class="skill-description">Imbui uma flecha com a energia viva de Sylvandell, causando dano mágico adicional e podendo prender o alvo com vinhas por um curto período.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/9ae6b4/276749?text=🌳👁️" alt="Ícone Comunhão com Sylvandell">
+                                </div>
+                                <h4 class="skill-name">Comunhão com Sylvandell</h4>
+                                <p class="skill-difficulty difficulty-avancada">Dificuldade: Avançada</p>
+                                <p class="skill-description">Em meditação profunda em locais de poder natural, o elfo pode sentir a presença de seres vivos, prever mudanças climáticas locais ou obter vislumbres do passado da floresta.</p>
+                            </article>
+                        </div>
+                    </div>
+                    
+                    <div class="race-skills-group">
+                        <h3 class="race-name-title">Anões das Montanhas Rochosas: A Firmeza da Pedra</h3>
+                        <div class="skills-grid">
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/e5a478/654321?text=🛡️⛰️" alt="Ícone Pele de Pedra">
+                                </div>
+                                <h4 class="skill-name">Pele de Pedra</h4>
+                                <p class="skill-difficulty difficulty-basica">Dificuldade: Básica</p>
+                                <p class="skill-description">A pele naturalmente resistente do anão concede uma pequena, porém constante, redução de dano físico recebido.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/e5a478/654321?text=🔨💥" alt="Ícone Golpe Demolidor">
+                                </div>
+                                <h4 class="skill-name">Golpe Demolidor</h4>
+                                <p class="skill-difficulty difficulty-intermediaria">Dificuldade: Intermediária</p>
+                                <p class="skill-description">Um poderoso ataque com arma de contusão (martelo, machado) que tem chance de atordoar oponentes ou causar dano extra a objetos e construtos.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="src/asstes/icone_forja_ancestral.png" alt="Ícone Forja Ancestral">
+                                </div>
+                                <h4 class="skill-name">Forja Ancestral</h4>
+                                <p class="skill-difficulty difficulty-avancada">Dificuldade: Avançada</p>
+                                <p class="skill-description">Utilizando uma forja e materiais raros, o anão pode imbuir temporariamente uma arma ou armadura com runas ancestrais, concedendo bônus significativos de ataque, defesa ou propriedades mágicas.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="race-skills-group">
+                        <h3 class="race-name-title">Gronar: O Espírito Indomável</h3>
+                        <div class="skills-grid">
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/c53030/4a2c2c?text=🗣️" alt="Ícone Rugido Intimidador">
+                                </div>
+                                <h4 class="skill-name">Rugido Intimidador</h4>
+                                <p class="skill-difficulty difficulty-basica">Dificuldade: Básica</p>
+                                <p class="skill-description">Solta um urro gutural que pode fazer inimigos de moral fraca hesitar ou até mesmo recuar brevemente em combate.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/c53030/4a2c2c?text=😡" alt="Ícone Fúria Selvagem">
+                                </div>
+                                <h4 class="skill-name">Fúria Selvagem</h4>
+                                <p class="skill-difficulty difficulty-intermediaria">Dificuldade: Intermediária</p>
+                                <p class="skill-description">Entra em um estado de berserker, aumentando drasticamente o dano físico e a resistência à dor, mas sacrificando a capacidade de defesa estratégica e o uso de habilidades complexas.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/c53030/4a2c2c?text=🐺🐾" alt="Ícone Vínculo Primevo">
+                                </div>
+                                <h4 class="skill-name">Vínculo Primevo</h4>
+                                <p class="skill-difficulty difficulty-avancada">Dificuldade: Avançada</p>
+                                <p class="skill-description">Através de rituais ancestrais, o Gronar pode invocar um espírito animal totem (lobo, urso, águia) para lutar ao seu lado por um período, ou absorver temporariamente um aspecto de seu totem.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="race-skills-group">
+                        <h3 class="race-name-title">Aethelianos: O Eco Arcano</h3>
+                        <div class="skills-grid">
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/a78bfa/3b0764?text=🔮✨" alt="Ícone Canalizar Magia Bruta">
+                                </div>
+                                <h4 class="skill-name">Canalizar Magia Bruta</h4>
+                                <p class="skill-difficulty difficulty-basica">Dificuldade: Básica</p>
+                                <p class="skill-description">Consegue absorver pequenas quantidades de energia mágica do ambiente ou sacrificar um pouco de sua vitalidade para restaurar sua reserva de mana.</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/a78bfa/3b0764?text=💥" alt="Ícone Centelha Arcana">
+                                </div>
+                                <h4 class="skill-name">Centelha Arcana</h4>
+                                <p class="skill-difficulty difficulty-intermediaria">Dificuldade: Intermediária</p>
+                                <p class="skill-description">Dispara um projétil de energia mágica instável que causa dano arcano e tem uma pequena chance de aplicar um efeito elemental secundário aleatório (queimadura, lentidão, choque).</p>
+                            </article>
+                            <article class="skill-card">
+                                <div class="skill-icon-container">
+                                    <img src="https://via.placeholder.com/100x100/a78bfa/3b0764?text=💨" alt="Ícone Manifestação Etérea">
+                                </div>
+                                <h4 class="skill-name">Manifestação Etérea</h4>
+                                <p class="skill-difficulty difficulty-avancada">Dificuldade: Avançada</p>
+                                <p class="skill-description">O Aetheliano desfoca sua forma física por poucos segundos, tornando-se parcialmente intangível, capaz de atravessar pequenos obstáculos sólidos ou ter alta chance de evitar um ataque físico ou mágico direto.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2024-2025 Aethelgard. Todos os direitos reservados.</p>
+                <p>O poder flui através de todas as linhagens.</p>
+            </div>
+        </footer>
+
+        <script>
+            // Script básico para toggle do menu mobile
+            const menuToggle = document.querySelector('.menu-toggle');
+            const menuList = document.querySelector('#menu-list');
+
+            if (menuToggle && menuList) {
+                menuToggle.addEventListener('click', () => {
+                    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
+                    menuToggle.setAttribute('aria-expanded', !isExpanded);
+                    menuList.classList.toggle('active');
+                    menuToggle.innerHTML = !isExpanded ? '&times;' : '☰';
+                });
+            }
+
+            // Animação de entrada para os cards de habilidade
+            document.addEventListener('DOMContentLoaded', () => {
+                const skillCards = document.querySelectorAll('.skill-card');
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target); // Para animar apenas uma vez
+                        }
+                    });
+                }, observerOptions);
+
+                skillCards.forEach(card => {
+                    observer.observe(card);
+                });
+            });
+        </script>
+    </body>
+</html>

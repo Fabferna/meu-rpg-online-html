@@ -1,0 +1,197 @@
+/* habilidades.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap'); /* Fonte para descrições */
+
+:root {
+    /* Herda variáveis de header_footer.css */
+    --skill-card-bg: #281e16; /* Tom terroso escuro para os cards */
+    --skill-card-border: var(--border-color);
+    --skill-icon-bg: #3a2d23;
+    --skill-text-secondary: #c5b8a3;
+
+    /* Cores de Dificuldade */
+    --difficulty-basica-color: #2ecc71;       /* Verde (Emerald) */
+    --difficulty-intermediaria-color: #f39c12; /* Laranja (Sun Flower) */
+    --difficulty-avancada-color: #e74c3c;      /* Vermelho (Alizarin) */
+}
+
+/* Seção Hero da Página Habilidades */
+.skills-hero {
+    background-image: 
+        linear-gradient(rgba(15, 10, 5, 0.7), rgba(15, 10, 5, 0.9)),
+        url('https://images.unsplash.com/photo-1506703719100-a0f3dc48c5a8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Imagem de runas, grimório ou energia mágica */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-color);
+    padding: 5rem 0;
+    text-align: center;
+    animation: fadeInComponentSkills 1.2s ease-out;
+}
+
+@keyframes fadeInComponentSkills {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.skills-hero h2 {
+    font-family: var(--primary-font);
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    color: var(--accent-color);
+}
+
+.skills-hero p {
+    font-size: 1.3rem;
+    font-family: var(--secondary-font);
+    font-style: italic;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Diretório de Habilidades Raciais */
+.racial-skills-directory {
+    padding: 3rem 0;
+}
+
+.race-skills-group {
+    margin-bottom: 4rem;
+    padding: 2rem;
+    background-color: rgba(0,0,0,0.1); /* Fundo sutil para o grupo */
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.race-skills-group:last-child {
+    margin-bottom: 0;
+}
+
+.race-name-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700; /* Cinzel já tem pesos, 700 é um bom bold */
+    font-size: 2.2rem;
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+    position: relative;
+}
+/* Pequeno adorno para o título da raça */
+.race-name-title::after {
+    content: '◈'; /* Ou um ícone de Font Awesome */
+    font-size: 0.8em;
+    color: var(--accent-color);
+    opacity: 0.7;
+    position: absolute;
+    bottom: -0.6em; /* Ajustar conforme o tamanho da fonte do ::after */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.skill-card {
+    background-color: var(--skill-card-bg);
+    border: 1px solid var(--skill-card-border);
+    border-left: 5px solid var(--accent-color); /* Borda de destaque temática */
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza o conteúdo do card */
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0; /* Para animação */
+    transform: translateY(30px); /* Para animação */
+}
+.skill-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+
+.skill-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.skill-icon-container {
+    width: 90px;
+    height: 90px;
+    background-color: var(--skill-icon-bg);
+    border-radius: 50%; /* Ícone circular */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    border: 3px solid var(--accent-color);
+    overflow: hidden; /* Caso a imagem seja maior que o container */
+}
+
+.skill-icon-container img {
+    width: 100%; /* Para imagens via placeholder */
+    height: 100%;
+    object-fit: cover; /* Ou 'contain' se preferir ver a imagem toda */
+    /* Se usar Font Awesome:
+    font-size: 2.5rem;
+    color: var(--accent-color); */
+}
+
+.skill-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.skill-difficulty {
+    font-family: var(--secondary-font);
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    color: #fff; /* Texto branco para bom contraste com fundos coloridos */
+    margin-bottom: 1rem;
+    display: inline-block; /* Para que o padding funcione bem */
+}
+
+.difficulty-basica { background-color: var(--difficulty-basica-color); }
+.difficulty-intermediaria { background-color: var(--difficulty-intermediaria-color); }
+.difficulty-avancada { background-color: var(--difficulty-avancada-color); }
+
+.skill-description {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--skill-text-secondary);
+    flex-grow: 1; /* Ocupa espaço disponível */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .skills-hero h2 {
+        font-size: 2.5rem;
+    }
+    .skills-hero p {
+        font-size: 1.1rem;
+    }
+    .race-name-title {
+        font-size: 1.8rem;
+    }
+    .skills-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+    .skill-name {
+        font-size: 1.3rem;
+    }
+}
