@@ -39,7 +39,6 @@
 
 ## ✨ Funcionalidades
 
-- 🎨 Layout fiel à estética 16-bits
 - 🖥️ Responsivo e leve
 - ⚔️ Interface de batalha, HUD e cenário simulados
 
