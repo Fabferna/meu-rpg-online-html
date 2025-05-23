@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aethelgard - A Saga Começa</title>
+        <meta name="description" content="Inicie sua aventura no mundo de Aethelgard. Crie seu personagem e desbrave reinos de fantasia.">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+        <link rel="stylesheet" href="src/css/jogo.css">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <div id="game-loader" class="loader-overlay" style="display: none;">
+            <div class="loader-content">
+                <img src="src/asstes/loader.png" alt="Carregando Aethelgard" class="loader-logo">
+                <p>Forjando seu destino...</p>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <div id="game-container">
+            <section id="welcome-screen" class="game-screen active-screen">
+                <div class="welcome-content">
+                    <h1 class="game-title-main">Aethelgard</h1>
+                    <p class="game-subtitle">Onde Lendas Nascem das Cinzas</p>
+                    <div class="welcome-options">
+                        <button id="btn-continue-game" class="btn-game btn-primary" disabled>Continuar Aventura <small>(Nenhum herói encontrado)</small></button>
+                        <button id="btn-create-new-char" class="btn-game btn-secondary">Criar Novo Herói</button>
+                    </div>
+                    <a href="index.html" class="back-to-site-link"><i class="fas fa-arrow-left"></i> Voltar ao Portal de Aethelgard</a>
+                </div>
+            </section>
+
+            <section id="char-creation-screen" class="game-screen">
+                <div class="creation-header">
+                    <h2>Forje Seu Destino</h2>
+                    <div class="step-indicator">
+                        <span id="indicator-region" class="indicator active">Região</span> <i class="fas fa-chevron-right"></i>
+                        <span id="indicator-race" class="indicator">Raça</span> <i class="fas fa-chevron-right"></i>
+                        <span id="indicator-appearance" class="indicator">Aparência</span> <i class="fas fa-chevron-right"></i>
+                        <span id="indicator-confirm" class="indicator">Sumário</span>
+                    </div>
+                </div>
+
+                <div class="creation-steps-container">
+                    <div id="region-select-step" class="creation-step active-step">
+                        <h3>Escolha sua Terra Natal:</h3>
+                        <div class="selection-grid region-grid">
+                            <div class="selectable-card" data-region="sylvandell">
+                                <img src="src/asstes/as_ruinas_sussurrantes.png" alt="Ruínas Sussurrantes de Sylvandell">
+                                <h4>Sylvandell</h4>
+                                <p>Antiga floresta élfica, cheia de mistérios e magia ancestral.</p>
+                            </div>
+                            <div class="selectable-card" data-region="agulhas_congeladas">
+                                <img src="src/asstes/as_agulhas_congeladas.png" alt="As Agulhas Congeladas">
+                                <h4>Agulhas Congeladas</h4>
+                                <p>Montanhas imponentes, lar de clãs resistentes e feras gélidas.</p>
+                            </div>
+                            <div class="selectable-card" data-region="deserto_ambar">
+                                <img src="src/asstes/deserto_ambar.png" alt="O Deserto Âmbar">
+                                <h4>Deserto Âmbar</h4>
+                                <p>Vastas dunas que escondem ruínas de civilizações perdidas e perigos.</p>
+                            </div>
+                        </div>
+                        <button id="btn-next-to-race" class="btn-game btn-secondary btn-next-step" disabled>Próximo: Raça <i class="fas fa-arrow-right"></i></button>
+                    </div>
+
+                    <div id="race-select-step" class="creation-step">
+                        <h3>Escolha sua Linhagem:</h3>
+                        <div class="selection-grid race-grid">
+                            </div>
+                        <button id="btn-prev-to-region" class="btn-game btn-tertiary btn-prev-step"><i class="fas fa-arrow-left"></i> Região</button>
+                        <button id="btn-next-to-appearance" class="btn-game btn-secondary btn-next-step" disabled>Próximo: Aparência <i class="fas fa-arrow-right"></i></button>
+                    </div>
+
+                    <div id="appearance-select-step" class="creation-step">
+                        <h3 id="appearance-title">Defina seu Herói (Raça Selecionada):</h3>
+                        <div class="appearance-selection">
+                            <div class="gender-options">
+                                <div class="selectable-char-image" data-gender="male">
+                                    <img id="char-img-male" src="https://via.placeholder.com/150x220/6c7a89/ffffff?text=Masculino" alt="Aparência Masculina">
+                                    <p>Opção Masculina</p>
+                                </div>
+                                <div class="selectable-char-image" data-gender="female">
+                                    <img id="char-img-female" src="https://via.placeholder.com/150x220/c0392b/ffffff?text=Feminino" alt="Aparência Feminina">
+                                    <p>Opção Feminina</p>
+                                </div>
+                            </div>
+                            <div class="form-group char-name-group">
+                                <label for="char-name">Nome do seu Herói:</label>
+                                <input type="text" id="char-name" name="char-name" placeholder="Ex: Kaelen, Lyra..." required maxlength="20">
+                            </div>
+                        </div>
+                        <button id="btn-prev-to-race" class="btn-game btn-tertiary btn-prev-step"><i class="fas fa-arrow-left"></i> Raça</button>
+                        <button id="btn-next-to-confirm" class="btn-game btn-secondary btn-next-step" disabled>Próximo: Sumário <i class="fas fa-arrow-right"></i></button>
+                    </div>
+
+                    <div id="attributes-confirm-step" class="creation-step">
+                        <h3>Sumário do Herói:</h3>
+                        <div class="summary-grid">
+                            <div class="summary-details">
+                                <p><strong>Nome:</strong> <span id="summary-name"></span></p>
+                                <p><strong>Região Natal:</strong> <span id="summary-region"></span></p>
+                                <p><strong>Raça:</strong> <span id="summary-race"></span></p>
+                                <p><strong>Aparência:</strong> <span id="summary-gender"></span></p>
+                            </div>
+                            <div class="summary-image">
+                                <img id="summary-char-img" src="https://via.placeholder.com/180x250/34495e/ffffff?text=Herói" alt="Imagem do Personagem">
+                            </div>
+                            <div class="summary-attributes">
+                                <h4>Atributos Iniciais:</h4>
+                                <ul id="attributes-list">
+                                    </ul>
+                                <p id="race-bonus-description" class="race-bonus-desc"></p>
+                            </div>
+                        </div>
+                        <button id="btn-prev-to-appearance" class="btn-game btn-tertiary btn-prev-step"><i class="fas fa-arrow-left"></i> Aparência</button>
+                        <button id="btn-confirm-creation" class="btn-game btn-primary btn-confirm"><i class="fas fa-check-circle"></i> Confirmar e Iniciar Jornada!</button>
+                    </div>
+                </div>
+                <button id="btn-back-to-welcome" class="btn-game btn-tertiary btn-back-to-main"><i class="fas fa-times-circle"></i> Cancelar Criação</button>
+            </section>
+
+            <section id="char-select-screen" class="game-screen">
+                <h2>Selecione seu Herói:</h2>
+                <p><em>(Funcionalidade de carregar personagens existentes será implementada no futuro.)</em></p>
+                <button id="btn-back-to-welcome-from-select" class="btn-game btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</button>
+            </section>
+        </div>
+
+        <script src="src/script/jogo.js"></script>
+    </body>
+</html>

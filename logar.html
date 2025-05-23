@@ -122,13 +122,18 @@
                         </div>
                         <p class="form-switch-text">Já é uma lenda conhecida? <a href="#" id="switch-to-login-link-1">Entre por este portal!</a></p>
                     </form>
-                </div>
-            </div>
-        </main>
+
+                    <div class="test-access-section">
+                        <p class="test-access-divider"><span>Ou explore o protótipo</span></p>
+                        <a href="jogo.html" class="btn-game btn-test-access">
+                            <i class="fas fa-gamepad"></i> Acesse o Teste do Jogo
+                        </a>
+                    </div>
+                    </div> </div> </main>
 
         <footer>
             <div class="container">
-                <p>&copy; 2024-2025 Aethelgard. Todos os direitos reservados.</p>
+                <p>&copy; <span id="current-year"></span> Aethelgard. Todos os direitos reservados.</p>
                 <p>Onde lendas são forjadas e jornadas épicas começam.</p>
             </div>
         </footer>
@@ -228,6 +233,9 @@
                     // Aqui ocorreria a chamada para o endpoint de OAuth do seu back-end.
                 });
             });
+            
+            // Atualiza o ano no rodapé
+            document.getElementById('current-year').textContent = new Date().getFullYear();
 
         </script>
     </body>
