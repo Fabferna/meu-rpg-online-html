@@ -1,0 +1,364 @@
+/* css/no_jogo_interface.css */
+:root {
+    --game-bg: #1a120b;
+    --game-header-bg: #2c1d10; /* Um pouco mais claro que o fundo */
+    --game-text: #e0ccab;
+    --game-text-secondary: #b0a08f;
+    --game-accent: #c89b3c; /* Dourado Aethelgard */
+    --game-accent-hover: #e6a74a;
+    --game-border-color: #4a3f35;
+
+    --hp-bar-color: #c0392b; /* Vermelho para HP */
+    --mana-bar-color: #2980b9; /* Azul para Mana */
+    --energy-bar-color: #27ae60; /* Verde para Energia */
+    --bar-bg-color: #423429; /* Fundo da barra de status */
+
+    --font-primary-game: 'Cinzel', serif;
+    --font-secondary-game: 'Lora', serif;
+    --font-ui-game: 'Roboto', sans-serif; /* Para elementos de UI mais densos */
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-ui-game);
+    background-color: var(--game-bg);
+    color: var(--game-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+#game-interface-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#game-header {
+    background-color: var(--game-header-bg);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+    gap: 1rem; /* Espaço entre os blocos principais do header */
+    border-bottom: 3px solid var(--game-accent);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    position: sticky; /* Header fixo no topo */
+    top: 0;
+    z-index: 1000;
+}
+
+/* Bloco de Informações do Jogador */
+.player-info-area {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-shrink: 0; /* Evita que encolha demais */
+}
+
+.player-portrait img {
+    width: 60px; /* Ajustado para um tamanho menor no header */
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--game-accent);
+    object-fit: cover;
+    background-color: var(--game-bg); /* Fundo caso a imagem não carregue */
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-name {
+    font-family: var(--font-primary-game);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--game-text);
+}
+
+.player-currency {
+    font-size: 0.9rem;
+    color: var(--game-accent);
+    display: flex;
+    align-items: center;
+}
+.player-currency i {
+    margin-right: 0.3rem;
+    font-size: 1em;
+}
+
+/* Bloco de Status do Jogador */
+.player-stats-area {
+    display: flex;
+    flex-direction: column; /* Barras empilhadas */
+    gap: 0.4rem; /* Espaço entre as barras */
+    flex-grow: 1; /* Ocupa espaço disponível */
+    min-width: 180px; /* Largura mínima para as barras */
+    max-width: 300px; /* Largura máxima */
+}
+
+.stat-bar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.stat-bar-group label {
+    font-size: 0.75rem;
+    color: var(--game-text-secondary);
+    width: 50px; /* Largura fixa para os labels */
+    text-align: right;
+    font-family: var(--font-ui-game);
+    font-weight: 500;
+}
+
+.stat-bar-container {
+    flex-grow: 1;
+    height: 12px; /* Altura da barra */
+    background-color: var(--bar-bg-color);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--game-border-color);
+}
+
+.stat-bar {
+    height: 100%;
+    border-radius: 5px; /* Um pouco menor para não cortar nas bordas do container */
+    transition: width 0.3s ease-in-out;
+}
+
+#hp-bar { background-color: var(--hp-bar-color); }
+#mana-bar { background-color: var(--mana-bar-color); }
+#energy-bar { background-color: var(--energy-bar-color); }
+
+.stat-value {
+    font-size: 0.75rem;
+    color: var(--game-text);
+    min-width: 55px; /* Espaço para "100/100" */
+    font-family: var(--font-ui-game);
+    font-weight: 500;
+}
+
+/* Navegação do Jogo */
+.game-navigation {
+    position: relative; /* Para o submenu */
+}
+.game-nav-toggle { /* Botão Hamburguer para mobile */
+    display: none; /* Escondido em telas maiores */
+    background: none;
+    border: 1px solid var(--game-accent);
+    color: var(--game-accent);
+    font-size: 1.5rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.game-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.5rem; /* Espaço entre itens principais */
+}
+
+.game-navigation ul li a.nav-item {
+    font-family: var(--font-primary-game);
+    color: var(--game-text-secondary);
+    text-decoration: none;
+    padding: 0.6rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: block; /* Para padding funcionar bem */
+    font-size: 1rem;
+}
+
+.game-navigation ul li a.nav-item:hover,
+.game-navigation ul li a.nav-item:focus,
+.game-navigation ul li a.nav-item.active {
+    background-color: var(--game-accent);
+    color: var(--game-header-bg);
+}
+
+.game-navigation ul li.has-submenu > a i { /* Ícone de seta */
+    margin-left: 0.3em;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+.game-navigation ul li.has-submenu.open > a i {
+    transform: rotate(180deg);
+}
+
+
+.submenu {
+    display: none; /* Escondido por padrão */
+    position: absolute;
+    top: 100%; /* Abaixo do item pai */
+    right: 0; /* Alinhado à direita para o último item, ou left: 0; se for no início */
+    background-color: var(--game-header-bg);
+    border: 1px solid var(--game-accent);
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    min-width: 200px; /* Largura mínima do submenu */
+    z-index: 1001;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    flex-direction: column; /* Itens do submenu empilhados */
+    gap: 0 !important; /* Remove gap do ul pai */
+}
+.has-submenu.open .submenu {
+    display: flex; /* Mostra o submenu */
+}
+
+.submenu li {
+    width: 100%;
+}
+.submenu li a {
+    padding: 0.7rem 1.2rem !important; /* Padding consistente para itens de submenu */
+    font-size: 0.9rem !important;
+    color: var(--game-text-secondary) !important;
+    border-radius: 0 !important; /* Remove borda individual dos itens */
+    white-space: nowrap;
+}
+.submenu li a:hover,
+.submenu li a:focus {
+    background-color: var(--game-accent) !important;
+    color: var(--game-header-bg) !important;
+}
+
+/* Placeholder para o conteúdo principal */
+#game-content-area {
+    flex-grow: 1; /* Ocupa o restante da altura */
+    padding: 2rem;
+    /* Estilos adicionais para o layout do conteúdo do jogo virão aqui */
+}
+.content-placeholder {
+    background-color: rgba(0,0,0,0.2);
+    padding: 3rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px dashed var(--game-border-color);
+}
+.content-placeholder h2 {
+    font-family: var(--font-primary-game);
+    color: var(--game-accent);
+    font-size: 2rem;
+}
+
+/* Classe para leitores de tela */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+
+/* Responsividade para o Header do Jogo */
+@media (max-width: 992px) { /* Ponto onde a navegação pode começar a quebrar */
+    #game-header {
+        /* Permite que os blocos se ajustem melhor */
+    }
+    .player-stats-area {
+        min-width: 150px; /* Reduz um pouco */
+        max-width: 250px;
+    }
+    .game-navigation ul li a.nav-item {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #game-header {
+        flex-direction: column; /* Empilha os blocos principais */
+        align-items: stretch; /* Fazem os blocos ocuparem a largura */
+        padding: 1rem;
+    }
+    .player-info-area {
+        justify-content: space-between; /* Nome de um lado, imagem do outro */
+        width: 100%;
+    }
+     .player-details {
+        align-items: flex-end; /* Alinha nome e ouro à direita */
+    }
+    .player-stats-area {
+        max-width: 100%; /* Barras ocupam mais espaço */
+        flex-direction: row; /* Barras lado a lado se couber, ou empilhadas (ver abaixo) */
+        flex-wrap: wrap; /* Permite que as barras quebrem */
+        justify-content: space-around;
+        gap: 0.8rem;
+    }
+    .stat-bar-group {
+        flex-basis: calc(50% - 0.4rem); /* Duas barras por linha */
+        min-width: 180px; /* Garante que não fiquem muito pequenas */
+    }
+     @media (max-width: 480px) { /* Se nem duas barras couberem bem */
+        .stat-bar-group {
+            flex-basis: 100%;
+        }
+    }
+
+
+    .game-nav-toggle {
+        display: block; /* Mostra o botão hamburguer */
+        position: absolute; /* Para posicionar no header */
+        top: 1rem;
+        right: 1rem;
+        z-index: 1002; /* Acima da lista de menu */
+    }
+    .game-navigation {
+        width: 100%;
+    }
+    .game-navigation ul#game-main-menu-list {
+        display: none; /* Esconde a lista principal */
+        flex-direction: column;
+        position: absolute;
+        top: calc(100% + 10px); /* Abaixo do botão hamburguer, considerando o padding do header */
+        left: 0;
+        right: 0;
+        background-color: var(--game-header-bg);
+        border: 1px solid var(--game-accent);
+        border-top: none; /* Já tem borda no header */
+        z-index: 1000;
+        padding: 0.5rem 0;
+        gap: 0;
+    }
+    .game-navigation ul#game-main-menu-list.open {
+        display: flex; /* Mostra quando 'open' */
+    }
+    .game-navigation ul li {
+        width: 100%;
+    }
+    .game-navigation ul li a.nav-item {
+        text-align: center;
+        border-bottom: 1px solid var(--game-border-color);
+    }
+    .game-navigation ul li:last-child a.nav-item {
+        border-bottom: none;
+    }
+    .submenu { /* Submenu no mobile */
+        position: static; /* Não mais absoluto */
+        border-left: 3px solid var(--game-accent);
+        border-right: none; border-bottom: none; border-top: none;
+        box-shadow: none;
+        margin-left: 1rem; /* Indentação */
+        width: auto; /* Não mais 100% do pai */
+        background-color: transparent; /* Remove fundo duplicado */
+    }
+    .submenu li a {
+        padding-left: 1.5rem !important; /* Maior indentação para itens de submenu */
+        text-align: left;
+        color: var(--game-text-secondary) !important;
+    }
+     .submenu li a:hover, .submenu li a:focus {
+        background-color: rgba(200, 155, 60, 0.2) !important; /* Fundo mais sutil no submenu mobile */
+        color: var(--game-accent) !important;
+    }
+}

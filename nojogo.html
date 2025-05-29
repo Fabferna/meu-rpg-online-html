@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aethelgard - Em Jogo</title>
+        <meta name="description" content="Interface principal do jogo Aethelgard.">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+        <link rel="stylesheet" href="src/css/no_jogo_interface.css">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <div id="game-interface-container">
+            <header id="game-header">
+                <div class="player-info-area">
+                    <div class="player-portrait">
+                        <img src="https://via.placeholder.com/70x70/c89b3c/1a120b?text=P" alt="Retrato do Personagem" id="player-char-img">
+                    </div>
+                    <div class="player-details">
+                        <span class="player-name" id="player-char-name">NomeDoHerói</span>
+                        <div class="player-currency">
+                            <i class="fas fa-coins"></i>
+                            <span id="player-gold">Ouro: 500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="player-stats-area">
+                    <div class="stat-bar-group">
+                        <label for="hp-bar">HP:</label>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar" id="hp-bar" style="width: 85%;"></div>
+                        </div>
+                        <span class="stat-value" id="hp-value">85/100</span>
+                    </div>
+                    <div class="stat-bar-group">
+                        <label for="mana-bar">Mana:</label>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar" id="mana-bar" style="width: 60%;"></div>
+                        </div>
+                        <span class="stat-value" id="mana-value">60/100</span>
+                    </div>
+                    <div class="stat-bar-group">
+                        <label for="energy-bar">Energia:</label>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar" id="energy-bar" style="width: 90%;"></div>
+                        </div>
+                        <span class="stat-value" id="energy-value">90/100</span>
+                    </div>
+                </div>
+
+                <nav class="game-navigation" aria-label="Navegação Principal do Jogo">
+                    <button class="game-nav-toggle" aria-expanded="false" aria-controls="game-main-menu-list">
+                        <i class="fas fa-bars"></i> <span class="sr-only">Menu</span>
+                    </button>
+                    <ul id="game-main-menu-list">
+                        <li><a href="#game-dashboard" class="nav-item">Home</a></li>
+                        <li class="has-submenu">
+                            <a href="#" class="nav-item" aria-haspopup="true" aria-expanded="false">Aventuras <i class="fas fa-caret-down"></i></a>
+                            <ul class="submenu">
+                                <li><a href="#missao-principal">Missão Principal</a></li>
+                                <li><a href="#coliseu">Coliseu</a></li>
+                                <li><a href="#mapa">Mapa</a></li>
+                                <li><a href="#dungeon">Dungeon</a></li>
+                                <li><a href="#treinar-atributos">Treinar Atributos</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="index.html" class="nav-item" title="Sair do Jogo"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+            <main id="game-content-area">
+                <div class="content-placeholder">
+                    <h2>Bem-vindo a Aethelgard, <span id="placeholder-player-name">NomeDoHerói</span>!</h2>
+                    <p>Sua aventura começa agora. Selecione uma opção no menu acima para prosseguir.</p>
+                    <p>O conteúdo principal desta página (<code>#game-content-area</code>) será desenvolvido nas próximas etapas.</p>
+                </div>
+            </main>
+
+        </div><script src="src/script/no_jogo_interface.js"></script>
+    </body>
+</html>
