@@ -362,3 +362,287 @@ body, html {
         color: var(--game-accent) !important;
     }
 }
+
+/* Container principal da mecânica */
+#text-rpg-engine {
+  width: 100%;
+  max-width: 700px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Caixas de texto e escolhas */
+.rpg-box {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid #555;
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Botões de escolha */
+.rpg-choice-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #3a6fb0;
+  color: white;
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+.rpg-choice-btn:hover {
+  background: #548dd4;
+}
+
+/* Painel de status do herói */
+#hero-status-panel {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto 30px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  background: rgba(5, 8, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Linha com avatar, nome e ouro */
+.hero-main-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hero-avatar-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 20%, #ffe08a, #8b4513);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.hero-text-info h2 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+}
+
+.hero-text-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.hero-gold {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Barras de HP/Mana/Energia */
+.hero-bars {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .hero-bars {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.hero-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-bar-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.hero-bar-track {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: #222;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.hero-bar-fill {
+  height: 100%;
+  width: 0%;
+  transform-origin: left;
+  transition: width 0.2s ease;
+}
+
+.hero-bar-fill.hp {
+  background: linear-gradient(90deg, #b30000, #ff5c5c);
+}
+
+.hero-bar-fill.mana {
+  background: linear-gradient(90deg, #003c8f, #4fc3f7);
+}
+
+.hero-bar-fill.energy {
+  background: linear-gradient(90deg, #33691e, #aed581);
+}
+
+.hero-bar-value {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+/* Barra de XP */
+.hero-bar-fill.xp {
+  background: linear-gradient(90deg, #ffb300, #ffe082);
+}
+
+/* Pontos de atributo */
+.hero-attribute-points {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.hero-attribute-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hero-attribute-buttons .attr-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: transparent;
+  color: #f5f5f5;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.hero-attribute-buttons .attr-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Atributos */
+.hero-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+/* ===========================
+   LAYOUT DO JOGO (TEXTO + MISSÕES)
+   =========================== */
+
+#game-play-area {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Em telas maiores, texto à esquerda e missões à direita */
+@media (min-width: 900px) {
+  #game-play-area {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  #text-rpg-engine {
+    flex: 2;
+  }
+
+  #quest-log {
+    flex: 1;
+  }
+}
+
+/* Log de Missões */
+#quest-log {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px 18px;
+  color: #f5f5f5;
+  font-size: 0.9rem;
+}
+
+#quest-log h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+}
+
+#active-quest h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+#active-quest p {
+  margin: 2px 0;
+}
+
+.quest-empty {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+#quest-messages {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+}
+
+#quest-messages p {
+  margin: 2px 0;
+  opacity: 0.85;
+}
+
+#completed-quests {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#completed-quests h4 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+#completed-quests ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+}
+
+#completed-quests li {
+  margin: 2px 0;
+}
