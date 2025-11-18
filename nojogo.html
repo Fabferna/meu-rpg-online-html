@@ -77,13 +77,120 @@
             </header>
 
             <main id="game-content-area">
-                <div class="content-placeholder">
-                    <h2>Bem-vindo a Aethelgard, <span id="placeholder-player-name">NomeDoHerói</span>!</h2>
-                    <p>Sua aventura começa agora. Selecione uma opção no menu acima para prosseguir.</p>
-                    <p>O conteúdo principal desta página (<code>#game-content-area</code>) será desenvolvido nas próximas etapas.</p>
-                </div>
+
+                <!-- 👤 Painel de status do personagem -->
+                <section id="hero-status-panel">
+                    <div class="hero-main-info">
+                        <div class="hero-avatar-placeholder"></div>
+
+                        <div class="hero-text-info">
+                        <h2 id="hero-name">Herói Desconhecido</h2>
+                        <p id="hero-race-region">Raça • Região</p>
+                        <p id="hero-level">Nível 1</p>
+                        <p id="hero-xp">XP: 0</p>
+                        </div>
+
+                        <div class="hero-gold">
+                        <span>🪙</span>
+                        <span id="hero-gold-amount">0</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-bars">
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">HP</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill hp" id="hero-hp-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-hp-text"></span>
+                        </div>
+
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">Mana</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill mana" id="hero-mana-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-mana-text"></span>
+                        </div>
+
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">Energia</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill energy" id="hero-energy-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-energy-text"></span>
+                        </div>
+
+                        <!-- Nova barra de XP -->
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">XP</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill xp" id="hero-xp-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-xp-bar-text"></span>
+                        </div>
+                    </div>
+
+                    <div class="hero-attributes">
+                        <span>FOR: <strong id="hero-str"></strong></span>
+                        <span>AGI: <strong id="hero-agi"></strong></span>
+                        <span>INT: <strong id="hero-int"></strong></span>
+                        <span>VIT: <strong id="hero-vit"></strong></span>
+                    </div>
+
+                    <!-- Novo bloco: pontos de atributo -->
+                    <div class="hero-attribute-points">
+                        <span id="hero-attribute-points-text">
+                        Pontos de atributo disponíveis: 0
+                        </span>
+                        <div class="hero-attribute-buttons">
+                        <button type="button" class="attr-btn" data-attr="strength">+ FOR</button>
+                        <button type="button" class="attr-btn" data-attr="agility">+ AGI</button>
+                        <button type="button" class="attr-btn" data-attr="intellect">+ INT</button>
+                        <button type="button" class="attr-btn" data-attr="vitality">+ VIT</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="game-play-area">
+
+                    <!-- 🎲 Engine do RPG de texto -->
+                    <section id="text-rpg-engine">
+
+                        <div id="rpg-scene-text" class="rpg-box">
+                        <!-- Texto da cena aparecerá aqui -->
+                        </div>
+
+                        <div id="rpg-choices" class="rpg-box">
+                        <!-- Botões de escolha aparecerão aqui -->
+                        </div>
+
+                    </section>
+
+                    <!-- 📜 Log de Missões -->
+                    <aside id="quest-log">
+                        <h3>Missões</h3>
+
+                        <div id="active-quest">
+                        <p class="quest-empty">Você ainda não possui missões ativas.</p>
+                        </div>
+
+                        <div id="quest-messages"></div>
+
+                        <div id="completed-quests">
+                        <!-- Lista de missões concluídas será renderizada aqui -->
+                        </div>
+                    </aside>
+
+                </section>
+
+
+
             </main>
 
-        </div><script src="src/script/no_jogo_interface.js"></script>
+
+        </div>
+        
+        <script src="src/script/no_jogo_interface.js"></script>
     </body>
 </html>
