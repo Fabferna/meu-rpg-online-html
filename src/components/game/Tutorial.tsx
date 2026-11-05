@@ -12,7 +12,7 @@ const STEPS = [
   { icon: "/assets/paisagem_epica_de_aethelgard.webp", title: "Bem-vindo a Aethelgard!", text: "Seu herói acabou de chegar. Aqui você evolui completando missões, caçando monstros e enfrentando outros jogadores." },
   { icon: "/assets/shop/potion_energy.webp", title: "⚡ Energia", text: "Missões, caçadas e duelos gastam energia. Ela volta sozinha: 1 ponto a cada 3 minutos, mesmo com o jogo fechado." },
   { icon: "/assets/as_ruinas_sussurrantes.webp", title: "📜 Missões", text: "Escolha uma missão e espere o cronômetro. Quando terminar, volte e receba XP, ouro e talvez um item raro. Comece pela Patrulha em Valerion!" },
-  { icon: "/assets/enemies/sombra_fraca.webp", title: "⚔️ Caçada", text: "Lutas por turnos: Atacar, Habilidade (forte, mas recarrega), Defender ou Poção. Se a vida estiver baixa, descanse ou use uma poção." },
+  { icon: "/assets/enemies/sombra_fraca-hd.webp", title: "⚔️ Caçada", text: "Lutas por turnos: Atacar, Habilidade (forte, mas recarrega), Defender ou Poção. Se a vida estiver baixa, descanse ou use uma poção." },
   { icon: "/assets/shop/frame_arcano.webp", title: "🏆 Arena e evolução", text: "A cada nível você ganha 3 pontos de atributo. Desafie heróis na Arena para subir no ranking e não esqueça a recompensa diária na Loja." },
 ];
 
