@@ -41,7 +41,7 @@ legacy/             versão HTML original (referência; será removida ao fim da
 ## Rodando localmente
 
 1. **Crie um projeto** em <https://supabase.com> (plano grátis serve).
-2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001_init.sql`, `0002_core_loop.sql`).
+2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001_init.sql`, `0002_core_loop.sql`, `0003_economy.sql`).
 3. Copie as chaves: **Project Settings → API**.
    ```bash
    cp .env.example .env.local   # e preencha os valores
@@ -81,9 +81,38 @@ Os arquivos em `public/assets/enemies/` são **prévias em baixa resolução**. 
 | `javali_corrompido.png` | https://www.canva.com/M/MAHaAKuC0Tc |
 | `lider_cultista.png` | https://www.canva.com/M/MAHaAFDagaA |
 
+## Economia e pagamentos (Fase 3)
+
+**Moedas:** 🪙 Ouro (grátis, ganho jogando) e 💎 Gemas (premium, compradas ou no login diário).
+
+**Fluxo de compra (seguro):**
+1. Jogador escolhe o pacote → `POST /api/shop/checkout` cria um pagamento **pendente** com o preço do catálogo do servidor.
+2. É redirecionado ao checkout hospedado (Stripe ou Mercado Pago). Dados de cartão nunca passam pelo nosso servidor.
+3. O gateway chama o **webhook** (`/api/webhooks/stripe` ou `/api/webhooks/mercadopago`). Validamos a **assinatura HMAC**, consultamos o valor/moeda e chamamos `fulfill_payment` (idempotente).
+4. Estorno/chargeback → `refund_payment` remove as gemas; se já foram gastas, a conta é marcada para revisão.
+
+| Gateway | Moedas | Métodos |
+|---|---|---|
+| Mercado Pago | BRL | Pix, cartão, boleto |
+| Stripe | BRL e USD | Cartão (+ métodos ativados no painel) |
+
+**Teste local sem gateway:** com `PAYMENTS_DEV=1` (e fora de produção), aparece o botão "Teste (dev)" que aprova o pagamento na hora.
+
+**Monetização:** pacotes de gemas (âncora "Melhor valor"), **gemas em dobro na 1ª compra**, Pacote do Aventureiro (oferta única), recarga de energia com preço progressivo no dia, concluir missão com gemas, Elixir +50% XP, ofertas do dia com cronômetro (rotação automática), cosméticos de **estoque global limitado**, login diário de 7 dias. Sem loot boxes pagas.
+
+Para criar novas ofertas limitadas, rode no SQL Editor:
+```sql
+insert into limited_offers (id, cosmetic_id, price_gems, stock_total, ends_at)
+values ('natal_moldura', 'frame_arcano', 300, 1000, now() + interval '7 days');
+```
+
+### Artes da loja (Canva)
+
+Em `public/assets/shop/` (200×200, suficiente para ícones). Originais: gemas [pequeno](https://www.canva.com/M/MAHaAXn073w) / [baú](https://www.canva.com/M/MAHaASvU90A), molduras [dragão](https://www.canva.com/M/MAHaAex5OCo) / [arcana](https://www.canva.com/M/MAHaAXWeEhc), poções [vida](https://www.canva.com/M/MAHaAR39AaE) / [energia](https://www.canva.com/M/MAHaAWGXAms).
+
 ## Roadmap
 
 - [x] **Fase 1** — Next.js, Supabase, login (e-mail/Google/Facebook), RLS, criação de personagem no servidor
 - [x] **Fase 2** — Missões com timer, combate PVE por turnos, PVP assíncrono com ranking Elo, níveis/atributos, inventário/equipamentos, UI animada
-- [ ] **Fase 3** — Gemas (premium), recarga de energia, loja de cosméticos, ofertas limitadas, Stripe/Mercado Pago
+- [x] **Fase 3** — Gemas (premium), recarga de energia, loja de cosméticos, ofertas limitadas, login diário, Stripe + Mercado Pago
 - [ ] **Fase 4** — `DEPLOY.md` (domínio, SSL, Cloudflare, banco em produção)

@@ -7,8 +7,9 @@ import type { GameCtx } from "./GameApp";
 import { PVP_ENERGY_COST } from "@/lib/game/rules";
 import { post } from "./api";
 import { Bar, Panel } from "./ui";
+import Avatar from "./Avatar";
 
-type Opp = { name: string; level: number; rating: number; wins: number; losses: number; raceName: string; portrait: string };
+type Opp = { name: string; level: number; rating: number; wins: number; losses: number; raceName: string; portrait: string; frame: string | null; title: string | null };
 type Fight = {
   won: boolean; delta: number; rewards: { xp: number; gold: number; levelUps: number };
   me: { name: string; maxHp: number; hp: number }; them: { name: string; maxHp: number; hp: number };
@@ -84,11 +85,9 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
           {opps.map((o, i) => (
             <motion.div key={o.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
               className="panel flex items-center gap-3 p-3">
-              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20">
-                <Image src={o.portrait} alt="" fill sizes="56px" className="object-cover" />
-              </div>
+              <Avatar src={o.portrait} frame={o.frame} size={56} />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display">{o.name}</p>
+                <p className="truncate font-display">{o.name}{o.title && <span className="ml-1 text-xs text-amber-200/80">« {o.title} »</span>}</p>
                 <p className="text-xs text-white/50">Nv. {o.level} · {o.raceName} · ⭐ {o.rating} · {o.wins}V/{o.losses}D</p>
               </div>
               <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || ctx.state.character.energy < PVP_ENERGY_COST} onClick={() => challenge(o)}>Desafiar</button>

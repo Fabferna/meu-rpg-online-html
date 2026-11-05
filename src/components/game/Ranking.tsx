@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Panel } from "./ui";
+import Avatar from "./Avatar";
 
-type Row = { pos: number; name: string; raceName: string; level: number; pvp_rating: number; pvp_wins: number; pvp_losses: number };
+type Row = { pos: number; name: string; raceName: string; level: number; pvp_rating: number; pvp_wins: number; pvp_losses: number; portrait: string; frame: string | null; title: string | null };
 
 export default function Ranking() {
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -21,7 +22,7 @@ export default function Ranking() {
           {(rows ?? []).map((r) => (
             <tr key={r.name} className="border-t border-white/5">
               <td className="p-3 font-display">{medal[r.pos - 1] ?? r.pos}</td>
-              <td className="font-display">{r.name}</td>
+              <td><div className="flex items-center gap-2 py-1"><Avatar src={r.portrait} frame={r.frame} size={36} /><div><p className="font-display">{r.name}</p>{r.title && <p className="text-[11px] text-amber-200/80">« {r.title} »</p>}</div></div></td>
               <td className="text-white/60">{r.raceName}</td>
               <td>{r.level}</td>
               <td className="font-display text-gold">{r.pvp_rating}</td>

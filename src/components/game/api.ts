@@ -14,6 +14,15 @@ export const ERROR_TEXT: Record<string, string> = {
   level_gap: "Diferença de nível muito grande.",
   too_many_requests: "Calma, guerreiro! Muitas ações seguidas.",
   stale_battle: "Ação duplicada ignorada.",
+  insufficient_funds: "Saldo insuficiente.",
+  energy_full: "Sua energia já está cheia.",
+  already_owned: "Você já possui isso.",
+  daily_limit: "Limite de compras atingido.",
+  sold_out: "Esgotado!",
+  offer_expired: "Esta oferta terminou.",
+  already_claimed: "Você já recebeu a recompensa de hoje.",
+  quest_already_done: "A missão já terminou.",
+  provider_unavailable: "Forma de pagamento indisponível.",
 };
 
 export async function post<T = { ok: true }>(url: string, body: unknown = {}): Promise<T> {

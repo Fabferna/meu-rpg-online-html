@@ -63,6 +63,17 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
           <p className={`mt-6 font-display text-5xl tabular-nums ${done ? "text-emerald-400" : "text-gold"}`}>{done ? "Concluída!" : fmtTime(left)}</p>
           <div className="mt-4"><Bar value={Math.min(end - start, now - start)} max={end - start} color="bg-gold" /></div>
           <p className="mt-4 text-sm text-white/70">Recompensa: {active.rewards.xp} XP · {active.rewards.gold} 🪙{active.rewards.item ? " · 🎁 item raro" : ""}</p>
+          {!done && (
+            <button className="mt-6 rounded-lg bg-sky-600/80 px-6 py-2.5 text-sm font-semibold hover:bg-sky-500" disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                try { const r = await post<{ price: number }>("/api/shop/rush-quest"); ctx.toast(`⚡ Missão concluída por 💎 ${r.price}`); await ctx.refresh(); }
+                catch (e) { ctx.toast((e as Error).message, "error"); }
+                finally { setBusy(false); }
+              }}>
+              Concluir agora · 💎 {Math.max(1, Math.ceil(left / 300))}
+            </button>
+          )}
           {done && (
             <motion.button initial={{ scale: 0.8 }} animate={{ scale: [1, 1.06, 1] }} transition={{ repeat: Infinity, duration: 1.4 }}
               className="btn-gold mt-6 px-10" disabled={busy} onClick={claim}>

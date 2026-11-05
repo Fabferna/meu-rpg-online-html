@@ -4,6 +4,7 @@ import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data"
 import { xpForNextLevel } from "./rules";
 import { deriveVitals, type CharacterRow } from "./player";
 import type { BattleState } from "./combat";
+import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
 
 export type InventoryEntry = {
   id: string;
@@ -24,6 +25,7 @@ export type PlayerState = {
     attributes: { str: number; dex: number; con: number; intel: number; wis: number; cha: number };
     hp: number; maxHp: number; energy: number; maxEnergy: number; nextEnergyInSec: number;
     pvpRating: number; pvpWins: number; pvpLosses: number; pveWins: number;
+    frame: string | null; title: string | null; skin: string | null; xpBoostUntil: string | null;
   };
   wallet: { gold: number; gems: number };
   quest: { id: string; questId: string; startedAt: string; endsAt: string; rewards: { xp: number; gold: number; item: string | null } } | null;
@@ -52,10 +54,12 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
   return {
     character: {
       name: row.name, race, raceName: RACES[race].name, region: row.region as RegionId,
-      regionName: REGIONS[row.region as RegionId].name, gender, portrait: RACES[race].portraits[gender],
+      regionName: REGIONS[row.region as RegionId].name, gender, portrait: (row.equipped_skin && COSMETIC_BY_ID[row.equipped_skin]?.image) || RACES[race].portraits[gender],
       level: row.level, xp: Number(row.xp), xpToNext: xpForNextLevel(row.level), attributePoints: row.attribute_points,
       attributes: v.attributes, hp: v.hp, maxHp: v.maxHp, energy: v.energy, maxEnergy: v.maxEnergy, nextEnergyInSec: v.nextEnergyInSec,
       pvpRating: row.pvp_rating, pvpWins: row.pvp_wins, pvpLosses: row.pvp_losses, pveWins: row.pve_wins,
+      frame: row.equipped_frame, title: row.equipped_title ? COSMETIC_BY_ID[row.equipped_title]?.name ?? null : null,
+      skin: row.equipped_skin, xpBoostUntil: row.xp_boost_until,
     },
     wallet: { gold: Number(w.data?.gold ?? 0), gems: Number(w.data?.gems ?? 0) },
     quest: q.data

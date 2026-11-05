@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import type { PlayerState } from "@/lib/game/state";
 import { fmtTime } from "./api";
@@ -12,6 +11,9 @@ import Battle from "./Battle";
 import Arena from "./Arena";
 import Inventory from "./Inventory";
 import Ranking from "./Ranking";
+import Shop from "./Shop";
+import Avatar from "./Avatar";
+import { post } from "./api";
 
 export type Toast = { id: number; text: string; kind: "ok" | "error" | "reward" };
 export type GameCtx = {
@@ -28,6 +30,7 @@ const TABS = [
   { id: "battle", label: "Caçada", icon: "⚔️" },
   { id: "arena", label: "Arena PVP", icon: "🏟️" },
   { id: "inventory", label: "Inventário", icon: "🎒" },
+  { id: "shop", label: "Loja", icon: "💎" },
   { id: "ranking", label: "Ranking", icon: "🏆" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
@@ -53,6 +56,26 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4000);
   }, []);
 
+  // Retorno do checkout. As gemas são creditadas pelo WEBHOOK, não aqui.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const status = q.get("pagamento");
+    if (!status) return;
+    window.history.replaceState(null, "", "/jogo");
+    setTab("shop");
+    if (status === "dev" && q.get("id")) {
+      post("/api/shop/dev-complete", { paymentId: q.get("id") }).then(() => { toast("💎 Pagamento de teste aprovado!", "reward"); refresh(); })
+        .catch((e) => toast((e as Error).message, "error"));
+    } else if (status === "sucesso") {
+      toast("💎 Pagamento recebido! Suas gemas chegam em instantes.", "reward");
+      [3000, 8000, 15000].forEach((ms) => setTimeout(refresh, ms));
+    } else if (status === "pendente") {
+      toast("Pagamento pendente. Assim que for confirmado, as gemas aparecem aqui.");
+    } else {
+      toast("Pagamento cancelado.", "error");
+    }
+  }, [refresh, toast]);
+
   // Relógio visual de 1s; sincroniza com o servidor a cada 60s ou quando ganharia energia.
   useEffect(() => {
     const t = setInterval(() => setTick((n) => n + 1), 1000);
@@ -73,12 +96,10 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   return (
     <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4">
       <header className="panel sticky top-2 z-30 flex flex-wrap items-center gap-3 px-4 py-3 backdrop-blur">
-        <div className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-gold/60">
-          <Image src={c.portrait} alt="" fill sizes="44px" className="object-cover" />
-        </div>
+        <Avatar src={c.portrait} frame={c.frame} size={48} />
         <div className="min-w-0">
           <p className="truncate font-display leading-tight">{c.name}</p>
-          <p className="text-xs text-gold">Nv. {c.level}</p>
+          <p className="text-xs text-gold">Nv. {c.level}{c.title ? <span className="ml-1 text-amber-200/80">« {c.title} »</span> : null}</p>
         </div>
         <div className="ml-auto hidden w-56 space-y-1 sm:block">
           <Bar value={c.hp} max={c.maxHp} color="bg-life" />
@@ -87,7 +108,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         <div className="flex items-center gap-3 text-sm">
           <span title={`Energia · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
           <span title="Ouro">🪙 <b>{state.wallet.gold.toLocaleString("pt-BR")}</b></span>
-          <span title="Gemas (premium)">💎 <b>{state.wallet.gems.toLocaleString("pt-BR")}</b></span>
+          <button onClick={() => setTab("shop")} title="Gemas (premium) — comprar" className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString("pt-BR")}</b> <span className="text-sky-300">＋</span></button>
           <form action="/auth/signout" method="post">
             <button className="rounded-md border border-white/15 px-2.5 py-1 text-xs hover:bg-white/5">Sair</button>
           </form>
@@ -119,6 +140,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "arena" && <Arena ctx={ctx} />}
             {tab === "inventory" && <Inventory ctx={ctx} />}
             {tab === "ranking" && <Ranking />}
+            {tab === "shop" && <Shop ctx={ctx} />}
           </motion.div>
         </AnimatePresence>
       </main>

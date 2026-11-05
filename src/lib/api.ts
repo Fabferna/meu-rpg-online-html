@@ -13,7 +13,8 @@ type Ctx<T> = { user: User; body: T; admin: ReturnType<typeof createAdminClient>
 const BUSINESS_ERRORS = new Set([
   "not_enough_energy", "quest_already_running", "quest_not_finished", "no_quest", "in_battle",
   "not_enough_points", "invalid_points", "not_owner", "not_equippable", "no_character",
-  "insufficient_funds", "not_enough_gems",
+  "insufficient_funds", "energy_full", "already_owned", "daily_limit", "sold_out", "offer_expired",
+  "already_claimed", "quest_already_done", "unknown_offer",
 ]);
 
 /**
