@@ -42,6 +42,9 @@ export type BattleState = {
   effects?: Effects;
   log: LogEntry[];
   rewards?: { xp: number; gold: number; item: string | null; levelUps: number };
+  /** História: número do capítulo e, ao vencer, a recompensa entregue. */
+  story?: number;
+  storyResult?: { xp: number; gold: number; gems: number; item?: string; cosmetic?: string; levelUps: number };
   /** Masmorra: estágio atual (0 = primeira luta) e total de estágios. */
   dungeon?: { id: string; name: string; stage: number; total: number; chest?: { gold: number; gems: number; item: string | null } };
 };

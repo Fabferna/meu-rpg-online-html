@@ -45,6 +45,11 @@ export const QUESTS: Quest[] = ([
     xp: [1400, 1700], gold: [600, 800], drop: { item: "amuleto_serpente", chance: 0.06 }, image: "/assets/reino_abissal_de_meria.webp",
   },
   {
+    id: "raizes_corrompidas", title: "Raízes Corrompidas", rank: "C", minLevel: 3, energy: 10, durationSec: 420,
+    description: "As raízes do grande carvalho escurecem. Descubra o que as envenena.",
+    xp: [60, 80], gold: [30, 45], drop: { item: "pocao_vida", chance: 0.4 }, image: "/assets/as_ruinas_sussurrantes.webp",
+  },
+  {
     id: "ervas_curandeira", title: "Ervas para a Curandeira", rank: "D", minLevel: 1, energy: 6, durationSec: 120,
     description: "A curandeira de Sylvandell precisa de raízes-da-lua antes do anoitecer.",
     xp: [20, 28], gold: [10, 16], drop: { item: "pocao_vida", chance: 0.5 }, image: "/assets/comunhao_com_sylvandell.webp",

@@ -41,7 +41,7 @@ legacy/             versão HTML original (referência; será removida ao fim da
 ## Rodando localmente
 
 1. **Crie um projeto** em <https://supabase.com> (plano grátis serve).
-2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001` a `0012`).
+2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001` a `0013`).
 3. Copie as chaves: **Project Settings → API**.
    ```bash
    cp .env.example .env.local   # e preencha os valores

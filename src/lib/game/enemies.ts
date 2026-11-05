@@ -11,6 +11,8 @@ export type Enemy = {
   drop?: { item: string; chance: number };
   image: string;
   boss?: boolean;
+  /** Inimigo exclusivo da história (não aparece na Caçada). */
+  story?: boolean;
   /** Chance de envenenar / atordoar ao acertar. */
   traits?: { poison?: number; stun?: number };
 };
@@ -26,6 +28,17 @@ const RAW: Enemy[] = [
   { id: "golem_gelo", name: "Golem de Gelo", minLevel: 16, maxHp: 520, atk: [24, 36], def: 24, agility: 5, xp: 260, gold: 80, image: "/assets/enemies/golem_gelo.webp", drop: { item: "peitoral_anao", chance: 0.06 }, traits: { stun: 0.15 } },
   { id: "lorde_vorlag", name: "Lorde Vorlag, o Sombrio", minLevel: 20, maxHp: 780, atk: [30, 46], def: 22, agility: 16, xp: 600, gold: 220, image: "/assets/lord_vorlag_sombrio.webp", boss: true, drop: { item: "amuleto_serpente", chance: 0.08 }, traits: { stun: 0.12, poison: 0.15 } },
   { id: "serpente_abissal", name: "Serpente Abissal de Meria", minLevel: 25, maxHp: 1100, atk: [38, 58], def: 28, agility: 14, xp: 950, gold: 380, image: "/assets/enemies/serpente_abissal.webp", boss: true, drop: { item: "amuleto_serpente", chance: 0.12 }, traits: { poison: 0.35 } },
+  // ── Inimigos da história (únicos, mais fortes que os comuns do mesmo nível) ──
+  { id: "story_batedor", name: "Batedor das Sombras", minLevel: 2, maxHp: 120, atk: [7, 11], def: 3, agility: 8, xp: 0, gold: 0, image: "/assets/enemies/sombra_fraca.webp", story: true },
+  { id: "story_alfa", name: "Alfa da Matilha Corrompida", minLevel: 4, maxHp: 170, atk: [11, 16], def: 5, agility: 15, xp: 0, gold: 0, image: "/assets/enemies/lobo_corrompido.webp", story: true },
+  { id: "story_sacerdote", name: "Sacerdote do Olho Vazio", minLevel: 6, maxHp: 230, atk: [14, 22], def: 7, agility: 9, xp: 0, gold: 0, image: "/assets/enemies/culto_acolito.webp", story: true, traits: { poison: 0.25 } },
+  { id: "story_guardiao", name: "Guardião Espectral", minLevel: 8, maxHp: 300, atk: [17, 26], def: 9, agility: 11, xp: 0, gold: 0, image: "/assets/enemies/vulto_menor.webp", story: true, traits: { stun: 0.12 } },
+  { id: "story_rainha", name: "Rainha Escorpião", minLevel: 11, maxHp: 900, atk: [22, 32], def: 16, agility: 11, xp: 0, gold: 0, image: "/assets/enemies/escorpiao_ambar.webp", story: true, boss: true, traits: { poison: 0.3 } },
+  { id: "story_mestre", name: "Mestre dos Rituais Desperto", minLevel: 14, maxHp: 900, atk: [26, 38], def: 15, agility: 12, xp: 0, gold: 0, image: "/assets/enemies/lider_cultista.webp", story: true, boss: true, traits: { poison: 0.2 } },
+  { id: "story_colosso", name: "Colosso das Agulhas", minLevel: 17, maxHp: 1100, atk: [30, 44], def: 26, agility: 5, xp: 0, gold: 0, image: "/assets/enemies/golem_gelo.webp", story: true, boss: true, traits: { stun: 0.18 } },
+  { id: "story_arauto", name: "Arauto do Abismo", minLevel: 18, maxHp: 1000, atk: [34, 50], def: 22, agility: 16, xp: 0, gold: 0, image: "/assets/raids/kraken.webp", story: true, boss: true, traits: { poison: 0.3 } },
+  { id: "story_vorlag", name: "Lorde Vorlag, Desperto", minLevel: 21, maxHp: 1200, atk: [38, 56], def: 24, agility: 17, xp: 0, gold: 0, image: "/assets/lord_vorlag_sombrio.webp", story: true, boss: true, traits: { stun: 0.15, poison: 0.15 } },
+  { id: "story_meria", name: "Meria, a Serpente Primordial", minLevel: 23, maxHp: 1400, atk: [42, 62], def: 28, agility: 15, xp: 0, gold: 0, image: "/assets/enemies/serpente_abissal.webp", story: true, boss: true, traits: { poison: 0.35, stun: 0.1 } },
 ];
 
 // Balanceamento: os atributos vêm de uma curva por nível (o "inimigo padrão"

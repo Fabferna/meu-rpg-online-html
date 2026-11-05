@@ -22,6 +22,10 @@ import Guild from "./Guild";
 import ChatDock from "./ChatDock";
 import EventBanner from "./EventBanner";
 import SeasonPass from "./SeasonPass";
+import World from "./World";
+import { CHAPTERS } from "@/lib/game/story";
+
+const CHAPTER_READY = (done: number, level: number) => { const n = CHAPTERS.find((c) => c.n === done + 1); return !!n && level >= n.minLevel; };
 import DailyLogin, { type LoginState } from "./DailyLogin";
 import { isMuted, play, setMuted } from "./sfx";
 import { useQuestAlerts } from "./notify";
@@ -37,6 +41,7 @@ export type GameCtx = {
 
 const TABS = [
   { id: "overview", label: "Herói", icon: "🛡️" },
+  { id: "world", label: "Mundo", icon: "🗺️" },
   { id: "goals", label: "Objetivos", icon: "🎯" },
   { id: "quests", label: "Missões", icon: "📜" },
   { id: "battle", label: "Caçada", icon: "⚔️" },
@@ -188,6 +193,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {t.icon} {t.label}
             {t.id === "quests" && questReady && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />}
             {t.id === "battle" && state.battle && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-ember" />}
+            {t.id === "world" && CHAPTER_READY(c.storyChapter, c.level) && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-gold" />}
             {t.id === "goals" && goalsReady > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{goalsReady}</span>}
             {t.id === "overview" && c.attributePoints > 0 && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-arcane" />}
           </button>
@@ -206,6 +212,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "shop" && <Shop ctx={ctx} />}
             {tab === "guild" && <Guild ctx={ctx} />}
             {tab === "pass" && <SeasonPass ctx={ctx} />}
+            {tab === "world" && <World ctx={ctx} onBattle={() => setTab("battle")} />}
             {tab === "goals" && <Goals ctx={ctx} onCount={setGoalsReady} />}
           </motion.div>
         </AnimatePresence>

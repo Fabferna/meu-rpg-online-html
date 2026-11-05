@@ -5,6 +5,7 @@ import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { loadPlayer } from "@/lib/game/player";
 import { PASS_DUNGEON_BONUS, seasonOf } from "@/lib/game/seasonPass";
 import type { BattleState } from "@/lib/game/combat";
+import { REGION_OF_DUNGEON, regionUnlocked } from "@/lib/game/regions";
 
 export const POST = action("dungeon-enter", z.object({ dungeonId: z.string().max(32) }).strict(), async ({ user, body, admin }) => {
   const d = DUNGEON_BY_ID[body.dungeonId];
@@ -12,6 +13,7 @@ export const POST = action("dungeon-enter", z.object({ dungeonId: z.string().max
   const p = await loadPlayer(admin, user.id);
   if (!p) throw new HttpError(404, "no_character");
   if (p.row.level < d.minLevel) throw new HttpError(403, "level_too_low");
+  if (!regionUnlocked(REGION_OF_DUNGEON[d.id], p.row.story_chapter)) throw new HttpError(403, "region_locked");
   if (p.hp < Math.ceil(p.maxHp * 0.5)) throw new HttpError(409, "hp_too_low");
 
   const { data: pass } = await admin.from("season_passes").select("season").eq("user_id", user.id).eq("season", seasonOf().id).maybeSingle();

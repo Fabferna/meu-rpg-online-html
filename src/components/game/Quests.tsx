@@ -9,6 +9,7 @@ import { fmtTime, post } from "./api";
 import { play } from "./sfx";
 import { askNotificationPermission } from "./notify";
 import { Bar, Panel, RankBadge } from "./ui";
+import { REGION_OF_QUEST, regionUnlocked } from "@/lib/game/regions";
 
 export default function Quests({ ctx }: { ctx: GameCtx }) {
   const { state } = ctx;
@@ -91,7 +92,9 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {QUESTS.map((q, i) => {
-        const locked = state.character.level < q.minLevel;
+        const region = REGION_OF_QUEST[q.id];
+        const regionLocked = !regionUnlocked(region, state.character.storyChapter);
+        const locked = state.character.level < q.minLevel || regionLocked;
         const noEnergy = state.character.energy < q.energy;
         return (
           <motion.div key={q.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -99,6 +102,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
             <div className="relative aspect-video">
               <Image src={q.image} alt="" fill sizes="400px" className="object-cover" />
               <div className="absolute left-3 top-3"><RankBadge rank={q.rank} /></div>
+              {region && <span className="absolute right-3 top-3 rounded bg-black/60 px-2 py-0.5 text-[11px]">{regionLocked ? "🔒 " : "📍 "}{region.name}</span>}
             </div>
             <div className="space-y-2 p-4">
               <h3 className="font-display">{q.title}</h3>
@@ -110,7 +114,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
                 <span className="rounded bg-black/40 px-2 py-1">🪙 {q.gold[0]}–{q.gold[1]}</span>
               </div>
               <button className="btn-gold w-full !py-2 text-sm" disabled={busy || locked || noEnergy || !!state.battle} onClick={() => start(q.id)}>
-                {locked ? `Requer nível ${q.minLevel}` : noEnergy ? "Sem energia" : "Iniciar"}
+                {regionLocked ? `Libera no Capítulo ${region!.unlockChapter}` : locked ? `Requer nível ${q.minLevel}` : noEnergy ? "Sem energia" : "Iniciar"}
               </button>
             </div>
           </motion.div>

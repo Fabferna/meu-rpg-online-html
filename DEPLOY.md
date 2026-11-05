@@ -55,6 +55,7 @@ Guia em duas partes:
    10. `supabase/migrations/0010_guild_boss_war_moderation.sql`
    11. `supabase/migrations/0011_events_upgrades_stats.sql`
    12. `supabase/migrations/0012_pass_pets_dungeons.sql`
+   13. `supabase/migrations/0013_story_regions.sql`
 
    Cada um deve terminar com `Success. No rows returned`.
 5. **Chat em tempo real:** em **Database → Publications → supabase_realtime**, confira se a tabela `chat_messages` está marcada (a migração 0009 já faz isso; sem Realtime o chat continua funcionando, atualizando a cada poucos segundos).
@@ -329,7 +330,7 @@ Para quem prefere um custo fixo (ex.: Hetzner/Contabo ~€5/mês):
 
 ## ✅ Checklist de lançamento
 
-- [ ] Migrações 0001–0012 aplicadas no Supabase de produção
+- [ ] Migrações 0001–0013 aplicadas no Supabase de produção
 - [ ] Variáveis de ambiente na Vercel (sem `PAYMENTS_DEV`)
 - [ ] Login por e-mail, Google e Facebook testados
 - [ ] Criar herói → missão → caçada → PVP → loja funcionando

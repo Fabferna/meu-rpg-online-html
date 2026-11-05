@@ -26,6 +26,7 @@ export const ERROR_TEXT: Record<string, string> = {
   boss_defeated: "O chefe já foi derrotado nesta semana!",
   muted: "Você está silenciado no chat por um tempo.",
   max_upgrade: "Este item já está no aprimoramento máximo (+10).",
+  region_locked: "Esta região ainda não foi liberada. Avance na História!",
   demo: "Modo demonstração: crie uma conta para jogar de verdade!",
   insufficient_funds: "Saldo insuficiente.",
   energy_full: "Sua energia já está cheia.",

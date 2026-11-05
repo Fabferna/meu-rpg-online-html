@@ -7,6 +7,7 @@ import { DUNGEONS } from "@/lib/game/dungeons";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { ITEM_BY_ID } from "@/lib/game/items";
 import { post } from "./api";
+import { REGION_OF_DUNGEON, regionUnlocked } from "@/lib/game/regions";
 import { Panel } from "./ui";
 
 export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () => void }) {
@@ -35,7 +36,9 @@ export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () =
         {info && <> Entradas por dia: <b>{info.limit}</b>{info.premium ? " (bônus do Passe Premium)" : ""}.</>}
       </p>
       {DUNGEONS.map((d) => {
-        const locked = c.level < d.minLevel;
+        const region = REGION_OF_DUNGEON[d.id];
+        const regionLocked = !regionUnlocked(region, c.storyChapter);
+        const locked = c.level < d.minLevel || regionLocked;
         const left = info?.left[d.id] ?? 0;
         return (
           <Panel key={d.id} className={`grid overflow-hidden sm:grid-cols-[260px_1fr] ${locked ? "opacity-60" : ""}`}>
@@ -66,7 +69,7 @@ export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () =
               </div>
               <p className="text-xs text-white/70">Baú: 🪙 {d.chest.gold}{d.chest.gems ? ` + 💎 ${d.chest.gems}` : ""}{d.chest.item ? ` · ${Math.round(d.chest.item.chance * 100)}% de chance: ${ITEM_BY_ID[d.chest.item.id]?.name}` : ""}</p>
               <button className="btn-gold" disabled={busy || locked || left <= 0 || c.energy < d.energy || !!ctx.state.battle || !!ctx.state.quest} onClick={() => enter(d.id)}>
-                {locked ? `Requer nível ${d.minLevel}` : left <= 0 ? "Volte amanhã" : `Entrar (${left} hoje)`}
+                {regionLocked ? `🔒 Libera no Capítulo ${region!.unlockChapter}` : locked ? `Requer nível ${d.minLevel}` : left <= 0 ? "Volte amanhã" : `Entrar (${left} hoje)`}
               </button>
             </div>
           </Panel>

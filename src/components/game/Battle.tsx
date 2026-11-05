@@ -10,6 +10,7 @@ import { PVE_ENERGY_COST } from "@/lib/game/rules";
 import { RACIAL_SKILLS } from "@/lib/game/racial";
 import Dungeons from "./Dungeons";
 import { ITEM_BY_ID } from "@/lib/game/items";
+import { REGION_OF_ENEMY, regionUnlocked } from "@/lib/game/regions";
 import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
@@ -124,6 +125,14 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
             <p>✨ +{r.xp} XP</p>
             <p>🪙 +{r.gold} ouro</p>
             {r.item && <p className="text-amber-300">🎁 Item encontrado!</p>}
+            {result.state.storyResult && (
+              <div className="mt-3 rounded-lg bg-gold/10 p-3">
+                <p className="font-display text-gold">📖 Capítulo {result.state.story} concluído!</p>
+                <p>✨ {result.state.storyResult.xp} XP · 🪙 {result.state.storyResult.gold}{result.state.storyResult.gems ? ` · 💎 ${result.state.storyResult.gems}` : ""}</p>
+                {result.state.storyResult.item && <p className="text-amber-300">✨ {ITEM_BY_ID[result.state.storyResult.item]?.name}</p>}
+                <p className="mt-1 text-xs text-white/60">Veja a continuação na aba 🗺️ Mundo.</p>
+              </div>
+            )}
             {result.state.dungeon?.chest && (
               <div className="mt-3 rounded-lg bg-gold/10 p-3">
                 <p className="font-display text-gold">🎁 Baú de {result.state.dungeon.name}</p>
@@ -204,8 +213,10 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       {tabs}
       <p className="mb-4 text-sm text-white/60">Cada caçada custa ⚡ {PVE_ENERGY_COST} de energia. Sua vida atual: {state.character.hp}/{state.character.maxHp}</p>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        {ENEMIES.map((e, i) => {
-          const locked = state.character.level < e.minLevel;
+        {ENEMIES.filter((e) => !e.story).map((e, i) => {
+          const region = REGION_OF_ENEMY[e.id];
+          const regionLocked = !regionUnlocked(region, state.character.storyChapter);
+          const locked = state.character.level < e.minLevel || regionLocked;
           return (
             <motion.button key={e.id} disabled={busy || locked || !!state.quest} onClick={() => start(e.id)}
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -216,7 +227,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               </div>
               <div className="p-3">
                 <p className="font-display text-sm">{e.name}</p>
-                <p className="text-xs text-white/50">{locked ? `Requer nível ${e.minLevel}` : `❤️ ${e.maxHp} · ✨ ${e.xp} XP · 🪙 ${e.gold}`}</p>
+                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${region!.name} · Capítulo ${region!.unlockChapter}` : locked ? `Requer nível ${e.minLevel}` : `❤️ ${e.maxHp} · ✨ ${e.xp} XP · 🪙 ${e.gold}`}</p>
               </div>
             </motion.button>
           );

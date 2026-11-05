@@ -5,6 +5,7 @@ import { loadPlayer } from "@/lib/game/player";
 import { chance } from "@/lib/game/rng";
 import type { RaceId } from "@/lib/game/data";
 import { DUNGEON_BY_ID, DUNGEON_REST } from "@/lib/game/dungeons";
+import { CHAPTER_BY_N } from "@/lib/game/story";
 import { enemyCombatant, playerCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
 
 const Schema = z.object({ action: z.enum(["attack", "skill", "defend", "potion", "racial"]) }).strict();
@@ -64,6 +65,16 @@ export const POST = action(
       });
       await rpc(admin, "record_event", { p_user: user.id, p_event: "pve_win", p_amount: 1 });
       if (enemy.boss) await rpc(admin, "record_event", { p_user: user.id, p_event: "boss_win", p_amount: 1 });
+
+      // História: conclui o capítulo e entrega a recompensa (o SQL garante a ordem).
+      if (next.story) {
+        const ch = CHAPTER_BY_N[next.story];
+        const ups = await rpc<number>(admin, "complete_chapter", {
+          p_user: user.id, p_chapter: ch.n, p_xp: ch.rewards.xp, p_gold: ch.rewards.gold, p_gems: ch.rewards.gems,
+          p_item: ch.rewards.item ?? null, p_cosmetic: ch.rewards.cosmetic ?? null,
+        });
+        next.storyResult = { ...ch.rewards, levelUps: ups };
+      }
 
       const d = dg ? DUNGEON_BY_ID[dg.id] : undefined;
       if (stageCleared && d && dg) {
