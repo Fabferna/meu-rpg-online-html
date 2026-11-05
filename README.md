@@ -1,71 +1,66 @@
-<h1 align="center">🧙‍♂️ Meu RPG Online — HTML Edition</h1>
+# Aethelgard Online
 
-<p align="center">
-  Uma aventura nostálgica em forma de site! Explore, inspire-se e sinta-se no mundo dos RPGs clássicos com apenas HTML e CSS.
-</p>
+RPG de navegador (estilo menus/missões/PVP) feito com **Next.js 15 + Supabase**.
 
-<p align="center">
-  <a href="https://meu-rpg-online-html.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/Site-Online-44cc11?style=for-the-badge&logo=vercel" />
-  </a>
-  <img src="https://img.shields.io/badge/HTML-100%25-orange?style=for-the-badge&logo=html5" />
-  <img src="https://img.shields.io/badge/CSS-Puro-blue?style=for-the-badge&logo=css3" />
-  <img src="https://img.shields.io/badge/Feito%20com-Amor-red?style=for-the-badge" />
-</p>
+![capa](public/capa_readme.png)
 
----
+## Arquitetura
 
-## 🧾 Visite agora o projeto online!
+```
+Navegador (React)  ──►  Next.js (rotas /api, server components)  ──►  Supabase Postgres
+  só exibe estado          valida (Zod), rate limit, regras do jogo        RLS + funções atômicas
+  e envia "intenções"      usa service_role para escrever                  ledger de moedas
+```
 
-<p align="center">
-  <a href="https://meu-rpg-online-html.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/➡️ Acessar Site-000000?style=for-the-badge&logo=firefox-browser&logoColor=white" />
-  </a>
-</p>
+**Regras de segurança (Fase 1):**
 
----
+| Ameaça | Defesa |
+|---|---|
+| Editar ouro/XP pelo Console | O cliente **não tem permissão de escrita** em nenhuma tabela (RLS + `REVOKE`). Toda escrita é feita pelo backend via funções SQL (`wallet_apply`, `create_character`) executáveis só pela `service_role`. |
+| Mandar campos extras (`"gold": 99999`) | Schemas Zod `.strict()` — o cliente envia só nome/raça/região/gênero; atributos e ouro são calculados no servidor. |
+| Acelerar energia mudando o relógio | Energia é derivada de `energy_updated_at` usando o horário do **servidor** (`src/lib/game/rules.ts`). |
+| Saldo negativo / gasto duplo | `CHECK (gold >= 0)`, lock de linha e `ledger.ref` único (idempotência para webhooks de pagamento). |
+| Ver dados de outro jogador | Policies `user_id = auth.uid()`. |
+| CSRF / clickjacking / XSS | Checagem de `Origin` nas rotas POST, cookies SameSite, CSP, `X-Frame-Options: DENY`. |
+| Bots / spam | Rate limit por usuário (Upstash Redis em produção, memória em dev). |
+| Vazar a chave secreta | `SUPABASE_SERVICE_ROLE_KEY` só é lida em módulos `server-only`. |
 
-## 🗺️ Sobre o projeto
+## Estrutura
 
-**Meu RPG Online** é um experimento visual feito com HTML e CSS, com o objetivo de simular a interface de um jogo de RPG clássico, direto no navegador.
+```
+src/app/            páginas (/, /login, /criar-personagem, /jogo) e rotas /api
+src/lib/game/       dados do mundo e regras puras (XP, HP, energia)
+src/lib/supabase/   clientes: browser (anon), server (sessão), admin (service_role)
+src/lib/security/   rate limit, CSRF, redirect seguro
+src/middleware.ts   renova sessão e protege rotas
+supabase/migrations esquema SQL + RLS
+public/assets/      imagens do jogo
+legacy/             versão HTML original (referência; será removida ao fim da migração)
+```
 
-🕹️ Ideal para:
+## Rodando localmente
 
-- Estudos de HTML/CSS para iniciantes
-- Inspiração visual para UIs de jogos
-- Fãs de RPGs retrô e HUDs antigas
+1. **Crie um projeto** em <https://supabase.com> (plano grátis serve).
+2. No painel: **SQL Editor → New query**, cole `supabase/migrations/0001_init.sql` e rode.
+3. Copie as chaves: **Project Settings → API**.
+   ```bash
+   cp .env.example .env.local   # e preencha os valores
+   ```
+4. **Auth → URL Configuration**: Site URL `http://localhost:3000` e adicione `http://localhost:3000/auth/callback` em *Redirect URLs*.
+5. **Auth → Providers**:
+   - **Email**: já vem ativo (deixe "Confirm email" ligado).
+   - **Google**: crie um OAuth Client em <https://console.cloud.google.com/apis/credentials> (tipo *Web*), com redirect URI `https://SEU-PROJETO.supabase.co/auth/v1/callback`. Cole Client ID/Secret no Supabase.
+   - **Facebook**: crie um app em <https://developers.facebook.com> → *Facebook Login* → Valid OAuth Redirect URI `https://SEU-PROJETO.supabase.co/auth/v1/callback`. Cole App ID/Secret no Supabase.
+6. Instale e rode:
+   ```bash
+   npm install
+   npm run dev
+   ```
+   Abra <http://localhost:3000>.
 
----
+## Roadmap
 
-## ✨ Funcionalidades
-
-- 🖥️ Responsivo e leve
-- ⚔️ Interface de batalha, HUD e cenário simulados
-
----
-
-## 🧩 Tecnologias
-
-- HTML5
-- CSS3
-- Git & GitHub
-- Deploy: [Vercel](https://vercel.com)
-
----
-
-## 🖼️ Preview
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Fabferna/meu-rpg-online-html/main/capa_readme.png" alt="Preview do Meu RPG Online" width="600" />
-
-
-</p>
-
----
-
-## 👾 Como rodar localmente
-
-```bash
-git clone https://github.com/Fabferna/meu-rpg-online-html.git
-cd meu-rpg-online-html
-# clique duas vezes no arquivo index.html
+- [x] **Fase 1** — Next.js, Supabase, login (e-mail/Google/Facebook), RLS, criação de personagem no servidor
+- [ ] **Fase 2** — Missões com timer, combate PVE/PVP, níveis, inventário, UI animada
+- [ ] **Fase 3** — Gemas (premium), recarga de energia, loja de cosméticos, ofertas limitadas, Stripe/Mercado Pago
+- [ ] **Fase 4** — `DEPLOY.md` (domínio, SSL, Cloudflare, banco em produção)
