@@ -19,3 +19,19 @@ export const ITEMS: ItemDef[] = [
 ];
 
 export const ITEM_BY_ID = Object.fromEntries(ITEMS.map((i) => [i.id, i]));
+
+// ── Aprimoramento (+1 a +10) ─────────────────────────────────────────
+export const MAX_UPGRADE = 10;
+/** Chance de sucesso (%) para chegar ao nível `next`. Falhar só gasta o ouro. */
+export const UPGRADE_CHANCE = [100, 100, 100, 85, 75, 65, 55, 45, 35, 25];
+export function upgradeChance(next: number) { return UPGRADE_CHANCE[next - 1] ?? 0; }
+export function upgradeCost(item: ItemDef, next: number) {
+  const base = item.buy ?? item.sell * 3;
+  return Math.max(30, Math.round((base * 0.2 * next ** 1.6) / 10) * 10);
+}
+/** Cada +1 aumenta os atributos do item em 10% (mínimo +1 por nível no atributo principal). */
+export function upgradedStats(stats: Record<string, number>, upgrade: number) {
+  if (!upgrade) return { ...stats };
+  return Object.fromEntries(Object.entries(stats).map(([k, v]) => [k, typeof v === "number" ? v + Math.max(upgrade, Math.ceil(v * 0.1 * upgrade)) : v]));
+}
+export function sellPrice(item: ItemDef, upgrade: number) { return Math.round(item.sell * (1 + 0.25 * upgrade)); }

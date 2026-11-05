@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { RACES } from "@/lib/game/data";
 import { SiteFooter } from "@/components/site/LegalPage";
+import EventBanner from "@/components/game/EventBanner";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
           <p className="mx-auto mt-5 max-w-xl text-lg text-white/80">
             Crie seu herói, cumpra missões, enfrente outros jogadores e escreva sua lenda num mundo de magia e aço.
           </p>
+          <EventBanner />
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/login?modo=registro" className="btn-gold">Começar a Jornada</Link>
             <Link href="/login" className="rounded-[10px] border border-white/20 px-5 py-3 font-display hover:bg-white/5">Entrar</Link>

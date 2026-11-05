@@ -53,6 +53,7 @@ Guia em duas partes:
    8. `supabase/migrations/0008_referrals.sql`
    9. `supabase/migrations/0009_guilds_chat.sql`
    10. `supabase/migrations/0010_guild_boss_war_moderation.sql`
+   11. `supabase/migrations/0011_events_upgrades_stats.sql`
 
    Cada um deve terminar com `Success. No rows returned`.
 5. **Chat em tempo real:** em **Database → Publications → supabase_realtime**, confira se a tabela `chat_messages` está marcada (a migração 0009 já faz isso; sem Realtime o chat continua funcionando, atualizando a cada poucos segundos).
@@ -70,7 +71,15 @@ Depois de criar seu herói no jogo, rode no **SQL Editor** (troque o nome):
 update public.profiles set is_admin = true
 where id = (select user_id from public.characters where name = 'SeuHeroi');
 ```
-O painel fica em `/admin` (para os demais jogadores essa página não existe).
+O painel fica em `/admin` (para os demais jogadores essa página não existe), com estatísticas, denúncias e punições.
+
+### Criar eventos (XP/ouro em dobro)
+O "Fim de Semana Heroico" (XP ×2 todo sábado e domingo) já vem ativo. Para um evento com data, rode:
+```sql
+insert into public.game_events (id, name, description, kind, multiplier, starts_at, ends_at)
+values ('natal_ouro', 'Natal Dourado', 'Ouro em dobro!', 'gold', 2, '2026-12-24 00:00+00', '2026-12-26 23:59+00');
+```
+Para desligar: `update public.game_events set enabled = false where id = 'fim_de_semana_xp';`
 
 ## A.2 Configurar o login
 
@@ -319,7 +328,7 @@ Para quem prefere um custo fixo (ex.: Hetzner/Contabo ~€5/mês):
 
 ## ✅ Checklist de lançamento
 
-- [ ] Migrações 0001–0010 aplicadas no Supabase de produção
+- [ ] Migrações 0001–0011 aplicadas no Supabase de produção
 - [ ] Variáveis de ambiente na Vercel (sem `PAYMENTS_DEV`)
 - [ ] Login por e-mail, Google e Facebook testados
 - [ ] Criar herói → missão → caçada → PVP → loja funcionando

@@ -4,7 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import { ITEMS, ITEM_BY_ID } from "@/lib/game/items";
+import { ITEMS, ITEM_BY_ID, MAX_UPGRADE, sellPrice, upgradedStats } from "@/lib/game/items";
+import type { InventoryEntry } from "@/lib/game/state";
+import Forge from "./Forge";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { Panel } from "./ui";
 import { play } from "./sfx";
@@ -17,6 +19,7 @@ const statText = (d: Record<string, unknown>) =>
 export default function Inventory({ ctx }: { ctx: GameCtx }) {
   const [busy, setBusy] = useState(false);
   const [view, setView] = useState<"bag" | "smith">("bag");
+  const [forging, setForging] = useState<InventoryEntry | null>(null);
   const items = ctx.state.inventory;
   const level = ctx.state.character.level;
 
@@ -47,7 +50,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
               <div className="relative mt-2 h-16 w-16">
                 {it ? <Image src={ITEM_BY_ID[it.itemId]?.image ?? String(it.data.image)} alt="" fill sizes="64px" className="object-contain" /> : <span className="grid h-full place-items-center text-2xl text-white/20">＋</span>}
               </div>
-              <p className="mt-2 text-center text-xs">{it?.name ?? "Vazio"}</p>
+              <p className="mt-2 text-center text-xs">{it?.name ?? "Vazio"}{it?.upgrade ? <b className="ml-1 text-gold">+{it.upgrade}</b> : null}</p>
             </div>
           );
         })}
@@ -69,14 +72,20 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
               const def = ITEM_BY_ID[it.itemId];
               return (
                 <motion.div key={it.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.03 }}
-                  className={`panel flex flex-col p-3 ring-1 ${RARITY_STYLE[it.rarity]}`}>
+                  className={`panel relative flex flex-col p-3 ring-1 ${RARITY_STYLE[it.rarity]}`}>
                   <div className="relative mx-auto h-20 w-20">
                     <Image src={def?.image ?? String(it.data.image)} alt="" fill sizes="80px" className="object-contain" />
                     {it.qty > 1 && <span className="absolute -right-1 -top-1 rounded-full bg-gold px-1.5 text-xs font-bold text-ink">x{it.qty}</span>}
                   </div>
+                  {it.upgrade > 0 && <span className="absolute left-2 top-2 rounded bg-gold px-1.5 font-display text-xs font-black text-ink">+{it.upgrade}</span>}
                   <p className="mt-2 truncate text-center text-sm">{it.name}</p>
                   <p className="text-center text-[11px] text-white/40">{RARITY_LABEL[it.rarity]}</p>
-                  <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(it.data)}</p>
+                  <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(upgradedStats(it.data as Record<string, number>, it.upgrade))}</p>
+                  {it.slot && (
+                    <button onClick={() => setForging(it)} className="mt-2 w-full rounded-md bg-gradient-to-r from-ember/70 to-amber-600/70 py-1.5 text-xs hover:brightness-110">
+                      ⚒️ {it.upgrade >= MAX_UPGRADE ? "Máximo" : `Aprimorar (+${it.upgrade + 1})`}
+                    </button>
+                  )}
                   <div className="mt-2 flex gap-1.5">
                     {it.slot && (
                       <button disabled={busy} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
@@ -85,9 +94,9 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                       </button>
                     )}
                     {def && !it.equipped && (
-                      <button disabled={busy} title={`Vender 1 por ${def.sell} de ouro`} onClick={() => run("/api/smith/sell", { inventoryId: it.id }, `Vendido por ${def.sell} 🪙`)}
+                      <button disabled={busy} title={`Vender 1 por ${sellPrice(def, it.upgrade)} de ouro`} onClick={() => run("/api/smith/sell", { inventoryId: it.id }, `Vendido por ${sellPrice(def, it.upgrade)} 🪙`)}
                         className="flex-1 rounded-md bg-white/5 py-1.5 text-xs hover:bg-white/10">
-                        Vender 🪙{def.sell}
+                        Vender 🪙{sellPrice(def, it.upgrade)}
                       </button>
                     )}
                   </div>
@@ -116,6 +125,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
           })}
         </div>
       )}
+      <Forge ctx={ctx} item={forging} onClose={() => setForging(null)} />
     </div>
   );
 }

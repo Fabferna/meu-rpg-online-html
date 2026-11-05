@@ -12,6 +12,7 @@ export type InventoryEntry = {
   qty: number;
   equipped: boolean;
   slot: string | null;
+  upgrade: number;
   name: string;
   kind: string;
   rarity: "common" | "rare" | "epic" | "legendary";
@@ -42,7 +43,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
     supabase.from("wallets").select("gold, gems").eq("user_id", userId).maybeSingle(),
     supabase.from("quest_runs").select("*").eq("user_id", userId).eq("status", "running").maybeSingle(),
     supabase.from("battles").select("id, state").eq("user_id", userId).eq("status", "active").maybeSingle(),
-    supabase.from("inventory").select("id, item_id, qty, equipped, slot, items(name, kind, rarity, data)").eq("user_id", userId).order("acquired_at"),
+    supabase.from("inventory").select("id, item_id, qty, equipped, slot, upgrade, items(name, kind, rarity, data)").eq("user_id", userId).order("acquired_at"),
     supabase.from("guild_members").select("role, guilds(id, name, tag, level)").eq("user_id", userId).maybeSingle(),
   ]);
   for (const r of [c, w, q, b, inv]) if (r.error) throw r.error;
@@ -69,9 +70,9 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       : null,
     battle: b.data ? { id: b.data.id, state: b.data.state as BattleState } : null,
     inventory: ((inv.data ?? []) as unknown as {
-      id: string; item_id: string; qty: number; equipped: boolean; slot: string | null;
+      id: string; item_id: string; qty: number; equipped: boolean; slot: string | null; upgrade: number;
       items: { name: string; kind: string; rarity: InventoryEntry["rarity"]; data: InventoryEntry["data"] };
-    }[]).map((i) => ({ id: i.id, itemId: i.item_id, qty: i.qty, equipped: i.equipped, slot: i.slot, ...i.items })),
+    }[]).map((i) => ({ id: i.id, itemId: i.item_id, qty: i.qty, equipped: i.equipped, slot: i.slot, upgrade: i.upgrade ?? 0, ...i.items })),
     guild: gm.data?.guilds
       ? { ...(gm.data.guilds as unknown as { id: string; name: string; tag: string; level: number }), role: gm.data.role as "leader" | "officer" | "member" }
       : null,

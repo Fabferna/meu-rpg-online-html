@@ -17,11 +17,11 @@ export function demoState(): PlayerState {
     quest: null,
     battle: null,
     inventory: [
-      { id: "i1", itemId: "espada_curta", qty: 1, equipped: true, slot: "weapon", name: "Espada Curta Funcional", kind: "weapon", rarity: "common", data: { atk: 4, image: "/assets/espada_curta_funcional.webp" } },
-      { id: "i2", itemId: "peitoral_anao", qty: 1, equipped: true, slot: "armor", name: "Peitoral de Placas Anão", kind: "armor", rarity: "epic", data: { def: 8, con: 2, image: "/assets/peitoral_de_placas_anao.webp" } },
-      { id: "i3", itemId: "arco_elfico", qty: 1, equipped: false, slot: "weapon", name: "Arco Élfico Elegante", kind: "weapon", rarity: "rare", data: { atk: 7, dex: 2, image: "/assets/arco_elfico_elegante.webp" } },
-      { id: "i4", itemId: "amuleto_serpente", qty: 1, equipped: false, slot: "accessory", name: "Amuleto da Serpente Sinistra", kind: "accessory", rarity: "legendary", data: { atk: 4, def: 3, intel: 3, image: "/assets/amuleto_da_serpente_sinistra.webp" } },
-      { id: "i5", itemId: "pocao_vida", qty: 6, equipped: false, slot: null, name: "Poção de Vida", kind: "consumable", rarity: "common", data: { heal: 60, image: "/assets/shop/potion_hp.webp" } },
+      { id: "i1", itemId: "espada_curta", qty: 1, equipped: true, slot: "weapon", upgrade: 4, name: "Espada Curta Funcional", kind: "weapon", rarity: "common", data: { atk: 4, image: "/assets/espada_curta_funcional.webp" } },
+      { id: "i2", itemId: "peitoral_anao", qty: 1, equipped: true, slot: "armor", upgrade: 0, name: "Peitoral de Placas Anão", kind: "armor", rarity: "epic", data: { def: 8, con: 2, image: "/assets/peitoral_de_placas_anao.webp" } },
+      { id: "i3", itemId: "arco_elfico", qty: 1, equipped: false, slot: "weapon", upgrade: 0, name: "Arco Élfico Elegante", kind: "weapon", rarity: "rare", data: { atk: 7, dex: 2, image: "/assets/arco_elfico_elegante.webp" } },
+      { id: "i4", itemId: "amuleto_serpente", qty: 1, equipped: false, slot: "accessory", upgrade: 0, name: "Amuleto da Serpente Sinistra", kind: "accessory", rarity: "legendary", data: { atk: 4, def: 3, intel: 3, image: "/assets/amuleto_da_serpente_sinistra.webp" } },
+      { id: "i5", itemId: "pocao_vida", qty: 6, equipped: false, slot: null, upgrade: 0, name: "Poção de Vida", kind: "consumable", rarity: "common", data: { heal: 60, image: "/assets/shop/potion_hp.webp" } },
     ],
     guild: { id: "g1", name: "Ordem da Chama", tag: "ODC", level: 3, role: "leader" },
     serverTime: new Date().toISOString(),
@@ -60,6 +60,7 @@ export function installDemoFetch() {
       { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, pvp_rating: 1048, pvp_wins: 5, pvp_losses: 2, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },
       { pos: 3, name: "Gromak", raceName: "Gronar", level: 5, pvp_rating: 1010, pvp_wins: 4, pvp_losses: 4, portrait: "/assets/retratodegronar.webp", frame: null, title: null },
     ] });
+    if (url === "/api/events") return json({ events: [{ id: "fim_de_semana_xp", name: "Fim de Semana Heroico", description: "XP em dobro todo sábado e domingo!", kind: "xp", multiplier: 2, endsAt: new Date(Date.now() + 30 * 3600_000).toISOString() }] });
     if (url === "/api/guild-boss") return json({ guild: true, attacksLeft: 2, previous: null, current: {
       week: "", boss: { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao.webp", lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
       hp: 9420, maxHp: 20000, defeated: false, myDamage: 3120, claimed: false, isTop: true,

@@ -25,6 +25,7 @@ export const ERROR_TEXT: Record<string, string> = {
   chat_links: "Links não são permitidos no chat.",
   boss_defeated: "O chefe já foi derrotado nesta semana!",
   muted: "Você está silenciado no chat por um tempo.",
+  max_upgrade: "Este item já está no aprimoramento máximo (+10).",
   demo: "Modo demonstração: crie uma conta para jogar de verdade!",
   insufficient_funds: "Saldo insuficiente.",
   energy_full: "Sua energia já está cheia.",

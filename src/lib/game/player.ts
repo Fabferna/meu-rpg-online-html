@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Attributes } from "./data";
 import { currentEnergy, currentHp, maxEnergy, maxHp } from "./rules";
 import type { ItemBonus } from "./combat";
+import { upgradedStats } from "./items";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -43,7 +44,7 @@ export function deriveVitals(row: CharacterRow, now = new Date()) {
 export async function loadPlayer(db: SupabaseClient, userId: string): Promise<LoadedPlayer | null> {
   const [{ data: row }, { data: gear }] = await Promise.all([
     db.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
-    db.from("inventory").select("items(data)").eq("user_id", userId).eq("equipped", true),
+    db.from("inventory").select("upgrade, items(data)").eq("user_id", userId).eq("equipped", true),
   ]);
   if (!row) return null;
   const v = deriveVitals(row);
@@ -54,6 +55,6 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
     maxHp: v.maxHp,
     energy: v.energy,
     maxEnergy: v.maxEnergy,
-    gear: ((gear ?? []) as unknown as { items: { data: ItemBonus } }[]).map((g) => g.items.data),
+    gear: ((gear ?? []) as unknown as { upgrade: number; items: { data: ItemBonus } }[]).map((g) => upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0) as ItemBonus),
   };
 }

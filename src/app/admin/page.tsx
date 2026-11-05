@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/admin";
 import AdminPanel from "./AdminPanel";
+import Stats from "./Stats";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Moderação — Aethelgard Online", robots: { index: false } };
@@ -25,5 +26,11 @@ export default async function AdminPage() {
   const { data: names } = flagged?.length ? await admin.from("characters").select("user_id, name").in("user_id", flagged.map((f) => f.id)) : { data: [] };
   const players = (flagged ?? []).map((f) => ({ name: (names ?? []).find((n) => n.user_id === f.id)?.name ?? "(sem herói)", banned: f.is_banned, mutedUntil: f.muted_until }));
 
-  return <AdminPanel reports={items} players={players} />;
+  const { data: stats } = await admin.rpc("admin_stats");
+  return (
+    <>
+      <div className="mx-auto max-w-5xl px-4 pt-8">{stats && <Stats s={stats} />}</div>
+      <AdminPanel reports={items} players={players} />
+    </>
+  );
 }
