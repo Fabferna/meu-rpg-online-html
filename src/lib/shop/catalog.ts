@@ -89,7 +89,7 @@ export const CONVENIENCE: DailyDeal[] = [
 ];
 
 /** Ofertas do dia: rotação determinística por data (UTC) com desconto. */
-const DAILY_POOL: DailyDeal[] = [
+export const DAILY_POOL: DailyDeal[] = [
   { key: "daily_potions", name: "Oferta: 10 Poções", description: "-50% só hoje!", image: "/assets/shop/potion_hp.webp", currency: "gems", price: 10, limit: 1, item: { id: "pocao_vida", qty: 10 } },
   { key: "daily_boost", name: "Oferta: Elixir 3h", description: "-40% só hoje!", image: "/assets/shop/potion_energy.webp", currency: "gems", price: 110, limit: 1, boostMinutes: 180 },
   { key: "daily_bow", name: "Oferta: Arco Élfico", description: "Arma rara por ouro.", image: "/assets/arco_elfico_elegante.webp", currency: "gold", price: 350, limit: 1, item: { id: "arco_elfico", qty: 1 } },

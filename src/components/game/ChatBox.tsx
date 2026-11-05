@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { GameCtx } from "./GameApp";
 import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
 import { post } from "./api";
+import { useT } from "@/lib/i18n/client";
 
 export type ChatMsg = { id: number; channel: string; name: string; tag: string | null; title: string | null; frame: string | null; body: string; created_at: string; hidden?: boolean };
 
@@ -11,6 +12,7 @@ const realtimeEnabled = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.
 
 /** Lista de mensagens + campo de envio. Tempo real via Supabase Realtime, com consulta periódica de reserva. */
 export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global" | "guild"; ctx: GameCtx; onIncoming?: (m: ChatMsg) => void }) {
+  const t = useT();
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -96,31 +98,31 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
     }
   }
 
-  if (channel === "guild" && !guildId) return <p className="p-4 text-sm text-white/60">Entre em uma guilda para usar este chat.</p>;
+  if (channel === "guild" && !guildId) return <p className="p-4 text-sm text-white/60">{t("Entre em uma guilda para usar este chat.")}</p>;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div ref={listRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1" aria-live="polite">
-        {msgs.length === 0 && <p className="py-8 text-center text-sm text-white/40">Nenhuma mensagem ainda. Diga olá!</p>}
+        {msgs.length === 0 && <p className="py-8 text-center text-sm text-white/40">{t("Nenhuma mensagem ainda. Diga olá!")}</p>}
         {msgs.map((m) => {
           const mine = m.name === ctx.state.character.name;
           const title = m.title ? COSMETIC_BY_ID[m.title]?.name : null;
           return (
             <div key={m.id} className={`group relative rounded-lg px-3 py-1.5 text-sm ${mine ? "bg-gold/10" : "bg-black/30"} ${m.hidden ? "opacity-50" : ""}`}>
               {!mine && !reported.has(m.id) && (
-                <button onClick={() => setReporting(reporting === m.id ? null : m.id)} title="Denunciar mensagem" aria-label="Denunciar mensagem"
+                <button onClick={() => setReporting(reporting === m.id ? null : m.id)} title={t("Denunciar mensagem")} aria-label={t("Denunciar mensagem")}
                   className="absolute right-1.5 top-1 rounded px-1 text-xs text-white/30 opacity-60 hover:bg-white/10 hover:text-red-300 group-hover:opacity-100">⚑</button>
               )}
               <p className="text-[11px] text-white/50">
                 {m.tag && <span className="mr-1 rounded bg-white/10 px-1 font-semibold text-gold">[{m.tag}]</span>}
                 <b className={mine ? "text-gold" : "text-white/90"}>{m.name}</b>
                 {title && <span className="ml-1 text-amber-200/70">« {title} »</span>}
-                <span className="ml-1">· {new Date(m.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+                <span className="ml-1">· {new Date(m.created_at).toLocaleTimeString(t.locale, { hour: "2-digit", minute: "2-digit" })}</span>
               </p>
-              <p className="break-words pr-5">{m.body}{m.hidden && <span className="ml-1 text-[10px] text-red-300">(oculta por denúncias)</span>}</p>
+              <p className="break-words pr-5">{m.body}{m.hidden && <span className="ml-1 text-[10px] text-red-300">{t("(oculta por denúncias)")}</span>}</p>
               {reporting === m.id && (
                 <div className="mt-1.5 flex flex-wrap gap-1 text-[11px]">
-                  <span className="text-white/50">Motivo:</span>
+                  <span className="text-white/50">{t("Motivo:")}</span>
                   {(["ofensa", "spam", "golpe", "outro"] as const).map((r) => (
                     <button key={r} onClick={() => report(m.id, r)} className="rounded bg-red-900/50 px-2 py-0.5 capitalize hover:bg-red-800/70">{r}</button>
                   ))}
@@ -131,11 +133,11 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
         })}
       </div>
       <form onSubmit={send} className="mt-2 flex gap-2">
-        <input id={`chat-input-${channel}`} value={text} onChange={(e) => setText(e.target.value)} maxLength={300} placeholder="Escreva uma mensagem…" autoComplete="off"
-          className="input min-w-0 flex-1 !py-2 text-sm" aria-label="Mensagem" />
-        <button className="btn-gold !px-3 !py-2 text-sm" disabled={sending || !text.trim()}>Enviar</button>
+        <input id={`chat-input-${channel}`} value={text} onChange={(e) => setText(e.target.value)} maxLength={300} placeholder={t("Escreva uma mensagem…")} autoComplete="off"
+          className="input min-w-0 flex-1 !py-2 text-sm" aria-label={t("Mensagem")} />
+        <button className="btn-gold !px-3 !py-2 text-sm" disabled={sending || !text.trim()}>{t("Enviar")}</button>
       </form>
-      <p className="mt-1 text-[10px] text-white/30">{live ? "● ao vivo" : "atualiza a cada poucos segundos"} · seja gentil: ofensas são censuradas e links bloqueados.</p>
+      <p className="mt-1 text-[10px] text-white/30">{live ? t("● ao vivo") : t("atualiza a cada poucos segundos")} · {t("seja gentil: ofensas são censuradas e links bloqueados.")}</p>
     </div>
   );
 }

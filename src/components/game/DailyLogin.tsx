@@ -7,6 +7,7 @@ import type { GameCtx } from "./GameApp";
 import { DAILY_LOGIN, LOGIN_MILESTONES } from "@/lib/shop/catalog";
 import { post } from "./api";
 import { play } from "./sfx";
+import { useT } from "@/lib/i18n/client";
 
 export type LoginState = { claimedToday: boolean; streak: number };
 type Result = { streak: number; day: number; gold: number; gems: number; potions: number; milestone: string | null };
@@ -15,6 +16,7 @@ type Result = { streak: number; day: number; gold: number; gems: number; potions
 export default function DailyLogin({ ctx, login, open, onClose, onClaimed }: {
   ctx: GameCtx; login: LoginState; open: boolean; onClose: () => void; onClaimed: () => void;
 }) {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   useEffect(() => { if (open) setResult(null); }, [open]);
@@ -49,12 +51,12 @@ export default function DailyLogin({ ctx, login, open, onClose, onClaimed }: {
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 id="dl-title" className="font-display text-2xl text-gold">Recompensa Diária</h2>
+                <h2 id="dl-title" className="font-display text-2xl text-gold">{t("Recompensa Diária")}</h2>
                 <p className="text-sm text-white/60">
-                  {login.streak > 0 && !result ? <>Sequência atual: <b className="text-white">{login.streak} dia(s)</b> 🔥</> : "Entre todos os dias para prêmios maiores!"}
+                  {login.streak > 0 && !result ? <>{t("Sequência atual:")} <b className="text-white">{t("{n} dia(s)", { n: login.streak })}</b> 🔥</> : t("Entre todos os dias para prêmios maiores!")}
                 </p>
               </div>
-              <button onClick={onClose} aria-label="Fechar" className="rounded-md px-2 text-white/50 hover:text-white">✕</button>
+              <button onClick={onClose} aria-label={t("Fechar")} className="rounded-md px-2 text-white/50 hover:text-white">✕</button>
             </div>
 
             <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-7">
@@ -86,30 +88,30 @@ export default function DailyLogin({ ctx, login, open, onClose, onClaimed }: {
                 </p>
                 {result.milestone && (
                   <p className="mt-2 rounded-lg bg-arcane/30 px-3 py-2 text-sm">
-                    🎉 Marco de {result.streak} dias seguidos! {LOGIN_MILESTONES.find((m) => m.streak === result.streak)?.reward}
+                    {t("🎉 Marco de {n} dias seguidos!", { n: result.streak })} {t(LOGIN_MILESTONES.find((m) => m.streak === result.streak)?.reward ?? "")}
                   </p>
                 )}
-                <p className="mt-2 text-sm text-white/60">Sequência: {result.streak} dia(s) 🔥 · volte amanhã!</p>
-                <button className="btn-gold mt-5 w-full" onClick={onClose}>Continuar</button>
+                <p className="mt-2 text-sm text-white/60">{t("Sequência: {n} dia(s) 🔥 · volte amanhã!", { n: result.streak })}</p>
+                <button className="btn-gold mt-5 w-full" onClick={onClose}>{t("Continuar")}</button>
               </motion.div>
             ) : login.claimedToday ? (
-              <p className="mt-6 text-center text-sm text-white/60">Você já resgatou hoje. A próxima recompensa libera à meia-noite (UTC).</p>
+              <p className="mt-6 text-center text-sm text-white/60">{t("Você já resgatou hoje. A próxima recompensa libera à meia-noite (UTC).")}</p>
             ) : (
               <button className="btn-gold mt-6 w-full text-lg" disabled={busy} onClick={claim}>
-                {busy ? "Abrindo…" : `Resgatar Dia ${todayDay}`}
+                {busy ? t("Abrindo…") : t("Resgatar Dia {n}", { n: todayDay })}
               </button>
             )}
 
             <div className="mt-5 rounded-lg bg-black/30 p-3 text-xs">
-              <p className="text-white/50">Bônus por dias seguidos{next ? ` · próximo: ${next.label} (faltam ${next.streak - current} dia(s))` : ""}</p>
+              <p className="text-white/50">{t("Bônus por dias seguidos")}{next ? ` · ${t("próximo: {x} (faltam {n} dia(s))", { x: t(next.label), n: next.streak - current })}` : ""}</p>
               <ul className="mt-1.5 grid gap-1 sm:grid-cols-3">
                 {LOGIN_MILESTONES.map((m) => (
                   <li key={m.streak} className={current >= m.streak ? "text-emerald-300" : "text-white/80"}>
-                    {current >= m.streak ? "✔" : "◇"} {m.streak} dias: {m.reward}
+                    {current >= m.streak ? "✔" : "◇"} {t("{n} dias:", { n: m.streak })} {t(m.reward)}
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 text-white/40">Se ficar um dia sem entrar, a sequência recomeça do Dia 1.</p>
+              <p className="mt-2 text-white/40">{t("Se ficar um dia sem entrar, a sequência recomeça do Dia 1.")}</p>
             </div>
           </motion.div>
         </motion.div>

@@ -9,8 +9,10 @@ import { ITEM_BY_ID } from "@/lib/game/items";
 import { post } from "./api";
 import { REGION_OF_DUNGEON, regionUnlocked } from "@/lib/game/regions";
 import { Panel } from "./ui";
+import { useT } from "@/lib/i18n/client";
 
 export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () => void }) {
+  const t = useT();
   const [info, setInfo] = useState<{ limit: number; premium: boolean; left: Record<string, number> } | null>(null);
   const [busy, setBusy] = useState(false);
   useEffect(() => { fetch("/api/dungeons", { cache: "no-store" }).then((r) => r.json()).then(setInfo).catch(() => {}); }, []);
@@ -32,8 +34,8 @@ export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () =
   return (
     <div className="space-y-4">
       <p className="text-sm text-white/60">
-        Enfrente 3 inimigos seguidos. Entre as lutas você só recupera <b>25% da vida</b>. Vença o guardião para abrir o baú.
-        {info && <> Entradas por dia: <b>{info.limit}</b>{info.premium ? " (bônus do Passe Premium)" : ""}.</>}
+        {t("Enfrente 3 inimigos seguidos. Entre as lutas você só recupera")} <b>{t("25% da vida")}</b>. {t("Vença o guardião para abrir o baú.")}
+        {info && <> {t("Entradas por dia:")} <b>{info.limit}</b>{info.premium ? ` ${t("(bônus do Passe Premium)")}` : ""}.</>}
       </p>
       {DUNGEONS.map((d) => {
         const region = REGION_OF_DUNGEON[d.id];
@@ -48,28 +50,28 @@ export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () =
             </div>
             <div className="space-y-3 p-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="font-display text-xl">{d.name}</h3>
-                <span className="text-xs text-white/50">Nível {d.minLevel}+ · ⚡ {d.energy}</span>
+                <h3 className="font-display text-xl">{t(d.name)}</h3>
+                <span className="text-xs text-white/50">{t("Nível {n}+", { n: d.minLevel })} · ⚡ {d.energy}</span>
               </div>
-              <p className="text-sm text-white/60">{d.description}</p>
+              <p className="text-sm text-white/60">{t(d.description)}</p>
               <div className="flex items-center gap-2">
                 {d.stages.map((s, i) => {
                   const e = ENEMY_BY_ID[s];
                   return (
                     <div key={s + i} className="flex items-center gap-2">
-                      <div className={`relative h-12 w-12 overflow-hidden rounded-lg ${i === d.stages.length - 1 ? "ring-2 ring-ember" : "ring-1 ring-white/10"}`} title={e.name}>
-                        <Image src={e.image} alt={e.name} fill sizes="48px" className="object-cover" />
+                      <div className={`relative h-12 w-12 overflow-hidden rounded-lg ${i === d.stages.length - 1 ? "ring-2 ring-ember" : "ring-1 ring-white/10"}`} title={t(e.name)}>
+                        <Image src={e.image} alt={t(e.name)} fill sizes="48px" className="object-cover" />
                       </div>
                       {i < d.stages.length - 1 && <span className="text-white/30">→</span>}
                     </div>
                   );
                 })}
                 <span className="ml-2 text-white/30">→</span>
-                <span className="text-2xl" title="Baú">🎁</span>
+                <span className="text-2xl" title={t("Baú")}>🎁</span>
               </div>
-              <p className="text-xs text-white/70">Baú: 🪙 {d.chest.gold}{d.chest.gems ? ` + 💎 ${d.chest.gems}` : ""}{d.chest.item ? ` · ${Math.round(d.chest.item.chance * 100)}% de chance: ${ITEM_BY_ID[d.chest.item.id]?.name}` : ""}</p>
+              <p className="text-xs text-white/70">{t("Baú:")} 🪙 {d.chest.gold}{d.chest.gems ? ` + 💎 ${d.chest.gems}` : ""}{d.chest.item ? ` · ${t("{p}% de chance: {item}", { p: Math.round(d.chest.item.chance * 100), item: t(ITEM_BY_ID[d.chest.item.id]?.name ?? "") })}` : ""}</p>
               <button className="btn-gold" disabled={busy || locked || left <= 0 || c.energy < d.energy || !!ctx.state.battle || !!ctx.state.quest} onClick={() => enter(d.id)}>
-                {regionLocked ? `🔒 Libera no Capítulo ${region!.unlockChapter}` : locked ? `Requer nível ${d.minLevel}` : left <= 0 ? "Volte amanhã" : `Entrar (${left} hoje)`}
+                {regionLocked ? `🔒 ${t("Libera no Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: d.minLevel }) : left <= 0 ? t("Volte amanhã") : t("Entrar ({n} hoje)", { n: left })}
               </button>
             </div>
           </Panel>

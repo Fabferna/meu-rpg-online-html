@@ -4,6 +4,10 @@ const BLOCKED = [
   "porra", "caralho", "puta", "puto", "viado", "vadia", "arrombado", "fdp", "filho da puta", "buceta", "cuzao", "cuzão",
   "merda", "otario", "otário", "desgraçado", "desgracado", "retardado", "macaco", "nazista",
   "fuck", "shit", "bitch", "nigger", "faggot", "cunt",
+  // Espanhol
+  "hijo de puta", "hijoputa", "pendejo", "cabron", "cabrón", "gilipollas", "mierda", "joder", "coño", "verga", "culero", "marica", "maricon", "maricón", "zorra", "chinga", "chingada", "pinche", "mamon", "mamón",
+  // Chinês (comparação por substring; caracteres CJK não têm limite de palavra)
+  "操你", "肏", "傻逼", "傻b", "煞笔", "妈的", "他妈", "你妈", "草泥马", "贱人", "婊子", "王八蛋", "滚蛋", "去死", "白痴", "脑残", "鸡巴", "屌",
 ];
 
 const normalize = (s: string) =>

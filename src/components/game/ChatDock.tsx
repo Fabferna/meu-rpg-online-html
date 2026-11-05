@@ -4,9 +4,11 @@ import { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import ChatBox, { type ChatMsg } from "./ChatBox";
+import { useT } from "@/lib/i18n/client";
 
 /** Botão flutuante 💬 com chat Global / Guilda. */
 export default function ChatDock({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"global" | "guild">("global");
   const [unread, setUnread] = useState(0);
@@ -16,7 +18,7 @@ export default function ChatDock({ ctx }: { ctx: GameCtx }) {
 
   return (
     <>
-      <button onClick={() => { setOpen(!open); setUnread(0); }} aria-label="Abrir chat"
+      <button onClick={() => { setOpen(!open); setUnread(0); }} aria-label={t("Abrir chat")}
         className="fixed bottom-4 left-4 z-40 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-arcane to-fuchsia-700 text-2xl shadow-xl ring-2 ring-white/10 transition hover:scale-105"
         style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}>
         💬
@@ -30,10 +32,10 @@ export default function ChatDock({ ctx }: { ctx: GameCtx }) {
             <div className="mb-2 flex items-center gap-2">
               {(["global", "guild"] as const).map((k) => (
                 <button key={k} onClick={() => setTab(k)} className={`rounded-md px-3 py-1 text-xs font-display ${tab === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>
-                  {k === "global" ? "🌍 Global" : `🏰 Guilda${ctx.state.guild ? ` [${ctx.state.guild.tag}]` : ""}`}
+                  {k === "global" ? `🌍 ${t("Global")}` : `🏰 ${t("Guilda")}${ctx.state.guild ? ` [${ctx.state.guild.tag}]` : ""}`}
                 </button>
               ))}
-              <button onClick={() => setOpen(false)} aria-label="Fechar chat" className="ml-auto px-2 text-white/50 hover:text-white">✕</button>
+              <button onClick={() => setOpen(false)} aria-label={t("Fechar chat")} className="ml-auto px-2 text-white/50 hover:text-white">✕</button>
             </div>
             <ChatBox key={tab} channel={tab} ctx={ctx} />
           </motion.div>

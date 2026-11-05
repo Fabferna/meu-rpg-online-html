@@ -5,19 +5,22 @@ import { QUESTS } from "@/lib/game/quests";
 import { ENEMIES } from "@/lib/game/enemies";
 import { ITEMS } from "@/lib/game/items";
 import { ATTRIBUTE_POINTS_PER_LEVEL } from "@/lib/game/rules";
+import { useT } from "@/lib/i18n/client";
+import type { TFn } from "@/lib/i18n/translate";
 
 /** O que fica disponível ao passar do nível `from` para `to`. */
-export function unlocksBetween(from: number, to: number) {
+export function unlocksBetween(t: TFn, from: number, to: number) {
   const inRange = (l?: number) => l !== undefined && l > from && l <= to;
   return [
-    ...QUESTS.filter((q) => inRange(q.minLevel)).map((q) => `📜 Missão: ${q.title} (rank ${q.rank})`),
-    ...ENEMIES.filter((e) => inRange(e.minLevel)).map((e) => `${e.boss ? "👑 Chefe" : "⚔️ Inimigo"}: ${e.name}`),
-    ...ITEMS.filter((i) => i.buy && inRange(i.minLevel)).map((i) => `⚒️ Ferreiro: ${i.name}`),
+    ...QUESTS.filter((q) => inRange(q.minLevel)).map((q) => `📜 ${t("Missão:")} ${t(q.title)} (${t("rank")} ${q.rank})`),
+    ...ENEMIES.filter((e) => !e.story && inRange(e.minLevel)).map((e) => `${e.boss ? `👑 ${t("Chefe")}` : `⚔️ ${t("Inimigo")}`}: ${t(e.name)}`),
+    ...ITEMS.filter((i) => i.buy && inRange(i.minLevel)).map((i) => `⚒️ ${t("Ferreiro:")} ${t(i.name)}`),
   ];
 }
 
 export default function LevelUp({ level, from, onClose, onSpend }: { level: number | null; from: number; onClose: () => void; onSpend: () => void }) {
-  const unlocks = level ? unlocksBetween(from, level) : [];
+  const t = useT();
+  const unlocks = level ? unlocksBetween(t, from, level) : [];
   const gained = level ? (level - from) * ATTRIBUTE_POINTS_PER_LEVEL : 0;
   return (
     <AnimatePresence>
@@ -30,18 +33,18 @@ export default function LevelUp({ level, from, onClose, onSpend }: { level: numb
               style={{ background: "conic-gradient(from 0deg, transparent, #e5b453, transparent 25%, #7b5cff, transparent 50%, #e5b453, transparent 75%)" }}
               animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 8, ease: "linear" }} />
             <div className="relative">
-              <p className="text-sm uppercase tracking-[0.3em] text-white/70">Subiu de nível!</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-white/70">{t("Subiu de nível!")}</p>
               <motion.p id="lvl-title" initial={{ scale: 2.2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.15, type: "spring" }}
                 className="font-display text-7xl font-black text-gold drop-shadow-[0_0_24px_#e5b45380]">{level}</motion.p>
-              <p className="mt-2 text-sm">❤️ Vida restaurada · <b className="text-arcane">+{gained} pontos de atributo</b></p>
+              <p className="mt-2 text-sm">{t("❤️ Vida restaurada ·")} <b className="text-arcane">{t("+{n} pontos de atributo", { n: gained })}</b></p>
               {unlocks.length > 0 && (
                 <div className="mt-5 rounded-lg bg-black/40 p-3 text-left text-sm">
-                  <p className="mb-1.5 text-xs uppercase tracking-wider text-gold">Desbloqueado</p>
+                  <p className="mb-1.5 text-xs uppercase tracking-wider text-gold">{t("Desbloqueado")}</p>
                   <ul className="space-y-1">{unlocks.map((u) => <li key={u}>{u}</li>)}</ul>
                 </div>
               )}
-              <button className="btn-gold mt-6 w-full" onClick={onSpend}>Distribuir pontos</button>
-              <button className="mt-3 text-sm text-white/50 hover:text-white" onClick={onClose}>Depois</button>
+              <button className="btn-gold mt-6 w-full" onClick={onSpend}>{t("Distribuir pontos")}</button>
+              <button className="mt-3 text-sm text-white/50 hover:text-white" onClick={onClose}>{t("Depois")}</button>
             </div>
           </motion.div>
         </motion.div>

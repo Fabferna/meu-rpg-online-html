@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
+import type { TFn } from "@/lib/i18n/translate";
 import { ENEMIES } from "@/lib/game/enemies";
 import { PVE_ENERGY_COST } from "@/lib/game/rules";
 import { RACIAL_SKILLS } from "@/lib/game/racial";
@@ -14,11 +15,13 @@ import { REGION_OF_ENEMY, regionUnlocked } from "@/lib/game/regions";
 import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
+import { useT } from "@/lib/i18n/client";
 
 type Result = { outcome: "won" | "lost"; state: BattleState };
 type Float = { id: number; side: "player" | "enemy"; text: string; color: string };
 
 export default function Battle({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
   const { state } = ctx;
   const [battle, setBattle] = useState<BattleState | null>(state.battle?.state ?? null);
   const [result, setResult] = useState<Result | null>(null);
@@ -45,7 +48,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   function showFloats(entries: LogEntry[]) {
     const fl: Float[] = entries.map((l, i) => {
       const target = l.target ?? (l.action === "defend" || l.action === "potion" || (l.action === "racial" && l.heal) ? l.actor : l.actor === "player" ? "enemy" : "player");
-      const text = l.action === "stunned" ? "Atordoado!" : l.miss ? "Esquivou!" : l.heal ? `+${l.heal}` : l.action === "poison" ? `☠️ -${l.dmg}` : `${l.crit ? "CRÍTICO " : ""}-${l.dmg}`;
+      const text = l.action === "stunned" ? t("Atordoado!") : l.miss ? t("Esquivou!") : l.heal ? `+${l.heal}` : l.action === "poison" ? `☠️ -${l.dmg}` : `${l.crit ? `${t("CRÍTICO")} ` : ""}-${l.dmg}`;
       const color = l.action === "poison" ? "text-lime-300" : l.action === "stunned" ? "text-sky-300" : l.heal ? "text-emerald-300" : l.crit ? "text-amber-300 text-3xl" : l.miss ? "text-white/70" : "text-red-400";
       return { id: Date.now() + i, side: target, text, color };
     });
@@ -77,7 +80,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       const res = await post<{ outcome: "won" | "lost" | "active"; state: BattleState; stageCleared?: { stage: number; rewards?: { xp: number; gold: number } } }>("/api/battle/action", { action });
       if (res.stageCleared) {
         play("victory");
-        ctx.toast(`🗝️ Estágio ${res.stageCleared.stage} vencido! +${res.stageCleared.rewards?.xp ?? 0} XP · +${res.stageCleared.rewards?.gold ?? 0} 🪙 — você descansa (+25% de vida) e segue!`, "reward");
+        ctx.toast(t("🗝️ Estágio {n} vencido! +{xp} XP · +{gold} 🪙 — você descansa (+25% de vida) e segue!", { n: res.stageCleared.stage, xp: res.stageCleared.rewards?.xp ?? 0, gold: res.stageCleared.rewards?.gold ?? 0 }), "reward");
         setBattle(res.state);
         ctx.refresh();
         return;
@@ -118,34 +121,34 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       <Panel className="mx-auto max-w-md p-8 text-center">
         <motion.h2 initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring" }}
           className={`font-display text-4xl font-black ${result.outcome === "won" ? "text-gold" : "text-red-400"}`}>
-          {result.outcome === "won" ? "VITÓRIA!" : "DERROTA"}
+          {result.outcome === "won" ? t("VITÓRIA!") : t("DERROTA")}
         </motion.h2>
         {r ? (
           <div className="mt-6 space-y-2">
             <p>✨ +{r.xp} XP</p>
-            <p>🪙 +{r.gold} ouro</p>
-            {r.item && <p className="text-amber-300">🎁 Item encontrado!</p>}
+            <p>🪙 +{r.gold} {t("ouro")}</p>
+            {r.item && <p className="text-amber-300">{t("🎁 Item encontrado!")}</p>}
             {result.state.storyResult && (
               <div className="mt-3 rounded-lg bg-gold/10 p-3">
-                <p className="font-display text-gold">📖 Capítulo {result.state.story} concluído!</p>
+                <p className="font-display text-gold">{t("📖 Capítulo {n} concluído!", { n: result.state.story ?? 0 })}</p>
                 <p>✨ {result.state.storyResult.xp} XP · 🪙 {result.state.storyResult.gold}{result.state.storyResult.gems ? ` · 💎 ${result.state.storyResult.gems}` : ""}</p>
-                {result.state.storyResult.item && <p className="text-amber-300">✨ {ITEM_BY_ID[result.state.storyResult.item]?.name}</p>}
-                <p className="mt-1 text-xs text-white/60">Veja a continuação na aba 🗺️ Mundo.</p>
+                {result.state.storyResult.item && <p className="text-amber-300">✨ {t(ITEM_BY_ID[result.state.storyResult.item]?.name ?? "")}</p>}
+                <p className="mt-1 text-xs text-white/60">{t("Veja a continuação na aba 🗺️ Mundo.")}</p>
               </div>
             )}
             {result.state.dungeon?.chest && (
               <div className="mt-3 rounded-lg bg-gold/10 p-3">
-                <p className="font-display text-gold">🎁 Baú de {result.state.dungeon.name}</p>
+                <p className="font-display text-gold">{t("🎁 Baú de {nome}", { nome: t(result.state.dungeon.name) })}</p>
                 <p>🪙 {result.state.dungeon.chest.gold}{result.state.dungeon.chest.gems ? ` · 💎 ${result.state.dungeon.chest.gems}` : ""}</p>
-                {result.state.dungeon.chest.item && <p className="text-amber-300">✨ {ITEM_BY_ID[result.state.dungeon.chest.item]?.name}!</p>}
+                {result.state.dungeon.chest.item && <p className="text-amber-300">✨ {t(ITEM_BY_ID[result.state.dungeon.chest.item]?.name ?? "")}!</p>}
               </div>
             )}
-            {r.levelUps > 0 && <p className="font-display text-xl text-arcane">⭐ Subiu de nível!</p>}
+            {r.levelUps > 0 && <p className="font-display text-xl text-arcane">{t("⭐ Subiu de nível!")}</p>}
           </div>
         ) : (
-          <p className="mt-4 text-white/60">Recupere sua vida e tente novamente.</p>
+          <p className="mt-4 text-white/60">{t("Recupere sua vida e tente novamente.")}</p>
         )}
-        <button className="btn-gold mt-8 w-full" onClick={() => { setResult(null); setBattle(null); }}>Continuar</button>
+        <button className="btn-gold mt-8 w-full" onClick={() => { setResult(null); setBattle(null); }}>{t("Continuar")}</button>
       </Panel>
     );
   }
@@ -164,32 +167,32 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
             <span className="flex gap-1">{Array.from({ length: battle.dungeon.total }, (_, i) => (
               <span key={i} className={`h-2 w-8 rounded-full ${i < battle.dungeon!.stage ? "bg-emerald-500" : i === battle.dungeon!.stage ? "bg-gold animate-pulse" : "bg-white/10"}`} />
             ))}</span>
-            <span className="text-white/50">Estágio {battle.dungeon.stage + 1}/{battle.dungeon.total}{battle.dungeon.stage === battle.dungeon.total - 1 ? " · Guardião!" : ""}</span>
+            <span className="text-white/50">{t("Estágio {a}/{b}", { a: battle.dungeon.stage + 1, b: battle.dungeon.total })}{battle.dungeon.stage === battle.dungeon.total - 1 ? ` · ${t("Guardião!")}` : ""}</span>
           </div>
         )}
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
           <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
-            badges={[fx.pPoison ? `☠️ Veneno ${fx.pPoison}` : "", fx.pStun ? "💫 Atordoado" : "", fx.pStone ? `🪨 Pele de Pedra ${fx.pStone}` : ""]} />
-          <Fighter refEl={enemyRef} name={battle.enemy.name} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
+            badges={[fx.pPoison ? `☠️ ${t("Veneno")} ${fx.pPoison}` : "", fx.pStun ? `💫 ${t("Atordoado")}` : "", fx.pStone ? `🪨 ${t("Pele de Pedra")} ${fx.pStone}` : ""]} />
+          <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
             badges={[fx.ePoison ? `☠️ Veneno ${fx.ePoison}` : "", fx.eStun ? "💫 Atordoado" : ""]} />
         </div>
         <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-6">
-          <ActBtn disabled={busy} onClick={() => act("attack")} label="⚔️ Atacar" />
-          <motion.button whileTap={{ scale: 0.94 }} onClick={() => act("racial")} disabled={busy || rcd > 0} title={racial.description}
+          <ActBtn disabled={busy} onClick={() => act("attack")} label={t("⚔️ Atacar")} />
+          <motion.button whileTap={{ scale: 0.94 }} onClick={() => act("racial")} disabled={busy || rcd > 0} title={t(racial.description)}
             className="col-span-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-ember/80 to-amber-600/80 px-3 py-2 text-left font-display text-sm transition hover:brightness-110 disabled:opacity-40 sm:col-span-1">
             <Image src={racial.icon} alt="" width={32} height={32} className="shrink-0 rounded" />
-            <span className="leading-tight">{rcd > 0 ? `Recarga (${rcd})` : racial.name}</span>
+            <span className="leading-tight">{rcd > 0 ? t("Recarga ({n})", { n: rcd }) : t(racial.name)}</span>
           </motion.button>
-          <ActBtn disabled={busy || battle.skillCooldown > 0} onClick={() => act("skill")} label={battle.skillCooldown > 0 ? `✨ Recarga (${battle.skillCooldown})` : "✨ Habilidade"} accent />
-          <ActBtn disabled={busy} onClick={() => act("defend")} label="🛡️ Defender" />
-          <ActBtn disabled={busy || !pot} onClick={() => act("potion")} label={`🧪 Poção (${pot})`} />
-          <ActBtn disabled={busy} onClick={flee} label="🏃 Fugir" muted />
+          <ActBtn disabled={busy || battle.skillCooldown > 0} onClick={() => act("skill")} label={battle.skillCooldown > 0 ? `✨ ${t("Recarga ({n})", { n: battle.skillCooldown })}` : t("✨ Habilidade")} accent />
+          <ActBtn disabled={busy} onClick={() => act("defend")} label={t("🛡️ Defender")} />
+          <ActBtn disabled={busy || !pot} onClick={() => act("potion")} label={t("🧪 Poção ({n})", { n: pot })} />
+          <ActBtn disabled={busy} onClick={flee} label={t("🏃 Fugir")} muted />
         </Panel>
         <Panel className="p-4 text-sm">
-          <p className="mb-2 font-display text-gold">Turno {battle.turn}</p>
+          <p className="mb-2 font-display text-gold">{t("Turno {n}", { n: battle.turn })}</p>
           <ul className="space-y-1 text-white/70">
             {last.map((l, i) => (
-              <li key={`${l.turn}-${i}`}>{describe(l, state.character.name, battle.enemy.name)}</li>
+              <li key={`${l.turn}-${i}`}>{describe(t, l, state.character.name, t(battle.enemy.name))}</li>
             ))}
           </ul>
         </Panel>
@@ -200,7 +203,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   const tabs = (
     <div className="mb-4 flex gap-2">
       {([["hunt", "⚔️ Caçada"], ["dungeon", "🗝️ Masmorras"]] as const).map(([k, l]) => (
-        <button key={k} onClick={() => setMode(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${mode === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{l}</button>
+        <button key={k} onClick={() => setMode(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${mode === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
       ))}
     </div>
   );
@@ -211,7 +214,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   return (
     <div>
       {tabs}
-      <p className="mb-4 text-sm text-white/60">Cada caçada custa ⚡ {PVE_ENERGY_COST} de energia. Sua vida atual: {state.character.hp}/{state.character.maxHp}</p>
+      <p className="mb-4 text-sm text-white/60">{t("Cada caçada custa ⚡ {e} de energia. Sua vida atual: {hp}/{max}", { e: PVE_ENERGY_COST, hp: state.character.hp, max: state.character.maxHp })}</p>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {ENEMIES.filter((e) => !e.story).map((e, i) => {
           const region = REGION_OF_ENEMY[e.id];
@@ -223,22 +226,23 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               className={`panel group overflow-hidden text-left transition hover:-translate-y-1 disabled:cursor-not-allowed ${locked ? "opacity-50 grayscale" : ""} ${e.boss ? "ring-2 ring-ember/70" : ""}`}>
               <div className="relative aspect-[3/4]">
                 <Image src={e.image} alt="" fill sizes="300px" className="object-cover transition duration-500 group-hover:scale-105" />
-                {e.boss && <span className="absolute right-2 top-2 rounded bg-ember px-2 py-0.5 text-xs font-bold">CHEFE</span>}
+                {e.boss && <span className="absolute right-2 top-2 rounded bg-ember px-2 py-0.5 text-xs font-bold">{t("CHEFE")}</span>}
               </div>
               <div className="p-3">
-                <p className="font-display text-sm">{e.name}</p>
-                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${region!.name} · Capítulo ${region!.unlockChapter}` : locked ? `Requer nível ${e.minLevel}` : `❤️ ${e.maxHp} · ✨ ${e.xp} XP · 🪙 ${e.gold}`}</p>
+                <p className="font-display text-sm">{t(e.name)}</p>
+                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${t(region!.name)} · ${t("Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: e.minLevel }) : `❤️ ${e.maxHp} · ✨ ${e.xp} XP · 🪙 ${e.gold}`}</p>
               </div>
             </motion.button>
           );
         })}
       </div>
-      {state.quest && <p className="mt-4 text-center text-sm text-amber-300">Você está em uma missão. Termine-a para caçar.</p>}
+      {state.quest && <p className="mt-4 text-center text-sm text-amber-300">{t("Você está em uma missão. Termine-a para caçar.")}</p>}
     </div>
   );
 }
 
 function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[]; badges?: string[] }) {
+  const t = useT();
   return (
     <div ref={props.refEl} className={`panel relative overflow-hidden p-3 ${props.boss ? "ring-2 ring-ember/70" : ""}`}>
       <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -256,7 +260,7 @@ function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image:
         </AnimatePresence>
       </div>
       <p className="mt-2 truncate font-display text-sm">{props.name}</p>
-      <Bar value={props.hp} max={props.max} color="bg-life" label="Vida" />
+      <Bar value={props.hp} max={props.max} color="bg-life" label={t("Vida")} />
     </div>
   );
 }
@@ -270,15 +274,18 @@ function ActBtn({ label, onClick, disabled, accent, muted }: { label: string; on
   );
 }
 
-function describe(l: LogEntry, me: string, foe: string) {
+function describe(t: TFn, l: LogEntry, me: string, foe: string) {
   const who = l.actor === "player" ? me : foe;
   const other = l.actor === "player" ? foe : me;
-  if (l.action === "stunned") return `💫 ${l.target === "player" ? me : foe} está atordoado e perde o turno.`;
-  if (l.action === "poison") return `☠️ O veneno causa ${l.dmg} de dano em ${l.target === "player" ? me : foe}.`;
-  if (l.action === "racial" && l.effect === "stone") return `🪨 ${who} ativa Pele de Pedra e recupera ${l.heal} de vida.`;
-  if (l.action === "defend") return `🛡️ ${who} se defende e recupera ${l.heal} de vida.`;
-  if (l.action === "potion") return `🧪 ${who} bebe uma poção (+${l.heal}).`;
-  if (l.miss) return `💨 ${other} esquiva do ataque de ${who}.`;
-  const extra = l.effect === "poison" ? " e o envenena" : l.effect === "stun" ? " e o atordoa" : l.effect === "rage" ? " em fúria" : "";
-  return `${l.action === "racial" ? "🔥" : l.action === "skill" ? "✨" : "⚔️"} ${who} causa ${l.dmg} de dano${l.crit ? " CRÍTICO" : ""} em ${other}${extra}.`;
+  const target = l.target === "player" ? me : foe;
+  if (l.action === "stunned") return t("💫 {a} está atordoado e perde o turno.", { a: target });
+  if (l.action === "poison") return t("☠️ O veneno causa {d} de dano em {a}.", { d: l.dmg ?? 0, a: target });
+  if (l.action === "racial" && l.effect === "stone") return t("🪨 {a} ativa Pele de Pedra e recupera {h} de vida.", { a: who, h: l.heal ?? 0 });
+  if (l.action === "defend") return t("🛡️ {a} se defende e recupera {h} de vida.", { a: who, h: l.heal ?? 0 });
+  if (l.action === "potion") return t("🧪 {a} bebe uma poção (+{h}).", { a: who, h: l.heal ?? 0 });
+  if (l.miss) return t("💨 {b} esquiva do ataque de {a}.", { a: who, b: other });
+  const icon = l.action === "racial" ? "🔥" : l.action === "skill" ? "✨" : "⚔️";
+  const base = l.crit ? t("{a} causa {d} de dano CRÍTICO em {b}", { a: who, d: l.dmg ?? 0, b: other }) : t("{a} causa {d} de dano em {b}", { a: who, d: l.dmg ?? 0, b: other });
+  const extra = l.effect === "poison" ? t(" e o envenena") : l.effect === "stun" ? t(" e o atordoa") : l.effect === "rage" ? t(" em fúria") : "";
+  return `${icon} ${base}${extra}.`;
 }

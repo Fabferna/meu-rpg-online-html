@@ -8,6 +8,8 @@ import { fmtTime, post } from "./api";
 import { Panel } from "./ui";
 import Avatar from "./Avatar";
 import { play } from "./sfx";
+import { useT } from "@/lib/i18n/client";
+import type { TFn } from "@/lib/i18n/translate";
 
 type Base = { pos: number; name: string; raceName: string; level: number; portrait: string; frame: string | null; title: string | null };
 type GlobalRow = Base & { pvp_rating: number; pvp_wins: number; pvp_losses: number };
@@ -19,10 +21,11 @@ type Week = {
 };
 
 const medal = ["🥇", "🥈", "🥉"];
-const prize = (t: { gems: number; gold: number; cosmetic?: string } | null) =>
-  t ? [t.gems && `💎 ${t.gems}`, t.gold && `🪙 ${t.gold}`, t.cosmetic && "título “Campeão Semanal”"].filter(Boolean).join(" + ") : "—";
+const prize = (tr: TFn, p: { gems: number; gold: number; cosmetic?: string } | null) =>
+  p ? [p.gems && `💎 ${p.gems}`, p.gold && `🪙 ${p.gold}`, p.cosmetic && tr("título “Campeão Semanal”")].filter(Boolean).join(" + ") : "—";
 
 export default function Ranking({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
   const [scope, setScope] = useState<"week" | "global">("week");
   const [week, setWeek] = useState<Week | null>(null);
   const [global, setGlobal] = useState<GlobalRow[] | null>(null);
@@ -44,7 +47,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
     try {
       const r = await post<{ pos: number; gems: number; gold: number }>("/api/ranking/claim");
       play("victory");
-      ctx.toast(`🏆 Prêmio da semana (${r.pos}º): ${prize(r)}`, "reward");
+      ctx.toast(`🏆 ${t("Prêmio da semana ({n}º):", { n: r.pos })} ${prize(t, r)}`, "reward");
       await Promise.all([load(), ctx.refresh()]);
     } catch (e) {
       ctx.toast((e as Error).message, "error");
@@ -61,19 +64,19 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
           className="panel flex flex-wrap items-center gap-4 bg-gradient-to-r from-amber-900/50 to-fuchsia-900/30 p-5 ring-2 ring-gold">
           <span className="text-4xl">{medal[lw.pos - 1] ?? "🏆"}</span>
           <div className="min-w-0 flex-1">
-            <p className="font-display text-lg">A semana passada terminou! Você ficou em {lw.pos}º com {lw.score} pontos.</p>
-            <p className="text-sm text-white/70">Prêmio: {prize(lw.reward)}</p>
+            <p className="font-display text-lg">{t("A semana passada terminou! Você ficou em {p}º com {s} pontos.", { p: lw.pos, s: lw.score })}</p>
+            <p className="text-sm text-white/70">{t("Prêmio:")} {prize(t, lw.reward)}</p>
           </div>
-          <button className="btn-gold" disabled={busy} onClick={claim}>Resgatar prêmio</button>
+          <button className="btn-gold" disabled={busy} onClick={claim}>{t("Resgatar prêmio")}</button>
         </motion.div>
       )}
 
       <div className="flex flex-wrap items-center gap-2">
         {([["week", "📅 Esta semana"], ["global", "⭐ Geral (Rating PVP)"]] as const).map(([k, l]) => (
-          <button key={k} onClick={() => setScope(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${scope === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{l}</button>
+          <button key={k} onClick={() => setScope(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${scope === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
         ))}
         {scope === "week" && week && (
-          <span className="ml-auto rounded-full bg-ember/30 px-3 py-1 text-xs">Termina em {fmtTime(week.endsInSec - (Date.now() - loadedAt) / 1000)}</span>
+          <span className="ml-auto rounded-full bg-ember/30 px-3 py-1 text-xs">{t("Termina em {tempo}", { tempo: fmtTime(week.endsInSec - (Date.now() - loadedAt) / 1000) })}</span>
         )}
       </div>
 
@@ -82,38 +85,38 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
           <Panel className="overflow-x-auto p-2">
             {week?.me && (
               <p className="m-2 rounded-lg bg-gold/10 px-3 py-2 text-sm">
-                Você está em <b>{week.me.pos}º</b> com <b>{week.me.score}</b> pontos{week.me.reward ? ` · prêmio atual: ${prize(week.me.reward)}` : ""}.
+                {t("Você está em")} <b>{week.me.pos}º</b> {t("com")} <b>{week.me.score}</b> {t("pontos")}{week.me.reward ? ` · ${t("prêmio atual:")} ${prize(t, week.me.reward)}` : ""}.
               </p>
             )}
-            <Table rows={week?.rows ?? null} me={ctx.state.character.name} cols={[["Pontos", (r) => <span className="font-display text-gold">{(r as WeekRow).score}</span>]]}
-              empty="Ninguém pontuou ainda nesta semana. Seja o primeiro!" />
+            <Table rows={week?.rows ?? null} me={ctx.state.character.name} cols={[[t("Pontos"), (r) => <span className="font-display text-gold">{(r as WeekRow).score}</span>]]}
+              empty={t("Ninguém pontuou ainda nesta semana. Seja o primeiro!")} />
           </Panel>
           <div className="space-y-4">
             <Panel className="p-4 text-sm">
-              <h3 className="font-display text-gold">Como pontuar</h3>
+              <h3 className="font-display text-gold">{t("Como pontuar")}</h3>
               <ul className="mt-2 space-y-1 text-white/80">
-                <li>🏟️ Vitória na Arena: <b>{WEEKLY_POINTS.pvp_win}</b></li>
-                <li>👑 Chefe derrotado: <b>{WEEKLY_POINTS.boss_win}</b></li>
-                <li>📜 Missão concluída: <b>{WEEKLY_POINTS.quest}</b></li>
-                <li>⚔️ Caçada vencida: <b>{WEEKLY_POINTS.pve_win}</b></li>
+                <li>{t("🏟️ Vitória na Arena:")} <b>{WEEKLY_POINTS.pvp_win}</b></li>
+                <li>{t("👑 Chefe derrotado:")} <b>{WEEKLY_POINTS.boss_win}</b></li>
+                <li>{t("📜 Missão concluída:")} <b>{WEEKLY_POINTS.quest}</b></li>
+                <li>{t("⚔️ Caçada vencida:")} <b>{WEEKLY_POINTS.pve_win}</b></li>
               </ul>
             </Panel>
             <Panel className="p-4 text-sm">
-              <h3 className="font-display text-gold">Prêmios da semana</h3>
+              <h3 className="font-display text-gold">{t("Prêmios da semana")}</h3>
               <ul className="mt-2 space-y-1.5">
-                {WEEKLY_REWARDS.map((t) => <li key={t.label} className="flex justify-between gap-2"><span className="text-white/70">{t.label}</span><span className="text-right">{prize(t)}</span></li>)}
-                <li className="flex justify-between gap-2"><span className="text-white/70">{WEEKLY_PARTICIPATION.minScore}+ pontos</span><span>{prize(WEEKLY_PARTICIPATION)}</span></li>
+                {WEEKLY_REWARDS.map((w) => <li key={w.label} className="flex justify-between gap-2"><span className="text-white/70">{t(w.label)}</span><span className="text-right">{prize(t, w)}</span></li>)}
+                <li className="flex justify-between gap-2"><span className="text-white/70">{t("{n}+ pontos", { n: WEEKLY_PARTICIPATION.minScore })}</span><span>{prize(t, WEEKLY_PARTICIPATION)}</span></li>
               </ul>
-              <p className="mt-3 text-[11px] text-white/40">A temporada vai de segunda a domingo (horário UTC). Resgate o prêmio durante a semana seguinte.</p>
+              <p className="mt-3 text-[11px] text-white/40">{t("A temporada vai de segunda a domingo (horário UTC). Resgate o prêmio durante a semana seguinte.")}</p>
             </Panel>
           </div>
         </div>
       ) : (
         <Panel className="overflow-x-auto p-2">
           <Table rows={global} me={ctx.state.character.name} cols={[
-            ["Rating", (r) => <span className="font-display text-gold">{(r as GlobalRow).pvp_rating}</span>],
-            ["V/D", (r) => <span className="text-white/60">{(r as GlobalRow).pvp_wins}/{(r as GlobalRow).pvp_losses}</span>],
-          ]} empty="Ninguém no ranking ainda." />
+            [t("Rating"), (r) => <span className="font-display text-gold">{(r as GlobalRow).pvp_rating}</span>],
+            [t("V/D"), (r) => <span className="text-white/60">{(r as GlobalRow).pvp_wins}/{(r as GlobalRow).pvp_losses}</span>],
+          ]} empty={t("Ninguém no ranking ainda.")} />
         </Panel>
       )}
     </div>
@@ -121,12 +124,13 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
 }
 
 function Table({ rows, cols, me, empty }: { rows: Base[] | null; cols: [string, (r: Base) => React.ReactNode][]; me: string; empty: string }) {
-  if (!rows) return <p className="p-6 text-center text-white/50">Carregando…</p>;
+  const t = useT();
+  if (!rows) return <p className="p-6 text-center text-white/50">{t("Carregando…")}</p>;
   if (!rows.length) return <p className="p-6 text-center text-white/50">{empty}</p>;
   return (
     <table className="w-full text-sm">
       <thead className="text-left text-xs uppercase text-white/40">
-        <tr><th className="p-3">#</th><th>Herói</th><th className="hidden sm:table-cell">Raça</th><th>Nível</th>{cols.map(([h]) => <th key={h}>{h}</th>)}</tr>
+        <tr><th className="p-3">#</th><th>{t("Herói")}</th><th className="hidden sm:table-cell">{t("Raça")}</th><th>{t("Nível")}</th>{cols.map(([h]) => <th key={h}>{h}</th>)}</tr>
       </thead>
       <tbody>
         {rows.map((r) => (

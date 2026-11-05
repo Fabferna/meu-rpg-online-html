@@ -5,10 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { GENDERS, RACES, REGIONS, type Gender, type RaceId, type RegionId } from "@/lib/game/data";
 import { REF_STORAGE_KEY, REFERRAL } from "@/lib/game/referrals";
+import { useT } from "@/lib/i18n/client";
 
 const ATTR_LABEL = { str: "FOR", dex: "DES", con: "CON", intel: "INT", wis: "SAB", cha: "CAR" } as const;
 
 export default function CharacterCreator() {
+  const t = useT();
   const router = useRouter();
   const [region, setRegion] = useState<RegionId | null>(null);
   const [race, setRace] = useState<RaceId | null>(null);
@@ -39,8 +41,8 @@ export default function CharacterCreator() {
     }
     const body = await res.json().catch(() => ({}));
     setError(
-      ({ name_taken: "Esse nome já pertence a outro herói.", already_has_character: "Você já possui um herói.", too_many_requests: "Muitas tentativas, aguarde." } as Record<string, string>)[body.error] ??
-        "Não foi possível criar o herói.",
+      t(({ name_taken: "Esse nome já pertence a outro herói.", already_has_character: "Você já possui um herói.", too_many_requests: "Muitas tentativas, aguarde." } as Record<string, string>)[body.error] ??
+        "Não foi possível criar o herói."),
     );
     setBusy(false);
   }
@@ -49,27 +51,27 @@ export default function CharacterCreator() {
     <div className="mt-8 space-y-10">
       {ref && (
         <p className="rounded-lg bg-gold/15 px-4 py-3 text-center text-sm">
-          🎁 Convite de <b>{ref}</b>: você começa com <b>🪙 {REFERRAL.welcomeGold}</b> de ouro extra!
+          {t("🎁 Convite de")} <b>{ref}</b>: {t("você começa com")} <b>🪙 {REFERRAL.welcomeGold}</b> {t("de ouro extra!")}
         </p>
       )}
-      <Step n={1} title="Região de origem">
+      <Step n={1} title={t("Região de origem")}>
         <div className="grid gap-4 sm:grid-cols-3">
           {Object.entries(REGIONS).map(([id, r]) => (
-            <Card key={id} selected={region === id} onClick={() => setRegion(id as RegionId)} image={r.image} title={r.name} text={r.description} />
+            <Card key={id} selected={region === id} onClick={() => setRegion(id as RegionId)} image={r.image} title={t(r.name)} text={t(r.description)} />
           ))}
         </div>
       </Step>
 
-      <Step n={2} title="Raça">
+      <Step n={2} title={t("Raça")}>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
           {Object.entries(RACES).map(([id, r]) => (
-            <Card key={id} selected={race === id} onClick={() => setRace(id as RaceId)} image={r.image} title={r.name} tall />
+            <Card key={id} selected={race === id} onClick={() => setRace(id as RaceId)} image={r.image} title={t(r.name)} tall />
           ))}
         </div>
       </Step>
 
       {race && (
-        <Step n={3} title="Aparência e nome">
+        <Step n={3} title={t("Aparência e nome")}>
           <div className="panel grid gap-6 p-6 sm:grid-cols-[220px_1fr]">
             <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
               <Image src={RACES[race].portraits[gender]} alt="" fill sizes="220px" className="object-cover" />
@@ -78,22 +80,22 @@ export default function CharacterCreator() {
               <div className="flex gap-2">
                 {GENDERS.map((g) => (
                   <button key={g} onClick={() => setGender(g)} className={`rounded-md px-4 py-2 text-sm ${gender === g ? "bg-gold text-ink" : "bg-white/5"}`}>
-                    {g === "male" ? "Masculino" : "Feminino"}
+                    {g === "male" ? t("Masculino") : t("Feminino")}
                   </button>
                 ))}
               </div>
-              <p className="text-sm text-white/70">{RACES[race].description}</p>
-              <p className="text-sm text-gold">{RACES[race].bonus}</p>
+              <p className="text-sm text-white/70">{t(RACES[race].description)}</p>
+              <p className="text-sm text-gold">{t(RACES[race].bonus)}</p>
               <div className="grid grid-cols-6 gap-2 text-center">
                 {Object.entries(RACES[race].attributes).map(([k, v]) => (
                   <div key={k} className="rounded-md bg-black/40 py-2">
-                    <div className="text-[10px] text-white/50">{ATTR_LABEL[k as keyof typeof ATTR_LABEL]}</div>
+                    <div className="text-[10px] text-white/50">{t(ATTR_LABEL[k as keyof typeof ATTR_LABEL])}</div>
                     <div className="font-display text-lg">{v}</div>
                   </div>
                 ))}
               </div>
               <label className="block text-sm">
-                <span className="mb-1 block text-white/70">Nome do herói (3–16, letras/números/_)</span>
+                <span className="mb-1 block text-white/70">{t("Nome do herói (3–16, letras/números/_)")}</span>
                 <input className="input" maxLength={16} value={name} onChange={(e) => setName(e.target.value)} />
               </label>
               {error && <p role="alert" className="text-sm text-red-300">{error}</p>}

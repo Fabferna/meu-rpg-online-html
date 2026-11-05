@@ -9,6 +9,7 @@ import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 import Avatar from "./Avatar";
+import { useT } from "@/lib/i18n/client";
 
 type Opp = { name: string; level: number; rating: number; wins: number; losses: number; raceName: string; portrait: string; frame: string | null; title: string | null };
 type Fight = {
@@ -18,6 +19,7 @@ type Fight = {
 };
 
 export default function Arena({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
   const [opps, setOpps] = useState<Opp[] | null>(null);
   const [fight, setFight] = useState<(Fight & { opp: Opp }) | null>(null);
   const [step, setStep] = useState(0);
@@ -63,14 +65,14 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
       <Panel className="mx-auto max-w-3xl p-6">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           <Side name={fight.me.name} image={ctx.state.character.portrait} hp={Math.max(0, hpA)} max={fight.me.maxHp} hit={cur?.side === "b" && !cur.miss} />
-          <span className="font-display text-3xl text-gold">VS</span>
+          <span className="font-display text-3xl text-gold">{t("VS")}</span>
           <Side name={fight.them.name} image={fight.opp.portrait} hp={Math.max(0, hpB)} max={fight.them.maxHp} hit={cur?.side === "a" && !cur.miss} />
         </div>
         {done && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 text-center">
-            <p className={`font-display text-4xl font-black ${fight.won ? "text-gold" : "text-red-400"}`}>{fight.won ? "VITÓRIA!" : "DERROTA"}</p>
-            <p className="mt-2 text-sm">Rating {fight.won ? "+" : "−"}{fight.delta} · ✨ +{fight.rewards.xp} XP{fight.rewards.gold ? ` · 🪙 +${fight.rewards.gold}` : ""}</p>
-            <button className="btn-gold mt-6" onClick={() => setFight(null)}>Voltar à Arena</button>
+            <p className={`font-display text-4xl font-black ${fight.won ? "text-gold" : "text-red-400"}`}>{fight.won ? t("VITÓRIA!") : t("DERROTA")}</p>
+            <p className="mt-2 text-sm">{t("Rating")} {fight.won ? "+" : "−"}{fight.delta} · ✨ +{fight.rewards.xp} XP{fight.rewards.gold ? ` · 🪙 +${fight.rewards.gold}` : ""}</p>
+            <button className="btn-gold mt-6" onClick={() => setFight(null)}>{t("Voltar à Arena")}</button>
           </motion.div>
         )}
       </Panel>
@@ -80,12 +82,12 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
   return (
     <div>
       <p className="mb-4 text-sm text-white/60">
-        Desafie heróis de nível próximo. Cada luta custa ⚡ {PVP_ENERGY_COST}. Seu rating: <b className="text-gold">{ctx.state.character.pvpRating}</b>
+        {t("Desafie heróis de nível próximo. Cada luta custa ⚡ {e}. Seu rating:", { e: PVP_ENERGY_COST })} <b className="text-gold">{ctx.state.character.pvpRating}</b>
       </p>
       {!opps ? (
-        <p className="text-white/50">Procurando adversários…</p>
+        <p className="text-white/50">{t("Procurando adversários…")}</p>
       ) : opps.length === 0 ? (
-        <Panel className="p-8 text-center text-white/60">Nenhum adversário do seu nível ainda. Volte mais tarde!</Panel>
+        <Panel className="p-8 text-center text-white/60">{t("Nenhum adversário do seu nível ainda. Volte mais tarde!")}</Panel>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {opps.map((o, i) => (
@@ -93,10 +95,10 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
               className="panel flex items-center gap-3 p-3">
               <Avatar src={o.portrait} frame={o.frame} size={56} />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display">{o.name}{o.title && <span className="ml-1 text-xs text-amber-200/80">« {o.title} »</span>}</p>
-                <p className="text-xs text-white/50">Nv. {o.level} · {o.raceName} · ⭐ {o.rating} · {o.wins}V/{o.losses}D</p>
+                <p className="truncate font-display">{o.name}{o.title && <span className="ml-1 text-xs text-amber-200/80">« {t(o.title)} »</span>}</p>
+                <p className="text-xs text-white/50">{t("Nv.")} {o.level} · {t(o.raceName)} · ⭐ {o.rating} · {t("{w}V/{l}D", { w: o.wins, l: o.losses })}</p>
               </div>
-              <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || ctx.state.character.energy < PVP_ENERGY_COST} onClick={() => challenge(o)}>Desafiar</button>
+              <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || ctx.state.character.energy < PVP_ENERGY_COST} onClick={() => challenge(o)}>{t("Desafiar")}</button>
             </motion.div>
           ))}
         </div>

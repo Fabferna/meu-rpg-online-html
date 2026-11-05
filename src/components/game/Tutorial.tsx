@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
+import { useT } from "@/lib/i18n/client";
 
 // Preferência local do navegador (só conveniência; nada de jogo aqui).
 const KEY = "aethelgard:tutorial-done";
@@ -16,6 +17,7 @@ const STEPS = [
 ];
 
 export default function Tutorial({ name, onNavigate, onDone }: { name: string; onNavigate: (tab: "quests") => void; onDone?: () => void }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [i, setI] = useState(0);
 
@@ -48,17 +50,17 @@ export default function Tutorial({ name, onNavigate, onDone }: { name: string; o
               <div className="absolute inset-0 bg-gradient-to-t from-panel to-transparent" />
             </div>
             <div className="p-6">
-              <p className="text-xs text-white/50">Passo {i + 1} de {STEPS.length}</p>
-              <h2 id="tut-title" className="mt-1 font-display text-2xl text-gold">{i === 0 ? `Bem-vindo, ${name}!` : s.title}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/80">{s.text}</p>
+              <p className="text-xs text-white/50">{t("Passo {a} de {b}", { a: i + 1, b: STEPS.length })}</p>
+              <h2 id="tut-title" className="mt-1 font-display text-2xl text-gold">{i === 0 ? t("Bem-vindo, {nome}!", { nome: name }) : t(s.title)}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/80">{t(s.text)}</p>
               <div className="mt-5 flex gap-1.5">
                 {STEPS.map((_, k) => <span key={k} className={`h-1.5 flex-1 rounded-full ${k <= i ? "bg-gold" : "bg-white/10"}`} />)}
               </div>
               <div className="mt-6 flex items-center justify-between gap-3">
-                <button className="text-sm text-white/50 hover:text-white" onClick={() => finish(false)}>Pular</button>
+                <button className="text-sm text-white/50 hover:text-white" onClick={() => finish(false)}>{t("Pular")}</button>
                 <div className="flex gap-2">
-                  {i > 0 && <button className="rounded-lg bg-white/10 px-4 py-2 text-sm" onClick={() => setI(i - 1)}>Voltar</button>}
-                  <button className="btn-gold" onClick={() => (last ? finish(true) : setI(i + 1))}>{last ? "Ir para Missões" : "Próximo"}</button>
+                  {i > 0 && <button className="rounded-lg bg-white/10 px-4 py-2 text-sm" onClick={() => setI(i - 1)}>{t("Voltar")}</button>}
+                  <button className="btn-gold" onClick={() => (last ? finish(true) : setI(i + 1))}>{last ? t("Ir para Missões") : t("Próximo")}</button>
                 </div>
               </div>
             </div>
