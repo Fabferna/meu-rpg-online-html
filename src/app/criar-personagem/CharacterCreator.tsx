@@ -124,9 +124,9 @@ function Card(props: { selected: boolean; onClick: () => void; image: string; ti
     <button
       onClick={props.onClick}
       type="button" aria-pressed={props.selected}
-      className={`panel overflow-hidden text-left transition hover:-translate-y-1 ${props.selected ? "ring-2 ring-gold" : ""}`}
+      className={`panel flex flex-col justify-start overflow-hidden text-left transition hover:-translate-y-1 ${props.selected ? "ring-2 ring-gold" : ""}`}
     >
-      <div className={`relative ${props.tall ? "aspect-[3/4]" : "aspect-video"}`}>
+      <div className={`relative w-full shrink-0 ${props.tall ? "aspect-[3/4]" : "aspect-video"}`}>
         <Image src={props.image} alt="" fill sizes="300px" className="object-cover" />
         {props.selected && <span className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-gold font-bold text-ink shadow-lg">✓</span>}
       </div>
