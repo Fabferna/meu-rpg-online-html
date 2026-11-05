@@ -9,6 +9,8 @@ import { Bar, Panel } from "./ui";
 import Avatar from "./Avatar";
 import { play } from "./sfx";
 import ChatBox from "./ChatBox";
+import GuildBoss from "./GuildBoss";
+import GuildWar from "./GuildWar";
 
 type Member = { name: string; level: number; role: GuildRole; contributed: number; me: boolean; portrait: string; frame: string | null; active: boolean };
 type MyGuild = { id: string; name: string; tag: string; description: string; level: number; xp: number; treasury: number; limit: number; myRole: GuildRole; members: Member[] };
@@ -17,6 +19,7 @@ type ListItem = { id: string; name: string; tag: string; description: string; le
 export default function Guild({ ctx }: { ctx: GameCtx }) {
   const [mine, setMine] = useState<MyGuild | null | undefined>(undefined);
   const [busy, setBusy] = useState(false);
+  const [view, setView] = useState<"home" | "boss" | "war">("home");
 
   const load = useCallback(async () => {
     const r = await fetch("/api/guilds/mine", { cache: "no-store" });
@@ -43,7 +46,17 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
 
   const lead = mine.myRole === "leader";
   const staff = lead || mine.myRole === "officer";
+  const nav = (
+    <div className="mb-4 flex flex-wrap gap-2">
+      {([["home", `🏰 ${mine.name}`], ["boss", "🐉 Chefe da Guilda"], ["war", "⚔️ Guerra de Guildas"]] as const).map(([k, l]) => (
+        <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{l}</button>
+      ))}
+    </div>
+  );
+  if (view === "boss") return <>{nav}<GuildBoss ctx={ctx} /></>;
+  if (view === "war") return <>{nav}<GuildWar ctx={ctx} /></>;
   return (
+    <>{nav}
     <div className="grid gap-5 lg:grid-cols-[1fr_380px]">
       <div className="space-y-5">
         <Panel className="relative overflow-hidden p-6">
@@ -105,6 +118,7 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
         <ChatBox channel="guild" ctx={ctx} />
       </Panel>
     </div>
+    </>
   );
 }
 

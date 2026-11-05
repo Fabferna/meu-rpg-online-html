@@ -5,7 +5,7 @@ import type { GameCtx } from "./GameApp";
 import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
 import { post } from "./api";
 
-export type ChatMsg = { id: number; channel: string; name: string; tag: string | null; title: string | null; frame: string | null; body: string; created_at: string };
+export type ChatMsg = { id: number; channel: string; name: string; tag: string | null; title: string | null; frame: string | null; body: string; created_at: string; hidden?: boolean };
 
 const realtimeEnabled = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -15,6 +15,8 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [live, setLive] = useState(false);
+  const [reporting, setReporting] = useState<number | null>(null);
+  const [reported, setReported] = useState<Set<number>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
   const lastId = useRef(0);
   const guildId = ctx.state.guild?.id;
@@ -82,6 +84,18 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
     }
   }
 
+  async function report(id: number, reason: string) {
+    setReporting(null);
+    try {
+      const r = await post<{ hidden: boolean }>("/api/chat/report", { messageId: id, reason });
+      setReported((s) => new Set(s).add(id));
+      if (r.hidden) setMsgs((cur) => cur.filter((m) => m.id !== id));
+      ctx.toast("Denúncia enviada. Obrigado por ajudar a manter o chat saudável!");
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    }
+  }
+
   if (channel === "guild" && !guildId) return <p className="p-4 text-sm text-white/60">Entre em uma guilda para usar este chat.</p>;
 
   return (
@@ -92,14 +106,26 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
           const mine = m.name === ctx.state.character.name;
           const title = m.title ? COSMETIC_BY_ID[m.title]?.name : null;
           return (
-            <div key={m.id} className={`rounded-lg px-3 py-1.5 text-sm ${mine ? "bg-gold/10" : "bg-black/30"}`}>
+            <div key={m.id} className={`group relative rounded-lg px-3 py-1.5 text-sm ${mine ? "bg-gold/10" : "bg-black/30"} ${m.hidden ? "opacity-50" : ""}`}>
+              {!mine && !reported.has(m.id) && (
+                <button onClick={() => setReporting(reporting === m.id ? null : m.id)} title="Denunciar mensagem" aria-label="Denunciar mensagem"
+                  className="absolute right-1.5 top-1 rounded px-1 text-xs text-white/30 opacity-60 hover:bg-white/10 hover:text-red-300 group-hover:opacity-100">⚑</button>
+              )}
               <p className="text-[11px] text-white/50">
                 {m.tag && <span className="mr-1 rounded bg-white/10 px-1 font-semibold text-gold">[{m.tag}]</span>}
                 <b className={mine ? "text-gold" : "text-white/90"}>{m.name}</b>
                 {title && <span className="ml-1 text-amber-200/70">« {title} »</span>}
                 <span className="ml-1">· {new Date(m.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
               </p>
-              <p className="break-words">{m.body}</p>
+              <p className="break-words pr-5">{m.body}{m.hidden && <span className="ml-1 text-[10px] text-red-300">(oculta por denúncias)</span>}</p>
+              {reporting === m.id && (
+                <div className="mt-1.5 flex flex-wrap gap-1 text-[11px]">
+                  <span className="text-white/50">Motivo:</span>
+                  {(["ofensa", "spam", "golpe", "outro"] as const).map((r) => (
+                    <button key={r} onClick={() => report(m.id, r)} className="rounded bg-red-900/50 px-2 py-0.5 capitalize hover:bg-red-800/70">{r}</button>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}

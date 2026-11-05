@@ -60,6 +60,15 @@ export function installDemoFetch() {
       { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, pvp_rating: 1048, pvp_wins: 5, pvp_losses: 2, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },
       { pos: 3, name: "Gromak", raceName: "Gronar", level: 5, pvp_rating: 1010, pvp_wins: 4, pvp_losses: 4, portrait: "/assets/retratodegronar.webp", frame: null, title: null },
     ] });
+    if (url === "/api/guild-boss") return json({ guild: true, attacksLeft: 2, previous: null, current: {
+      week: "", boss: { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao.webp", lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
+      hp: 9420, maxHp: 20000, defeated: false, myDamage: 3120, claimed: false, isTop: true,
+      ranking: [{ pos: 1, name: "Kaelen", damage: 3120, attacks: 4, me: true }, { pos: 2, name: "Lyra", damage: 2980, attacks: 4, me: false },
+        { pos: 3, name: "Thorin", damage: 2650, attacks: 3, me: false }, { pos: 4, name: "Mirelle", damage: 1830, attacks: 2, me: false }] } });
+    if (url === "/api/guild-war") return json({ endsInSec: 3 * 86400 + 4000, claimable: { pos: 2, gems: 20, gold: 600 },
+      mine: { pos: 2, name: "Ordem da Chama", tag: "ODC", level: 3, score: 412, mine: true },
+      rows: [{ pos: 1, name: "Lâminas do Deserto", tag: "LDD", level: 5, score: 688, mine: false }, { pos: 2, name: "Ordem da Chama", tag: "ODC", level: 3, score: 412, mine: true },
+        { pos: 3, name: "Filhos da Montanha", tag: "FDM", level: 2, score: 230, mine: false }] });
     if (url.startsWith("/api/guilds/mine")) return json({ guild: {
       id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: 20, myRole: "leader",
       members: [

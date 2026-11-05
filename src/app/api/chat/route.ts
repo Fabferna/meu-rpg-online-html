@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   const channel = url.searchParams.get("channel") === "guild" ? "guild" : "global";
   const after = Number(url.searchParams.get("after") ?? 0) || 0;
 
-  let q = supabase.from("chat_messages").select("id, channel, name, tag, title, frame, body, created_at").order("id", { ascending: false }).limit(50);
+  let q = supabase.from("chat_messages").select("id, channel, name, tag, title, frame, body, created_at, hidden").order("id", { ascending: false }).limit(50);
   if (channel === "global") q = q.eq("channel", "global");
   else q = q.like("channel", "guild:%"); // RLS filtra para a guilda do jogador
   if (after) q = q.gt("id", after);

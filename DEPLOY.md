@@ -52,6 +52,7 @@ Guia em duas partes:
    7. `supabase/migrations/0007_daily_login_streak.sql`
    8. `supabase/migrations/0008_referrals.sql`
    9. `supabase/migrations/0009_guilds_chat.sql`
+   10. `supabase/migrations/0010_guild_boss_war_moderation.sql`
 
    Cada um deve terminar com `Success. No rows returned`.
 5. **Chat em tempo real:** em **Database → Publications → supabase_realtime**, confira se a tabela `chat_messages` está marcada (a migração 0009 já faz isso; sem Realtime o chat continua funcionando, atualizando a cada poucos segundos).
@@ -62,6 +63,14 @@ Guia em duas partes:
    - `service_role` / `secret` → `SUPABASE_SERVICE_ROLE_KEY` ⚠️ **nunca** cole essa em lugar público.
 
 > ⚠️ **Plano Free pausa o projeto após 7 dias sem acesso.** Se pausar, entre no painel e clique em *Restore*. Com jogadores ativos isso não acontece.
+
+### Tornar-se administrador (moderação do chat)
+Depois de criar seu herói no jogo, rode no **SQL Editor** (troque o nome):
+```sql
+update public.profiles set is_admin = true
+where id = (select user_id from public.characters where name = 'SeuHeroi');
+```
+O painel fica em `/admin` (para os demais jogadores essa página não existe).
 
 ## A.2 Configurar o login
 
@@ -310,7 +319,7 @@ Para quem prefere um custo fixo (ex.: Hetzner/Contabo ~€5/mês):
 
 ## ✅ Checklist de lançamento
 
-- [ ] Migrações 0001–0009 aplicadas no Supabase de produção
+- [ ] Migrações 0001–0010 aplicadas no Supabase de produção
 - [ ] Variáveis de ambiente na Vercel (sem `PAYMENTS_DEV`)
 - [ ] Login por e-mail, Google e Facebook testados
 - [ ] Criar herói → missão → caçada → PVP → loja funcionando

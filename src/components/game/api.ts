@@ -23,6 +23,8 @@ export const ERROR_TEXT: Record<string, string> = {
   no_permission: "Você não tem permissão para isso.",
   invalid_name: "Nome inválido.",
   chat_links: "Links não são permitidos no chat.",
+  boss_defeated: "O chefe já foi derrotado nesta semana!",
+  muted: "Você está silenciado no chat por um tempo.",
   demo: "Modo demonstração: crie uma conta para jogar de verdade!",
   insufficient_funds: "Saldo insuficiente.",
   energy_full: "Sua energia já está cheia.",

@@ -215,3 +215,15 @@ export function eloDelta(winner: number, loser: number, k = 32) {
   const expected = 1 / (1 + 10 ** ((loser - winner) / 400));
   return Math.max(1, Math.round(k * (1 - expected)));
 }
+
+/** Chefe de guilda: N rodadas de golpes (sem contra-ataque). A cada 3ª rodada, habilidade. */
+export function raidDamage(p: Combatant, bossDef: number, bossAgility: number, rounds = 6) {
+  const boss: Combatant = { name: "boss", hp: 1, maxHp: 1, atk: [0, 0], magic: [0, 0], def: bossDef, agility: bossAgility };
+  const hits: { dmg: number; crit: boolean; miss: boolean; skill: boolean }[] = [];
+  for (let i = 1; i <= rounds; i++) {
+    const skill = i % 3 === 0;
+    const r = strike(p, boss, skill ? "skill" : "attack", false);
+    hits.push({ ...r, skill });
+  }
+  return { total: hits.reduce((a, h) => a + h.dmg, 0), hits };
+}

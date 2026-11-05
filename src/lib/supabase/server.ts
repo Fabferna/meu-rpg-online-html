@@ -21,6 +21,10 @@ export async function createClient() {
 
 /** Retorna o usuário autenticado validando o JWT no Supabase (não confia só no cookie). */
 export async function getUser() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    // Sem Supabase configurado (ex.: preview só com a demo): ninguém está logado.
+    return { supabase: null as unknown as Awaited<ReturnType<typeof createClient>>, user: null };
+  }
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   return { supabase, user: error ? null : data.user };
