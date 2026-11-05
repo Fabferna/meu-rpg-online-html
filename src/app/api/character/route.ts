@@ -71,6 +71,7 @@ export async function POST(request: Request) {
   } as never);
 
   if (error) {
+    if (error.message.includes("no_slot")) return jsonError(403, "no_slot");
     if (error.code === "23505") {
       const msg = error.message.includes("user_id") ? "already_has_character" : "name_taken";
       return jsonError(409, msg);

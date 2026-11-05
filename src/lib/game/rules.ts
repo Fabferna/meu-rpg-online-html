@@ -55,3 +55,8 @@ export const PVP_ENERGY_COST = 8;
 /** Resetar/excluir o herói: a 1ª vez de cada é grátis; depois custa ouro. */
 export const RESET_COST = 500;
 export const DELETE_COST = 500;
+
+/** Heróis por conta: 2 grátis; espaços extras com gemas. */
+export const FREE_CHAR_SLOTS = 2;
+export const MAX_CHAR_SLOTS = 5;
+export const CHAR_SLOT_PRICE = 200;

@@ -48,7 +48,7 @@ export default function HeroManage({ ctx }: { ctx: GameCtx }) {
           <div className="mt-3 space-y-2 rounded-lg bg-black/40 p-3">
             <p>{open === "reset"
               ? t("Resetar: {x} volta ao nível 1, com atributos, habilidades, história e itens zerados.", { x: name })
-              : t("Excluir: {x} é apagado e você poderá criar um herói novo (outro nome e raça).", { x: name })}</p>
+              : t("Excluir: {x} é apagado e o espaço fica livre para um herói novo. Seus outros heróis não são afetados.", { x: name })}</p>
             <p className="text-white/60">{t("Você mantém: ouro, gemas, cosméticos, pets e passe de temporada.")}</p>
             <p className="text-gold">{costs ? (cost ? t("Custo: 🪙 {n}", { n: cost }) : t("Grátis (primeira vez)")) : t("Carregando…")}</p>
             <label className="block">
