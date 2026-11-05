@@ -164,7 +164,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           <Bar value={c.hp} max={c.maxHp} color="bg-life" />
           <Bar value={c.energy} max={c.maxEnergy} color="bg-energy" />
         </div>
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex w-full flex-wrap items-center gap-2 text-sm sm:w-auto sm:gap-3">
           {login && (
             <button onClick={() => setLoginOpen(true)} title={t("Recompensa diária")}
               className={`relative rounded-md px-2 py-0.5 ${login.claimedToday ? "bg-white/5" : "bg-gold/20 ring-1 ring-gold animate-pulse"}`}>
