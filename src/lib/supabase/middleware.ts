@@ -5,6 +5,8 @@ const PROTECTED = ["/jogo", "/criar-personagem"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
+  // Sem Supabase configurado (ex.: preview sem variáveis): só a demo e a landing funcionam.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return response;
 
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {

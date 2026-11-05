@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -20,12 +20,14 @@ export default function LoginForm() {
 
   const rawNext = params.get("next") ?? "";
   const next = /^\/(?![/\\])/.test(rawNext) ? rawNext : "/jogo"; // evita open-redirect
-  const supabase = createClient();
+  const configured = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = useMemo(() => (configured ? createClient() : null), [configured]);
   const redirectTo = () =>
     `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!supabase) return;
     setBusy(true);
     setMsg(null);
     try {
@@ -48,6 +50,7 @@ export default function LoginForm() {
   }
 
   async function oauth(provider: "google" | "facebook") {
+    if (!supabase) return;
     setBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: redirectTo() } });
     if (error) {
@@ -72,6 +75,11 @@ export default function LoginForm() {
         ))}
       </div>
 
+      {!configured && (
+        <p className="mt-4 rounded-md bg-amber-500/15 px-3 py-2 text-sm text-amber-200">
+          O login ainda não está ativo neste servidor. Enquanto isso, <Link href="/demo" className="underline">veja a demonstração</Link>.
+        </p>
+      )}
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <label className="block text-sm">
           <span className="mb-1 block text-white/70">E-mail</span>

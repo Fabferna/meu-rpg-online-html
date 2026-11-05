@@ -52,7 +52,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
   return (
     <div className="grid gap-5 md:grid-cols-[320px_1fr]">
       <Panel className="p-5">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-gold/40">
+        <div className="relative mx-auto aspect-[3/4] w-full max-w-60 overflow-hidden rounded-lg ring-2 ring-gold/40 md:max-w-none">
           <Image src={c.portrait} alt={c.name} fill sizes="320px" className="object-cover" priority />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4">
             <h1 className="font-display text-2xl">{c.name}</h1>
