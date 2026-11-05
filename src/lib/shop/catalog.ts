@@ -96,6 +96,8 @@ export const COSMETICS: Cosmetic[] = [
   { id: "skin_gronar_escarlate", kind: "skin", name: "Chefe de Guerra Escarlate", rarity: "epic", race: "gronar", price: { currency: "gems", amount: 300 }, image: "/assets/skins/gronar_escarlate_male.webp" },
   { id: "skin_aetheliano_andarilho_f", kind: "skin", name: "Andarilha Astral", rarity: "rare", race: "aetheliano", gender: "female", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/aetheliano_andarilho_female.webp" },
   { id: "skin_aetheliano_andarilho_m", kind: "skin", name: "Andarilho Astral", rarity: "rare", race: "aetheliano", gender: "male", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/aetheliano_andarilho_male.webp" },
+  { id: "skin_aetheliano_oraculo_f", kind: "skin", name: "Oráculo do Éter", rarity: "epic", race: "aetheliano", gender: "female", price: { currency: "gems", amount: 300 }, image: "/assets/skins/aetheliano_oraculo_female.webp" },
+  { id: "skin_aetheliano_oraculo_m", kind: "skin", name: "Oráculo do Éter", rarity: "epic", race: "aetheliano", gender: "male", price: { currency: "gems", amount: 300 }, image: "/assets/skins/aetheliano_oraculo_male.webp" },
   { id: "skin_vorlag", kind: "skin", name: "Lorde Vorlag Sombrio", rarity: "legendary", image: "/assets/lord_vorlag_sombrio.webp" },
 ];
 export const COSMETIC_BY_ID = Object.fromEntries(COSMETICS.map((c) => [c.id, c]));
