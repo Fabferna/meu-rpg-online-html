@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aethelgard - Personagens</title>
+        <meta name="description" content="Conheça os heróis, vilões e figuras notáveis que habitam o mundo de Aethelgard e suas incríveis habilidades.">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+        <link rel="stylesheet" href="css/header_footer.css">
+        <link rel="stylesheet" href="css/personagens.css">
+
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <header>
+            <div class="container header-container">
+                <h1 class="site-title"><a href="index.html">Aethelgard</a></h1>
+                <nav class="main-menu" aria-label="Navegação Principal">
+                    <button class="menu-toggle" aria-expanded="false" aria-controls="menu-list">
+                        <span class="sr-only">Abrir Menu</span>
+                        ☰
+                    </button>
+                    <ul id="menu-list">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="mundo.html">Mundo</a></li>
+                        <li><a href="personagens.html" class="active">Personagens</a></li>
+                        <li><a href="racas.html">Raças</a></li>
+                        <li><a href="equipamentos.html">Equipamentos</a></li>
+                        <li><a href="habilidades.html">Habilidades</a></li>
+                        <li><a href="logar.html" class="login-link">Logar</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <section class="characters-hero">
+                <div class="container">
+                    <h2>Protagonistas de Aethelgard</h2>
+                    <p>Das lendas que inspiram canções aos terrores que assombram pesadelos, conheça as figuras que tecem o destino deste mundo.</p>
+                </div>
+            </section>
+
+            <section class="characters-gallery">
+                <div class="container">
+                    <h3>Figuras Notáveis</h3>
+                    <div class="character-grid">
+
+                        <article class="character-card hero-card">
+                            <div class="character-image-container">
+                                <img src="../public/assets/kaelen_guardiao_da_chama.webp" alt="Retrato de Kaelen, o Guardião da Chama Escondida, empunhando sua espada brilhante." class="character-image" id="img-kaelen-card">
+                            </div>
+                            <div class="character-info">
+                                <h4 class="character-name">Kaelen</h4>
+                                <p class="character-title">O Guardião da Chama Escondida</p>
+                                <p class="character-bio">Um valente guerreiro que carrega a centelha da Chama Primordial, Kaelen jurou defender Aethelgard das sombras que ameaçam consumi-la. Sua coragem é tão ardente quanto o fogo que ele comanda.</p>
+                                <h5>Habilidades Principais:</h5>
+                                <ul class="character-abilities">
+                                    <li><span class="ability-name">Golpe Solar Incandescente:</span> Cega inimigos com luz pura.</li>
+                                    <li><span class="ability-name">Barreira de Cinzas Protetora:</span> Repele magias sombrias.</li>
+                                    <li><span class="ability-name">Lâmina Consagrada:</span> Ataques imbuidos com poder sagrado.</li>
+                                </ul>
+                                <a href="javascript:void(0);" class="btn-character-details" data-modal-id="kaelen-profile" aria-haspopup="dialog">Ver Detalhes &raquo;</a>
+                            </div>
+                        </article>
+
+                        <article class="character-card villain-card">
+                            <div class="character-image-container">
+                                <img src="../public/assets/lord_vorlag_sombrio.webp" alt="Lord Vorlag, Mestre das Sombras, envolto em energia escura e com olhar malévolo." class="character-image" id="img-vorlag-card">
+                            </div>
+                            <div class="character-info">
+                                <h4 class="character-name">Lord Vorlag</h4>
+                                <p class="character-title">O Mestre das Sombras Corrompidas</p>
+                                <p class="character-bio">Um feiticeiro ancestral caído em desgraça, Vorlag busca mergulhar Aethelgard em um crepúsculo eterno. Seu poder sombrio é vasto, e suas legiões incontáveis.</p>
+                                <h5>Habilidades Principais:</h5>
+                                <ul class="character-abilities">
+                                     <li><span class="ability-name">Toque Necrótico Congelante</span></li>
+                                    <li><span class="ability-name">Conjuração de Abominações</span></li>
+                                    <li><span class="ability-name">Aura de Desespero</span></li>
+                                </ul>
+                                <a href="javascript:void(0);" class="btn-character-details" data-modal-id="vorlag-profile" aria-haspopup="dialog">Ver Detalhes &raquo;</a>
+                            </div>
+                        </article>
+
+                        <article class="character-card hero-support-card">
+                            <div class="character-image-container">
+                                <img src="../public/assets/lyra_a_sacerdotisa_da_lua.webp" alt="Sacerdotisa Lyra, com vestes prateadas, segurando um cajado lunar." class="character-image" id="img-lyra-card">
+                            </div>
+                            <div class="character-info">
+                                <h4 class="character-name">Lyra</h4>
+                                <p class="character-title">A Sacerdotisa da Lua Argêntea</p>
+                                <p class="character-bio">Vinda dos templos ocultos de Sylvandell, Lyra é uma curandeira e vidente que canaliza os poderes serenos e misteriosos da lua. Sua sabedoria e compaixão são faróis de esperança.</p>
+                                <h5>Habilidades Principais:</h5>
+                                <ul class="character-abilities">
+                                    <li><span class="ability-name">Bênção Lunar Restauradora</span></li>
+                                    <li><span class="ability-name">Flecha de Prata Purificadora</span></li>
+                                    <li><span class="ability-name">Visão da Penumbra Arcana</span></li>
+                                </ul>
+                                <a href="javascript:void(0);" class="btn-character-details" data-modal-id="lyra-profile" aria-haspopup="dialog">Ver Detalhes &raquo;</a>
+                            </div>
+                        </article>
+
+                        <article class="character-card neutral-card">
+                            <div class="character-image-container">
+                                <img src="../public/assets/roric_corvo__blackwood.webp" alt="Roric Blackwood, o mercenário, com capuz e adagas, olhar astuto." class="character-image" id="img-roric-card">
+                            </div>
+                            <div class="character-info">
+                                <h4 class="character-name">Roric "Corvo" Blackwood</h4>
+                                <p class="character-title">O Mercenário Astuto</p>
+                                <p class="character-bio">Com um passado envolto em mistério e lealdade apenas ao maior lance, Roric é um mestre da furtividade e do combate com adagas. Suas habilidades são valiosas para quem pode pagar seu preço.</p>
+                                <h5>Habilidades Principais:</h5>
+                                <ul class="character-abilities">
+                                    <li><span class="ability-name">Ataque Furtivo Mortal</span></li>
+                                    <li><span class="ability-name">Manto das Sombras Evanescente</span></li>
+                                    <li><span class="ability-name">Adagas Envenenadas (Peçonha Sutil)</span></li>
+                                </ul>
+                                <a href="javascript:void(0);" class="btn-character-details" data-modal-id="roric-profile" aria-haspopup="dialog">Ver Detalhes &raquo;</a>
+                            </div>
+                        </article>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>&copy; <span id="current-year-footer-char">2024</span>-2025 Aethelgard. Todos os direitos reservados.</p>
+                <p>Criado com a magia da colaboração.</p>
+            </div>
+        </footer>
+        
+        <div id="info-modal-overlay" class="modal-overlay" style="display: none;" aria-hidden="true"></div>
+        <div id="info-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title-content" tabindex="-1">
+            <div class="modal-content-wrapper">
+                <button id="modal-close-btn" class="modal-close-btn" aria-label="Fechar Detalhes">&times;</button>
+                <div class="modal-header-image-container">
+                    <img src="" alt="Imagem do Personagem" id="modal-character-hero-image" class="modal-character-hero-image" style="display:none;">
+                </div>
+                <h3 id="modal-title-content" class="modal-title"></h3>
+                <p id="modal-character-epithet" class="modal-character-epithet"></p>
+                <div id="modal-details-content" class="modal-details">
+                    </div>
+            </div>
+        </div>
+
+        <script>
+            // Script básico para toggle do menu mobile (EXISTENTE NO SEU HTML)
+            const menuToggle = document.querySelector('.menu-toggle');
+            const menuList = document.querySelector('#menu-list');
+
+            if (menuToggle && menuList) {
+                menuToggle.addEventListener('click', () => {
+                    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
+                    menuToggle.setAttribute('aria-expanded', !isExpanded);
+                    menuList.classList.toggle('active');
+                    const icon = menuToggle.querySelector('i') || menuToggle; // Lida com texto ou ícone
+                    icon.innerHTML = !isExpanded ? '&times;' : '☰';
+                });
+            }
+
+            // Animação de fade-in para os cards de personagem (EXISTENTE NO SEU HTML)
+            const characterCards = document.querySelectorAll('.character-card');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // observer.unobserve(entry.target); // Descomente para animar apenas uma vez
+                    } else {
+                        // entry.target.classList.remove('visible'); // Descomente para reanimar ao sair e entrar
+                    }
+                });
+            }, observerOptions);
+
+            characterCards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // Atualiza o ano no rodapé (se não tiver um script compartilhado)
+            const currentYearSpanChar = document.getElementById('current-year-footer-char');
+            if (currentYearSpanChar) { // Adicionado span para o ano e ID
+                currentYearSpanChar.textContent = new Date().getFullYear();
+            }
+        </script>
+        <script src="script/personagens.js"></script>
+    </body>
+</html>

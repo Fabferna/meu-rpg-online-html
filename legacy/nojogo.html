@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aethelgard - Em Jogo</title>
+        <meta name="description" content="Interface principal do jogo Aethelgard.">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+        <link rel="stylesheet" href="css/no_jogo_interface.css">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <div id="game-interface-container">
+            <header id="game-header">
+                <div class="player-info-area">
+                    <div class="player-portrait">
+                        <img src="https://via.placeholder.com/70x70/c89b3c/1a120b?text=P" alt="Retrato do Personagem" id="player-char-img">
+                    </div>
+                    <div class="player-details">
+                        <span class="player-name" id="player-char-name">NomeDoHerói</span>
+                        <div class="player-currency">
+                            <i class="fas fa-coins"></i>
+                            <span id="player-gold">Ouro: 500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="player-stats-area">
+                    <div class="stat-bar-group">
+                        <label for="hp-bar">HP:</label>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar" id="hp-bar" style="width: 85%;"></div>
+                        </div>
+                        <span class="stat-value" id="hp-value">85/100</span>
+                    </div>
+                    <div class="stat-bar-group">
+                        <label for="mana-bar">Mana:</label>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar" id="mana-bar" style="width: 60%;"></div>
+                        </div>
+                        <span class="stat-value" id="mana-value">60/100</span>
+                    </div>
+                    <div class="stat-bar-group">
+                        <label for="energy-bar">Energia:</label>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar" id="energy-bar" style="width: 90%;"></div>
+                        </div>
+                        <span class="stat-value" id="energy-value">90/100</span>
+                    </div>
+                </div>
+
+                <nav class="game-navigation" aria-label="Navegação Principal do Jogo">
+                    <button class="game-nav-toggle" aria-expanded="false" aria-controls="game-main-menu-list">
+                        <i class="fas fa-bars"></i> <span class="sr-only">Menu</span>
+                    </button>
+                    <ul id="game-main-menu-list">
+                        <li><a href="#game-dashboard" class="nav-item">Home</a></li>
+                        <li class="has-submenu">
+                            <a href="#" class="nav-item" aria-haspopup="true" aria-expanded="false">Aventuras <i class="fas fa-caret-down"></i></a>
+                            <ul class="submenu">
+                                <li><a href="#missao-principal">Missão Principal</a></li>
+                                <li><a href="#coliseu">Coliseu</a></li>
+                                <li><a href="#mapa">Mapa</a></li>
+                                <li><a href="#dungeon">Dungeon</a></li>
+                                <li><a href="#treinar-atributos">Treinar Atributos</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="index.html" class="nav-item" title="Sair do Jogo"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+            <main id="game-content-area">
+
+                <!-- 👤 Painel de status do personagem -->
+                <section id="hero-status-panel">
+                    <div class="hero-main-info">
+                        <div class="hero-avatar-placeholder"></div>
+
+                        <div class="hero-text-info">
+                        <h2 id="hero-name">Herói Desconhecido</h2>
+                        <p id="hero-race-region">Raça • Região</p>
+                        <p id="hero-level">Nível 1</p>
+                        <p id="hero-xp">XP: 0</p>
+                        </div>
+
+                        <div class="hero-gold">
+                        <span>🪙</span>
+                        <span id="hero-gold-amount">0</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-bars">
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">HP</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill hp" id="hero-hp-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-hp-text"></span>
+                        </div>
+
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">Mana</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill mana" id="hero-mana-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-mana-text"></span>
+                        </div>
+
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">Energia</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill energy" id="hero-energy-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-energy-text"></span>
+                        </div>
+
+                        <!-- Nova barra de XP -->
+                        <div class="hero-bar">
+                        <span class="hero-bar-label">XP</span>
+                        <div class="hero-bar-track">
+                            <div class="hero-bar-fill xp" id="hero-xp-bar"></div>
+                        </div>
+                        <span class="hero-bar-value" id="hero-xp-bar-text"></span>
+                        </div>
+                    </div>
+
+                    <div class="hero-attributes">
+                        <span>FOR: <strong id="hero-str"></strong></span>
+                        <span>AGI: <strong id="hero-agi"></strong></span>
+                        <span>INT: <strong id="hero-int"></strong></span>
+                        <span>VIT: <strong id="hero-vit"></strong></span>
+                    </div>
+
+                    <!-- Novo bloco: pontos de atributo -->
+                    <div class="hero-attribute-points">
+                        <span id="hero-attribute-points-text">
+                        Pontos de atributo disponíveis: 0
+                        </span>
+                        <div class="hero-attribute-buttons">
+                        <button type="button" class="attr-btn" data-attr="strength">+ FOR</button>
+                        <button type="button" class="attr-btn" data-attr="agility">+ AGI</button>
+                        <button type="button" class="attr-btn" data-attr="intellect">+ INT</button>
+                        <button type="button" class="attr-btn" data-attr="vitality">+ VIT</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="game-play-area">
+
+                    <!-- 🎲 Engine do RPG de texto -->
+                    <section id="text-rpg-engine">
+
+                        <div id="rpg-scene-text" class="rpg-box">
+                        <!-- Texto da cena aparecerá aqui -->
+                        </div>
+
+                        <div id="rpg-choices" class="rpg-box">
+                        <!-- Botões de escolha aparecerão aqui -->
+                        </div>
+
+                    </section>
+
+                    <!-- 📜 Log de Missões -->
+                    <aside id="quest-log">
+                        <h3>Missões</h3>
+
+                        <div id="active-quest">
+                        <p class="quest-empty">Você ainda não possui missões ativas.</p>
+                        </div>
+
+                        <div id="quest-messages"></div>
+
+                        <div id="completed-quests">
+                        <!-- Lista de missões concluídas será renderizada aqui -->
+                        </div>
+                    </aside>
+
+                </section>
+
+
+
+            </main>
+
+
+        </div>
+        
+        <script src="script/no_jogo_interface.js"></script>
+    </body>
+</html>

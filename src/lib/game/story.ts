@@ -1,0 +1,99 @@
+// História principal: 10 capítulos. Cada um termina numa luta única.
+export type Speaker = "lyra" | "kaelen" | "roric" | "vorlag" | "narrador";
+export const SPEAKERS: Record<Speaker, { name: string; portrait: string | null }> = {
+  lyra: { name: "Lyra, Sacerdotisa da Lua", portrait: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
+  kaelen: { name: "Kaelen, Guardião da Chama", portrait: "/assets/kaelen_guardiao_da_chama.webp" },
+  roric: { name: "Roric Corvo", portrait: "/assets/roric_corvo__blackwood.webp" },
+  vorlag: { name: "Lorde Vorlag", portrait: "/assets/lord_vorlag_sombrio.webp" },
+  narrador: { name: "", portrait: null },
+};
+
+export type Chapter = {
+  n: number; title: string; region: string; minLevel: number;
+  scenes: { who: Speaker; text: string }[];
+  victory: string;
+  enemy: string; // id de inimigo da história (enemies.ts, oculto da Caçada)
+  rewards: { xp: number; gold: number; gems: number; item?: string; cosmetic?: string };
+};
+
+// Use {heroi} para o nome do jogador.
+export const CHAPTERS: Chapter[] = [
+  { n: 1, title: "Sombras em Valerion", region: "valerion", minLevel: 1, enemy: "story_batedor",
+    scenes: [
+      { who: "narrador", text: "Os sinos de Valerion tocam fora de hora. Ao longe, uma névoa negra rasteja sobre as muralhas." },
+      { who: "kaelen", text: "Você é {heroi}? Chegou na hora certa. Criaturas de sombra atravessaram o portão leste esta noite." },
+      { who: "kaelen", text: "Uma delas comanda as outras. Encontre esse batedor antes que ele traga o resto da horda." },
+    ],
+    victory: "O batedor se desfaz em fumaça, deixando para trás um amuleto com um olho vazio gravado.",
+    rewards: { xp: 60, gold: 100, gems: 5 } },
+  { n: 2, title: "O Uivo na Estrada", region: "valerion", minLevel: 3, enemy: "story_alfa",
+    scenes: [
+      { who: "lyra", text: "Esse símbolo... o Olho Vazio. Um culto que eu acreditava extinto há cem anos." },
+      { who: "lyra", text: "Os lobos da estrada norte enlouqueceram na mesma noite em que as sombras surgiram. Não é coincidência." },
+      { who: "lyra", text: "Derrote o alfa da matilha, {heroi}. Depois, siga-me até Sylvandell: a floresta guarda respostas." },
+    ],
+    victory: "Com o alfa caído, os outros lobos fogem. A estrada para Sylvandell está livre.",
+    rewards: { xp: 150, gold: 200, gems: 5 } },
+  { n: 3, title: "Sussurros nas Ruínas", region: "sylvandell", minLevel: 5, enemy: "story_sacerdote",
+    scenes: [
+      { who: "narrador", text: "As árvores de Sylvandell são mais antigas que qualquer reino. Entre elas, ruínas cobertas de musgo brilham em azul." },
+      { who: "roric", text: "Ora, ora. Mais um herói atrás do culto? Eu os sigo há meses. Pago bem por informação — e informo de graça quando gosto de alguém." },
+      { who: "roric", text: "Um sacerdote do Olho Vazio realiza rituais nestas ruínas. Pare-o e eu conto o que sei." },
+    ],
+    victory: "Nas vestes do sacerdote, um mapa marca três pontos: Sylvandell, o Deserto Âmbar e as Agulhas Congeladas.",
+    rewards: { xp: 280, gold: 320, gems: 5 } },
+  { n: 4, title: "O Guardião Esquecido", region: "sylvandell", minLevel: 7, enemy: "story_guardiao",
+    scenes: [
+      { who: "lyra", text: "O primeiro ponto do mapa fica aqui, sob o grande carvalho. Há um selo antigo... e ele está rachado." },
+      { who: "lyra", text: "Um espírito guardião protegia o selo. O culto o corrompeu. Liberte-o, {heroi}, e o selo resistirá." },
+    ],
+    victory: "O espírito encontra paz. Antes de sumir, sussurra: \"O segundo selo queima sob as areias\".",
+    rewards: { xp: 450, gold: 450, gems: 5, item: "estandarte_inspirador" } },
+  { n: 5, title: "A Rainha das Areias", region: "deserto", minLevel: 10, enemy: "story_rainha",
+    scenes: [
+      { who: "roric", text: "O Deserto Âmbar. Já perdi duas caravanas aqui. O segundo selo fica numa cidade soterrada, guardada por algo grande." },
+      { who: "narrador", text: "A areia treme. Uma carapaça dourada emerge das dunas, maior que uma casa." },
+    ],
+    victory: "A Rainha Escorpião tomba. Sob ela, o segundo selo — ainda inteiro. Por enquanto.",
+    rewards: { xp: 700, gold: 650, gems: 10 } },
+  { n: 6, title: "O Ritual Interrompido", region: "deserto", minLevel: 13, enemy: "story_mestre",
+    scenes: [
+      { who: "kaelen", text: "Recebi sua mensagem e vim o mais rápido que pude. O Mestre dos Rituais está aqui, tentando quebrar o selo à força." },
+      { who: "vorlag", text: "(uma voz ecoa de lugar nenhum) Que adorável. Mais um peão tentando segurar a maré com as mãos." },
+      { who: "kaelen", text: "Essa voz... é Vorlag. Ele está vivo. Acabe com o ritual, {heroi}, eu seguro os acólitos!" },
+    ],
+    victory: "O ritual se desfaz. O Mestre, antes de cair, ri: \"O terceiro selo já está perdido nas montanhas\".",
+    rewards: { xp: 1000, gold: 900, gems: 5 } },
+  { n: 7, title: "O Colosso das Agulhas", region: "agulhas", minLevel: 16, enemy: "story_colosso",
+    scenes: [
+      { who: "narrador", text: "O vento das Agulhas Congeladas corta como lâmina. Nas forjas abandonadas dos anões, algo se move." },
+      { who: "roric", text: "Os anões selaram um colosso de gelo aqui, séculos atrás. O culto o acordou para destruir o último selo." },
+      { who: "roric", text: "Se ele cair, o caminho para Meria se abre. Para nós... e para Vorlag." },
+    ],
+    victory: "O colosso se parte em mil cristais. Mas o selo já foi rompido — e o mar ao sul começa a ferver.",
+    rewards: { xp: 1400, gold: 1200, gems: 5, item: "martelo_forja" } },
+  { n: 8, title: "O Arauto do Abismo", region: "agulhas", minLevel: 19, enemy: "story_arauto",
+    scenes: [
+      { who: "lyra", text: "Os três selos mantinham Meria no fundo do oceano. Agora o reino abissal está subindo." },
+      { who: "lyra", text: "Um arauto guarda a passagem. Derrote-o e entraremos em Meria antes que Vorlag complete o despertar." },
+    ],
+    victory: "O arauto afunda nas águas negras. Uma escadaria de coral se ergue do mar: o caminho para Meria.",
+    rewards: { xp: 1900, gold: 1500, gems: 5 } },
+  { n: 9, title: "O Trono de Vorlag", region: "meria", minLevel: 22, enemy: "story_vorlag",
+    scenes: [
+      { who: "vorlag", text: "{heroi}. Finalmente. Você destruiu meus servos, libertou espíritos, quebrou meus rituais..." },
+      { who: "vorlag", text: "...e mesmo assim abriu as portas de Meria para mim. Obrigado. Agora ajoelhe-se diante do novo rei." },
+      { who: "kaelen", text: "Não dê ouvidos! Lute, {heroi}! Nós estamos com você!" },
+    ],
+    victory: "Vorlag cai de joelhos. \"Tolo... eu era a única coisa que a mantinha dormindo.\" O chão de Meria começa a tremer.",
+    rewards: { xp: 2600, gold: 2000, gems: 10 } },
+  { n: 10, title: "Meria, a Serpente Primordial", region: "meria", minLevel: 25, enemy: "story_meria",
+    scenes: [
+      { who: "narrador", text: "Das profundezas surge Meria, a serpente que dá nome ao reino — a origem de toda a escuridão de Aethelgard." },
+      { who: "lyra", text: "Vorlag não queria governá-la. Queria contê-la. E nós o derrotamos..." },
+      { who: "roric", text: "Então cabe a nós terminar o serviço. {heroi}, todo o reino está olhando para você." },
+    ],
+    victory: "Meria se desfaz em luz. O céu de Aethelgard clareia pela primeira vez em um século. Seu nome será cantado por gerações.",
+    rewards: { xp: 4000, gold: 5000, gems: 30, cosmetic: "title_salvador" } },
+];
+export const CHAPTER_BY_N = Object.fromEntries(CHAPTERS.map((c) => [c.n, c]));
