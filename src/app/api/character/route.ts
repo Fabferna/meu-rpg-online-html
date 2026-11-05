@@ -32,6 +32,7 @@ const CreateSchema = z
     race: z.enum(RACE_IDS),
     region: z.enum(REGION_IDS),
     gender: z.enum(GENDERS),
+    ref: z.string().regex(/^[A-Za-zÀ-ÿ0-9_]{3,16}$/).optional(),
   })
   .strict(); // rejeita campos extras (ex.: alguém tentando mandar "gold": 99999)
 
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid_input", issues: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
-  const { name, race, region, gender } = parsed.data;
+  const { name, race, region, gender, ref } = parsed.data;
   const a = baseAttributes(race);
 
   const admin = createAdminClient();
@@ -78,5 +79,12 @@ export async function POST(request: Request) {
     return jsonError(500, "internal_error");
   }
 
-  return NextResponse.json({ ok: true }, { status: 201 });
+  // Convite: só aplica se quem convidou existe e não é o próprio jogador.
+  let referred = false;
+  if (ref) {
+    const r = await admin.rpc("apply_referral", { p_user: user.id, p_referrer_name: ref } as never);
+    referred = r.data === true;
+  }
+
+  return NextResponse.json({ ok: true, referred }, { status: 201 });
 }

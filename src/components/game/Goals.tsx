@@ -8,6 +8,7 @@ import { COSMETIC_BY_ID, secondsToUtcMidnight } from "@/lib/shop/catalog";
 import { fmtTime, post } from "./api";
 import { Bar, Panel } from "./ui";
 import { play } from "./sfx";
+import Invite from "./Invite";
 
 type GoalsState = {
   daily: (DailyGoal & { progress: number; claimed: boolean })[];
@@ -79,6 +80,7 @@ export default function Goals({ ctx, onCount }: { ctx: GameCtx; onCount?: (n: nu
             {g.bonus.claimed ? "✔ Feito" : "Resgatar"}
           </button>
         </motion.div>
+        <Invite ctx={ctx} />
       </section>
 
       <section className="space-y-3">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { GENDERS, RACES, REGIONS, type Gender, type RaceId, type RegionId } from "@/lib/game/data";
+import { REF_STORAGE_KEY, REFERRAL } from "@/lib/game/referrals";
 
 const ATTR_LABEL = { str: "FOR", dex: "DES", con: "CON", intel: "INT", wis: "SAB", cha: "CAR" } as const;
 
@@ -15,6 +16,9 @@ export default function CharacterCreator() {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ref] = useState<string | null>(() => {
+    try { return typeof window !== "undefined" ? localStorage.getItem(REF_STORAGE_KEY) : null; } catch { return null; }
+  });
 
   const ready = region && race && /^[A-Za-zÀ-ÿ0-9_]{3,16}$/.test(name);
 
@@ -25,9 +29,10 @@ export default function CharacterCreator() {
     const res = await fetch("/api/character", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, race, region, gender }),
+      body: JSON.stringify({ name, race, region, gender, ...(ref ? { ref } : {}) }),
     });
     if (res.ok) {
+      try { localStorage.removeItem(REF_STORAGE_KEY); } catch { /* ignora */ }
       router.replace("/jogo");
       router.refresh();
       return;
@@ -42,6 +47,11 @@ export default function CharacterCreator() {
 
   return (
     <div className="mt-8 space-y-10">
+      {ref && (
+        <p className="rounded-lg bg-gold/15 px-4 py-3 text-center text-sm">
+          🎁 Convite de <b>{ref}</b>: você começa com <b>🪙 {REFERRAL.welcomeGold}</b> de ouro extra!
+        </p>
+      )}
       <Step n={1} title="Região de origem">
         <div className="grid gap-4 sm:grid-cols-3">
           {Object.entries(REGIONS).map(([id, r]) => (

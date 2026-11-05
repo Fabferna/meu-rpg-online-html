@@ -59,6 +59,11 @@ export function installDemoFetch() {
       { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, pvp_rating: 1048, pvp_wins: 5, pvp_losses: 2, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },
       { pos: 3, name: "Gromak", raceName: "Gronar", level: 5, pvp_rating: 1010, pvp_wins: 4, pvp_losses: 4, portrait: "/assets/retratodegronar.webp", frame: null, title: null },
     ] });
+    if (url === "/api/referrals") return json({ code: "Kaelen", paid: 1, maxPaid: 10, invited: [
+      { idx: 0, name: "Thorin", level: 6, claimed: true, ready: true },
+      { idx: 1, name: "Mirelle", level: 5, claimed: false, ready: true },
+      { idx: 2, name: "Bran", level: 2, claimed: false, ready: false },
+    ] });
     if (url === "/api/goals") {
       const prog: Record<string, number> = { quests: 2, hunts: 3, arena: 1, energy: 60 };
       const stats: Record<string, number> = { level: 6, pve_wins: 23, pvp_wins: 5, quests_done: 14, bosses_slain: 0 };

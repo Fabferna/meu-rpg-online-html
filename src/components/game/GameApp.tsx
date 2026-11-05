@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { PlayerState } from "@/lib/game/state";
 import { fmtTime } from "./api";
@@ -16,6 +16,8 @@ import Goals from "./Goals";
 import Avatar from "./Avatar";
 import { post } from "./api";
 import Tutorial from "./Tutorial";
+import LevelUp from "./LevelUp";
+import InstallButton from "./InstallButton";
 import DailyLogin, { type LoginState } from "./DailyLogin";
 import { isMuted, play, setMuted } from "./sfx";
 import { useQuestAlerts } from "./notify";
@@ -51,6 +53,8 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   const [login, setLogin] = useState<LoginState | null>(null);
   const [tutorialDone, setTutorialDone] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [levelUp, setLevelUp] = useState<{ to: number; from: number } | null>(null);
+  const lastLevel = useRef(initial.character.level);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/state", { cache: "no-store" });
@@ -65,6 +69,16 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
     setToasts((t) => [...t, { id, text, kind }]);
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4000);
   }, []);
+
+  // Detecta subida de nível em qualquer lugar do jogo (missão, caçada, PVP, objetivos).
+  useEffect(() => {
+    const lv = state.character.level;
+    if (lv > lastLevel.current) {
+      const from = lastLevel.current;
+      setTimeout(() => { setLevelUp({ to: lv, from }); play("levelup"); }, 1200); // deixa o resultado da luta aparecer antes
+    }
+    lastLevel.current = lv;
+  }, [state.character.level]);
 
   // Estado do login diário; a janela abre sozinha depois do tutorial.
   useEffect(() => {
@@ -146,6 +160,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           <span title={`Energia · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
           <span title="Ouro">🪙 <b>{state.wallet.gold.toLocaleString("pt-BR")}</b></span>
           <button onClick={() => setTab("shop")} title="Gemas (premium) — comprar" className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString("pt-BR")}</b> <span className="text-sky-300">＋</span></button>
+          <InstallButton />
           <button onClick={() => { setMuted(!muted); setMutedState(!muted); if (muted) play("click"); }}
             title={muted ? "Ativar sons" : "Silenciar"} aria-label={muted ? "Ativar sons" : "Silenciar"}
             className="rounded-md border border-white/15 px-2 py-1 text-xs hover:bg-white/5">{muted ? "🔇" : "🔊"}</button>
@@ -187,6 +202,8 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         </AnimatePresence>
       </main>
 
+      <LevelUp level={levelUp?.to ?? null} from={levelUp?.from ?? 0} onClose={() => setLevelUp(null)}
+        onSpend={() => { setLevelUp(null); setTab("overview"); }} />
       <Tutorial name={c.name} onNavigate={setTab} onDone={() => setTutorialDone(true)} />
       {login && (
         <DailyLogin ctx={ctx} login={login} open={loginOpen} onClose={() => setLoginOpen(false)}

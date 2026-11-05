@@ -37,9 +37,8 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
     setBusy(true);
     try {
       const { rewards } = await post<{ rewards: { xp: number; gold: number; item: string | null; levelUps: number } }>("/api/quests/claim");
-      play(rewards.levelUps ? "levelup" : "coin");
+      play("coin");
       ctx.toast(`+${rewards.xp} XP · +${rewards.gold} 🪙${rewards.item ? " · 🎁 item!" : ""}`, "reward");
-      if (rewards.levelUps) ctx.toast(`⭐ SUBIU DE NÍVEL! +${rewards.levelUps * 3} pontos de atributo`, "reward");
       await ctx.refresh();
     } catch (e) {
       ctx.toast((e as Error).message, "error");

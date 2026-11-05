@@ -77,7 +77,6 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
         setTimeout(() => {
           setResult({ outcome: res.outcome as "won" | "lost", state: res.state });
           play(res.outcome === "won" ? "victory" : "defeat");
-          if (res.state.rewards?.levelUps) setTimeout(() => play("levelup"), 900);
         }, 600);
         await ctx.refresh();
       } else if (action === "potion") {
