@@ -31,17 +31,19 @@ export type PlayerState = {
   quest: { id: string; questId: string; startedAt: string; endsAt: string; rewards: { xp: number; gold: number; item: string | null } } | null;
   battle: { id: string; state: BattleState } | null;
   inventory: InventoryEntry[];
+  guild: { id: string; name: string; tag: string; level: number; role: "leader" | "officer" | "member" } | null;
   serverTime: string;
 };
 
 /** Estado completo do jogador, lido com o cliente do usuário (RLS). */
 export async function getPlayerState(supabase: SupabaseClient, userId: string): Promise<PlayerState | null> {
-  const [c, w, q, b, inv] = await Promise.all([
+  const [c, w, q, b, inv, gm] = await Promise.all([
     supabase.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     supabase.from("wallets").select("gold, gems").eq("user_id", userId).maybeSingle(),
     supabase.from("quest_runs").select("*").eq("user_id", userId).eq("status", "running").maybeSingle(),
     supabase.from("battles").select("id, state").eq("user_id", userId).eq("status", "active").maybeSingle(),
     supabase.from("inventory").select("id, item_id, qty, equipped, slot, items(name, kind, rarity, data)").eq("user_id", userId).order("acquired_at"),
+    supabase.from("guild_members").select("role, guilds(id, name, tag, level)").eq("user_id", userId).maybeSingle(),
   ]);
   for (const r of [c, w, q, b, inv]) if (r.error) throw r.error;
   const row = c.data;
@@ -70,6 +72,9 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       id: string; item_id: string; qty: number; equipped: boolean; slot: string | null;
       items: { name: string; kind: string; rarity: InventoryEntry["rarity"]; data: InventoryEntry["data"] };
     }[]).map((i) => ({ id: i.id, itemId: i.item_id, qty: i.qty, equipped: i.equipped, slot: i.slot, ...i.items })),
+    guild: gm.data?.guilds
+      ? { ...(gm.data.guilds as unknown as { id: string; name: string; tag: string; level: number }), role: gm.data.role as "leader" | "officer" | "member" }
+      : null,
     serverTime: new Date().toISOString(),
   };
 }

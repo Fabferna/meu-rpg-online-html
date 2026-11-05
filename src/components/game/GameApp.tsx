@@ -18,6 +18,8 @@ import { post } from "./api";
 import Tutorial from "./Tutorial";
 import LevelUp from "./LevelUp";
 import InstallButton from "./InstallButton";
+import Guild from "./Guild";
+import ChatDock from "./ChatDock";
 import DailyLogin, { type LoginState } from "./DailyLogin";
 import { isMuted, play, setMuted } from "./sfx";
 import { useQuestAlerts } from "./notify";
@@ -37,6 +39,7 @@ const TABS = [
   { id: "quests", label: "Missões", icon: "📜" },
   { id: "battle", label: "Caçada", icon: "⚔️" },
   { id: "arena", label: "Arena PVP", icon: "🏟️" },
+  { id: "guild", label: "Guilda", icon: "🏰" },
   { id: "inventory", label: "Inventário", icon: "🎒" },
   { id: "shop", label: "Loja", icon: "💎" },
   { id: "ranking", label: "Ranking", icon: "🏆" },
@@ -144,7 +147,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         <Avatar src={c.portrait} frame={c.frame} size={48} />
         <div className="min-w-0">
           <p className="truncate font-display leading-tight">{c.name}</p>
-          <p className="text-xs text-gold">Nv. {c.level}{c.title ? <span className="ml-1 text-amber-200/80">« {c.title} »</span> : null}</p>
+          <p className="text-xs text-gold">{state.guild && <span className="mr-1 rounded bg-white/10 px-1 font-semibold">[{state.guild.tag}]</span>}Nv. {c.level}{c.title ? <span className="ml-1 text-amber-200/80">« {c.title} »</span> : null}</p>
         </div>
         <div className="ml-auto hidden w-56 space-y-1 sm:block">
           <Bar value={c.hp} max={c.maxHp} color="bg-life" />
@@ -197,11 +200,13 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "inventory" && <Inventory ctx={ctx} />}
             {tab === "ranking" && <Ranking ctx={ctx} />}
             {tab === "shop" && <Shop ctx={ctx} />}
+            {tab === "guild" && <Guild ctx={ctx} />}
             {tab === "goals" && <Goals ctx={ctx} onCount={setGoalsReady} />}
           </motion.div>
         </AnimatePresence>
       </main>
 
+      <ChatDock ctx={ctx} />
       <LevelUp level={levelUp?.to ?? null} from={levelUp?.from ?? 0} onClose={() => setLevelUp(null)}
         onSpend={() => { setLevelUp(null); setTab("overview"); }} />
       <Tutorial name={c.name} onNavigate={setTab} onDone={() => setTutorialDone(true)} />

@@ -51,9 +51,11 @@ Guia em duas partes:
    6. `supabase/migrations/0006_weekly_ranking.sql`
    7. `supabase/migrations/0007_daily_login_streak.sql`
    8. `supabase/migrations/0008_referrals.sql`
+   9. `supabase/migrations/0009_guilds_chat.sql`
 
    Cada um deve terminar com `Success. No rows returned`.
-5. Confira em **Table Editor** que existem as tabelas `characters`, `wallets`, `ledger`, `battles`, `payments`…
+5. **Chat em tempo real:** em **Database → Publications → supabase_realtime**, confira se a tabela `chat_messages` está marcada (a migração 0009 já faz isso; sem Realtime o chat continua funcionando, atualizando a cada poucos segundos).
+6. Confira em **Table Editor** que existem as tabelas `characters`, `wallets`, `ledger`, `battles`, `payments`…
 6. Pegue as chaves em **Project Settings → API** (ou **API Keys**):
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
    - `anon` / `publishable` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -308,7 +310,7 @@ Para quem prefere um custo fixo (ex.: Hetzner/Contabo ~€5/mês):
 
 ## ✅ Checklist de lançamento
 
-- [ ] Migrações 0001–0008 aplicadas no Supabase de produção
+- [ ] Migrações 0001–0009 aplicadas no Supabase de produção
 - [ ] Variáveis de ambiente na Vercel (sem `PAYMENTS_DEV`)
 - [ ] Login por e-mail, Google e Facebook testados
 - [ ] Criar herói → missão → caçada → PVP → loja funcionando

@@ -23,6 +23,7 @@ export function demoState(): PlayerState {
       { id: "i4", itemId: "amuleto_serpente", qty: 1, equipped: false, slot: "accessory", name: "Amuleto da Serpente Sinistra", kind: "accessory", rarity: "legendary", data: { atk: 4, def: 3, intel: 3, image: "/assets/amuleto_da_serpente_sinistra.webp" } },
       { id: "i5", itemId: "pocao_vida", qty: 6, equipped: false, slot: null, name: "Poção de Vida", kind: "consumable", rarity: "common", data: { heal: 60, image: "/assets/shop/potion_hp.webp" } },
     ],
+    guild: { id: "g1", name: "Ordem da Chama", tag: "ODC", level: 3, role: "leader" },
     serverTime: new Date().toISOString(),
   };
 }
@@ -59,6 +60,34 @@ export function installDemoFetch() {
       { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, pvp_rating: 1048, pvp_wins: 5, pvp_losses: 2, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },
       { pos: 3, name: "Gromak", raceName: "Gronar", level: 5, pvp_rating: 1010, pvp_wins: 4, pvp_losses: 4, portrait: "/assets/retratodegronar.webp", frame: null, title: null },
     ] });
+    if (url.startsWith("/api/guilds/mine")) return json({ guild: {
+      id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: 20, myRole: "leader",
+      members: [
+        { name: "Kaelen", level: 6, role: "leader", contributed: 4200, me: true, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", active: true },
+        { name: "Lyra", level: 7, role: "officer", contributed: 2900, me: false, portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", active: true },
+        { name: "Thorin", level: 6, role: "member", contributed: 1050, me: false, portrait: "/assets/anaodasrochosas.webp", frame: "frame_bronze", active: false },
+        { name: "Mirelle", level: 5, role: "member", contributed: 500, me: false, portrait: "/assets/retrato_aetheliana.webp", frame: null, active: true },
+      ] } });
+    if (url.startsWith("/api/guilds")) return json({ guilds: [
+      { id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion.", level: 3, limit: 20, members: 4 },
+      { id: "g2", name: "Lâminas do Deserto", tag: "LDD", description: "PVP todo dia às 21h.", level: 5, limit: 20, members: 17 },
+      { id: "g3", name: "Filhos da Montanha", tag: "FDM", description: "Anões e amigos. Iniciantes bem-vindos!", level: 2, limit: 20, members: 9 },
+    ] });
+    if (url.startsWith("/api/chat")) {
+      const guild = url.includes("channel=guild");
+      const now = Date.now();
+      const m = (id: number, name: string, body: string, ago: number, extra: object = {}) => ({ id, channel: guild ? "guild:g1" : "global", name, body, created_at: new Date(now - ago * 60000).toISOString(), tag: null, title: null, frame: null, ...extra });
+      return json({ messages: guild ? [
+        m(11, "Lyra", "Bora derrubar o Mestre dos Rituais hoje?", 14, { tag: "ODC", frame: "frame_dragao" }),
+        m(12, "Thorin", "Tô dentro, só terminar a missão", 12, { tag: "ODC", frame: "frame_bronze" }),
+        m(13, "Kaelen", "Doei 1000 pro cofre, falta pouco pro nível 4 da guilda!", 5, { tag: "ODC", frame: "frame_arcano" }),
+      ] : [
+        m(1, "Gromak", "alguém sabe onde dropa o Amuleto da Serpente?", 30),
+        m(2, "Lyra", "Chefes de nível alto, tipo o Lorde Vorlag", 28, { tag: "ODC", title: "title_lenda", frame: "frame_dragao" }),
+        m(3, "Bran", "valeu! e qual raça vocês acham melhor pra PVP?", 9),
+        m(4, "Thorin", "Anão com Pele de Pedra aguenta tudo 😄", 7, { tag: "ODC", frame: "frame_bronze" }),
+      ] });
+    }
     if (url === "/api/referrals") return json({ code: "Kaelen", paid: 1, maxPaid: 10, invited: [
       { idx: 0, name: "Thorin", level: 6, claimed: true, ready: true },
       { idx: 1, name: "Mirelle", level: 5, claimed: false, ready: true },
