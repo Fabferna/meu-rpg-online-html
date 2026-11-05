@@ -186,7 +186,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
-      <nav className="mt-4 flex gap-1 overflow-x-auto pb-1">
+      <nav className="mt-4 flex gap-1 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((tb) => (
           <button
             key={tb.id}
