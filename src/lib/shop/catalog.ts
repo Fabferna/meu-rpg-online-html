@@ -51,7 +51,14 @@ export type Cosmetic = {
   /** Classe CSS da moldura (para frames sem imagem). */
   ring?: string;
   rarity: "common" | "rare" | "epic" | "legendary";
+  /** Skin exclusiva de uma raça (e, opcionalmente, de um gênero). */
+  race?: string;
+  gender?: "male" | "female";
 };
+
+/** A skin serve para este herói? (sem raça = serve para todos) */
+export const skinFits = (c: Cosmetic, race: string, gender: string) =>
+  c.kind !== "skin" || ((!c.race || c.race === race) && (!c.gender || c.gender === gender));
 
 export const COSMETICS: Cosmetic[] = [
   { id: "frame_bronze", kind: "frame", name: "Moldura de Bronze", rarity: "common", price: { currency: "gold", amount: 800 }, ring: "ring-4 ring-amber-700" },

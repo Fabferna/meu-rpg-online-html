@@ -11,6 +11,7 @@ import { askNotificationPermission } from "./notify";
 import { Bar, Panel, RankBadge } from "./ui";
 import { REGION_OF_QUEST, regionUnlocked } from "@/lib/game/regions";
 import { useT } from "@/lib/i18n/client";
+import { DAILY_QUESTS } from "@/lib/game/rules";
 
 export default function Quests({ ctx }: { ctx: GameCtx }) {
   const t = useT();
@@ -92,6 +93,8 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
   }
 
   return (
+    <div className="space-y-3">
+    <p className={`text-sm ${state.daily.quests >= DAILY_QUESTS ? "text-amber-300" : "text-white/60"}`}>{t("Missões hoje: {a}/{b}", { a: state.daily.quests, b: DAILY_QUESTS })}</p>
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {QUESTS.map((q, i) => {
         const region = REGION_OF_QUEST[q.id];
@@ -122,6 +125,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
           </motion.div>
         );
       })}
+    </div>
     </div>
   );
 }

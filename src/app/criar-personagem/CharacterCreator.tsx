@@ -100,7 +100,7 @@ export default function CharacterCreator() {
               </label>
               {error && <p role="alert" className="text-sm text-red-300">{error}</p>}
               <button className="btn-gold w-full" disabled={!ready || busy} onClick={submit}>
-                {busy ? "Forjando…" : "Iniciar Jornada"}
+                {busy ? t("Forjando…") : t("Começar a Jornada")}
               </button>
             </div>
           </div>
@@ -123,10 +123,12 @@ function Card(props: { selected: boolean; onClick: () => void; image: string; ti
   return (
     <button
       onClick={props.onClick}
+      type="button" aria-pressed={props.selected}
       className={`panel overflow-hidden text-left transition hover:-translate-y-1 ${props.selected ? "ring-2 ring-gold" : ""}`}
     >
       <div className={`relative ${props.tall ? "aspect-[3/4]" : "aspect-video"}`}>
         <Image src={props.image} alt="" fill sizes="300px" className="object-cover" />
+        {props.selected && <span className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-gold font-bold text-ink shadow-lg">✓</span>}
       </div>
       <div className="p-3">
         <p className="font-display text-sm">{props.title}</p>

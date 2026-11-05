@@ -46,5 +46,8 @@ export function currentHp(stored: number, updatedAt: Date, max: number, now: Dat
 }
 
 export const ATTRIBUTE_POINTS_PER_LEVEL = 3;
-export const PVE_ENERGY_COST = 5;
+export const PVE_ENERGY_COST = 4;
+/** Teto diário (UTC) além da energia: evita maratonas e mantém o ranking justo. */
+export const DAILY_HUNTS = 40;
+export const DAILY_QUESTS = 20;
 export const PVP_ENERGY_COST = 8;

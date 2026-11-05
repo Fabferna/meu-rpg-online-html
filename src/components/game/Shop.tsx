@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import {
-  COSMETICS, DAILY_LOGIN, GEM_PACKS, STARTER_PACK, formatPrice, providersFor,
+  COSMETICS, skinFits, DAILY_LOGIN, GEM_PACKS, STARTER_PACK, formatPrice, providersFor,
   type Cosmetic, type Currency, type DailyDeal, type GemPack, type Provider,
 } from "@/lib/shop/catalog";
 import { fmtTime, post, RARITY_LABEL, RARITY_STYLE } from "./api";
@@ -223,7 +223,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
       <section>
         <h2 className="mb-3 font-display text-xl text-gold">{t("✨ Cosméticos")}</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {COSMETICS.filter((x) => x.price || shop.owned.includes(x.id)).map((x) => {
+          {COSMETICS.filter((x) => (x.price || shop.owned.includes(x.id)) && skinFits(x, ctx.state.character.race, ctx.state.character.gender)).map((x) => {
             const owned = shop.owned.includes(x.id);
             const equipped = shop.equipped[x.kind] === x.id;
             return (

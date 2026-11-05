@@ -2,7 +2,8 @@ import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { loadPlayer } from "@/lib/game/player";
-import { PVE_ENERGY_COST } from "@/lib/game/rules";
+import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
+import { dailyCounts } from "@/lib/game/dailyLimits";
 import type { BattleState } from "@/lib/game/combat";
 import { REGION_OF_ENEMY, regionUnlocked } from "@/lib/game/regions";
 
@@ -18,6 +19,8 @@ export const POST = action("battle-start", z.object({ enemyId: z.string().max(64
 
   const { count } = await admin.from("quest_runs").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "running");
   if (count) throw new HttpError(409, "quest_already_running");
+
+  if ((await dailyCounts(admin, user.id)).hunts >= DAILY_HUNTS) throw new HttpError(429, "daily_hunts");
 
   await rpc(admin, "spend_energy", { p_user: user.id, p_amount: PVE_ENERGY_COST });
 
