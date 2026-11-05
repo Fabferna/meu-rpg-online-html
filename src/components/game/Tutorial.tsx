@@ -15,21 +15,23 @@ const STEPS = [
   { icon: "/assets/shop/frame_arcano.webp", title: "🏆 Arena e evolução", text: "A cada nível você ganha 3 pontos de atributo. Desafie heróis na Arena para subir no ranking e não esqueça a recompensa diária na Loja." },
 ];
 
-export default function Tutorial({ name, onNavigate }: { name: string; onNavigate: (tab: "quests") => void }) {
+export default function Tutorial({ name, onNavigate, onDone }: { name: string; onNavigate: (tab: "quests") => void; onDone?: () => void }) {
   const [open, setOpen] = useState(false);
   const [i, setI] = useState(0);
 
   useEffect(() => {
     try {
       if (!localStorage.getItem(KEY)) setOpen(true);
+      else onDone?.();
     } catch {
-      /* armazenamento bloqueado: não mostra */
+      onDone?.(); /* armazenamento bloqueado: não mostra */
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function finish(goQuests: boolean) {
     try { localStorage.setItem(KEY, "1"); } catch { /* ignora */ }
     setOpen(false);
+    onDone?.();
     if (goQuests) onNavigate("quests");
   }
 

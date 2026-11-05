@@ -16,6 +16,7 @@ import Goals from "./Goals";
 import Avatar from "./Avatar";
 import { post } from "./api";
 import Tutorial from "./Tutorial";
+import DailyLogin, { type LoginState } from "./DailyLogin";
 import { isMuted, play, setMuted } from "./sfx";
 import { useQuestAlerts } from "./notify";
 
@@ -47,6 +48,9 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   const [skew, setSkew] = useState(() => new Date(initial.serverTime).getTime() - Date.now());
   const [tick, setTick] = useState(0);
   const [goalsReady, setGoalsReady] = useState(0);
+  const [login, setLogin] = useState<LoginState | null>(null);
+  const [tutorialDone, setTutorialDone] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/state", { cache: "no-store" });
@@ -61,6 +65,14 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
     setToasts((t) => [...t, { id, text, kind }]);
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4000);
   }, []);
+
+  // Estado do login diário; a janela abre sozinha depois do tutorial.
+  useEffect(() => {
+    fetch("/api/shop", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((sh) => sh && setLogin(sh.login)).catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (tutorialDone && login && !login.claimedToday) setLoginOpen(true);
+  }, [tutorialDone, login?.claimedToday]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Selo com quantos objetivos estão prontos para resgatar.
   useEffect(() => {
@@ -125,6 +137,12 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           <Bar value={c.energy} max={c.maxEnergy} color="bg-energy" />
         </div>
         <div className="flex items-center gap-3 text-sm">
+          {login && (
+            <button onClick={() => setLoginOpen(true)} title="Recompensa diária"
+              className={`relative rounded-md px-2 py-0.5 ${login.claimedToday ? "bg-white/5" : "bg-gold/20 ring-1 ring-gold animate-pulse"}`}>
+              🎁{login.streak > 0 && <span className="ml-1 text-xs">🔥{login.streak}</span>}
+            </button>
+          )}
           <span title={`Energia · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
           <span title="Ouro">🪙 <b>{state.wallet.gold.toLocaleString("pt-BR")}</b></span>
           <button onClick={() => setTab("shop")} title="Gemas (premium) — comprar" className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString("pt-BR")}</b> <span className="text-sky-300">＋</span></button>
@@ -169,7 +187,11 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         </AnimatePresence>
       </main>
 
-      <Tutorial name={c.name} onNavigate={setTab} />
+      <Tutorial name={c.name} onNavigate={setTab} onDone={() => setTutorialDone(true)} />
+      {login && (
+        <DailyLogin ctx={ctx} login={login} open={loginOpen} onClose={() => setLoginOpen(false)}
+          onClaimed={() => setLogin({ claimedToday: true, streak: login.claimedToday ? login.streak : login.streak + 1 })} />
+      )}
 
       <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-72 flex-col gap-2">
         <AnimatePresence>

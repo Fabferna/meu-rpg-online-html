@@ -64,6 +64,7 @@ export const COSMETICS: Cosmetic[] = [
   { id: "title_matador", kind: "title", name: "Matador de Chefes", rarity: "legendary" },
   { id: "title_veterano", kind: "title", name: "Veterano da Arena", rarity: "epic" },
   { id: "title_campeao", kind: "title", name: "Campeão Semanal", rarity: "legendary" },
+  { id: "title_fiel", kind: "title", name: "Fiel ao Reino", rarity: "epic" },
   { id: "skin_kaelen", kind: "skin", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
   { id: "skin_lyra", kind: "skin", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
   { id: "skin_roric", kind: "skin", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },
@@ -110,4 +111,11 @@ export function secondsToUtcMidnight(now = new Date()) {
 export const DAILY_LOGIN = [
   { day: 1, gold: 50 }, { day: 2, gold: 75 }, { day: 3, gold: 100, gems: 2 }, { day: 4, gold: 125, potions: 2 },
   { day: 5, gold: 150, gems: 3 }, { day: 6, gold: 200 }, { day: 7, gold: 300, gems: 10 },
+];
+
+/** Bônus extras por dias SEGUIDOS (espelho da migração 0007). */
+export const LOGIN_MILESTONES = [
+  { streak: 7, label: "1 semana", reward: "Baú do 7º dia (💎 10)" },
+  { streak: 14, label: "2 semanas", reward: "💎 15 extras" },
+  { streak: 30, label: "1 mês", reward: "💎 30 + título “Fiel ao Reino”" },
 ];
