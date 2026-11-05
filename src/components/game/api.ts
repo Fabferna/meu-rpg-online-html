@@ -3,6 +3,9 @@
 export const ERROR_TEXT: Record<string, string> = {
   not_enough_energy: "Energia insuficiente.",
   wrong_race: "Esta skin é de outra raça.",
+  guild_leader: "Passe a liderança da guilda antes de excluir o herói.",
+  confirm_name: "Digite o nome do herói exatamente para confirmar.",
+  unknown_skill: "Habilidade inválida.",
   daily_hunts: "Você atingiu o limite de caçadas de hoje. Volte amanhã!",
   daily_quests: "Você atingiu o limite de missões de hoje. Volte amanhã!",
   quest_already_running: "Você já está em uma missão.",

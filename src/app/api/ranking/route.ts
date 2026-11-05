@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonError } from "@/lib/security/http";
 import { RACES, type Gender, type RaceId } from "@/lib/game/data";
 import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
-import { previousWeekStart, rewardFor, secondsToWeekEnd, weekStart } from "@/lib/game/weekly";
+import { previousSeasonStart, rewardFor, secondsToSeasonEnd, seasonStart } from "@/lib/game/weekly";
 import { weeklyBoard } from "@/lib/game/weeklyServer";
 
 export const dynamic = "force-dynamic";
@@ -16,17 +16,17 @@ export async function GET(request: Request) {
   const scope = new URL(request.url).searchParams.get("scope");
 
   if (scope === "week") {
-    const cur = weekStart(), prev = previousWeekStart();
+    const cur = seasonStart(), prev = previousSeasonStart();
     const [board, last, claim] = await Promise.all([
       weeklyBoard(admin, cur),
       weeklyBoard(admin, prev),
-      admin.from("reward_claims").select("claim_key").eq("user_id", user.id).eq("claim_key", `week:${prev}`).maybeSingle(),
+      admin.from("reward_claims").select("claim_key").eq("user_id", user.id).eq("claim_key", `season:${prev}`).maybeSingle(),
     ]);
     const strip = ({ userId: _u, ...r }: (typeof board)[number]) => r; // não expõe ids
     const me = board.find((r) => r.userId === user.id);
     const mePrev = last.find((r) => r.userId === user.id);
     return NextResponse.json({
-      week: cur, endsInSec: secondsToWeekEnd(),
+      week: cur, endsInSec: secondsToSeasonEnd(),
       rows: board.slice(0, 50).map(strip),
       me: me ? { pos: me.pos, score: me.score, reward: rewardFor(me.pos, me.score) } : null,
       lastWeek: mePrev ? { week: prev, pos: mePrev.pos, score: mePrev.score, reward: rewardFor(mePrev.pos, mePrev.score), claimed: !!claim.data } : null,

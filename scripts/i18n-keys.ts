@@ -8,6 +8,7 @@ import { CHAPTERS, SPEAKERS } from "../src/lib/game/story";
 import { REGIONS_MAP } from "../src/lib/game/regions";
 import { ITEMS } from "../src/lib/game/items";
 import { PETS } from "../src/lib/game/pets";
+import { SKILLS } from "../src/lib/game/skills";
 import { COSMETICS, GEM_PACKS, STARTER_PACK, CONVENIENCE, DAILY_POOL, LOGIN_MILESTONES } from "../src/lib/shop/catalog";
 import { DAILY_GOALS, ACHIEVEMENTS } from "../src/lib/game/goals";
 import { RACIAL_SKILLS } from "../src/lib/game/racial";
@@ -48,6 +49,7 @@ for (const s of Object.values(SPEAKERS)) add(s.name);
 for (const r of REGIONS_MAP) { add(r.name); add(r.description); }
 for (const i of ITEMS) add(i.name);
 for (const p of PETS) { add(p.name); add(p.description); }
+for (const s of SKILLS) { add(s.name); add(s.description); }
 for (const c of COSMETICS) add(c.name);
 for (const p of [...GEM_PACKS, STARTER_PACK]) { add(p.name); p.extras?.forEach(add); }
 for (const d of [...CONVENIENCE, ...DAILY_POOL]) { add(d.name); add(d.description); }
@@ -64,5 +66,5 @@ add(SITE.updatedAt); add("Fim de Semana Heroico"); add("Participação");
 // nomes de itens vindos do banco (iguais aos do catálogo) e títulos de cosméticos já cobertos acima
 
 const list = [...keys].sort();
-writeFileSync("scripts/i18n-keys.json", JSON.stringify(list, null, 1));
+writeFileSync(process.env.KEYS_OUT ?? "scripts/i18n-keys.json", JSON.stringify(list, null, 1));
 console.log(list.length, "textos");

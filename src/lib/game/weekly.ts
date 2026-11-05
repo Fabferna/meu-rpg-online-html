@@ -32,6 +32,24 @@ export function previousWeekStart(d = new Date()): string {
   return x.toISOString().slice(0, 10);
 }
 
+// ── Temporada do ranking: 14 dias (segunda 00:00 UTC, a cada duas semanas) ──
+export const SEASON_DAYS = 14;
+const DAY = 86_400_000;
+const EPOCH_MONDAY = Date.UTC(1970, 0, 5);
+/** Início da temporada de 14 dias que contém `d` (AAAA-MM-DD). */
+export function seasonStart(d = new Date()): string {
+  const days = Math.floor((d.getTime() - EPOCH_MONDAY) / DAY);
+  const start = days - (((days - 7) % SEASON_DAYS) + SEASON_DAYS) % SEASON_DAYS;
+  return new Date(EPOCH_MONDAY + start * DAY).toISOString().slice(0, 10);
+}
+export function previousSeasonStart(d = new Date()): string {
+  return new Date(new Date(seasonStart(d) + "T00:00:00Z").getTime() - SEASON_DAYS * DAY).toISOString().slice(0, 10);
+}
+export function secondsToSeasonEnd(d = new Date()) {
+  const end = new Date(seasonStart(d) + "T00:00:00Z").getTime() + SEASON_DAYS * DAY;
+  return Math.floor((end - d.getTime()) / 1000);
+}
+
 export function secondsToWeekEnd(d = new Date()) {
   const end = new Date(weekStart(d) + "T00:00:00Z").getTime() + 7 * 86_400_000;
   return Math.floor((end - d.getTime()) / 1000);

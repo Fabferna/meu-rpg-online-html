@@ -78,6 +78,12 @@ export const COSMETICS: Cosmetic[] = [
   { id: "skin_kaelen", kind: "skin", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
   { id: "skin_lyra", kind: "skin", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
   { id: "skin_roric", kind: "skin", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },
+  // Skins por raça (só aparecem para heróis da raça/gênero certos).
+  { id: "skin_anao_mineiro_f", kind: "skin", name: "Mineira das Agulhas", rarity: "rare", race: "anao", gender: "female", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/anao_mineiro_female.webp" },
+  { id: "skin_anao_mineiro_m", kind: "skin", name: "Mineiro das Agulhas", rarity: "rare", race: "anao", gender: "male", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/anao_mineiro_male.webp" },
+  { id: "skin_elfo_patrulheiro_f", kind: "skin", name: "Patrulheira do Bosque", rarity: "rare", race: "elfo", gender: "female", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/elfo_patrulheiro_female.webp" },
+  { id: "skin_elfo_patrulheiro_m", kind: "skin", name: "Patrulheiro do Bosque", rarity: "rare", race: "elfo", gender: "male", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/elfo_patrulheiro_male.webp" },
+  { id: "skin_humano_paladino_f", kind: "skin", name: "Paladina da Aurora", rarity: "epic", race: "humano", gender: "female", price: { currency: "gems", amount: 300 }, image: "/assets/skins/humano_paladino_female.webp" },
   { id: "skin_vorlag", kind: "skin", name: "Lorde Vorlag Sombrio", rarity: "legendary", image: "/assets/lord_vorlag_sombrio.webp" },
 ];
 export const COSMETIC_BY_ID = Object.fromEntries(COSMETICS.map((c) => [c.id, c]));

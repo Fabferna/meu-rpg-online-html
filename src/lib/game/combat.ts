@@ -1,7 +1,7 @@
 import "server-only";
 import { chance, roll } from "./rng";
 import type { Attributes, RaceId } from "./data";
-import { RACIAL_SKILLS } from "./racial";
+import { SKILL_BY_ID, skillPower, type SkillLoadout } from "./skills";
 import type { Enemy } from "./enemies";
 
 export type ItemBonus = Partial<{ atk: number; def: number; str: number; dex: number; con: number; intel: number }>;
@@ -20,6 +20,8 @@ export type LogEntry = {
   turn: number;
   actor: "player" | "enemy";
   action: "attack" | "skill" | "defend" | "potion" | "racial" | "poison" | "stunned";
+  /** Habilidade usada (id). */
+  skillId?: string;
   /** Quem recebe o efeito (para veneno/atordoamento). */
   target?: "player" | "enemy";
   dmg?: number;
@@ -39,6 +41,8 @@ export type BattleState = {
   turn: number;
   skillCooldown: number;
   racialCooldown?: number;
+  /** Recarga de cada habilidade (id → turnos). */
+  cds?: Record<string, number>;
   effects?: Effects;
   log: LogEntry[];
   rewards?: { xp: number; gold: number; item: string | null; levelUps: number };
@@ -49,7 +53,7 @@ export type BattleState = {
   dungeon?: { id: string; name: string; stage: number; total: number; chest?: { gold: number; gems: number; item: string | null } };
 };
 
-export type PlayerAction = "attack" | "skill" | "defend" | "potion" | "racial";
+export type PlayerAction = "attack" | "defend" | "potion" | "s0" | "s1" | "s2";
 
 export const SKILL_COOLDOWN = 3;
 export const POTION_ITEM = "pocao_vida";
@@ -96,51 +100,55 @@ export type EnemyTraits = { poison?: number; stun?: number };
 /** Resolve um turno de PVE. O cliente só informa a ação; tudo o resto é calculado aqui. */
 export function resolveTurn(
   state: BattleState, action: PlayerAction, p: Combatant, e: Combatant, hasPotion: boolean,
-  race: RaceId, traits: EnemyTraits = {},
+  loadout: SkillLoadout, traits: EnemyTraits = {},
 ) {
   const s: BattleState = structuredClone(state);
   const fx: Effects = (s.effects ??= {});
-  s.racialCooldown ??= 0;
+  const cds = (s.cds ??= {});
   s.turn += 1;
   let defending = false;
   let potionUsed = false;
   const log = (l: Omit<LogEntry, "turn">) => s.log.push({ turn: s.turn, ...l });
 
-  if (action === "skill" && s.skillCooldown > 0) action = "attack";
-  if (action === "racial" && s.racialCooldown > 0) action = "attack";
+  // Habilidade da barra (s0/s1/s2): precisa estar equipada e fora de recarga.
+  let skillId: string | undefined;
+  if (action === "s0" || action === "s1" || action === "s2") {
+    skillId = loadout.eq[Number(action[1])];
+    if (!skillId || !SKILL_BY_ID[skillId] || (cds[skillId] ?? 0) > 0) action = "attack";
+  }
   if (action === "potion" && !hasPotion) action = "defend";
 
   // ── Turno do jogador ──
   if (fx.pStun) {
     fx.pStun -= 1;
     log({ actor: "player", action: "stunned", target: "player" });
-  } else if (action === "attack" || action === "skill") {
-    const r = strike({ ...p, hp: s.player.hp }, e, action, false);
+  } else if (action === "attack") {
+    const r = strike({ ...p, hp: s.player.hp }, e, "attack", false);
     s.enemy.hp = Math.max(0, s.enemy.hp - r.dmg);
     log({ actor: "player", action, ...r });
-    if (action === "skill") s.skillCooldown = SKILL_COOLDOWN + 1;
-  } else if (action === "racial") {
-    const sk = RACIAL_SKILLS[race];
-    s.racialCooldown = sk.cooldown + 1;
-    if (race === "anao") {
-      fx.pStone = 3;
-      const heal = Math.round(s.player.maxHp * 0.1);
-      s.player.hp = Math.min(s.player.maxHp, s.player.hp + heal);
-      log({ actor: "player", action: "racial", heal, effect: "stone" });
-    } else {
-      const kind = race === "aetheliano" ? "skill" : "attack";
-      const mult = { humano: 1.8, elfo: 1.1, gronar: 2.6, aetheliano: 1.6 }[race];
-      const r = strike({ ...p, hp: s.player.hp }, e, kind, false, mult, race === "humano");
-      s.enemy.hp = Math.max(0, s.enemy.hp - r.dmg);
-      let effect: LogEntry["effect"];
-      if (race === "elfo" && !r.miss) { fx.ePoison = 3; effect = "poison"; }
-      if (race === "aetheliano") { fx.eStun = 1; effect = "stun"; }
-      if (race === "gronar") {
-        effect = "rage";
-        s.player.hp = Math.max(1, s.player.hp - Math.round(s.player.maxHp * 0.06));
+  } else if (skillId) {
+    const sk = SKILL_BY_ID[skillId];
+    const pw = skillPower(sk, loadout.lv[skillId] ?? 1);
+    cds[skillId] = pw.cooldown + 1;
+    let effect: LogEntry["effect"];
+    let dmg = 0, crit = false, miss = false, heal = 0;
+    if (pw.mult) {
+      for (let i = 0; i < (sk.hits ?? 1) && s.enemy.hp > 0; i++) {
+        const r = strike({ ...p, hp: s.player.hp }, e, sk.type === "magic" ? "skill" : "attack", false, pw.mult, sk.sure);
+        s.enemy.hp = Math.max(0, s.enemy.hp - r.dmg);
+        dmg += r.dmg; crit ||= r.crit; miss = (sk.hits ?? 1) === 1 && r.miss;
       }
-      log({ actor: "player", action: "racial", ...r, effect });
     }
+    if (!miss) {
+      if (sk.poison) { fx.ePoison = sk.poison; effect = "poison"; }
+      if (sk.stun) { fx.eStun = sk.stun; effect = "stun"; }
+    }
+    if (sk.lifesteal && dmg) heal += Math.round(dmg * sk.lifesteal);
+    if (pw.healPct) heal += Math.round(s.player.maxHp * pw.healPct / 100);
+    if (sk.stone) { fx.pStone = sk.stone; effect ??= "stone"; }
+    if (heal) s.player.hp = Math.min(s.player.maxHp, s.player.hp + heal);
+    if (sk.selfHpPct) { effect = "rage"; s.player.hp = Math.max(1, s.player.hp - Math.round(s.player.maxHp * sk.selfHpPct / 100)); }
+    log({ actor: "player", action: "skill", skillId, ...(pw.mult ? { dmg, crit, miss } : {}), ...(heal ? { heal } : {}), effect });
   } else if (action === "defend") {
     defending = true;
     const heal = Math.round(s.player.maxHp * 0.05);
@@ -150,7 +158,7 @@ export function resolveTurn(
     potionUsed = true;
     const heal = 60;
     s.player.hp = Math.min(s.player.maxHp, s.player.hp + heal);
-    log({ actor: "player", action, heal });
+    log({ actor: "player", action: "potion", heal });
   }
 
   // Veneno no inimigo.
@@ -186,8 +194,7 @@ export function resolveTurn(
   }
 
   if (fx.pStone) fx.pStone -= 1;
-  if (s.skillCooldown > 0) s.skillCooldown -= 1;
-  if (s.racialCooldown > 0) s.racialCooldown -= 1;
+  for (const k of Object.keys(cds)) if (cds[k] > 0) cds[k] -= 1;
 
   s.log = s.log.slice(-30);
   const outcome: "won" | "lost" | "active" = s.enemy.hp <= 0 ? "won" : s.player.hp <= 0 ? "lost" : "active";
