@@ -30,10 +30,8 @@ export async function createStripeCheckout(args: {
     cancel_url: `${args.siteUrl}/jogo?pagamento=cancelado`,
   };
   if (args.userEmail) body.customer_email = args.userEmail;
-  if (args.currency === "BRL") {
-    // Cartão + Pix/Boleto ficam a cargo dos métodos ativados no painel Stripe.
-    body["payment_method_types[0]"] = "card";
-  }
+  // Formas de pagamento (cartão, Pix etc.) vêm das ativadas no painel do Stripe
+  // (Settings → Payment methods); a API nova não aceita mais `payment_method_types`.
 
   const res = await fetch(`${API}/checkout/sessions`, {
     method: "POST",
