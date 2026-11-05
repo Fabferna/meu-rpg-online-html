@@ -186,12 +186,12 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
-      <nav className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible">
+      <nav className="mt-4 flex gap-1 overflow-x-auto pb-1">
         {TABS.map((tb) => (
           <button
             key={tb.id}
             onClick={() => { setTab(tb.id); play("click"); }}
-            className={`relative shrink-0 rounded-lg px-4 py-2 text-sm font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
+            className={`relative shrink-0 rounded-lg whitespace-nowrap px-2.5 py-2 text-[13px] xl:px-3 font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
           >
             {tab === tb.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
             {tb.icon} {t(tb.label)}
