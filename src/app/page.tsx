@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <main>
       <section className="relative isolate overflow-hidden">
-        <Image src="/assets/paisagem_epica_de_aethelgard.png" alt="" fill priority className="-z-10 object-cover opacity-40" />
+        <Image src="/assets/paisagem_epica_de_aethelgard.webp" alt="" fill priority className="-z-10 object-cover opacity-40" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-ink/60 to-ink" />
         <div className="mx-auto max-w-5xl px-4 py-28 text-center fade-up">
           <h1 className="font-display text-4xl font-black tracking-wide text-gold sm:text-6xl">Aethelgard Online</h1>

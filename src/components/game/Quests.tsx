@@ -58,7 +58,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
     return (
       <Panel className="mx-auto max-w-2xl overflow-hidden">
         <div className="relative aspect-[21/9]">
-          <Image src={q?.image ?? "/assets/loader.png"} alt="" fill sizes="700px" className="object-cover" />
+          <Image src={q?.image ?? "/assets/loader.webp"} alt="" fill sizes="700px" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-panel to-transparent" />
         </div>
         <div className="p-6 text-center">

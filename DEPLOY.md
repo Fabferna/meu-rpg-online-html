@@ -46,6 +46,8 @@ Guia em duas partes:
    1. `supabase/migrations/0001_init.sql`
    2. `supabase/migrations/0002_core_loop.sql`
    3. `supabase/migrations/0003_economy.sql`
+   4. `supabase/migrations/0004_progression.sql`
+   5. `supabase/migrations/0005_webp_images.sql`
 
    Cada um deve terminar com `Success. No rows returned`.
 5. Confira em **Table Editor** que existem as tabelas `characters`, `wallets`, `ledger`, `battles`, `payments`…
@@ -302,7 +304,7 @@ Para quem prefere um custo fixo (ex.: Hetzner/Contabo ~€5/mês):
 
 ## ✅ Checklist de lançamento
 
-- [ ] Migrações 0001–0003 aplicadas no Supabase de produção
+- [ ] Migrações 0001–0005 aplicadas no Supabase de produção
 - [ ] Variáveis de ambiente na Vercel (sem `PAYMENTS_DEV`)
 - [ ] Login por e-mail, Google e Facebook testados
 - [ ] Criar herói → missão → caçada → PVP → loja funcionando

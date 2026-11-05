@@ -16,15 +16,15 @@ export type GemPack = {
 };
 
 export const GEM_PACKS: GemPack[] = [
-  { id: "gems_80", name: "Bolsa de Gemas", gems: 80, bonus: 0, price: { BRL: 490, USD: 99 }, image: "/assets/shop/gems_small.png" },
-  { id: "gems_450", name: "Saco de Gemas", gems: 450, bonus: 50, price: { BRL: 2490, USD: 499 }, image: "/assets/shop/gems_small.png", tag: "popular" },
-  { id: "gems_1000", name: "Arca de Gemas", gems: 1000, bonus: 150, price: { BRL: 4990, USD: 999 }, image: "/assets/shop/gems_large.png", tag: "best" },
-  { id: "gems_2200", name: "Tesouro do Rei", gems: 2200, bonus: 400, price: { BRL: 9990, USD: 1999 }, image: "/assets/shop/gems_large.png" },
+  { id: "gems_80", name: "Bolsa de Gemas", gems: 80, bonus: 0, price: { BRL: 490, USD: 99 }, image: "/assets/shop/gems_small.webp" },
+  { id: "gems_450", name: "Saco de Gemas", gems: 450, bonus: 50, price: { BRL: 2490, USD: 499 }, image: "/assets/shop/gems_small.webp", tag: "popular" },
+  { id: "gems_1000", name: "Arca de Gemas", gems: 1000, bonus: 150, price: { BRL: 4990, USD: 999 }, image: "/assets/shop/gems_large.webp", tag: "best" },
+  { id: "gems_2200", name: "Tesouro do Rei", gems: 2200, bonus: 400, price: { BRL: 9990, USD: 1999 }, image: "/assets/shop/gems_large.webp" },
 ];
 
 export const STARTER_PACK: GemPack = {
   id: "starter", name: "Pacote do Aventureiro", gems: 300, bonus: 0, price: { BRL: 990, USD: 199 },
-  image: "/assets/shop/gems_large.png", oncePerAccount: true,
+  image: "/assets/shop/gems_large.webp", oncePerAccount: true,
   extras: ["Peitoral de Placas Anão (Épico)", "5 Poções de Vida", "Título exclusivo “Pioneiro”"],
 };
 
@@ -55,16 +55,18 @@ export type Cosmetic = {
 
 export const COSMETICS: Cosmetic[] = [
   { id: "frame_bronze", kind: "frame", name: "Moldura de Bronze", rarity: "common", price: { currency: "gold", amount: 800 }, ring: "ring-4 ring-amber-700" },
-  { id: "frame_arcano", kind: "frame", name: "Moldura Arcana", rarity: "epic", price: { currency: "gems", amount: 250 }, image: "/assets/shop/frame_arcano.png" },
-  { id: "frame_dragao", kind: "frame", name: "Moldura do Dragão Dourado", rarity: "legendary", image: "/assets/shop/frame_dragao.png" },
+  { id: "frame_arcano", kind: "frame", name: "Moldura Arcana", rarity: "epic", price: { currency: "gems", amount: 250 }, image: "/assets/shop/frame_arcano.webp" },
+  { id: "frame_dragao", kind: "frame", name: "Moldura do Dragão Dourado", rarity: "legendary", image: "/assets/shop/frame_dragao.webp" },
   { id: "title_destemido", kind: "title", name: "O Destemido", rarity: "common", price: { currency: "gold", amount: 1500 } },
   { id: "title_cacador", kind: "title", name: "Caçador de Sombras", rarity: "rare", price: { currency: "gems", amount: 120 } },
   { id: "title_lenda", kind: "title", name: "Lenda de Aethelgard", rarity: "legendary", price: { currency: "gems", amount: 600 } },
   { id: "title_pioneiro", kind: "title", name: "Pioneiro", rarity: "epic" },
-  { id: "skin_kaelen", kind: "skin", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.png" },
-  { id: "skin_lyra", kind: "skin", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.png" },
-  { id: "skin_roric", kind: "skin", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.png" },
-  { id: "skin_vorlag", kind: "skin", name: "Lorde Vorlag Sombrio", rarity: "legendary", image: "/assets/lord_vorlag_sombrio.png" },
+  { id: "title_matador", kind: "title", name: "Matador de Chefes", rarity: "legendary" },
+  { id: "title_veterano", kind: "title", name: "Veterano da Arena", rarity: "epic" },
+  { id: "skin_kaelen", kind: "skin", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
+  { id: "skin_lyra", kind: "skin", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
+  { id: "skin_roric", kind: "skin", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },
+  { id: "skin_vorlag", kind: "skin", name: "Lorde Vorlag Sombrio", rarity: "legendary", image: "/assets/lord_vorlag_sombrio.webp" },
 ];
 export const COSMETIC_BY_ID = Object.fromEntries(COSMETICS.map((c) => [c.id, c]));
 
@@ -76,18 +78,18 @@ export type DailyDeal = {
 };
 
 export const CONVENIENCE: DailyDeal[] = [
-  { key: "potions_5", name: "5 Poções de Vida", description: "Cura 60 de vida cada.", image: "/assets/shop/potion_hp.png", currency: "gold", price: 110, limit: 3, item: { id: "pocao_vida", qty: 5 } },
-  { key: "potions_20", name: "Caixa com 20 Poções", description: "Para longas caçadas.", image: "/assets/shop/potion_hp.png", currency: "gems", price: 40, limit: 5, item: { id: "pocao_vida", qty: 20 } },
-  { key: "xp_boost_60", name: "Elixir da Sabedoria (1h)", description: "+50% de XP em tudo por 1 hora.", image: "/assets/shop/potion_energy.png", currency: "gems", price: 60, limit: 5, boostMinutes: 60 },
+  { key: "potions_5", name: "5 Poções de Vida", description: "Cura 60 de vida cada.", image: "/assets/shop/potion_hp.webp", currency: "gold", price: 110, limit: 3, item: { id: "pocao_vida", qty: 5 } },
+  { key: "potions_20", name: "Caixa com 20 Poções", description: "Para longas caçadas.", image: "/assets/shop/potion_hp.webp", currency: "gems", price: 40, limit: 5, item: { id: "pocao_vida", qty: 20 } },
+  { key: "xp_boost_60", name: "Elixir da Sabedoria (1h)", description: "+50% de XP em tudo por 1 hora.", image: "/assets/shop/potion_energy.webp", currency: "gems", price: 60, limit: 5, boostMinutes: 60 },
 ];
 
 /** Ofertas do dia: rotação determinística por data (UTC) com desconto. */
 const DAILY_POOL: DailyDeal[] = [
-  { key: "daily_potions", name: "Oferta: 10 Poções", description: "-50% só hoje!", image: "/assets/shop/potion_hp.png", currency: "gems", price: 10, limit: 1, item: { id: "pocao_vida", qty: 10 } },
-  { key: "daily_boost", name: "Oferta: Elixir 3h", description: "-40% só hoje!", image: "/assets/shop/potion_energy.png", currency: "gems", price: 110, limit: 1, boostMinutes: 180 },
-  { key: "daily_bow", name: "Oferta: Arco Élfico", description: "Arma rara por ouro.", image: "/assets/arco_elfico_elegante.png", currency: "gold", price: 350, limit: 1, item: { id: "arco_elfico", qty: 1 } },
-  { key: "daily_staff", name: "Oferta: Cajado Luminoso", description: "Arma rara por ouro.", image: "/assets/cajado_magico_luminoso.png", currency: "gold", price: 350, limit: 1, item: { id: "cajado_luminoso", qty: 1 } },
-  { key: "daily_armor", name: "Oferta: Peitoral Anão", description: "Armadura épica -30%.", image: "/assets/peitoral_de_placas_anao.png", currency: "gems", price: 140, limit: 1, item: { id: "peitoral_anao", qty: 1 } },
+  { key: "daily_potions", name: "Oferta: 10 Poções", description: "-50% só hoje!", image: "/assets/shop/potion_hp.webp", currency: "gems", price: 10, limit: 1, item: { id: "pocao_vida", qty: 10 } },
+  { key: "daily_boost", name: "Oferta: Elixir 3h", description: "-40% só hoje!", image: "/assets/shop/potion_energy.webp", currency: "gems", price: 110, limit: 1, boostMinutes: 180 },
+  { key: "daily_bow", name: "Oferta: Arco Élfico", description: "Arma rara por ouro.", image: "/assets/arco_elfico_elegante.webp", currency: "gold", price: 350, limit: 1, item: { id: "arco_elfico", qty: 1 } },
+  { key: "daily_staff", name: "Oferta: Cajado Luminoso", description: "Arma rara por ouro.", image: "/assets/cajado_magico_luminoso.webp", currency: "gold", price: 350, limit: 1, item: { id: "cajado_luminoso", qty: 1 } },
+  { key: "daily_armor", name: "Oferta: Peitoral Anão", description: "Armadura épica -30%.", image: "/assets/peitoral_de_placas_anao.webp", currency: "gems", price: 140, limit: 1, item: { id: "peitoral_anao", qty: 1 } },
 ];
 
 export function todaysDeals(now = new Date()): DailyDeal[] {

@@ -41,7 +41,7 @@ legacy/             versão HTML original (referência; será removida ao fim da
 ## Rodando localmente
 
 1. **Crie um projeto** em <https://supabase.com> (plano grátis serve).
-2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001_init.sql`, `0002_core_loop.sql`, `0003_economy.sql`).
+2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001` a `0005`).
 3. Copie as chaves: **Project Settings → API**.
    ```bash
    cp .env.example .env.local   # e preencha os valores
@@ -70,19 +70,19 @@ legacy/             versão HTML original (referência; será removida ao fim da
 
 ### Imagens dos inimigos (geradas no Canva)
 
-Os arquivos em `public/assets/enemies/` são **prévias em baixa resolução**. Baixe as versões completas no Canva e substitua mantendo o mesmo nome:
+Os arquivos em `public/assets/enemies/` (agora em `.webp`) são **prévias em baixa resolução**. Baixe as versões completas no Canva e substitua mantendo o mesmo nome:
 
 | Arquivo | Canva |
 |---|---|
-| `sombra_fraca.png` | https://www.canva.com/M/MAHaAP1GQXA |
-| `lobo_corrompido.png` | https://www.canva.com/M/MAHaAEHKcBs |
-| `vulto_menor.png` | https://www.canva.com/M/MAHaAATp6OQ |
-| `culto_acolito.png` | https://www.canva.com/M/MAHaANiI3iw |
-| `javali_corrompido.png` | https://www.canva.com/M/MAHaAKuC0Tc |
-| `lider_cultista.png` | https://www.canva.com/M/MAHaAFDagaA |
-| `golem_gelo.png` | https://www.canva.com/M/MAHaAttcoLM |
-| `escorpiao_ambar.png` | https://www.canva.com/M/MAHaAgixiYY |
-| `serpente_abissal.png` | https://www.canva.com/M/MAHaAvChFMk |
+| `sombra_fraca.webp` | https://www.canva.com/M/MAHaAP1GQXA |
+| `lobo_corrompido.webp` | https://www.canva.com/M/MAHaAEHKcBs |
+| `vulto_menor.webp` | https://www.canva.com/M/MAHaAATp6OQ |
+| `culto_acolito.webp` | https://www.canva.com/M/MAHaANiI3iw |
+| `javali_corrompido.webp` | https://www.canva.com/M/MAHaAKuC0Tc |
+| `lider_cultista.webp` | https://www.canva.com/M/MAHaAFDagaA |
+| `golem_gelo.webp` | https://www.canva.com/M/MAHaAttcoLM |
+| `escorpiao_ambar.webp` | https://www.canva.com/M/MAHaAgixiYY |
+| `serpente_abissal.webp` | https://www.canva.com/M/MAHaAvChFMk |
 
 ## Economia e pagamentos (Fase 3)
 

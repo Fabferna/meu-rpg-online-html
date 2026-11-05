@@ -108,7 +108,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
       {/* ENERGIA / ATALHOS */}
       <div className="grid gap-4 sm:grid-cols-2">
         <Panel className="flex items-center gap-4 p-4">
-          <Image src="/assets/shop/potion_energy.png" alt="" width={64} height={64} className="rounded-lg" />
+          <Image src="/assets/shop/potion_energy.webp" alt="" width={64} height={64} className="rounded-lg" />
           <div className="flex-1">
             <p className="font-display">Recarga Total de Energia</p>
             <p className="text-xs text-white/60">⚡ {c.energy}/{c.maxEnergy} · O preço sobe a cada recarga no dia.</p>
@@ -119,7 +119,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
           </button>
         </Panel>
         <Panel className="flex items-center gap-4 p-4">
-          <Image src="/assets/shop/potion_energy.png" alt="" width={64} height={64} className="rounded-lg hue-rotate-[200deg]" />
+          <Image src="/assets/shop/potion_energy.webp" alt="" width={64} height={64} className="rounded-lg hue-rotate-[200deg]" />
           <div className="flex-1">
             <p className="font-display">Elixir da Sabedoria</p>
             <p className="text-xs text-white/60">{boostLeft > 0 ? `Ativo! +50% XP por mais ${fmtTime(boostLeft)}` : "+50% de XP por 1 hora."}</p>
@@ -154,7 +154,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
                 <span className="absolute right-2 top-2 rounded bg-ember px-2 py-0.5 text-[10px] font-bold">EDIÇÃO LIMITADA</span>
                 <div className="relative mx-auto mt-4 h-28 w-28">
                   {o.cosmetic?.kind === "frame" ? <Avatar src={c.portrait} frame={o.cosmetic.id} size={112} /> :
-                    <Image src={o.cosmetic?.image ?? "/assets/loader.png"} alt="" fill sizes="112px" className="rounded-lg object-cover" />}
+                    <Image src={o.cosmetic?.image ?? "/assets/loader.webp"} alt="" fill sizes="112px" className="rounded-lg object-cover" />}
                 </div>
                 <p className="mt-3 text-center font-display text-sm">{o.cosmetic?.name}</p>
                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-black/50">

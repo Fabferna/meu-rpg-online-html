@@ -24,7 +24,7 @@ export function useQuestAlerts(endsAt: string | null, skew: number) {
       blink = setInterval(() => { document.title = on ? `(✔) Missão concluída! · ${base}` : base; on = !on; }, 1500);
       try {
         if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
-          const n = new Notification("Missão concluída! 📜", { body: "Volte para receber sua recompensa em Aethelgard.", icon: "/assets/loader.png", tag: "quest" });
+          const n = new Notification("Missão concluída! 📜", { body: "Volte para receber sua recompensa em Aethelgard.", icon: "/assets/loader.webp", tag: "quest" });
           n.onclick = () => { window.focus(); n.close(); };
         }
       } catch { /* sem suporte */ }

@@ -14,6 +14,8 @@ export const ERROR_TEXT: Record<string, string> = {
   level_gap: "Diferença de nível muito grande.",
   too_many_requests: "Calma, guerreiro! Muitas ações seguidas.",
   stale_battle: "Ação duplicada ignorada.",
+  goal_incomplete: "Objetivo ainda não concluído.",
+  item_equipped: "Remova o item antes de vender.",
   demo: "Modo demonstração: crie uma conta para jogar de verdade!",
   insufficient_funds: "Saldo insuficiente.",
   energy_full: "Sua energia já está cheia.",

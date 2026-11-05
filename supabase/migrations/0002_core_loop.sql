@@ -67,12 +67,12 @@ create unique index inventory_one_per_slot on public.inventory (user_id, slot) w
 -- Catálogo inicial de itens
 -- ---------------------------------------------------------------------
 insert into public.items (id, name, kind, rarity, data) values
-  ('espada_curta',      'Espada Curta Funcional',      'weapon',    'common',    '{"slot":"weapon","atk":4,"image":"/assets/espada_curta_funcional.png","price":120}'),
-  ('arco_elfico',       'Arco Élfico Elegante',        'weapon',    'rare',      '{"slot":"weapon","atk":7,"dex":2,"image":"/assets/arco_elfico_elegante.png","price":420}'),
-  ('cajado_luminoso',   'Cajado Mágico Luminoso',      'weapon',    'rare',      '{"slot":"weapon","atk":3,"intel":4,"image":"/assets/cajado_magico_luminoso.png","price":420}'),
-  ('peitoral_anao',     'Peitoral de Placas Anão',     'armor',     'epic',      '{"slot":"armor","def":8,"con":2,"image":"/assets/peitoral_de_placas_anao.png","price":900}'),
-  ('amuleto_serpente',  'Amuleto da Serpente Sinistra','accessory', 'legendary', '{"slot":"accessory","atk":4,"def":3,"intel":3,"image":"/assets/amuleto_da_serpente_sinistra.png","price":2500}'),
-  ('pocao_vida',        'Poção de Vida',               'consumable','common',    '{"heal":60,"image":"/assets/loader.png","price":25}')
+  ('espada_curta',      'Espada Curta Funcional',      'weapon',    'common',    '{"slot":"weapon","atk":4,"image":"/assets/espada_curta_funcional.webp","price":120}'),
+  ('arco_elfico',       'Arco Élfico Elegante',        'weapon',    'rare',      '{"slot":"weapon","atk":7,"dex":2,"image":"/assets/arco_elfico_elegante.webp","price":420}'),
+  ('cajado_luminoso',   'Cajado Mágico Luminoso',      'weapon',    'rare',      '{"slot":"weapon","atk":3,"intel":4,"image":"/assets/cajado_magico_luminoso.webp","price":420}'),
+  ('peitoral_anao',     'Peitoral de Placas Anão',     'armor',     'epic',      '{"slot":"armor","def":8,"con":2,"image":"/assets/peitoral_de_placas_anao.webp","price":900}'),
+  ('amuleto_serpente',  'Amuleto da Serpente Sinistra','accessory', 'legendary', '{"slot":"accessory","atk":4,"def":3,"intel":3,"image":"/assets/amuleto_da_serpente_sinistra.webp","price":2500}'),
+  ('pocao_vida',        'Poção de Vida',               'consumable','common',    '{"heal":60,"image":"/assets/loader.webp","price":25}')
 on conflict (id) do update set name = excluded.name, kind = excluded.kind, rarity = excluded.rarity, data = excluded.data;
 
 -- =====================================================================

@@ -391,4 +391,4 @@ begin
 end $$;
 
 -- Ícone novo da poção (gerado no Canva).
-update public.items set data = jsonb_set(data, '{image}', '"/assets/shop/potion_hp.png"') where id = 'pocao_vida';
+update public.items set data = jsonb_set(data, '{image}', '"/assets/shop/potion_hp.webp"') where id = 'pocao_vida';

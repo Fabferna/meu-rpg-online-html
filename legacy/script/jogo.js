@@ -4,18 +4,18 @@ const HERO_STORAGE_KEY = "aethelgard_hero";
 // Dados do jogo (regiões e raças)
 const gameData = {
   regions: [
-    { id: 'sylvandell', name: 'Sylvandell', description: 'Antiga floresta élfica, cheia de mistérios e magia ancestral.', imgSrc: '../public/assets/as_ruinas_sussurrantes.png' },
-    { id: 'agulhas_congeladas', name: 'Agulhas Congeladas', description: 'Montanhas imponentes, lar de clãs resistentes e feras gélidas.', imgSrc: '../public/assets/as_agulhas_congeladas.png' },
-    { id: 'deserto_ambar', name: 'Deserto Âmbar', description: 'Vastas dunas que escondem ruínas de civilizações perdidas e perigos.', imgSrc: '../public/assets/deserto_ambar.png' }
+    { id: 'sylvandell', name: 'Sylvandell', description: 'Antiga floresta élfica, cheia de mistérios e magia ancestral.', imgSrc: '../public/assets/as_ruinas_sussurrantes.webp' },
+    { id: 'agulhas_congeladas', name: 'Agulhas Congeladas', description: 'Montanhas imponentes, lar de clãs resistentes e feras gélidas.', imgSrc: '../public/assets/as_agulhas_congeladas.webp' },
+    { id: 'deserto_ambar', name: 'Deserto Âmbar', description: 'Vastas dunas que escondem ruínas de civilizações perdidas e perigos.', imgSrc: '../public/assets/deserto_ambar.webp' }
   ],
   races: [
     { 
       id: 'humano', name: 'Humano', 
       description: 'Versáteis e adaptáveis, os humanos podem prosperar em qualquer lugar.',
-      imgBase: '../public/assets/aventureiro_de_aethelgard.png',
+      imgBase: '../public/assets/aventureiro_de_aethelgard.webp',
       appearances: {
-        male: '../public/assets/guerreiro_fantastico_determinado.png',
-        female: '../public/assets/aventureira_curiosa.png'
+        male: '../public/assets/guerreiro_fantastico_determinado.webp',
+        female: '../public/assets/aventureira_curiosa.webp'
       },
       attributes: { FOR: 10, DES: 10, CON: 10, INT: 10, SAB: 10, CAR: 10 },
       bonusDesc: "Humanos recebem +1 em um atributo à sua escolha ao atingir o nível 5 (simulado)."
@@ -23,10 +23,10 @@ const gameData = {
     { 
       id: 'elfo', name: 'Elfo de Sylvandell', 
       description: 'Graciosos e conectados à magia da natureza, com sentidos aguçados.',
-      imgBase: '../public/assets/elfo_gracioso_de_sylvandelli.png',
+      imgBase: '../public/assets/elfo_gracioso_de_sylvandelli.webp',
       appearances: {
-        male: '../public/assets/elfo_de_Sylvandell_masc.png',
-        female: '../public/assets/elfo_de_sylvandell_mulher.png'
+        male: '../public/assets/elfo_de_Sylvandell_masc.webp',
+        female: '../public/assets/elfo_de_sylvandell_mulher.webp'
       },
       attributes: { FOR: 9, DES: 12, CON: 9, INT: 11, SAB: 10, CAR: 9 },
       bonusDesc: "Elfos possuem visão no escuro e resistência natural a encantamentos."
@@ -34,10 +34,10 @@ const gameData = {
     { 
       id: 'anao', name: 'Anão das Montanhas', 
       description: 'Robustos, resilientes e mestres na forja e no combate subterrâneo.',
-      imgBase: '../public/assets/anao_das_rochosas_determinado.png',
+      imgBase: '../public/assets/anao_das_rochosas_determinado.webp',
       appearances: {
-        male: '../public/assets/anaodasrochosas.png',
-        female: '../public/assets/ana_das_montanhas_rochosas.png'
+        male: '../public/assets/anaodasrochosas.webp',
+        female: '../public/assets/ana_das_montanhas_rochosas.webp'
       },
       attributes: { FOR: 12, DES: 8, CON: 13, INT: 9, SAB: 10, CAR: 8 },
       bonusDesc: "Anões são resistentes a venenos e possuem conhecimento profundo de rochas e metais."
@@ -45,10 +45,10 @@ const gameData = {
     { 
       id: 'gronar', name: 'Gronar', 
       description: 'Poderosos e tribais, com uma força física imponente e instintos selvagens.',
-      imgBase: '../public/assets/retrato_de_gronar_fantasia.png',
+      imgBase: '../public/assets/retrato_de_gronar_fantasia.webp',
       appearances: {
-        male: '../public/assets/retratodegronar.png',
-        female: '../public/assets/guerreira_gronar.png'
+        male: '../public/assets/retratodegronar.webp',
+        female: '../public/assets/guerreira_gronar.webp'
       },
       attributes: { FOR: 13, DES: 9, CON: 12, INT: 7, SAB: 8, CAR: 7 },
       bonusDesc: "Gronar podem entrar em Fúria de Batalha, aumentando seu dano temporariamente."
@@ -56,10 +56,10 @@ const gameData = {
     { 
       id: 'aetheliano', name: 'Aetheliano', 
       description: 'Seres tocados pela magia primordial, com afinidade natural para o arcano.',
-      imgBase: '../public/assets/retrato_mistic_zetheliano.png',
+      imgBase: '../public/assets/retrato_mistic_zetheliano.webp',
       appearances: {
-        male: '../public/assets/aetheliano.png',
-        female: '../public/assets/retrato_aetheliana.png'
+        male: '../public/assets/aetheliano.webp',
+        female: '../public/assets/retrato_aetheliana.webp'
       },
       attributes: { FOR: 8, DES: 10, CON: 8, INT: 13, SAB: 12, CAR: 9 },
       bonusDesc: "Aethelianos regeneram uma pequena quantidade de mana mais rapidamente."

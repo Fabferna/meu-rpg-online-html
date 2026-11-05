@@ -7,6 +7,7 @@ import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import { ENEMIES } from "@/lib/game/enemies";
 import { PVE_ENERGY_COST } from "@/lib/game/rules";
+import { RACIAL_SKILLS } from "@/lib/game/racial";
 import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
@@ -39,22 +40,25 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
 
   function showFloats(entries: LogEntry[]) {
     const fl: Float[] = entries.map((l, i) => {
-      const target = l.action === "defend" || l.action === "potion" ? l.actor : l.actor === "player" ? "enemy" : "player";
-      const text = l.miss ? "Esquivou!" : l.heal ? `+${l.heal}` : `${l.crit ? "CRÍTICO " : ""}-${l.dmg}`;
-      const color = l.heal ? "text-emerald-300" : l.crit ? "text-amber-300 text-3xl" : l.miss ? "text-white/70" : "text-red-400";
+      const target = l.target ?? (l.action === "defend" || l.action === "potion" || (l.action === "racial" && l.heal) ? l.actor : l.actor === "player" ? "enemy" : "player");
+      const text = l.action === "stunned" ? "Atordoado!" : l.miss ? "Esquivou!" : l.heal ? `+${l.heal}` : l.action === "poison" ? `☠️ -${l.dmg}` : `${l.crit ? "CRÍTICO " : ""}-${l.dmg}`;
+      const color = l.action === "poison" ? "text-lime-300" : l.action === "stunned" ? "text-sky-300" : l.heal ? "text-emerald-300" : l.crit ? "text-amber-300 text-3xl" : l.miss ? "text-white/70" : "text-red-400";
       return { id: Date.now() + i, side: target, text, color };
     });
     setFloats((f) => [...f, ...fl]);
     setTimeout(() => setFloats((f) => f.filter((x) => !fl.includes(x))), 1200);
     entries.forEach((l, i) => setTimeout(() => {
-      if (l.action === "defend") play("defend");
+      if (l.action === "stunned") play("miss");
+      else if (l.action === "poison") play("hurt");
+      else if (l.action === "racial") play(l.heal ? "defend" : "skill");
+      else if (l.action === "defend") play("defend");
       else if (l.action === "potion") play("heal");
       else if (l.miss) play("miss");
       else if (l.actor === "player") play(l.action === "skill" ? "skill" : l.crit ? "crit" : "hit");
       else play(l.crit ? "crit" : "hurt");
     }, i * 260));
     for (const l of entries) {
-      if (l.dmg && !l.miss) {
+      if (l.dmg && !l.miss && l.action !== "poison") {
         const ref = l.actor === "player" ? enemyRef : playerRef;
         const anim = l.actor === "player" ? animateEnemy : animatePlayer;
         if (ref.current) anim(ref.current, { x: [0, -10, 10, -6, 6, 0] }, { duration: 0.35 });
@@ -123,15 +127,25 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
 
   if (battle) {
     const pot = state.inventory.find((i) => i.itemId === "pocao_vida")?.qty ?? 0;
-    const last = battle.log.slice(-6).reverse();
+    const last = battle.log.slice(-8).reverse();
+    const fx = battle.effects ?? {};
+    const racial = RACIAL_SKILLS[state.character.race];
+    const rcd = battle.racialCooldown ?? 0;
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
-          <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")} />
-          <Fighter refEl={enemyRef} name={battle.enemy.name} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")} />
+          <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
+            badges={[fx.pPoison ? `☠️ Veneno ${fx.pPoison}` : "", fx.pStun ? "💫 Atordoado" : "", fx.pStone ? `🪨 Pele de Pedra ${fx.pStone}` : ""]} />
+          <Fighter refEl={enemyRef} name={battle.enemy.name} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
+            badges={[fx.ePoison ? `☠️ Veneno ${fx.ePoison}` : "", fx.eStun ? "💫 Atordoado" : ""]} />
         </div>
-        <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-5">
+        <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-6">
           <ActBtn disabled={busy} onClick={() => act("attack")} label="⚔️ Atacar" />
+          <motion.button whileTap={{ scale: 0.94 }} onClick={() => act("racial")} disabled={busy || rcd > 0} title={racial.description}
+            className="col-span-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-ember/80 to-amber-600/80 px-3 py-2 text-left font-display text-sm transition hover:brightness-110 disabled:opacity-40 sm:col-span-1">
+            <Image src={racial.icon} alt="" width={32} height={32} className="shrink-0 rounded" />
+            <span className="leading-tight">{rcd > 0 ? `Recarga (${rcd})` : racial.name}</span>
+          </motion.button>
           <ActBtn disabled={busy || battle.skillCooldown > 0} onClick={() => act("skill")} label={battle.skillCooldown > 0 ? `✨ Recarga (${battle.skillCooldown})` : "✨ Habilidade"} accent />
           <ActBtn disabled={busy} onClick={() => act("defend")} label="🛡️ Defender" />
           <ActBtn disabled={busy || !pot} onClick={() => act("potion")} label={`🧪 Poção (${pot})`} />
@@ -176,11 +190,14 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   );
 }
 
-function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[] }) {
+function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[]; badges?: string[] }) {
   return (
     <div ref={props.refEl} className={`panel relative overflow-hidden p-3 ${props.boss ? "ring-2 ring-ember/70" : ""}`}>
       <div className="relative aspect-square overflow-hidden rounded-lg">
         <Image src={props.image} alt="" fill sizes="400px" className={`object-cover ${props.hp <= 0 ? "grayscale" : ""}`} />
+        <div className="absolute left-2 top-2 flex flex-col gap-1">
+          {props.badges?.filter(Boolean).map((b) => <span key={b} className="rounded bg-black/70 px-2 py-0.5 text-[11px]">{b}</span>)}
+        </div>
         <AnimatePresence>
           {props.floats.map((f) => (
             <motion.span key={f.id} initial={{ y: 0, opacity: 1, scale: 0.6 }} animate={{ y: -60, opacity: 0, scale: 1.2 }} exit={{ opacity: 0 }} transition={{ duration: 1.1 }}
@@ -208,8 +225,12 @@ function ActBtn({ label, onClick, disabled, accent, muted }: { label: string; on
 function describe(l: LogEntry, me: string, foe: string) {
   const who = l.actor === "player" ? me : foe;
   const other = l.actor === "player" ? foe : me;
+  if (l.action === "stunned") return `💫 ${l.target === "player" ? me : foe} está atordoado e perde o turno.`;
+  if (l.action === "poison") return `☠️ O veneno causa ${l.dmg} de dano em ${l.target === "player" ? me : foe}.`;
+  if (l.action === "racial" && l.effect === "stone") return `🪨 ${who} ativa Pele de Pedra e recupera ${l.heal} de vida.`;
   if (l.action === "defend") return `🛡️ ${who} se defende e recupera ${l.heal} de vida.`;
   if (l.action === "potion") return `🧪 ${who} bebe uma poção (+${l.heal}).`;
   if (l.miss) return `💨 ${other} esquiva do ataque de ${who}.`;
-  return `${l.action === "skill" ? "✨" : "⚔️"} ${who} causa ${l.dmg} de dano${l.crit ? " CRÍTICO" : ""} em ${other}.`;
+  const extra = l.effect === "poison" ? " e o envenena" : l.effect === "stun" ? " e o atordoa" : l.effect === "rage" ? " em fúria" : "";
+  return `${l.action === "racial" ? "🔥" : l.action === "skill" ? "✨" : "⚔️"} ${who} causa ${l.dmg} de dano${l.crit ? " CRÍTICO" : ""} em ${other}${extra}.`;
 }

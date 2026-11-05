@@ -12,6 +12,7 @@ import Arena from "./Arena";
 import Inventory from "./Inventory";
 import Ranking from "./Ranking";
 import Shop from "./Shop";
+import Goals from "./Goals";
 import Avatar from "./Avatar";
 import { post } from "./api";
 import Tutorial from "./Tutorial";
@@ -29,6 +30,7 @@ export type GameCtx = {
 
 const TABS = [
   { id: "overview", label: "Herói", icon: "🛡️" },
+  { id: "goals", label: "Objetivos", icon: "🎯" },
   { id: "quests", label: "Missões", icon: "📜" },
   { id: "battle", label: "Caçada", icon: "⚔️" },
   { id: "arena", label: "Arena PVP", icon: "🏟️" },
@@ -44,6 +46,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [skew, setSkew] = useState(() => new Date(initial.serverTime).getTime() - Date.now());
   const [tick, setTick] = useState(0);
+  const [goalsReady, setGoalsReady] = useState(0);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/state", { cache: "no-store" });
@@ -58,6 +61,16 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
     setToasts((t) => [...t, { id, text, kind }]);
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4000);
   }, []);
+
+  // Selo com quantos objetivos estão prontos para resgatar.
+  useEffect(() => {
+    fetch("/api/goals", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((g) => {
+      if (!g) return;
+      const n = g.daily.filter((d: { claimed: boolean; progress: number; target: number }) => !d.claimed && d.progress >= d.target).length
+        + g.achievements.filter((a: { claimed: boolean; progress: number; target: number }) => !a.claimed && a.progress >= a.target).length;
+      setGoalsReady(n);
+    }).catch(() => {});
+  }, [state.serverTime]);
 
   // Retorno do checkout. As gemas são creditadas pelo WEBHOOK, não aqui.
   useEffect(() => {
@@ -135,6 +148,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {t.icon} {t.label}
             {t.id === "quests" && questReady && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />}
             {t.id === "battle" && state.battle && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-ember" />}
+            {t.id === "goals" && goalsReady > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{goalsReady}</span>}
             {t.id === "overview" && c.attributePoints > 0 && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-arcane" />}
           </button>
         ))}
@@ -150,6 +164,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "inventory" && <Inventory ctx={ctx} />}
             {tab === "ranking" && <Ranking />}
             {tab === "shop" && <Shop ctx={ctx} />}
+            {tab === "goals" && <Goals ctx={ctx} onCount={setGoalsReady} />}
           </motion.div>
         </AnimatePresence>
       </main>

@@ -3,9 +3,10 @@ import { action, HttpError, rpc } from "@/lib/api";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { loadPlayer } from "@/lib/game/player";
 import { chance } from "@/lib/game/rng";
+import type { RaceId } from "@/lib/game/data";
 import { enemyCombatant, playerCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
 
-const Schema = z.object({ action: z.enum(["attack", "skill", "defend", "potion"]) }).strict();
+const Schema = z.object({ action: z.enum(["attack", "skill", "defend", "potion", "racial"]) }).strict();
 
 export const POST = action(
   "battle-action",
@@ -26,7 +27,7 @@ export const POST = action(
     let hasPotion = false;
     if (body.action === "potion") hasPotion = await rpc<boolean>(admin, "consume_item", { p_user: user.id, p_item: POTION_ITEM });
 
-    const { state: next, outcome } = resolveTurn(state, body.action, pc, ec, hasPotion);
+    const { state: next, outcome } = resolveTurn(state, body.action, pc, ec, hasPotion, p.row.race as RaceId, enemy.traits);
 
     if (outcome === "won") {
       // Inimigos muito abaixo do seu nível rendem menos XP (anti-farm).
@@ -56,8 +57,8 @@ export const POST = action(
         p_reason: `pve:${enemy.id}`, p_ref: `battle:${battle.id}`,
       });
       await admin.from("battles").update({ state: next }).eq("id", battle.id);
-      const { data: c } = await admin.from("characters").select("pve_wins").eq("user_id", user.id).single();
-      if (c) await admin.from("characters").update({ pve_wins: c.pve_wins + 1 }).eq("user_id", user.id);
+      await rpc(admin, "record_event", { p_user: user.id, p_event: "pve_win", p_amount: 1 });
+      if (enemy.boss) await rpc(admin, "record_event", { p_user: user.id, p_event: "boss_win", p_amount: 1 });
     }
 
     return { outcome, state: next };

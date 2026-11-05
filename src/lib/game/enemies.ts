@@ -11,19 +11,47 @@ export type Enemy = {
   drop?: { item: string; chance: number };
   image: string;
   boss?: boolean;
+  /** Chance de envenenar / atordoar ao acertar. */
+  traits?: { poison?: number; stun?: number };
 };
 
-export const ENEMIES: Enemy[] = [
-  { id: "sombra_fraca", name: "Criatura das Sombras", minLevel: 1, maxHp: 60, atk: [5, 9], def: 2, agility: 6, xp: 18, gold: 6, image: "/assets/enemies/sombra_fraca.png", drop: { item: "pocao_vida", chance: 0.2 } },
-  { id: "lobo_corrompido", name: "Lobo das Sombras", minLevel: 2, maxHp: 75, atk: [6, 11], def: 3, agility: 14, xp: 28, gold: 8, image: "/assets/enemies/lobo_corrompido.png" },
-  { id: "culto_acolito", name: "Acólito do Olho Vazio", minLevel: 4, maxHp: 110, atk: [9, 15], def: 5, agility: 8, xp: 48, gold: 18, image: "/assets/enemies/culto_acolito.png", drop: { item: "pocao_vida", chance: 0.3 } },
-  { id: "vulto_menor", name: "Vulto Atormentado", minLevel: 6, maxHp: 150, atk: [12, 20], def: 6, agility: 10, xp: 75, gold: 25, image: "/assets/enemies/vulto_menor.png" },
-  { id: "javali_corrompido", name: "Javali das Sombras", minLevel: 9, maxHp: 230, atk: [15, 24], def: 10, agility: 6, xp: 120, gold: 35, image: "/assets/enemies/javali_corrompido.png", drop: { item: "peitoral_anao", chance: 0.03 } },
-  { id: "lider_cultista", name: "Mestre dos Rituais", minLevel: 14, maxHp: 420, atk: [22, 34], def: 14, agility: 12, xp: 320, gold: 120, image: "/assets/enemies/lider_cultista.png", boss: true, drop: { item: "amuleto_serpente", chance: 0.05 } },
-  { id: "escorpiao_ambar", name: "Escorpião Âmbar", minLevel: 11, maxHp: 300, atk: [18, 28], def: 16, agility: 11, xp: 170, gold: 50, image: "/assets/enemies/escorpiao_ambar.png", drop: { item: "pocao_vida", chance: 0.4 } },
-  { id: "golem_gelo", name: "Golem de Gelo", minLevel: 16, maxHp: 520, atk: [24, 36], def: 24, agility: 5, xp: 260, gold: 80, image: "/assets/enemies/golem_gelo.png", drop: { item: "peitoral_anao", chance: 0.06 } },
-  { id: "lorde_vorlag", name: "Lorde Vorlag, o Sombrio", minLevel: 20, maxHp: 780, atk: [30, 46], def: 22, agility: 16, xp: 600, gold: 220, image: "/assets/lord_vorlag_sombrio.png", boss: true, drop: { item: "amuleto_serpente", chance: 0.08 } },
-  { id: "serpente_abissal", name: "Serpente Abissal de Meria", minLevel: 25, maxHp: 1100, atk: [38, 58], def: 28, agility: 14, xp: 950, gold: 380, image: "/assets/enemies/serpente_abissal.png", boss: true, drop: { item: "amuleto_serpente", chance: 0.12 } },
+const RAW: Enemy[] = [
+  { id: "sombra_fraca", name: "Criatura das Sombras", minLevel: 1, maxHp: 60, atk: [5, 9], def: 2, agility: 6, xp: 18, gold: 6, image: "/assets/enemies/sombra_fraca.webp", drop: { item: "pocao_vida", chance: 0.2 } },
+  { id: "lobo_corrompido", name: "Lobo das Sombras", minLevel: 2, maxHp: 75, atk: [6, 11], def: 3, agility: 14, xp: 28, gold: 8, image: "/assets/enemies/lobo_corrompido.webp" },
+  { id: "culto_acolito", name: "Acólito do Olho Vazio", minLevel: 4, maxHp: 110, atk: [9, 15], def: 5, agility: 8, xp: 48, gold: 18, image: "/assets/enemies/culto_acolito.webp", drop: { item: "pocao_vida", chance: 0.3 }, traits: { poison: 0.15 } },
+  { id: "vulto_menor", name: "Vulto Atormentado", minLevel: 6, maxHp: 150, atk: [12, 20], def: 6, agility: 10, xp: 75, gold: 25, image: "/assets/enemies/vulto_menor.webp", traits: { stun: 0.1 } },
+  { id: "javali_corrompido", name: "Javali das Sombras", minLevel: 9, maxHp: 230, atk: [15, 24], def: 10, agility: 6, xp: 120, gold: 35, image: "/assets/enemies/javali_corrompido.webp", drop: { item: "peitoral_anao", chance: 0.03 } },
+  { id: "lider_cultista", name: "Mestre dos Rituais", minLevel: 14, maxHp: 420, atk: [22, 34], def: 14, agility: 12, xp: 320, gold: 120, image: "/assets/enemies/lider_cultista.webp", boss: true, drop: { item: "amuleto_serpente", chance: 0.05 } },
+  { id: "escorpiao_ambar", name: "Escorpião Âmbar", minLevel: 11, maxHp: 300, atk: [18, 28], def: 16, agility: 11, xp: 170, gold: 50, image: "/assets/enemies/escorpiao_ambar.webp", drop: { item: "pocao_vida", chance: 0.4 }, traits: { poison: 0.3 } },
+  { id: "golem_gelo", name: "Golem de Gelo", minLevel: 16, maxHp: 520, atk: [24, 36], def: 24, agility: 5, xp: 260, gold: 80, image: "/assets/enemies/golem_gelo.webp", drop: { item: "peitoral_anao", chance: 0.06 }, traits: { stun: 0.15 } },
+  { id: "lorde_vorlag", name: "Lorde Vorlag, o Sombrio", minLevel: 20, maxHp: 780, atk: [30, 46], def: 22, agility: 16, xp: 600, gold: 220, image: "/assets/lord_vorlag_sombrio.webp", boss: true, drop: { item: "amuleto_serpente", chance: 0.08 }, traits: { stun: 0.12, poison: 0.15 } },
+  { id: "serpente_abissal", name: "Serpente Abissal de Meria", minLevel: 25, maxHp: 1100, atk: [38, 58], def: 28, agility: 14, xp: 950, gold: 380, image: "/assets/enemies/serpente_abissal.webp", boss: true, drop: { item: "amuleto_serpente", chance: 0.12 }, traits: { poison: 0.35 } },
 ];
+
+// Balanceamento: os atributos vêm de uma curva por nível (o "inimigo padrão"
+// do nível recomendado) vezes a personalidade de cada inimigo. Os números do
+// RAW servem só como proporção entre vida/ataque/defesa. Calibrado por simulação
+// (scripts de teste): comuns ~90% de vitória, chefes ~55–75% no nível recomendado.
+const K = { hp: 100, hpL: 28, atk: 14, atkL: 3.6, def: 1, defL: 0.9, bossHp: 1.3, bossAtk: 0.85 };
+
+function tune(e: Enemy): Enemy {
+  const L = e.minLevel;
+  const hp = (K.hp + K.hpL * L) * (e.boss ? K.bossHp : 1);
+  const atkMid = (K.atk + K.atkL * L) * (e.boss ? K.bossAtk : 1);
+  // Personalidade: proporções relativas da tabela RAW (ex.: golem = muita defesa, lobo = rápido).
+  const ref = RAW_REF(L);
+  const hpP = e.maxHp / ref.hp, atkP = (e.atk[0] + e.atk[1]) / 2 / ref.atk, defP = (e.def + 1) / ref.def;
+  const mid = atkMid * Math.sqrt(atkP);
+  return {
+    ...e,
+    maxHp: Math.round(hp * Math.sqrt(e.boss ? Math.min(1, hpP) : hpP)),
+    atk: [Math.round(mid * 0.8), Math.round(mid * 1.2)],
+    def: Math.round((K.def + K.defL * L) * Math.sqrt(defP)),
+  };
+}
+// Curva aproximada que gerou a tabela RAW original (para extrair as proporções).
+function RAW_REF(L: number) { return { hp: 45 + 26 * L, atk: 6 + 1.9 * L, def: 1.5 + 0.95 * L }; }
+
+export const ENEMIES: Enemy[] = RAW.map(tune);
 
 export const ENEMY_BY_ID = Object.fromEntries(ENEMIES.map((e) => [e.id, e]));

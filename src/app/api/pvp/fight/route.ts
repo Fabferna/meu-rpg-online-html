@@ -39,6 +39,8 @@ export const POST = action(
         state: { opponent: them.row.name, log: duel.log, hpA: duel.hpA, hpB: duel.hpB, maxA: a.maxHp, maxB: b.maxHp, delta },
       })
       .select("id").single();
+    await rpc(admin, "record_event", { p_user: user.id, p_event: "pvp", p_amount: 1 });
+    if (duel.aWins) await rpc(admin, "record_event", { p_user: user.id, p_event: "pvp_win", p_amount: 1 });
     const levelUps = await rpc<number>(admin, "grant_rewards", {
       p_user: user.id, p_xp: xp, p_gold: gold, p_item: null, p_reason: "pvp", p_ref: `pvp:${rec?.id}`,
     });
