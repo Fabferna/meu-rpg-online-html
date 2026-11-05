@@ -75,9 +75,9 @@ export const COSMETICS: Cosmetic[] = [
   { id: "title_salvador", kind: "title", name: "Salvador de Aethelgard", rarity: "legendary" },
   { id: "title_heroi_temporada", kind: "title", name: "Herói da Temporada", rarity: "legendary" },
   { id: "frame_temporada", kind: "frame", name: "Moldura da Temporada", rarity: "epic", ring: "ring-4 ring-fuchsia-400 shadow-[0_0_14px_#e879f9]" },
-  { id: "skin_kaelen", kind: "skin", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
-  { id: "skin_lyra", kind: "skin", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
-  { id: "skin_roric", kind: "skin", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },
+  { id: "skin_kaelen", kind: "skin", race: "humano", gender: "male", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
+  { id: "skin_lyra", kind: "skin", race: "elfo", gender: "female", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
+  { id: "skin_roric", kind: "skin", race: "humano", gender: "male", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },
   // Skins por raça (só aparecem para heróis da raça/gênero certos).
   { id: "skin_anao_mineiro_f", kind: "skin", name: "Mineira das Agulhas", rarity: "rare", race: "anao", gender: "female", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/anao_mineiro_female.webp" },
   { id: "skin_anao_mineiro_m", kind: "skin", name: "Mineiro das Agulhas", rarity: "rare", race: "anao", gender: "male", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/anao_mineiro_male.webp" },
