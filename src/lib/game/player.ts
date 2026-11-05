@@ -4,6 +4,7 @@ import type { Attributes } from "./data";
 import { currentEnergy, currentHp, maxEnergy, maxHp } from "./rules";
 import type { ItemBonus } from "./combat";
 import { upgradedStats } from "./items";
+import { petBonus } from "./pets";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -42,9 +43,10 @@ export function deriveVitals(row: CharacterRow, now = new Date()) {
 
 /** Carrega personagem + bônus dos equipamentos. `db` pode ser admin ou cliente com RLS. */
 export async function loadPlayer(db: SupabaseClient, userId: string): Promise<LoadedPlayer | null> {
-  const [{ data: row }, { data: gear }] = await Promise.all([
+  const [{ data: row }, { data: gear }, { data: pet }] = await Promise.all([
     db.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     db.from("inventory").select("upgrade, items(data)").eq("user_id", userId).eq("equipped", true),
+    db.from("owned_pets").select("pet_id, level").eq("user_id", userId).eq("active", true).maybeSingle(),
   ]);
   if (!row) return null;
   const v = deriveVitals(row);
@@ -55,6 +57,7 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
     maxHp: v.maxHp,
     energy: v.energy,
     maxEnergy: v.maxEnergy,
-    gear: ((gear ?? []) as unknown as { upgrade: number; items: { data: ItemBonus } }[]).map((g) => upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0) as ItemBonus),
+    gear: ((gear ?? []) as unknown as { upgrade: number; items: { data: ItemBonus } }[]).map((g) => upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0) as ItemBonus)
+      .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
   };
 }

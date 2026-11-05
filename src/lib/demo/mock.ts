@@ -60,6 +60,13 @@ export function installDemoFetch() {
       { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, pvp_rating: 1048, pvp_wins: 5, pvp_losses: 2, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },
       { pos: 3, name: "Gromak", raceName: "Gronar", level: 5, pvp_rating: 1010, pvp_wins: 4, pvp_losses: 4, portrait: "/assets/retratodegronar.webp", frame: null, title: null },
     ] });
+    if (url === "/api/pass") {
+      const now = new Date(); const y = now.getUTCFullYear(), m = now.getUTCMonth();
+      return json({ season: { id: "", name: new Date(Date.UTC(y, m, 1)).toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" }), endsInSec: Math.floor((Date.UTC(y, m + 1, 1) - now.getTime()) / 1000) },
+        points: 1260, tier: 12, premium: false, claimed: ["1:free", "2:free", "3:free", "4:free", "5:free", "6:free", "7:free", "8:free", "9:free"] });
+    }
+    if (url === "/api/pets") return json({ pets: [{ pet_id: "lobo", level: 3, active: true }, { pet_id: "coruja", level: 1, active: false }] });
+    if (url === "/api/dungeons") return json({ limit: 1, premium: false, left: { cripta: 1, minas: 1, fortaleza: 1 } });
     if (url === "/api/events") return json({ events: [{ id: "fim_de_semana_xp", name: "Fim de Semana Heroico", description: "XP em dobro todo sábado e domingo!", kind: "xp", multiplier: 2, endsAt: new Date(Date.now() + 30 * 3600_000).toISOString() }] });
     if (url === "/api/guild-boss") return json({ guild: true, attacksLeft: 2, previous: null, current: {
       week: "", boss: { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao.webp", lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },

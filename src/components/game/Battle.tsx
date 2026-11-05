@@ -8,6 +8,8 @@ import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import { ENEMIES } from "@/lib/game/enemies";
 import { PVE_ENERGY_COST } from "@/lib/game/rules";
 import { RACIAL_SKILLS } from "@/lib/game/racial";
+import Dungeons from "./Dungeons";
+import { ITEM_BY_ID } from "@/lib/game/items";
 import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
@@ -22,6 +24,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   const [busy, setBusy] = useState(false);
   const [floats, setFloats] = useState<Float[]>([]);
   const [enemyRef, animateEnemy] = useAnimate();
+  const [mode, setMode] = useState<"hunt" | "dungeon">("hunt");
   const [playerRef, animatePlayer] = useAnimate();
 
   async function start(enemyId: string) {
@@ -70,7 +73,14 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     if (!battle) return;
     setBusy(true);
     try {
-      const res = await post<{ outcome: "won" | "lost" | "active"; state: BattleState }>("/api/battle/action", { action });
+      const res = await post<{ outcome: "won" | "lost" | "active"; state: BattleState; stageCleared?: { stage: number; rewards?: { xp: number; gold: number } } }>("/api/battle/action", { action });
+      if (res.stageCleared) {
+        play("victory");
+        ctx.toast(`🗝️ Estágio ${res.stageCleared.stage} vencido! +${res.stageCleared.rewards?.xp ?? 0} XP · +${res.stageCleared.rewards?.gold ?? 0} 🪙 — você descansa (+25% de vida) e segue!`, "reward");
+        setBattle(res.state);
+        ctx.refresh();
+        return;
+      }
       showFloats(res.state.log.filter((l) => l.turn === res.state.turn));
       setBattle(res.state);
       if (res.outcome !== "active") {
@@ -114,6 +124,13 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
             <p>✨ +{r.xp} XP</p>
             <p>🪙 +{r.gold} ouro</p>
             {r.item && <p className="text-amber-300">🎁 Item encontrado!</p>}
+            {result.state.dungeon?.chest && (
+              <div className="mt-3 rounded-lg bg-gold/10 p-3">
+                <p className="font-display text-gold">🎁 Baú de {result.state.dungeon.name}</p>
+                <p>🪙 {result.state.dungeon.chest.gold}{result.state.dungeon.chest.gems ? ` · 💎 ${result.state.dungeon.chest.gems}` : ""}</p>
+                {result.state.dungeon.chest.item && <p className="text-amber-300">✨ {ITEM_BY_ID[result.state.dungeon.chest.item]?.name}!</p>}
+              </div>
+            )}
             {r.levelUps > 0 && <p className="font-display text-xl text-arcane">⭐ Subiu de nível!</p>}
           </div>
         ) : (
@@ -132,6 +149,15 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     const rcd = battle.racialCooldown ?? 0;
     return (
       <div className="space-y-4">
+        {battle.dungeon && (
+          <div className="flex items-center gap-3 rounded-lg bg-black/30 px-4 py-2 text-sm">
+            <span className="font-display text-gold">🗝️ {battle.dungeon.name}</span>
+            <span className="flex gap-1">{Array.from({ length: battle.dungeon.total }, (_, i) => (
+              <span key={i} className={`h-2 w-8 rounded-full ${i < battle.dungeon!.stage ? "bg-emerald-500" : i === battle.dungeon!.stage ? "bg-gold animate-pulse" : "bg-white/10"}`} />
+            ))}</span>
+            <span className="text-white/50">Estágio {battle.dungeon.stage + 1}/{battle.dungeon.total}{battle.dungeon.stage === battle.dungeon.total - 1 ? " · Guardião!" : ""}</span>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
           <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
             badges={[fx.pPoison ? `☠️ Veneno ${fx.pPoison}` : "", fx.pStun ? "💫 Atordoado" : "", fx.pStone ? `🪨 Pele de Pedra ${fx.pStone}` : ""]} />
@@ -162,8 +188,20 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     );
   }
 
+  const tabs = (
+    <div className="mb-4 flex gap-2">
+      {([["hunt", "⚔️ Caçada"], ["dungeon", "🗝️ Masmorras"]] as const).map(([k, l]) => (
+        <button key={k} onClick={() => setMode(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${mode === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{l}</button>
+      ))}
+    </div>
+  );
+  if (mode === "dungeon") {
+    return <div>{tabs}<Dungeons ctx={ctx} onEnter={async () => { const r = await fetch("/api/state", { cache: "no-store" }).then((x) => x.json()); setBattle(r.battle?.state ?? null); }} /></div>;
+  }
+
   return (
     <div>
+      {tabs}
       <p className="mb-4 text-sm text-white/60">Cada caçada custa ⚡ {PVE_ENERGY_COST} de energia. Sua vida atual: {state.character.hp}/{state.character.maxHp}</p>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {ENEMIES.map((e, i) => {

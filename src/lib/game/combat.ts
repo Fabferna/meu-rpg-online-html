@@ -42,6 +42,8 @@ export type BattleState = {
   effects?: Effects;
   log: LogEntry[];
   rewards?: { xp: number; gold: number; item: string | null; levelUps: number };
+  /** Masmorra: estágio atual (0 = primeira luta) e total de estágios. */
+  dungeon?: { id: string; name: string; stage: number; total: number; chest?: { gold: number; gems: number; item: string | null } };
 };
 
 export type PlayerAction = "attack" | "skill" | "defend" | "potion" | "racial";

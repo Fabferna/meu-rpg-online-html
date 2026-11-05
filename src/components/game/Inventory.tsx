@@ -7,6 +7,7 @@ import type { GameCtx } from "./GameApp";
 import { ITEMS, ITEM_BY_ID, MAX_UPGRADE, sellPrice, upgradedStats } from "@/lib/game/items";
 import type { InventoryEntry } from "@/lib/game/state";
 import Forge from "./Forge";
+import Pets from "./Pets";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { Panel } from "./ui";
 import { play } from "./sfx";
@@ -18,7 +19,7 @@ const statText = (d: Record<string, unknown>) =>
 
 export default function Inventory({ ctx }: { ctx: GameCtx }) {
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState<"bag" | "smith">("bag");
+  const [view, setView] = useState<"bag" | "smith" | "pets">("bag");
   const [forging, setForging] = useState<InventoryEntry | null>(null);
   const items = ctx.state.inventory;
   const level = ctx.state.character.level;
@@ -57,13 +58,13 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
       </Panel>
 
       <div className="flex gap-2">
-        {([["bag", "🎒 Minha bolsa"], ["smith", "⚒️ Ferreiro"]] as const).map(([k, l]) => (
+        {([["bag", "🎒 Minha bolsa"], ["smith", "⚒️ Ferreiro"], ["pets", "🐾 Pets"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{l}</button>
         ))}
         <span className="ml-auto self-center text-sm">🪙 <b>{ctx.state.wallet.gold.toLocaleString("pt-BR")}</b></span>
       </div>
 
-      {view === "bag" ? (
+      {view === "pets" ? <Pets ctx={ctx} /> : view === "bag" ? (
         items.length === 0 ? (
           <Panel className="p-8 text-center text-white/60">Sua bolsa está vazia. Complete missões e caçadas para encontrar itens!</Panel>
         ) : (

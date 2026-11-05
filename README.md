@@ -41,7 +41,7 @@ legacy/             versão HTML original (referência; será removida ao fim da
 ## Rodando localmente
 
 1. **Crie um projeto** em <https://supabase.com> (plano grátis serve).
-2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001` a `0011`).
+2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001` a `0012`).
 3. Copie as chaves: **Project Settings → API**.
    ```bash
    cp .env.example .env.local   # e preencha os valores
@@ -86,6 +86,7 @@ Os arquivos em `public/assets/enemies/` (agora em `.webp`) são **prévias em ba
 | `raids/dragao.webp` | https://www.canva.com/M/MAHaA7MalAo |
 | `raids/tita_gelo.webp` | https://www.canva.com/M/MAHaA-kOJG0 |
 | `raids/kraken.webp` | https://www.canva.com/M/MAHaAyj4qHo |
+| `pets/lobo.webp` · `coruja` · `tartaruga` · `fenix` | [lobo](https://www.canva.com/M/MAHaA3Qw_28) · [coruja](https://www.canva.com/M/MAHaA79lwv0) · [tartaruga](https://www.canva.com/M/MAHaA2hijYA) · [fênix](https://www.canva.com/M/MAHaA772XTw) |
 
 ## Economia e pagamentos (Fase 3)
 

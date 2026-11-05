@@ -21,6 +21,7 @@ import InstallButton from "./InstallButton";
 import Guild from "./Guild";
 import ChatDock from "./ChatDock";
 import EventBanner from "./EventBanner";
+import SeasonPass from "./SeasonPass";
 import DailyLogin, { type LoginState } from "./DailyLogin";
 import { isMuted, play, setMuted } from "./sfx";
 import { useQuestAlerts } from "./notify";
@@ -42,6 +43,7 @@ const TABS = [
   { id: "arena", label: "Arena PVP", icon: "🏟️" },
   { id: "guild", label: "Guilda", icon: "🏰" },
   { id: "inventory", label: "Inventário", icon: "🎒" },
+  { id: "pass", label: "Passe", icon: "👑" },
   { id: "shop", label: "Loja", icon: "💎" },
   { id: "ranking", label: "Ranking", icon: "🏆" },
 ] as const;
@@ -175,7 +177,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
-      <nav className="mt-4 flex gap-2 overflow-x-auto pb-1">
+      <nav className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -203,6 +205,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "ranking" && <Ranking ctx={ctx} />}
             {tab === "shop" && <Shop ctx={ctx} />}
             {tab === "guild" && <Guild ctx={ctx} />}
+            {tab === "pass" && <SeasonPass ctx={ctx} />}
             {tab === "goals" && <Goals ctx={ctx} onCount={setGoalsReady} />}
           </motion.div>
         </AnimatePresence>
