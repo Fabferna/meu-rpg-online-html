@@ -1,0 +1,200 @@
+400	Hero name (3–16, letters/numbers/_)
+401	Invalid name.
+402	Hero names that are offensive, discriminatory or impersonate the staff may be changed or banned.
+403	Lv.
+404	Don't listen to him! Fight, {heroi}! We're with you!
+405	Could not authenticate. Please try again.
+406	Could not create the hero.
+407	Level
+408	Level too low.
+409	Max level
+410	Recommended level {n}+
+411	Level {n}
+412	Level {n} · XP
+413	Level {n}+
+414	The Herald of the Abyss
+415	The Colossus of the Spires
+416	The Amber Desert. I've already lost two caravans here. The second seal lies in a buried city, guarded by something big.
+417	The Fearless
+418	The Forgotten Guardian
+419	The Game does not sell random reward boxes (“loot boxes”) for real money: every purchase shows exactly what you get.
+420	The Game is not intended for children under 13. If we identify an account belonging to a child under 13, it will be removed.
+421	The Game is provided “as is”. We may change game balance, items, rules and these Terms. Significant changes will be announced in the Game. If the Game shuts down, we will give at least 30 days' notice.
+422	The Lament of the Dead
+423	The Shadow Market
+424	Gold (game currency) and Gems (premium currency) are limited, personal, non-transferable licenses. They are not money, have no value outside the Game and cannot be exchanged for real money.
+425	The Interrupted Ritual
+426	The Throne of Vorlag
+427	The Howl on the Road
+428	The herald sinks into the black waters. A coral staircase rises from the sea: the path to Meria.
+429	The scout dissolves into smoke, leaving behind an amulet engraved with a hollow eye.
+430	The boss has already been defeated this week!
+431	The colossus shatters into a thousand crystals. But the seal is already broken — and the sea to the south begins to boil.
+432	The Dark Lord's lair. Only the strongest return.
+433	The cemetery journal points to a hidden sanctuary.
+434	The spirit finds peace. Before fading, it whispers: "The second seal burns beneath the sands".
+435	The guardian of the Frozen Spires marches on the valley villages.
+436	Sign-in isn't active on this server yet. Meanwhile,
+437	The price rises with each refill of the day.
+438	The first point on the map is here, under the great oak. There's an ancient seal... and it's cracked.
+439	The sunken kingdom where darkness was born. The end of everything — or a new beginning.
+440	The ritual unravels. Before falling, the Master laughs: "The third seal is already lost in the mountains".
+441	The wind of the Frozen Spires cuts like a blade. In the abandoned dwarven forges, something moves.
+442	ONE-TIME OFFER · ONLY ONCE PER ACCOUNT
+443	Goal not completed yet.
+444	Goals
+445	Offer: 10 Potions
+446	Offer: Elven Bow
+447	Offer: Luminous Staff
+448	Offer: Elixir 3h
+449	Offer: Dwarven Breastplate
+450	Limited-time offers, limited stock, weekly rankings and rewards may change or end. Ranking rewards are delivered according to the rules shown in the Game during the season.
+451	Officer
+452	Well, well. Another hero chasing the cult? I've been tracking them for months. I pay well for information — and give it away free when I like someone.
+453	The dwarves sealed an ice colossus here centuries ago. The cult woke it to destroy the last seal.
+454	The guards need reinforcements for the wall patrol at dusk.
+455	The wolves of the north road went mad the same night the shadows appeared. That's no coincidence.
+456	Prices are shown in Brazilian Reais (BRL) or US Dollars (USD), taxes included. Payments are processed by Stripe or Mercado Pago; we do not store card data.
+457	The bells of Valerion ring at the wrong hour. In the distance, a black mist creeps over the walls.
+458	The three seals kept Meria at the bottom of the ocean. Now the abyssal kingdom is rising.
+459	Gold
+460	Adventurer's Pack
+461	Payment securely processed by the gateway. We do not store your card details.
+462	Payments are not configured on the server yet.
+463	Payments:
+464	For long hunts.
+465	Participation
+466	Transfer leadership
+467	Pass
+468	Pass complete!
+469	Season Pass
+470	Step {a} of {b}
+471	Valerion Patrol
+472	Dwarven Plate Breastplate
+473	Dwarven Plate Breastplate (Epic)
+474	Stoneskin
+475	Pet dismissed.
+476	Legendary pet: Phoenix
+477	Pet: Crystal Turtle
+478	Pioneer
+479	Pix / Mercado Pago
+480	We may update this Policy. The date at the top shows the current version, and significant changes will be announced in the Game.
+481	Mighty and tribal, with imposing physical strength and wild instincts.
+482	Privacy Policy
+483	Points
+484	Not enough attribute points.
+485	Portal of the Abyssal Kingdom
+486	Health Potion
+487	Prevent fraud, cheating and attacks (legitimate interest).
+488	Final prices include taxes. Gems are digital items with no monetary value outside the game. You may request a refund within 7 days if the gems have not been used (Brazilian Consumer Code art. 49). See the
+489	First purchase: DOUBLE GEMS!
+490	First Blood
+491	Process purchases and refunds (performance of contract and legal obligation).
+492	Looking for opponents…
+493	Promote
+494	Weekly prize (#{n}):
+495	Prize for every member
+496	Prize:
+497	Weekly prizes
+498	Next
+499	Next (+{n})
+500	Next tier: {a}/{b} points
+501	Skip
+502	Browser RPG
+503	Free browser RPG: create your hero, complete quests, hunt monsters and climb the PVP Arena ranking.
+504	Scorpion Queen
+505	Ranking
+506	Rare
+507	Rating
+508	PVP Rating
+509	Race
+510	Corrupted Roots
+511	Demote
+512	Refill ({n})
+513	Full Energy Refill
+514	Collect
+515	Collect Reward
+516	I got your message and came as fast as I could. The Ritual Master is here, trying to break the seal by force.
+517	Daily Reward
+518	Daily reward
+519	Reward:
+520	Restores 10% health and halves damage taken for 3 turns.
+521	Recover the core of an ancient golem in the Frozen Spires.
+522	Recover your health and try again.
+523	Regenerates mana faster.
+524	Sign up
+525	Home region
+526	Abyssal Kingdom of Meria
+527	Reread completed chapters
+528	Unequip the item before selling it.
+529	Unequip
+530	Resets in {tempo}
+531	Reset in {tempo}
+532	Requires level {n}
+533	Requires level {n} for the battle
+534	Claim
+535	Claim Day {n}
+536	Claim prize
+537	Claim all ({n})
+538	Poison resistance and mastery of metals.
+539	{a}/{b} left · ends in {tempo}
+540	Sturdy, resilient masters of the forge and underground combat.
+541	Roric Raven
+542	Roric Raven Blackwood
+543	Wisdom
+544	Priest of the Hollow Eye
+545	Gem Sack
+546	Log out
+547	Leave guild
+548	Insufficient balance.
+549	Savior of Aethelgard
+550	If he falls, the path to Meria opens. For us... and for Vorlag.
+551	If it fails, the item doesn't break or lose level: only the gold is spent.
+552	If you skip a day, the streak restarts from Day 1.
+553	No description.
+554	Out of energy
+555	Password
+556	Current streak:
+557	Streak: {n} day(s) 🔥 · come back tomorrow!
+558	Beings touched by primordial magic, with a natural affinity for the arcane.
+559	Abyssal Serpent of Meria
+560	Your friend gets 🪙 {a} when creating a hero through your link. When they reach level {b}, you get 💎 {c} (up to {d} friends).
+561	Your hero has just arrived. Here you grow by completing quests, hunting monsters and facing other players.
+562	Your invite link
+563	Mute
+564	Beneath the old cemetery, the cult keeps its secrets.
+565	Sum of all members' weekly points:
+566	Shadows over Valerion
+567	Only with the services needed for the Game to work, which process data on our behalf:
+568	Your bag is empty. Complete quests and hunts to find items!
+569	Your energy is already full.
+570	Your guild defeated the
+571	Your guild is in
+572	Your guild placed
+573	Your health is already full.
+574	Level up!
+575	Whispers in the Ruins
+576	Sylvandell
+577	Tag (2–4 letters/numbers)
+578	Crystal Turtle
+579	Telegram
+580	Sandstorm
+581	Ends in {tempo}
+582	Finish the current battle first.
+583	Terms of Use
+584	King's Treasure
+585	Test (dev)
+586	The Game's texts, art, trademarks and code belong to their creators. You may not copy or redistribute them without permission.
+587	Ice Titan
+588	Train
+589	Turn {n}
+590	Technical:
+591	Title
+592	Exclusive “Pioneer” title
+593	“{x}” title
+594	Ice tunnels where something enormous is waking.
+595	A herald guards the passage. Defeat him and we'll enter Meria before Vorlag completes the awakening.
+596	A guardian spirit protected the seal. The cult corrupted it. Free it, {heroi}, and the seal will hold.
+597	An active pet follows you and adds attributes in hunts, dungeons, the Arena and the guild boss.
+598	A priest of the Hollow Eye performs rituals in these ruins. Stop him and I'll tell you what I know.
+599	A caravan vanished on the east road. Find the survivors.
