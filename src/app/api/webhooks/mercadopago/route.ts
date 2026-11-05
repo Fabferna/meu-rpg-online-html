@@ -32,6 +32,8 @@ export async function POST(request: Request) {
       await admin.rpc("refund_payment", { p_provider_payment_id: `mp_${mp.id}` });
     }
   } catch (err) {
+    // Pagamento inexistente (ex.: "Simular notificação" com ID falso): nada a fazer, responde 200 para não gerar reenvios.
+    if (err instanceof Error && /mercadopago payment 404/.test(err.message)) return NextResponse.json({ ignored: "unknown_payment" });
     console.error("[mercadopago webhook]", err);
     return new NextResponse("error", { status: 500 });
   }
