@@ -223,8 +223,8 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           return (
             <motion.button key={e.id} disabled={busy || locked || !!state.quest} onClick={() => start(e.id)}
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className={`panel group overflow-hidden text-left transition hover:-translate-y-1 disabled:cursor-not-allowed ${locked ? "opacity-50 grayscale" : ""} ${e.boss ? "ring-2 ring-ember/70" : ""}`}>
-              <div className="relative aspect-[3/4]">
+              className={`panel group flex flex-col justify-start overflow-hidden text-left transition hover:-translate-y-1 disabled:cursor-not-allowed ${locked ? "opacity-50 grayscale" : ""} ${e.boss ? "ring-2 ring-ember/70" : ""}`}>
+              <div className="relative aspect-[3/4] w-full shrink-0">
                 <Image src={e.image} alt="" fill sizes="300px" className="object-cover transition duration-500 group-hover:scale-105" />
                 {e.boss && <span className="absolute right-2 top-2 rounded bg-ember px-2 py-0.5 text-xs font-bold">{t("CHEFE")}</span>}
               </div>
