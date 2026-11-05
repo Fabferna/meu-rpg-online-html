@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import RefCapture from "./RefCapture";
+import { getT } from "@/lib/i18n/server";
 
 type Props = { params: Promise<{ nome: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { nome } = await params;
   const n = decodeURIComponent(nome).slice(0, 16);
+  const t = await getT();
+  const title = t("{x} convidou você para Aethelgard Online", { x: n });
   return {
-    title: `${n} convidou você para Aethelgard Online`,
-    description: "Crie seu herói pelo convite e comece com 300 de ouro extra.",
-    openGraph: { title: `${n} convidou você para Aethelgard Online`, description: "Entre pelo convite e comece com 🪙 300 de ouro extra.", images: ["/og.jpg"] },
+    title,
+    description: t("Crie seu herói pelo convite e comece com 300 de ouro extra."),
+    openGraph: { title, description: t("Entre pelo convite e comece com 🪙 300 de ouro extra."), images: ["/og.jpg"] },
   };
 }
 

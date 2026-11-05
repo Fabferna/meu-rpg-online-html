@@ -6,6 +6,7 @@ import type { GameCtx } from "./GameApp";
 import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
+import { useT } from "@/lib/i18n/client";
 
 const ATTRS = [
   { k: "str", label: "Força", hint: "Dano físico" },
@@ -18,6 +19,7 @@ const ATTRS = [
 type K = (typeof ATTRS)[number]["k"];
 
 export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint: string }) {
+  const t = useT();
   const c = ctx.state.character;
   const empty = { str: 0, dex: 0, con: 0, intel: 0, wis: 0, cha: 0 };
   const [add, setAdd] = useState<Record<K, number>>(empty);
@@ -58,32 +60,32 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
           <Image src={c.portrait} alt={c.name} fill sizes="320px" className="object-cover" priority />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4">
             <h1 className="font-display text-2xl">{c.name}</h1>
-            <p className="text-sm text-white/70">{c.raceName} · {c.regionName}</p>
+            <p className="text-sm text-white/70">{t(c.raceName)} · {t(c.regionName)}</p>
           </div>
         </div>
         <div className="mt-4 space-y-3">
-          <Bar label="Vida" value={c.hp} max={c.maxHp} color="bg-life" />
-          <Bar label="Energia" value={c.energy} max={c.maxEnergy} color="bg-energy" hint={energyHint} />
-          <Bar label={`Nível ${c.level} · XP`} value={c.xp} max={c.xpToNext} color="bg-arcane" />
+          <Bar label={t("Vida")} value={c.hp} max={c.maxHp} color="bg-life" />
+          <Bar label={t("Energia")} value={c.energy} max={c.maxEnergy} color="bg-energy" hint={energyHint} />
+          <Bar label={t("Nível {n} · XP", { n: c.level })} value={c.xp} max={c.xpToNext} color="bg-arcane" />
         </div>
         <button onClick={potion} disabled={!potions || c.hp >= c.maxHp}
           className="mt-4 w-full rounded-lg bg-life/30 py-2 text-sm hover:bg-life/40 disabled:opacity-40">
-          🧪 Usar Poção de Vida ({potions})
+          {t("🧪 Usar Poção de Vida ({n})", { n: potions })}
         </button>
       </Panel>
 
       <div className="space-y-5">
         <Panel className="p-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg text-gold">Atributos</h2>
-            {c.attributePoints > 0 && <span className="rounded-full bg-arcane/30 px-3 py-1 text-xs">{left} ponto(s) livre(s)</span>}
+            <h2 className="font-display text-lg text-gold">{t("Atributos")}</h2>
+            {c.attributePoints > 0 && <span className="rounded-full bg-arcane/30 px-3 py-1 text-xs">{t("{n} ponto(s) livre(s)", { n: left })}</span>}
           </div>
           <ul className="mt-4 grid gap-2 sm:grid-cols-2">
             {ATTRS.map(({ k, label, hint }) => (
               <li key={k} className="flex items-center gap-3 rounded-lg bg-black/30 px-3 py-2">
                 <div className="flex-1">
-                  <p className="text-sm">{label}</p>
-                  <p className="text-[11px] text-white/40">{hint}</p>
+                  <p className="text-sm">{t(label)}</p>
+                  <p className="text-[11px] text-white/40">{t(hint)}</p>
                 </div>
                 <span className="font-display text-xl">
                   {c.attributes[k] + add[k]}
@@ -98,14 +100,14 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
               </li>
             ))}
           </ul>
-          {used > 0 && <button className="btn-gold mt-4 w-full" disabled={busy} onClick={confirm}>Confirmar distribuição</button>}
+          {used > 0 && <button className="btn-gold mt-4 w-full" disabled={busy} onClick={confirm}>{t("Confirmar distribuição")}</button>}
         </Panel>
 
         <Panel className="grid grid-cols-2 gap-3 p-5 text-center sm:grid-cols-4">
-          <Stat label="Vitórias PVE" value={c.pveWins} />
-          <Stat label="Rating PVP" value={c.pvpRating} />
-          <Stat label="Vitórias PVP" value={c.pvpWins} />
-          <Stat label="Derrotas PVP" value={c.pvpLosses} />
+          <Stat label={t("Vitórias PVE")} value={c.pveWins} />
+          <Stat label={t("Rating PVP")} value={c.pvpRating} />
+          <Stat label={t("Vitórias PVP")} value={c.pvpWins} />
+          <Stat label={t("Derrotas PVP")} value={c.pvpLosses} />
         </Panel>
       </div>
     </div>

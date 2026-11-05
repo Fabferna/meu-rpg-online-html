@@ -29,6 +29,7 @@ const CHAPTER_READY = (done: number, level: number) => { const n = CHAPTERS.find
 import DailyLogin, { type LoginState } from "./DailyLogin";
 import { isMuted, play, setMuted } from "./sfx";
 import { useQuestAlerts } from "./notify";
+import { LanguageSwitcher, useT } from "@/lib/i18n/client";
 
 export type Toast = { id: number; text: string; kind: "ok" | "error" | "reward" };
 export type GameCtx = {
@@ -55,6 +56,7 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"];
 
 export default function GameApp({ initial }: { initial: PlayerState }) {
+  const t = useT();
   const [state, setState] = useState(initial);
   const [tab, setTab] = useState<TabId>(initial.battle ? "battle" : "overview");
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -77,9 +79,10 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
 
   const toast = useCallback((text: string, kind: Toast["kind"] = "ok") => {
     const id = Date.now() + Math.random();
-    setToasts((t) => [...t, { id, text, kind }]);
-    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4000);
-  }, []);
+    // Mensagens fixas (ex.: erros da API) são traduzidas aqui; as montadas já chegam traduzidas.
+    setToasts((list) => [...list, { id, text: t(text), kind }]);
+    setTimeout(() => setToasts((list) => list.filter((x) => x.id !== id)), 4000);
+  }, [t]);
 
   // Detecta subida de nível em qualquer lugar do jogo (missão, caçada, PVP, objetivos).
   useEffect(() => {
@@ -138,7 +141,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
 
   const c = state.character;
   const elapsed = Math.floor((Date.now() + skew - new Date(state.serverTime).getTime()) / 1000);
-  const energyHint = c.energy >= c.maxEnergy ? "cheia" : `+1 em ${fmtTime(Math.max(0, c.nextEnergyInSec - elapsed))}`;
+  const energyHint = c.energy >= c.maxEnergy ? t("cheia") : t("+1 em {tempo}", { tempo: fmtTime(Math.max(0, c.nextEnergyInSec - elapsed)) });
   useEffect(() => {
     if (c.energy < c.maxEnergy && c.nextEnergyInSec - elapsed <= 0) refresh();
   }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -155,7 +158,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         <Avatar src={c.portrait} frame={c.frame} size={48} />
         <div className="min-w-0">
           <p className="truncate font-display leading-tight">{c.name}</p>
-          <p className="text-xs text-gold">{state.guild && <span className="mr-1 rounded bg-white/10 px-1 font-semibold">[{state.guild.tag}]</span>}Nv. {c.level}{c.title ? <span className="ml-1 text-amber-200/80">« {c.title} »</span> : null}</p>
+          <p className="text-xs text-gold">{state.guild && <span className="mr-1 rounded bg-white/10 px-1 font-semibold">[{state.guild.tag}]</span>}{t("Nv.")} {c.level}{c.title ? <span className="ml-1 text-amber-200/80">« {t(c.title)} »</span> : null}</p>
         </div>
         <div className="ml-auto hidden w-56 space-y-1 sm:block">
           <Bar value={c.hp} max={c.maxHp} color="bg-life" />
@@ -163,39 +166,40 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         </div>
         <div className="flex items-center gap-3 text-sm">
           {login && (
-            <button onClick={() => setLoginOpen(true)} title="Recompensa diária"
+            <button onClick={() => setLoginOpen(true)} title={t("Recompensa diária")}
               className={`relative rounded-md px-2 py-0.5 ${login.claimedToday ? "bg-white/5" : "bg-gold/20 ring-1 ring-gold animate-pulse"}`}>
               🎁{login.streak > 0 && <span className="ml-1 text-xs">🔥{login.streak}</span>}
             </button>
           )}
-          <span title={`Energia · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
-          <span title="Ouro">🪙 <b>{state.wallet.gold.toLocaleString("pt-BR")}</b></span>
-          <button onClick={() => setTab("shop")} title="Gemas (premium) — comprar" className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString("pt-BR")}</b> <span className="text-sky-300">＋</span></button>
+          <span title={`${t("Energia")} · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
+          <span title={t("Ouro")}>🪙 <b>{state.wallet.gold.toLocaleString(t.locale)}</b></span>
+          <button onClick={() => setTab("shop")} title={t("Gemas (premium) — comprar")} className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString(t.locale)}</b> <span className="text-sky-300">＋</span></button>
+          <LanguageSwitcher compact />
           <InstallButton />
           <button onClick={() => { setMuted(!muted); setMutedState(!muted); if (muted) play("click"); }}
-            title={muted ? "Ativar sons" : "Silenciar"} aria-label={muted ? "Ativar sons" : "Silenciar"}
+            title={muted ? t("Ativar sons") : t("Silenciar")} aria-label={muted ? t("Ativar sons") : t("Silenciar")}
             className="rounded-md border border-white/15 px-2 py-1 text-xs hover:bg-white/5">{muted ? "🔇" : "🔊"}</button>
           <form action="/auth/signout" method="post">
-            <button className="rounded-md border border-white/15 px-2.5 py-1 text-xs hover:bg-white/5">Sair</button>
+            <button className="rounded-md border border-white/15 px-2.5 py-1 text-xs hover:bg-white/5">{t("Sair")}</button>
           </form>
         </div>
       </header>
 
       <EventBanner />
       <nav className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible">
-        {TABS.map((t) => (
+        {TABS.map((tb) => (
           <button
-            key={t.id}
-            onClick={() => { setTab(t.id); play("click"); }}
-            className={`relative shrink-0 rounded-lg px-4 py-2 text-sm font-display transition ${tab === t.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
+            key={tb.id}
+            onClick={() => { setTab(tb.id); play("click"); }}
+            className={`relative shrink-0 rounded-lg px-4 py-2 text-sm font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
           >
-            {tab === t.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
-            {t.icon} {t.label}
-            {t.id === "quests" && questReady && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />}
-            {t.id === "battle" && state.battle && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-ember" />}
-            {t.id === "world" && CHAPTER_READY(c.storyChapter, c.level) && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-gold" />}
-            {t.id === "goals" && goalsReady > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{goalsReady}</span>}
-            {t.id === "overview" && c.attributePoints > 0 && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-arcane" />}
+            {tab === tb.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
+            {tb.icon} {t(tb.label)}
+            {tb.id === "quests" && questReady && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />}
+            {tb.id === "battle" && state.battle && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-ember" />}
+            {tb.id === "world" && CHAPTER_READY(c.storyChapter, c.level) && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-gold" />}
+            {tb.id === "goals" && goalsReady > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{goalsReady}</span>}
+            {tb.id === "overview" && c.attributePoints > 0 && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-arcane" />}
           </button>
         ))}
       </nav>

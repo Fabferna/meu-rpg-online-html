@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n/client";
 
 type BIPEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 
 /** Botão "Instalar app": só aparece quando o navegador oferece instalação (Chrome, Edge, Android). */
 export default function InstallButton() {
+  const t = useT();
   const [evt, setEvt] = useState<BIPEvent | null>(null);
   useEffect(() => {
     const onPrompt = (e: Event) => { e.preventDefault(); setEvt(e as BIPEvent); };
@@ -16,9 +18,9 @@ export default function InstallButton() {
   }, []);
   if (!evt) return null;
   return (
-    <button title="Instalar o jogo como app" onClick={async () => { await evt.prompt(); await evt.userChoice; setEvt(null); }}
+    <button title={t("Instalar o jogo como app")} onClick={async () => { await evt.prompt(); await evt.userChoice; setEvt(null); }}
       className="rounded-md border border-gold/40 px-2 py-1 text-xs text-gold hover:bg-gold/10">
-      📲 Instalar
+      {t("📲 Instalar")}
     </button>
   );
 }

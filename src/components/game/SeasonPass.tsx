@@ -8,10 +8,12 @@ import { PASS_POINTS, PASS_PRICE_GEMS, PASS_REWARDS, PASS_TIER_POINTS, PASS_TIER
 import { fmtTime, post } from "./api";
 import { Bar, Panel } from "./ui";
 import { play } from "./sfx";
+import { useT } from "@/lib/i18n/client";
 
 type Data = { season: { id: string; name: string; endsInSec: number }; points: number; tier: number; premium: boolean; claimed: string[] };
 
 export default function SeasonPass({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
   const [d, setD] = useState<Data | null>(null);
   const [busy, setBusy] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ export default function SeasonPass({ ctx }: { ctx: GameCtx }) {
     }
   }
 
-  if (!d) return <p className="text-white/50">Carregando passe…</p>;
+  if (!d) return <p className="text-white/50">{t("Carregando passe…")}</p>;
   const inTier = d.tier >= PASS_TIERS ? PASS_TIER_POINTS : d.points % PASS_TIER_POINTS;
   const claimable = PASS_REWARDS.filter((r) => r.tier <= d.tier).reduce((n, r) =>
     n + (d.claimed.includes(`${r.tier}:free`) ? 0 : 1) + (d.premium && !d.claimed.includes(`${r.tier}:premium`) ? 1 : 0), 0);
@@ -69,21 +71,21 @@ export default function SeasonPass({ ctx }: { ctx: GameCtx }) {
         <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-fuchsia-900/40 via-transparent to-amber-900/30" />
         <div className="relative flex flex-wrap items-center gap-5">
           <div className="min-w-0 flex-1">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/60">Passe de Temporada</p>
-            <h2 className="font-display text-3xl capitalize text-gold">{d.season.name}</h2>
-            <p className="text-sm text-white/60">Termina em {fmtTime(d.season.endsInSec)} · Nível <b className="text-white">{d.tier}</b>/{PASS_TIERS}</p>
-            <div className="mt-3 max-w-md"><Bar value={inTier} max={PASS_TIER_POINTS} color="bg-gradient-to-r from-fuchsia-500 to-gold" label={d.tier >= PASS_TIERS ? "Passe completo!" : `Próximo nível: ${inTier}/${PASS_TIER_POINTS} pontos`} /></div>
+            <p className="text-xs uppercase tracking-[0.25em] text-white/60">{t("Passe de Temporada")}</p>
+            <h2 className="font-display text-3xl capitalize text-gold">{/^\d{4}-\d{2}$/.test(d.season.id) ? new Date(d.season.id + "-15T00:00:00Z").toLocaleDateString(t.locale, { month: "long", year: "numeric", timeZone: "UTC" }) : d.season.name}</h2>
+            <p className="text-sm text-white/60">{t("Termina em {tempo}", { tempo: fmtTime(d.season.endsInSec) })} · {t("Nível")} <b className="text-white">{d.tier}</b>/{PASS_TIERS}</p>
+            <div className="mt-3 max-w-md"><Bar value={inTier} max={PASS_TIER_POINTS} color="bg-gradient-to-r from-fuchsia-500 to-gold" label={d.tier >= PASS_TIERS ? t("Passe completo!") : t("Próximo nível: {a}/{b} pontos", { a: inTier, b: PASS_TIER_POINTS })} /></div>
           </div>
           <div className="flex flex-col items-stretch gap-2">
-            {claimable > 0 && <button className="btn-gold" disabled={busy} onClick={claimAll}>Resgatar tudo ({claimable})</button>}
+            {claimable > 0 && <button className="btn-gold" disabled={busy} onClick={claimAll}>{t("Resgatar tudo ({n})", { n: claimable })}</button>}
             {!d.premium ? (
               <motion.button whileHover={{ scale: 1.03 }} disabled={busy || ctx.state.wallet.gems < PASS_PRICE_GEMS}
                 onClick={() => run("/api/pass/buy", {}, "👑 Passe Premium ativado!")}
                 className="rounded-xl bg-gradient-to-r from-fuchsia-600 to-amber-500 px-5 py-3 text-left font-display shadow-lg disabled:opacity-50">
                 <span className="block text-lg">👑 Ativar Premium · 💎 {PASS_PRICE_GEMS}</span>
-                <span className="block text-xs font-sans text-white/80">Devolve 💎 {PREMIUM_TOTAL_GEMS} ao completar · 2 pets · moldura e título</span>
+                <span className="block text-xs font-sans text-white/80">{t("Devolve 💎 {n} ao completar · 2 pets · moldura e título", { n: PREMIUM_TOTAL_GEMS })}</span>
               </motion.button>
-            ) : <span className="rounded-lg bg-fuchsia-600/30 px-4 py-2 text-center font-display text-sm">👑 Premium ativo · +{PASS_DUNGEON_BONUS} entrada diária nas masmorras</span>}
+            ) : <span className="rounded-lg bg-fuchsia-600/30 px-4 py-2 text-center font-display text-sm">{t("👑 Premium ativo · +{n} entrada diária nas masmorras", { n: PASS_DUNGEON_BONUS })}</span>}
           </div>
         </div>
       </Panel>
@@ -97,41 +99,42 @@ export default function SeasonPass({ ctx }: { ctx: GameCtx }) {
                 <div key={r.tier} data-tier={r.tier} className="contents">
                   <div className={`text-center font-display text-sm ${reached ? "text-gold" : "text-white/40"}`}>{r.tier}</div>
                   <Cell reward={r.free} reached={reached} claimed={d.claimed.includes(`${r.tier}:free`)} locked={false} busy={busy}
-                    onClaim={() => run("/api/pass/claim", { tier: r.tier, track: "free" }, `🎁 ${r.free.label}`)} />
+                    onClaim={() => run("/api/pass/claim", { tier: r.tier, track: "free" }, `🎁 ${t(r.free.label)}`)} />
                   <Cell reward={r.premium} reached={reached} claimed={d.claimed.includes(`${r.tier}:premium`)} locked={!d.premium} premium busy={busy}
-                    onClaim={() => run("/api/pass/claim", { tier: r.tier, track: "premium" }, `👑 ${r.premium.label}`)} />
+                    onClaim={() => run("/api/pass/claim", { tier: r.tier, track: "premium" }, `👑 ${t(r.premium.label)}`)} />
                 </div>
               );
             })}
           </div>
         </div>
-        <div className="mt-1 flex gap-4 text-[11px] text-white/50"><span>Linha de cima: grátis</span><span>Linha de baixo: 👑 premium</span></div>
+        <div className="mt-1 flex gap-4 text-[11px] text-white/50"><span>{t("Linha de cima: grátis")}</span><span>{t("Linha de baixo: 👑 premium")}</span></div>
       </Panel>
 
       <Panel className="p-4 text-sm">
-        <h3 className="font-display text-gold">Como ganhar pontos do passe</h3>
+        <h3 className="font-display text-gold">{t("Como ganhar pontos do passe")}</h3>
         <ul className="mt-2 grid gap-1 sm:grid-cols-5">
-          <li>📜 Missão: <b>{PASS_POINTS.quest}</b></li>
-          <li>👑 Chefe: <b>{PASS_POINTS.boss_win}</b></li>
-          <li>🎁 Login do dia: <b>{PASS_POINTS.login}</b></li>
-          <li>🏟️ Duelo na Arena: <b>{PASS_POINTS.pvp}</b></li>
-          <li>⚔️ Caçada vencida: <b>{PASS_POINTS.pve_win}</b></li>
+          <li>{t("📜 Missão:")} <b>{PASS_POINTS.quest}</b></li>
+          <li>{t("👑 Chefe:")} <b>{PASS_POINTS.boss_win}</b></li>
+          <li>{t("🎁 Login do dia:")} <b>{PASS_POINTS.login}</b></li>
+          <li>{t("🏟️ Duelo na Arena:")} <b>{PASS_POINTS.pvp}</b></li>
+          <li>{t("⚔️ Caçada vencida:")} <b>{PASS_POINTS.pve_win}</b></li>
         </ul>
-        <p className="mt-2 text-[11px] text-white/40">Cada {PASS_TIER_POINTS} pontos = 1 nível. A temporada dura o mês inteiro (UTC); recompensas não resgatadas expiram no fim do mês.</p>
+        <p className="mt-2 text-[11px] text-white/40">{t("Cada {n} pontos = 1 nível. A temporada dura o mês inteiro (UTC); recompensas não resgatadas expiram no fim do mês.", { n: PASS_TIER_POINTS })}</p>
       </Panel>
     </div>
   );
 }
 
 function Cell({ reward, reached, claimed, locked, premium, busy, onClaim }: { reward: PassReward; reached: boolean; claimed: boolean; locked: boolean; premium?: boolean; busy: boolean; onClaim: () => void }) {
+  const t = useT();
   const can = reached && !claimed && !locked;
   return (
-    <button disabled={!can || busy} onClick={onClaim} title={reward.label}
+    <button disabled={!can || busy} onClick={onClaim} title={t(reward.label)}
       className={`relative flex h-28 w-28 flex-col items-center justify-center gap-1 rounded-lg p-2 text-center text-[11px] transition
         ${premium ? "bg-gradient-to-b from-fuchsia-900/50 to-black/40" : "bg-black/40"}
         ${can ? "ring-2 ring-gold hover:-translate-y-0.5" : ""} ${claimed ? "opacity-40" : ""} ${!reached ? "opacity-60" : ""}`}>
       {reward.icon ? <Image src={reward.icon} alt="" width={44} height={44} className="rounded" /> : <span className="text-2xl">{reward.cosmetic ? "🖼️" : "🪙"}</span>}
-      <span className="leading-tight">{reward.label}</span>
+      <span className="leading-tight">{t(reward.label)}</span>
       {claimed && <span className="absolute right-1 top-1 text-emerald-300">✔</span>}
       {locked && <span className="absolute right-1 top-1">🔒</span>}
     </button>
