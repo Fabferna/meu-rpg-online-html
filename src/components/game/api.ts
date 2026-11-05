@@ -38,6 +38,7 @@ export async function post<T = { ok: true }>(url: string, body: unknown = {}): P
 export function fmtTime(sec: number) {
   sec = Math.max(0, Math.ceil(sec));
   const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  if (h >= 48) return `${Math.floor(h / 24)}d ${h % 24}h`;
   return h ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}:${String(s).padStart(2, "0")}`;
 }
 

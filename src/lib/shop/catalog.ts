@@ -63,6 +63,7 @@ export const COSMETICS: Cosmetic[] = [
   { id: "title_pioneiro", kind: "title", name: "Pioneiro", rarity: "epic" },
   { id: "title_matador", kind: "title", name: "Matador de Chefes", rarity: "legendary" },
   { id: "title_veterano", kind: "title", name: "Veterano da Arena", rarity: "epic" },
+  { id: "title_campeao", kind: "title", name: "Campeão Semanal", rarity: "legendary" },
   { id: "skin_kaelen", kind: "skin", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
   { id: "skin_lyra", kind: "skin", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
   { id: "skin_roric", kind: "skin", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },

@@ -48,6 +48,7 @@ Guia em duas partes:
    3. `supabase/migrations/0003_economy.sql`
    4. `supabase/migrations/0004_progression.sql`
    5. `supabase/migrations/0005_webp_images.sql`
+   6. `supabase/migrations/0006_weekly_ranking.sql`
 
    Cada um deve terminar com `Success. No rows returned`.
 5. Confira em **Table Editor** que existem as tabelas `characters`, `wallets`, `ledger`, `battles`, `payments`…
@@ -82,7 +83,7 @@ Guia em duas partes:
 1. <https://developers.facebook.com> → **Meus apps → Criar app** → caso de uso **Autenticar e solicitar dados dos usuários com o Login do Facebook**.
 2. **Login do Facebook → Configurações**:
    - **URIs de redirecionamento do OAuth válidos:** `https://SEU-PROJETO.supabase.co/auth/v1/callback`
-3. **Configurações do app → Básico**: copie **ID do app** e **Chave secreta**; preencha **URL da Política de Privacidade** (obrigatório para publicar — pode ser uma página simples por enquanto).
+3. **Configurações do app → Básico**: copie **ID do app** e **Chave secreta**; preencha **URL da Política de Privacidade** com `https://meu-rpg-online-html.vercel.app/privacidade` e **Termos de Serviço** com `.../termos` (as páginas já existem no jogo).
 4. Supabase **Providers → Facebook** → cole → **Save**.
 5. Para jogadores de fora testarem, mude o app de *Desenvolvimento* para **Ao vivo**.
 
@@ -114,6 +115,7 @@ O projeto atual `meu-rpg-online-html` foi criado servindo **HTML estático**. Ag
    | `NEXT_PUBLIC_SITE_URL` | `https://meu-rpg-online-html.vercel.app` |
    | `UPSTASH_REDIS_REST_URL` | do A.3 |
    | `UPSTASH_REDIS_REST_TOKEN` | do A.3 (Sensitive) |
+   | `NEXT_PUBLIC_CONTACT_EMAIL` | seu e-mail de contato (aparece nos Termos e na Privacidade) |
 
    ❌ **Não** adicione `PAYMENTS_DEV` em produção.
 4. **Deployments → ⋯ → Redeploy** para aplicar as variáveis.
@@ -304,7 +306,7 @@ Para quem prefere um custo fixo (ex.: Hetzner/Contabo ~€5/mês):
 
 ## ✅ Checklist de lançamento
 
-- [ ] Migrações 0001–0005 aplicadas no Supabase de produção
+- [ ] Migrações 0001–0006 aplicadas no Supabase de produção
 - [ ] Variáveis de ambiente na Vercel (sem `PAYMENTS_DEV`)
 - [ ] Login por e-mail, Google e Facebook testados
 - [ ] Criar herói → missão → caçada → PVP → loja funcionando

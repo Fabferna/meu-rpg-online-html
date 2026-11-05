@@ -162,7 +162,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "battle" && <Battle ctx={ctx} />}
             {tab === "arena" && <Arena ctx={ctx} />}
             {tab === "inventory" && <Inventory ctx={ctx} />}
-            {tab === "ranking" && <Ranking />}
+            {tab === "ranking" && <Ranking ctx={ctx} />}
             {tab === "shop" && <Shop ctx={ctx} />}
             {tab === "goals" && <Goals ctx={ctx} onCount={setGoalsReady} />}
           </motion.div>

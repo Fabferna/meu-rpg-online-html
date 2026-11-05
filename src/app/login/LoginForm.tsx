@@ -118,6 +118,10 @@ export default function LoginForm() {
           Facebook
         </button>
       </div>
+      <p className="mt-6 text-center text-[11px] text-white/40">
+        Ao continuar, você concorda com os <Link href="/termos" className="underline">Termos de Uso</Link> e a{" "}
+        <Link href="/privacidade" className="underline">Política de Privacidade</Link>.
+      </p>
     </div>
   );
 }

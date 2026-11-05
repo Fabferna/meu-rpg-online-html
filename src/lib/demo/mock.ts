@@ -43,6 +43,17 @@ export function installDemoFetch() {
       { name: "Gromak", level: 5, rating: 1010, wins: 4, losses: 4, raceName: "Gronar", portrait: "/assets/retratodegronar.webp", frame: null, title: null },
       { name: "Thorin", level: 6, rating: 990, wins: 3, losses: 5, raceName: "Anão das Montanhas", portrait: "/assets/anaodasrochosas.webp", frame: "frame_bronze", title: "O Destemido" },
     ] });
+    if (url === "/api/ranking?scope=week") return json({
+      week: "", endsInSec: 3 * 86400 + 5000,
+      rows: [
+        { pos: 1, name: "Lyra", raceName: "Elfo de Sylvandell", level: 7, score: 214, portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", title: "Lenda de Aethelgard" },
+        { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, score: 168, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },
+        { pos: 3, name: "Gromak", raceName: "Gronar", level: 5, score: 97, portrait: "/assets/retratodegronar.webp", frame: null, title: null },
+        { pos: 4, name: "Thorin", raceName: "Anão das Montanhas", level: 6, score: 54, portrait: "/assets/anaodasrochosas.webp", frame: "frame_bronze", title: "O Destemido" },
+      ],
+      me: { pos: 2, score: 168, reward: { maxRank: 3, label: "2º–3º", gems: 50, gold: 1000 } },
+      lastWeek: { week: "", pos: 4, score: 120, reward: { maxRank: 10, label: "4º–10º", gems: 20, gold: 500 }, claimed: false },
+    });
     if (url.startsWith("/api/ranking")) return json({ rows: [
       { pos: 1, name: "Lyra", raceName: "Elfo de Sylvandell", level: 7, pvp_rating: 1102, pvp_wins: 9, pvp_losses: 3, portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", title: "Lenda de Aethelgard" },
       { pos: 2, name: "Kaelen", raceName: "Humano", level: 6, pvp_rating: 1048, pvp_wins: 5, pvp_losses: 2, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", title: "Caçador de Sombras" },

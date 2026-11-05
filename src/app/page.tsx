@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { RACES } from "@/lib/game/data";
+import { SiteFooter } from "@/components/site/LegalPage";
 
 export default function Home() {
   return (
@@ -33,6 +34,7 @@ export default function Home() {
             </div>
           ))}
         </div>
+        <SiteFooter />
       </section>
     </main>
   );

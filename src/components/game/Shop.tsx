@@ -213,7 +213,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
           ))}
         </div>
         <p className="mt-3 text-[11px] text-white/40">
-          Preços finais com impostos inclusos. Gemas são itens digitais sem valor monetário fora do jogo. Você pode solicitar reembolso em até 7 dias se as gemas não tiverem sido usadas (CDC art. 49).
+          Preços finais com impostos inclusos. Gemas são itens digitais sem valor monetário fora do jogo. Você pode solicitar reembolso em até 7 dias se as gemas não tiverem sido usadas (CDC art. 49). Veja os <a href="/termos" target="_blank" className="underline">Termos de Uso</a>.
         </p>
       </section>
 
