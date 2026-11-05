@@ -9,6 +9,7 @@ import {
   type Cosmetic, type Currency, type DailyDeal, type GemPack, type Provider,
 } from "@/lib/shop/catalog";
 import { fmtTime, post, RARITY_LABEL, RARITY_STYLE } from "./api";
+import { play } from "./sfx";
 import { Panel } from "./ui";
 import Avatar from "./Avatar";
 
@@ -49,6 +50,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
     setBusy(true);
     try {
       await fn();
+      play("coin");
       ctx.toast(okText, kind);
       await Promise.all([load(), ctx.refresh()]);
     } catch (e) {

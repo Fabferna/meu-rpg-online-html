@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type { GameCtx } from "./GameApp";
 import { post } from "./api";
+import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 
 const ATTRS = [
@@ -41,6 +42,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
   async function potion() {
     try {
       await post("/api/inventory/use", { itemId: "pocao_vida" });
+      play("heal");
       ctx.toast("❤️ +60 de vida");
       await ctx.refresh();
     } catch (e) {

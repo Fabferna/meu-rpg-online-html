@@ -14,6 +14,9 @@ import Ranking from "./Ranking";
 import Shop from "./Shop";
 import Avatar from "./Avatar";
 import { post } from "./api";
+import Tutorial from "./Tutorial";
+import { isMuted, play, setMuted } from "./sfx";
+import { useQuestAlerts } from "./notify";
 
 export type Toast = { id: number; text: string; kind: "ok" | "error" | "reward" };
 export type GameCtx = {
@@ -92,6 +95,9 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
 
   const questReady = state.quest && new Date(state.quest.endsAt).getTime() <= Date.now() + skew;
   const ctx: GameCtx = { state, refresh, toast, skew };
+  const [muted, setMutedState] = useState(false);
+  useEffect(() => setMutedState(isMuted()), []);
+  useQuestAlerts(state.quest?.endsAt ?? null, skew);
 
   return (
     <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4">
@@ -109,6 +115,9 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           <span title={`Energia · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
           <span title="Ouro">🪙 <b>{state.wallet.gold.toLocaleString("pt-BR")}</b></span>
           <button onClick={() => setTab("shop")} title="Gemas (premium) — comprar" className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString("pt-BR")}</b> <span className="text-sky-300">＋</span></button>
+          <button onClick={() => { setMuted(!muted); setMutedState(!muted); if (muted) play("click"); }}
+            title={muted ? "Ativar sons" : "Silenciar"} aria-label={muted ? "Ativar sons" : "Silenciar"}
+            className="rounded-md border border-white/15 px-2 py-1 text-xs hover:bg-white/5">{muted ? "🔇" : "🔊"}</button>
           <form action="/auth/signout" method="post">
             <button className="rounded-md border border-white/15 px-2.5 py-1 text-xs hover:bg-white/5">Sair</button>
           </form>
@@ -119,7 +128,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         {TABS.map((t) => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => { setTab(t.id); play("click"); }}
             className={`relative shrink-0 rounded-lg px-4 py-2 text-sm font-display transition ${tab === t.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
           >
             {tab === t.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
@@ -144,6 +153,8 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <Tutorial name={c.name} onNavigate={setTab} />
 
       <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-72 flex-col gap-2">
         <AnimatePresence>

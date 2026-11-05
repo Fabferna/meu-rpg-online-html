@@ -6,6 +6,8 @@ import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import { QUESTS, QUEST_BY_ID } from "@/lib/game/quests";
 import { fmtTime, post } from "./api";
+import { play } from "./sfx";
+import { askNotificationPermission } from "./notify";
 import { Bar, Panel, RankBadge } from "./ui";
 
 export default function Quests({ ctx }: { ctx: GameCtx }) {
@@ -21,6 +23,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
     setBusy(true);
     try {
       await post("/api/quests/start", { questId: id });
+      askNotificationPermission();
       ctx.toast("📜 Missão iniciada!");
       await ctx.refresh();
     } catch (e) {
@@ -34,6 +37,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
     setBusy(true);
     try {
       const { rewards } = await post<{ rewards: { xp: number; gold: number; item: string | null; levelUps: number } }>("/api/quests/claim");
+      play(rewards.levelUps ? "levelup" : "coin");
       ctx.toast(`+${rewards.xp} XP · +${rewards.gold} 🪙${rewards.item ? " · 🎁 item!" : ""}`, "reward");
       if (rewards.levelUps) ctx.toast(`⭐ SUBIU DE NÍVEL! +${rewards.levelUps * 3} pontos de atributo`, "reward");
       await ctx.refresh();

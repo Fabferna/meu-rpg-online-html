@@ -8,6 +8,7 @@ import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import { ENEMIES } from "@/lib/game/enemies";
 import { PVE_ENERGY_COST } from "@/lib/game/rules";
 import { post } from "./api";
+import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 
 type Result = { outcome: "won" | "lost"; state: BattleState };
@@ -45,6 +46,13 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     });
     setFloats((f) => [...f, ...fl]);
     setTimeout(() => setFloats((f) => f.filter((x) => !fl.includes(x))), 1200);
+    entries.forEach((l, i) => setTimeout(() => {
+      if (l.action === "defend") play("defend");
+      else if (l.action === "potion") play("heal");
+      else if (l.miss) play("miss");
+      else if (l.actor === "player") play(l.action === "skill" ? "skill" : l.crit ? "crit" : "hit");
+      else play(l.crit ? "crit" : "hurt");
+    }, i * 260));
     for (const l of entries) {
       if (l.dmg && !l.miss) {
         const ref = l.actor === "player" ? enemyRef : playerRef;
@@ -62,7 +70,11 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       showFloats(res.state.log.filter((l) => l.turn === res.state.turn));
       setBattle(res.state);
       if (res.outcome !== "active") {
-        setTimeout(() => setResult({ outcome: res.outcome as "won" | "lost", state: res.state }), 600);
+        setTimeout(() => {
+          setResult({ outcome: res.outcome as "won" | "lost", state: res.state });
+          play(res.outcome === "won" ? "victory" : "defeat");
+          if (res.state.rewards?.levelUps) setTimeout(() => play("levelup"), 900);
+        }, 600);
         await ctx.refresh();
       } else if (action === "potion") {
         await ctx.refresh();
@@ -140,7 +152,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   return (
     <div>
       <p className="mb-4 text-sm text-white/60">Cada caçada custa ⚡ {PVE_ENERGY_COST} de energia. Sua vida atual: {state.character.hp}/{state.character.maxHp}</p>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {ENEMIES.map((e, i) => {
           const locked = state.character.level < e.minLevel;
           return (

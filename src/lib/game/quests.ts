@@ -13,7 +13,7 @@ export type Quest = {
   image: string;
 };
 
-export const QUESTS: Quest[] = [
+export const QUESTS: Quest[] = ([
   {
     id: "patrulha_valerion", title: "Patrulha em Valerion", rank: "D", minLevel: 1, energy: 5, durationSec: 60,
     description: "Os guardas pedem reforço na ronda das muralhas ao anoitecer.",
@@ -44,6 +44,31 @@ export const QUESTS: Quest[] = [
     description: "Feche o portal antes que Meria desperte por completo.",
     xp: [1400, 1700], gold: [600, 800], drop: { item: "amuleto_serpente", chance: 0.06 }, image: "/assets/reino_abissal_de_meria.png",
   },
-];
+  {
+    id: "ervas_curandeira", title: "Ervas para a Curandeira", rank: "D", minLevel: 1, energy: 6, durationSec: 120,
+    description: "A curandeira de Sylvandell precisa de raízes-da-lua antes do anoitecer.",
+    xp: [20, 28], gold: [10, 16], drop: { item: "pocao_vida", chance: 0.5 }, image: "/assets/comunhao_com_sylvandell.png",
+  },
+  {
+    id: "tempestade_areia", title: "Tempestade de Areia", rank: "C", minLevel: 4, energy: 14, durationSec: 900,
+    description: "Guie um grupo de peregrinos pelo Deserto Âmbar antes que a tempestade os engula.",
+    xp: [110, 140], gold: [50, 75], drop: { item: "pocao_vida", chance: 0.4 }, image: "/assets/deserto_ambar.png",
+  },
+  {
+    id: "mercado_sombras", title: "O Mercado das Sombras", rank: "B", minLevel: 7, energy: 20, durationSec: 2700,
+    description: "Infiltre-se no mercado clandestino e descubra quem vende relíquias do culto.",
+    xp: [300, 380], gold: [130, 180], drop: { item: "arco_elfico", chance: 0.1 }, image: "/assets/ruinas_misticas_de_sylvandell.png",
+  },
+  {
+    id: "coracao_gelo", title: "Coração de Gelo", rank: "A", minLevel: 13, energy: 28, durationSec: 5400,
+    description: "Recupere o núcleo de um golem antigo nas Agulhas Congeladas.",
+    xp: [800, 980], gold: [320, 420], drop: { item: "peitoral_anao", chance: 0.12 }, image: "/assets/as_agulhas_congeladas.png",
+  },
+  {
+    id: "coroa_vorlag", title: "A Coroa de Vorlag", rank: "S", minLevel: 22, energy: 40, durationSec: 10800,
+    description: "Invada a fortaleza do Lorde Sombrio e roube a coroa que alimenta seu poder.",
+    xp: [2200, 2600], gold: [900, 1200], drop: { item: "amuleto_serpente", chance: 0.1 }, image: "/assets/lord_vorlag_sombrio_news.png",
+  },
+] as Quest[]).sort((a, b) => a.minLevel - b.minLevel || a.durationSec - b.durationSec);
 
 export const QUEST_BY_ID = Object.fromEntries(QUESTS.map((q) => [q.id, q]));

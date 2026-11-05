@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import { PVP_ENERGY_COST } from "@/lib/game/rules";
 import { post } from "./api";
+import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 import Avatar from "./Avatar";
 
@@ -28,8 +29,13 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
 
   // Replay animado da luta (calculada inteiramente no servidor).
   useEffect(() => {
-    if (!fight || step >= fight.log.length) return;
-    const t = setTimeout(() => setStep((s) => s + 1), 380);
+    if (!fight) return;
+    if (step >= fight.log.length) { if (step > 0) play(fight.won ? "victory" : "defeat"); return; }
+    const t = setTimeout(() => {
+      const l = fight.log[step];
+      play(l.miss ? "miss" : l.side === "a" ? (l.crit ? "crit" : l.action === "skill" ? "skill" : "hit") : "hurt");
+      setStep((s) => s + 1);
+    }, 380);
     return () => clearTimeout(t);
   }, [fight, step]);
 

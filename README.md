@@ -80,6 +80,9 @@ Os arquivos em `public/assets/enemies/` são **prévias em baixa resolução**. 
 | `culto_acolito.png` | https://www.canva.com/M/MAHaANiI3iw |
 | `javali_corrompido.png` | https://www.canva.com/M/MAHaAKuC0Tc |
 | `lider_cultista.png` | https://www.canva.com/M/MAHaAFDagaA |
+| `golem_gelo.png` | https://www.canva.com/M/MAHaAttcoLM |
+| `escorpiao_ambar.png` | https://www.canva.com/M/MAHaAgixiYY |
+| `serpente_abissal.png` | https://www.canva.com/M/MAHaAvChFMk |
 
 ## Economia e pagamentos (Fase 3)
 
