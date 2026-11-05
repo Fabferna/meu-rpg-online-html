@@ -7,7 +7,7 @@ import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
 import { ENEMIES } from "@/lib/game/enemies";
-import { PVE_ENERGY_COST } from "@/lib/game/rules";
+import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
 import { RACIAL_SKILLS } from "@/lib/game/racial";
 import Dungeons from "./Dungeons";
 import { ITEM_BY_ID } from "@/lib/game/items";
@@ -214,7 +214,8 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   return (
     <div>
       {tabs}
-      <p className="mb-4 text-sm text-white/60">{t("Cada caçada custa ⚡ {e} de energia. Sua vida atual: {hp}/{max}", { e: PVE_ENERGY_COST, hp: state.character.hp, max: state.character.maxHp })}</p>
+      <p className="mb-4 text-sm text-white/60">{t("Cada caçada custa ⚡ {e} de energia. Sua vida atual: {hp}/{max}", { e: PVE_ENERGY_COST, hp: state.character.hp, max: state.character.maxHp })}
+        {" · "}<span className={state.daily.hunts >= DAILY_HUNTS ? "text-amber-300" : ""}>{t("Caçadas hoje: {a}/{b}", { a: state.daily.hunts, b: DAILY_HUNTS })}</span></p>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {ENEMIES.filter((e) => !e.story).map((e, i) => {
           const region = REGION_OF_ENEMY[e.id];

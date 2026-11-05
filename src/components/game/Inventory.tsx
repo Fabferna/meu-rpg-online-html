@@ -4,9 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import { ITEMS, ITEM_BY_ID, MAX_UPGRADE, sellPrice, upgradedStats } from "@/lib/game/items";
-import type { InventoryEntry } from "@/lib/game/state";
-import Forge from "./Forge";
+import { ITEM_BY_ID, sellPrice, upgradedStats } from "@/lib/game/items";
 import type { TFn } from "@/lib/i18n/translate";
 import Pets from "./Pets";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
@@ -14,18 +12,16 @@ import { Panel } from "./ui";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 
-const SLOT_LABEL: Record<string, string> = { weapon: "Arma", armor: "Armadura", accessory: "Acessório" };
+export const SLOT_LABEL: Record<string, string> = { weapon: "Arma", armor: "Armadura", accessory: "Acessório" };
 const STAT_LABEL: Record<string, string> = { atk: "ATQ", def: "DEF", str: "FOR", dex: "DES", con: "CON", intel: "INT", heal: "Cura" };
-const statText = (t: TFn, d: Record<string, unknown>) =>
+export const statText = (t: TFn, d: Record<string, unknown>) =>
   Object.entries(d).filter(([k]) => k in STAT_LABEL).map(([k, v]) => `${t(STAT_LABEL[k])} +${v}`).join(" · ");
 
 export default function Inventory({ ctx }: { ctx: GameCtx }) {
   const t = useT();
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState<"bag" | "smith" | "pets">("bag");
-  const [forging, setForging] = useState<InventoryEntry | null>(null);
+  const [view, setView] = useState<"bag" | "pets">("bag");
   const items = ctx.state.inventory;
-  const level = ctx.state.character.level;
 
   async function run(url: string, body: object, ok: string) {
     setBusy(true);
@@ -61,13 +57,13 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
       </Panel>
 
       <div className="flex gap-2">
-        {([["bag", "🎒 Minha bolsa"], ["smith", "⚒️ Ferreiro"], ["pets", "🐾 Pets"]] as const).map(([k, l]) => (
+        {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
         ))}
         <span className="ml-auto self-center text-sm">🪙 <b>{ctx.state.wallet.gold.toLocaleString(t.locale)}</b></span>
       </div>
 
-      {view === "pets" ? <Pets ctx={ctx} /> : view === "bag" ? (
+      {view === "pets" ? <Pets ctx={ctx} /> : (
         items.length === 0 ? (
           <Panel className="p-8 text-center text-white/60">{t("Sua bolsa está vazia. Complete missões e caçadas para encontrar itens!")}</Panel>
         ) : (
@@ -85,11 +81,6 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                   <p className="mt-2 truncate text-center text-sm">{t(it.name)}</p>
                   <p className="text-center text-[11px] text-white/40">{t(RARITY_LABEL[it.rarity])}</p>
                   <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, upgradedStats(it.data as Record<string, number>, it.upgrade))}</p>
-                  {it.slot && (
-                    <button onClick={() => setForging(it)} className="mt-2 w-full rounded-md bg-gradient-to-r from-ember/70 to-amber-600/70 py-1.5 text-xs hover:brightness-110">
-                      ⚒️ {it.upgrade >= MAX_UPGRADE ? t("Máximo") : t("Aprimorar (+{n})", { n: it.upgrade + 1 })}
-                    </button>
-                  )}
                   <div className="mt-2 flex gap-1.5">
                     {it.slot && (
                       <button disabled={busy} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
@@ -109,27 +100,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
             })}
           </div>
         )
-      ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {ITEMS.filter((d) => d.buy).map((d) => {
-            const locked = level < (d.minLevel ?? 1);
-            const owned = items.filter((i) => i.itemId === d.id).reduce((n, i) => n + i.qty, 0);
-            return (
-              <div key={d.id} className={`panel flex flex-col p-3 ring-1 ${RARITY_STYLE[d.rarity]} ${locked ? "opacity-50" : ""}`}>
-                <div className="relative mx-auto h-20 w-20"><Image src={d.image} alt="" fill sizes="80px" className="object-contain" /></div>
-                <p className="mt-2 truncate text-center text-sm">{t(d.name)}</p>
-                <p className="text-center text-[11px] text-white/40">{d.slot ? t(SLOT_LABEL[d.slot]) : ""} · {t(RARITY_LABEL[d.rarity])}{owned ? ` · ${t("você tem {n}", { n: owned })}` : ""}</p>
-                <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, d.stats)}</p>
-                <button disabled={busy || locked || ctx.state.wallet.gold < d.buy!} onClick={() => run("/api/smith/buy", { itemId: d.id }, t("{x} comprado!", { x: t(d.name) }))}
-                  className="btn-gold mt-2 w-full !py-1.5 text-xs">
-                  {locked ? t("Requer nível {n}", { n: d.minLevel ?? 1 }) : `🪙 ${d.buy}`}
-                </button>
-              </div>
-            );
-          })}
-        </div>
       )}
-      <Forge ctx={ctx} item={forging} onClose={() => setForging(null)} />
     </div>
   );
 }

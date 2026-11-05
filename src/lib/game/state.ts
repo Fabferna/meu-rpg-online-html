@@ -1,4 +1,5 @@
 import "server-only";
+import { dailyCounts } from "./dailyLimits";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data";
 import { xpForNextLevel } from "./rules";
@@ -34,18 +35,20 @@ export type PlayerState = {
   battle: { id: string; state: BattleState } | null;
   inventory: InventoryEntry[];
   guild: { id: string; name: string; tag: string; level: number; role: "leader" | "officer" | "member" } | null;
+  daily: { hunts: number; quests: number };
   serverTime: string;
 };
 
 /** Estado completo do jogador, lido com o cliente do usuário (RLS). */
 export async function getPlayerState(supabase: SupabaseClient, userId: string): Promise<PlayerState | null> {
-  const [c, w, q, b, inv, gm] = await Promise.all([
+  const [c, w, q, b, inv, gm, daily] = await Promise.all([
     supabase.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     supabase.from("wallets").select("gold, gems").eq("user_id", userId).maybeSingle(),
     supabase.from("quest_runs").select("*").eq("user_id", userId).eq("status", "running").maybeSingle(),
     supabase.from("battles").select("id, state").eq("user_id", userId).eq("status", "active").maybeSingle(),
     supabase.from("inventory").select("id, item_id, qty, equipped, slot, upgrade, items(name, kind, rarity, data)").eq("user_id", userId).order("acquired_at"),
     supabase.from("guild_members").select("role, guilds(id, name, tag, level)").eq("user_id", userId).maybeSingle(),
+    dailyCounts(supabase, userId),
   ]);
   for (const r of [c, w, q, b, inv]) if (r.error) throw r.error;
   const row = c.data;
@@ -77,6 +80,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
     guild: gm.data?.guilds
       ? { ...(gm.data.guilds as unknown as { id: string; name: string; tag: string; level: number }), role: gm.data.role as "leader" | "officer" | "member" }
       : null,
+    daily,
     serverTime: new Date().toISOString(),
   };
 }

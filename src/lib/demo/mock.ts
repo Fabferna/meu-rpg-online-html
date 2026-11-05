@@ -24,6 +24,7 @@ export function demoState(): PlayerState {
       { id: "i5", itemId: "pocao_vida", qty: 6, equipped: false, slot: null, upgrade: 0, name: "Poção de Vida", kind: "consumable", rarity: "common", data: { heal: 60, image: "/assets/shop/potion_hp.webp" } },
     ],
     guild: { id: "g1", name: "Ordem da Chama", tag: "ODC", level: 3, role: "leader" },
+    daily: { hunts: 12, quests: 3 },
     serverTime: new Date().toISOString(),
   };
 }

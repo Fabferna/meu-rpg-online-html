@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
-import { CONVENIENCE, COSMETIC_BY_ID, todaysDeals } from "@/lib/shop/catalog";
+import { CONVENIENCE, COSMETIC_BY_ID, skinFits, todaysDeals } from "@/lib/shop/catalog";
 
 const Schema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("cosmetic"), id: z.string().max(64) }).strict(),
@@ -12,6 +12,10 @@ export const POST = action("shop-buy", Schema, async ({ user, body, admin }) => 
   if (body.type === "cosmetic") {
     const c = COSMETIC_BY_ID[body.id];
     if (!c?.price) throw new HttpError(404, "unknown_item");
+    if (c.race) {
+      const { data: ch } = await admin.from("characters").select("race, gender").eq("user_id", user.id).single();
+      if (!ch || !skinFits(c, ch.race, ch.gender)) throw new HttpError(403, "wrong_race");
+    }
     await rpc(admin, "buy_cosmetic", { p_user: user.id, p_cosmetic: c.id, p_currency: c.price.currency, p_price: c.price.amount });
   } else if (body.type === "deal") {
     const d = [...CONVENIENCE, ...todaysDeals()].find((x) => x.key === body.id);

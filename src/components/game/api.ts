@@ -2,6 +2,9 @@
 
 export const ERROR_TEXT: Record<string, string> = {
   not_enough_energy: "Energia insuficiente.",
+  wrong_race: "Esta skin é de outra raça.",
+  daily_hunts: "Você atingiu o limite de caçadas de hoje. Volte amanhã!",
+  daily_quests: "Você atingiu o limite de missões de hoje. Volte amanhã!",
   quest_already_running: "Você já está em uma missão.",
   quest_not_finished: "A missão ainda não terminou.",
   in_battle: "Termine a batalha atual primeiro.",

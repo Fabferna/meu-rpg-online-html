@@ -10,6 +10,7 @@ import Quests from "./Quests";
 import Battle from "./Battle";
 import Arena from "./Arena";
 import Inventory from "./Inventory";
+import Smithy from "./Smithy";
 import Ranking from "./Ranking";
 import Shop from "./Shop";
 import Goals from "./Goals";
@@ -49,6 +50,7 @@ const TABS = [
   { id: "arena", label: "Arena PVP", icon: "🏟️" },
   { id: "guild", label: "Guilda", icon: "🏰" },
   { id: "inventory", label: "Inventário", icon: "🎒" },
+  { id: "forge", label: "Forja", icon: "⚒️" },
   { id: "pass", label: "Passe", icon: "👑" },
   { id: "shop", label: "Loja", icon: "💎" },
   { id: "ranking", label: "Ranking", icon: "🏆" },
@@ -186,12 +188,12 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
-      <nav className="mt-4 flex gap-1 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <nav className="mt-4 flex gap-0.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((tb) => (
           <button
             key={tb.id}
             onClick={() => { setTab(tb.id); play("click"); }}
-            className={`relative shrink-0 rounded-lg whitespace-nowrap px-2.5 py-2 text-[13px] xl:px-3 font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
+            className={`relative shrink-0 rounded-lg whitespace-nowrap px-2 py-2 text-[13px] font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
           >
             {tab === tb.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
             {tb.icon} {t(tb.label)}
@@ -212,6 +214,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "battle" && <Battle ctx={ctx} />}
             {tab === "arena" && <Arena ctx={ctx} />}
             {tab === "inventory" && <Inventory ctx={ctx} />}
+            {tab === "forge" && <Smithy ctx={ctx} />}
             {tab === "ranking" && <Ranking ctx={ctx} />}
             {tab === "shop" && <Shop ctx={ctx} />}
             {tab === "guild" && <Guild ctx={ctx} />}
