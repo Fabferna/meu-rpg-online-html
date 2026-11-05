@@ -6,6 +6,8 @@ export const ERROR_TEXT: Record<string, string> = {
   guild_leader: "Passe a liderança da guilda antes de excluir o herói.",
   confirm_name: "Digite o nome do herói exatamente para confirmar.",
   unknown_skill: "Habilidade inválida.",
+  no_slot: "Sem espaço livre. Compre um espaço de herói com gemas.",
+  already_has_character: "Você já está com um herói ativo.",
   daily_hunts: "Você atingiu o limite de caçadas de hoje. Volte amanhã!",
   daily_quests: "Você atingiu o limite de missões de hoje. Volte amanhã!",
   quest_already_running: "Você já está em uma missão.",

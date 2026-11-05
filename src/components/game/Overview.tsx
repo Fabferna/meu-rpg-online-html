@@ -8,6 +8,7 @@ import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
 import HeroManage from "./HeroManage";
+import HeroList from "./HeroList";
 
 const ATTRS = [
   { k: "str", label: "Força", hint: "Dano físico" },
@@ -110,6 +111,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
           <Stat label={t("Vitórias PVP")} value={c.pvpWins} />
           <Stat label={t("Derrotas PVP")} value={c.pvpLosses} />
         </Panel>
+        <HeroList gems={ctx.state.wallet.gems} onError={(m) => ctx.toast(m, "error")} />
         <HeroManage ctx={ctx} />
       </div>
     </div>
