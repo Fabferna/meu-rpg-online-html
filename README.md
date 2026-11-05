@@ -41,7 +41,7 @@ legacy/             versão HTML original (referência; será removida ao fim da
 ## Rodando localmente
 
 1. **Crie um projeto** em <https://supabase.com> (plano grátis serve).
-2. No painel: **SQL Editor → New query**, cole `supabase/migrations/0001_init.sql` e rode.
+2. No painel: **SQL Editor → New query**, cole e rode **em ordem** cada arquivo de `supabase/migrations/` (`0001_init.sql`, `0002_core_loop.sql`).
 3. Copie as chaves: **Project Settings → API**.
    ```bash
    cp .env.example .env.local   # e preencha os valores
@@ -58,9 +58,32 @@ legacy/             versão HTML original (referência; será removida ao fim da
    ```
    Abra <http://localhost:3000>.
 
+## Core loop (Fase 2)
+
+| Sistema | Onde a regra vive | Anti-cheat |
+|---|---|---|
+| Missões com timer | `src/lib/game/quests.ts` + `start_quest` / `claim_quest` (SQL) | Recompensa sorteada no servidor ao iniciar; resgate só se `now() >= ends_at` no relógio do banco; 1 missão ativa por vez. |
+| Caçada PVE por turnos | `src/lib/game/combat.ts` + `/api/battle/*` | Estado da luta salvo no banco; cliente envia só a ação; RNG criptográfico; versão otimista impede clique duplo. |
+| Arena PVP | `/api/pvp/fight` + `apply_pvp_result` | Luta simulada inteira no servidor; ±5 níveis; máx. 3 desafios/h ao mesmo alvo; Elo. |
+| Níveis e atributos | `grant_rewards`, `spend_attribute_points` | Level up calculado no SQL; +3 pontos por nível. |
+| Inventário | `give_item`, `toggle_equip`, `consume_item` | Unicidade de 1 item equipado por slot no banco. |
+
+### Imagens dos inimigos (geradas no Canva)
+
+Os arquivos em `public/assets/enemies/` são **prévias em baixa resolução**. Baixe as versões completas no Canva e substitua mantendo o mesmo nome:
+
+| Arquivo | Canva |
+|---|---|
+| `sombra_fraca.png` | https://www.canva.com/M/MAHaAP1GQXA |
+| `lobo_corrompido.png` | https://www.canva.com/M/MAHaAEHKcBs |
+| `vulto_menor.png` | https://www.canva.com/M/MAHaAATp6OQ |
+| `culto_acolito.png` | https://www.canva.com/M/MAHaANiI3iw |
+| `javali_corrompido.png` | https://www.canva.com/M/MAHaAKuC0Tc |
+| `lider_cultista.png` | https://www.canva.com/M/MAHaAFDagaA |
+
 ## Roadmap
 
 - [x] **Fase 1** — Next.js, Supabase, login (e-mail/Google/Facebook), RLS, criação de personagem no servidor
-- [ ] **Fase 2** — Missões com timer, combate PVE/PVP, níveis, inventário, UI animada
+- [x] **Fase 2** — Missões com timer, combate PVE por turnos, PVP assíncrono com ranking Elo, níveis/atributos, inventário/equipamentos, UI animada
 - [ ] **Fase 3** — Gemas (premium), recarga de energia, loja de cosméticos, ofertas limitadas, Stripe/Mercado Pago
 - [ ] **Fase 4** — `DEPLOY.md` (domínio, SSL, Cloudflare, banco em produção)

@@ -35,3 +35,16 @@ export function currentEnergy(stored: number, updatedAt: Date, max: number, now:
   const nextPointInSec = energy >= max ? 0 : ENERGY_REGEN_SECONDS - (elapsed % ENERGY_REGEN_SECONDS);
   return { energy, nextPointInSec };
 }
+
+/** 1 ponto de HP a cada N segundos (espelho de f_regen no SQL). */
+export const HP_REGEN_SECONDS = 10;
+
+export function currentHp(stored: number, updatedAt: Date, max: number, now: Date = new Date()): number {
+  if (stored >= max) return max;
+  const elapsed = Math.max(0, Math.floor((now.getTime() - updatedAt.getTime()) / 1000));
+  return Math.min(max, stored + Math.floor(elapsed / HP_REGEN_SECONDS));
+}
+
+export const ATTRIBUTE_POINTS_PER_LEVEL = 3;
+export const PVE_ENERGY_COST = 5;
+export const PVP_ENERGY_COST = 8;

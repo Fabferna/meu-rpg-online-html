@@ -1,11 +1,11 @@
 import "server-only";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 // Cliente com service_role: ignora RLS. Só pode existir no servidor —
 // o import "server-only" quebra o build se alguém importar no frontend.
-let admin: ReturnType<typeof createClient> | null = null;
+let admin: SupabaseClient | null = null;
 
-export function createAdminClient() {
+export function createAdminClient(): SupabaseClient {
   if (!admin) {
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY ausente");

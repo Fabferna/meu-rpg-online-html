@@ -1,73 +1,71 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data";
-import { currentEnergy, maxEnergy, maxHp, xpForNextLevel } from "./rules";
+import { xpForNextLevel } from "./rules";
+import { deriveVitals, type CharacterRow } from "./player";
+import type { BattleState } from "./combat";
+
+export type InventoryEntry = {
+  id: string;
+  itemId: string;
+  qty: number;
+  equipped: boolean;
+  slot: string | null;
+  name: string;
+  kind: string;
+  rarity: "common" | "rare" | "epic" | "legendary";
+  data: Record<string, number | string>;
+};
 
 export type PlayerState = {
   character: {
-    name: string;
-    race: RaceId;
-    raceName: string;
-    region: RegionId;
-    regionName: string;
-    gender: Gender;
-    portrait: string;
-    level: number;
-    xp: number;
-    xpToNext: number;
-    attributePoints: number;
+    name: string; race: RaceId; raceName: string; region: RegionId; regionName: string; gender: Gender; portrait: string;
+    level: number; xp: number; xpToNext: number; attributePoints: number;
     attributes: { str: number; dex: number; con: number; intel: number; wis: number; cha: number };
-    hp: number;
-    maxHp: number;
-    energy: number;
-    maxEnergy: number;
-    nextEnergyInSec: number;
+    hp: number; maxHp: number; energy: number; maxEnergy: number; nextEnergyInSec: number;
+    pvpRating: number; pvpWins: number; pvpLosses: number; pveWins: number;
   };
   wallet: { gold: number; gems: number };
+  quest: { id: string; questId: string; startedAt: string; endsAt: string; rewards: { xp: number; gold: number; item: string | null } } | null;
+  battle: { id: string; state: BattleState } | null;
+  inventory: InventoryEntry[];
   serverTime: string;
 };
 
-/**
- * Lê o estado do jogador. Usa o cliente com a sessão do usuário, então
- * o RLS garante que só os próprios dados são retornados.
- */
+/** Estado completo do jogador, lido com o cliente do usuário (RLS). */
 export async function getPlayerState(supabase: SupabaseClient, userId: string): Promise<PlayerState | null> {
-  const [{ data: c, error: ce }, { data: w, error: we }] = await Promise.all([
-    supabase.from("characters").select("*").eq("user_id", userId).maybeSingle(),
+  const [c, w, q, b, inv] = await Promise.all([
+    supabase.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     supabase.from("wallets").select("gold, gems").eq("user_id", userId).maybeSingle(),
+    supabase.from("quest_runs").select("*").eq("user_id", userId).eq("status", "running").maybeSingle(),
+    supabase.from("battles").select("id, state").eq("user_id", userId).eq("status", "active").maybeSingle(),
+    supabase.from("inventory").select("id, item_id, qty, equipped, slot, items(name, kind, rarity, data)").eq("user_id", userId).order("acquired_at"),
   ]);
-  if (ce) throw ce;
-  if (we) throw we;
-  if (!c) return null;
+  for (const r of [c, w, q, b, inv]) if (r.error) throw r.error;
+  const row = c.data;
+  if (!row) return null;
 
-  const attributes = { str: c.str, dex: c.dex, con: c.con, intel: c.intel, wis: c.wis, cha: c.cha };
-  const now = new Date();
-  const mEnergy = maxEnergy(attributes, c.level);
-  const e = currentEnergy(c.energy, new Date(c.energy_updated_at), mEnergy, now);
-  const race = c.race as RaceId;
-  const gender = c.gender as Gender;
+  const v = deriveVitals(row);
+  const race = row.race as RaceId;
+  const gender = row.gender as Gender;
 
   return {
     character: {
-      name: c.name,
-      race,
-      raceName: RACES[race].name,
-      region: c.region,
-      regionName: REGIONS[c.region as RegionId].name,
-      gender,
-      portrait: RACES[race].portraits[gender],
-      level: c.level,
-      xp: Number(c.xp),
-      xpToNext: xpForNextLevel(c.level),
-      attributePoints: c.attribute_points,
-      attributes,
-      hp: Math.min(c.hp, maxHp(attributes, c.level)),
-      maxHp: maxHp(attributes, c.level),
-      energy: e.energy,
-      maxEnergy: mEnergy,
-      nextEnergyInSec: e.nextPointInSec,
+      name: row.name, race, raceName: RACES[race].name, region: row.region as RegionId,
+      regionName: REGIONS[row.region as RegionId].name, gender, portrait: RACES[race].portraits[gender],
+      level: row.level, xp: Number(row.xp), xpToNext: xpForNextLevel(row.level), attributePoints: row.attribute_points,
+      attributes: v.attributes, hp: v.hp, maxHp: v.maxHp, energy: v.energy, maxEnergy: v.maxEnergy, nextEnergyInSec: v.nextEnergyInSec,
+      pvpRating: row.pvp_rating, pvpWins: row.pvp_wins, pvpLosses: row.pvp_losses, pveWins: row.pve_wins,
     },
-    wallet: { gold: Number(w?.gold ?? 0), gems: Number(w?.gems ?? 0) },
-    serverTime: now.toISOString(),
+    wallet: { gold: Number(w.data?.gold ?? 0), gems: Number(w.data?.gems ?? 0) },
+    quest: q.data
+      ? { id: q.data.id, questId: q.data.quest_id, startedAt: q.data.started_at, endsAt: q.data.ends_at, rewards: q.data.rewards }
+      : null,
+    battle: b.data ? { id: b.data.id, state: b.data.state as BattleState } : null,
+    inventory: ((inv.data ?? []) as unknown as {
+      id: string; item_id: string; qty: number; equipped: boolean; slot: string | null;
+      items: { name: string; kind: string; rarity: InventoryEntry["rarity"]; data: InventoryEntry["data"] };
+    }[]).map((i) => ({ id: i.id, itemId: i.item_id, qty: i.qty, equipped: i.equipped, slot: i.slot, ...i.items })),
+    serverTime: new Date().toISOString(),
   };
 }
