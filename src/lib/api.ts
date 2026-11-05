@@ -15,7 +15,7 @@ const BUSINESS_ERRORS = new Set([
   "not_enough_points", "invalid_points", "not_owner", "not_equippable", "no_character",
   "insufficient_funds", "energy_full", "already_owned", "daily_limit", "sold_out", "offer_expired",
   "already_claimed", "quest_already_done", "unknown_offer", "item_equipped",
-  "already_in_guild", "guild_name_taken", "unknown_guild", "guild_full", "not_in_guild", "no_permission", "invalid_target", "boss_defeated", "muted", "max_upgrade", "region_locked",
+  "already_in_guild", "guild_name_taken", "unknown_guild", "guild_full", "not_in_guild", "no_permission", "invalid_target", "boss_defeated", "muted", "max_upgrade", "region_locked", "guild_leader", "stale_battle", "invalid_action",
 ]);
 
 /**

@@ -47,7 +47,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
     try {
       const r = await post<{ pos: number; gems: number; gold: number }>("/api/ranking/claim");
       play("victory");
-      ctx.toast(`🏆 ${t("Prêmio da semana ({n}º):", { n: r.pos })} ${prize(t, r)}`, "reward");
+      ctx.toast(`🏆 ${t("Prêmio da temporada ({n}º):", { n: r.pos })} ${prize(t, r)}`, "reward");
       await Promise.all([load(), ctx.refresh()]);
     } catch (e) {
       ctx.toast((e as Error).message, "error");
@@ -64,7 +64,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
           className="panel flex flex-wrap items-center gap-4 bg-gradient-to-r from-amber-900/50 to-fuchsia-900/30 p-5 ring-2 ring-gold">
           <span className="text-4xl">{medal[lw.pos - 1] ?? "🏆"}</span>
           <div className="min-w-0 flex-1">
-            <p className="font-display text-lg">{t("A semana passada terminou! Você ficou em {p}º com {s} pontos.", { p: lw.pos, s: lw.score })}</p>
+            <p className="font-display text-lg">{t("A temporada passada terminou! Você ficou em {p}º com {s} pontos.", { p: lw.pos, s: lw.score })}</p>
             <p className="text-sm text-white/70">{t("Prêmio:")} {prize(t, lw.reward)}</p>
           </div>
           <button className="btn-gold" disabled={busy} onClick={claim}>{t("Resgatar prêmio")}</button>
@@ -72,7 +72,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        {([["week", "📅 Esta semana"], ["global", "⭐ Geral (Rating PVP)"]] as const).map(([k, l]) => (
+        {([["week", "📅 Temporada (14 dias)"], ["global", "⭐ Geral (Rating PVP)"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setScope(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${scope === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
         ))}
         {scope === "week" && week && (
@@ -89,7 +89,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
               </p>
             )}
             <Table rows={week?.rows ?? null} me={ctx.state.character.name} cols={[[t("Pontos"), (r) => <span className="font-display text-gold">{(r as WeekRow).score}</span>]]}
-              empty={t("Ninguém pontuou ainda nesta semana. Seja o primeiro!")} />
+              empty={t("Ninguém pontuou ainda nesta temporada. Seja o primeiro!")} />
           </Panel>
           <div className="space-y-4">
             <Panel className="p-4 text-sm">
@@ -102,12 +102,12 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
               </ul>
             </Panel>
             <Panel className="p-4 text-sm">
-              <h3 className="font-display text-gold">{t("Prêmios da semana")}</h3>
+              <h3 className="font-display text-gold">{t("Prêmios da temporada")}</h3>
               <ul className="mt-2 space-y-1.5">
                 {WEEKLY_REWARDS.map((w) => <li key={w.label} className="flex justify-between gap-2"><span className="text-white/70">{t(w.label)}</span><span className="text-right">{prize(t, w)}</span></li>)}
                 <li className="flex justify-between gap-2"><span className="text-white/70">{t("{n}+ pontos", { n: WEEKLY_PARTICIPATION.minScore })}</span><span>{prize(t, WEEKLY_PARTICIPATION)}</span></li>
               </ul>
-              <p className="mt-3 text-[11px] text-white/40">{t("A temporada vai de segunda a domingo (horário UTC). Resgate o prêmio durante a semana seguinte.")}</p>
+              <p className="mt-3 text-[11px] text-white/40">{t("Cada temporada dura 14 dias, de segunda a domingo da semana seguinte (horário UTC). Resgate o prêmio durante a temporada seguinte.")}</p>
             </Panel>
           </div>
         </div>

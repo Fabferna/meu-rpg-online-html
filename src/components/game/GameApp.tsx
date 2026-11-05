@@ -11,6 +11,7 @@ import Battle from "./Battle";
 import Arena from "./Arena";
 import Inventory from "./Inventory";
 import Smithy from "./Smithy";
+import Skills from "./Skills";
 import Ranking from "./Ranking";
 import Shop from "./Shop";
 import Goals from "./Goals";
@@ -47,8 +48,9 @@ const TABS = [
   { id: "goals", label: "Objetivos", icon: "🎯" },
   { id: "quests", label: "Missões", icon: "📜" },
   { id: "battle", label: "Caçada", icon: "⚔️" },
-  { id: "arena", label: "Arena PVP", icon: "🏟️" },
+  { id: "arena", label: "Arena", icon: "🏟️" },
   { id: "guild", label: "Guilda", icon: "🏰" },
+  { id: "skills", label: "Habilidades", icon: "✨" },
   { id: "inventory", label: "Inventário", icon: "🎒" },
   { id: "forge", label: "Forja", icon: "⚒️" },
   { id: "pass", label: "Passe", icon: "👑" },
@@ -193,7 +195,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           <button
             key={tb.id}
             onClick={() => { setTab(tb.id); play("click"); }}
-            className={`relative shrink-0 rounded-lg whitespace-nowrap px-2 py-2 text-[13px] font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
+            className={`relative shrink-0 rounded-lg whitespace-nowrap px-1.5 py-2 text-[12.5px] font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
           >
             {tab === tb.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
             {tb.icon} {t(tb.label)}
@@ -215,6 +217,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tab === "arena" && <Arena ctx={ctx} />}
             {tab === "inventory" && <Inventory ctx={ctx} />}
             {tab === "forge" && <Smithy ctx={ctx} />}
+            {tab === "skills" && <Skills ctx={ctx} />}
             {tab === "ranking" && <Ranking ctx={ctx} />}
             {tab === "shop" && <Shop ctx={ctx} />}
             {tab === "guild" && <Guild ctx={ctx} />}

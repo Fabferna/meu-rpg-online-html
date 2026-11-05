@@ -14,6 +14,7 @@ export type CharacterRow = {
   pvp_rating: number; pvp_wins: number; pvp_losses: number; pve_wins: number;
   equipped_frame: string | null; equipped_title: string | null; equipped_skin: string | null; xp_boost_until: string | null;
   story_chapter: number;
+  skills?: unknown;
 };
 
 export type LoadedPlayer = {

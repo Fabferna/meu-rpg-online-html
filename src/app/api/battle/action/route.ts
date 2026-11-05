@@ -3,12 +3,14 @@ import { action, HttpError, rpc } from "@/lib/api";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { loadPlayer } from "@/lib/game/player";
 import { chance } from "@/lib/game/rng";
+import { normalizeLoadout } from "@/lib/game/skills";
 import type { RaceId } from "@/lib/game/data";
 import { DUNGEON_BY_ID, DUNGEON_REST } from "@/lib/game/dungeons";
 import { CHAPTER_BY_N } from "@/lib/game/story";
 import { enemyCombatant, playerCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
 
-const Schema = z.object({ action: z.enum(["attack", "skill", "defend", "potion", "racial"]) }).strict();
+// "skill"/"racial" = nomes antigos, tratados como o 1º espaço da barra.
+const Schema = z.object({ action: z.enum(["attack", "defend", "potion", "s0", "s1", "s2", "skill", "racial"]) }).strict();
 
 export const POST = action(
   "battle-action",
@@ -29,7 +31,9 @@ export const POST = action(
     let hasPotion = false;
     if (body.action === "potion") hasPotion = await rpc<boolean>(admin, "consume_item", { p_user: user.id, p_item: POTION_ITEM });
 
-    const { state: next, outcome } = resolveTurn(state, body.action, pc, ec, hasPotion, p.row.race as RaceId, enemy.traits);
+    const act = body.action === "skill" || body.action === "racial" ? "s0" : body.action;
+    const loadout = normalizeLoadout(p.row.race as RaceId, p.row.skills, p.row.level);
+    const { state: next, outcome } = resolveTurn(state, act, pc, ec, hasPotion, loadout, enemy.traits);
 
     if (outcome === "won") {
       // Inimigos muito abaixo do seu nível rendem menos XP (anti-farm).

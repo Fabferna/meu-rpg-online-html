@@ -51,3 +51,7 @@ export const PVE_ENERGY_COST = 4;
 export const DAILY_HUNTS = 40;
 export const DAILY_QUESTS = 20;
 export const PVP_ENERGY_COST = 8;
+
+/** Resetar/excluir o herói: a 1ª vez de cada é grátis; depois custa ouro. */
+export const RESET_COST = 500;
+export const DELETE_COST = 500;

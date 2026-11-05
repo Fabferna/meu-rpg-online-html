@@ -8,7 +8,7 @@ import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
 import { ENEMIES } from "@/lib/game/enemies";
 import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
-import { RACIAL_SKILLS } from "@/lib/game/racial";
+import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
 import { ITEM_BY_ID } from "@/lib/game/items";
 import { REGION_OF_ENEMY, regionUnlocked } from "@/lib/game/regions";
@@ -47,7 +47,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
 
   function showFloats(entries: LogEntry[]) {
     const fl: Float[] = entries.map((l, i) => {
-      const target = l.target ?? (l.action === "defend" || l.action === "potion" || (l.action === "racial" && l.heal) ? l.actor : l.actor === "player" ? "enemy" : "player");
+      const target = l.target ?? (l.action === "defend" || l.action === "potion" || ((l.action === "racial" || l.action === "skill") && l.heal && !l.dmg) ? l.actor : l.actor === "player" ? "enemy" : "player");
       const text = l.action === "stunned" ? t("Atordoado!") : l.miss ? t("Esquivou!") : l.heal ? `+${l.heal}` : l.action === "poison" ? `☠️ -${l.dmg}` : `${l.crit ? `${t("CRÍTICO")} ` : ""}-${l.dmg}`;
       const color = l.action === "poison" ? "text-lime-300" : l.action === "stunned" ? "text-sky-300" : l.heal ? "text-emerald-300" : l.crit ? "text-amber-300 text-3xl" : l.miss ? "text-white/70" : "text-red-400";
       return { id: Date.now() + i, side: target, text, color };
@@ -157,8 +157,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     const pot = state.inventory.find((i) => i.itemId === "pocao_vida")?.qty ?? 0;
     const last = battle.log.slice(-8).reverse();
     const fx = battle.effects ?? {};
-    const racial = RACIAL_SKILLS[state.character.race];
-    const rcd = battle.racialCooldown ?? 0;
+    const lo = state.character.loadout;
     return (
       <div className="space-y-4">
         {battle.dungeon && (
@@ -176,14 +175,24 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
             badges={[fx.ePoison ? `☠️ Veneno ${fx.ePoison}` : "", fx.eStun ? "💫 Atordoado" : ""]} />
         </div>
-        <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-6">
+        <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-4 lg:grid-cols-7">
           <ActBtn disabled={busy} onClick={() => act("attack")} label={t("⚔️ Atacar")} />
-          <motion.button whileTap={{ scale: 0.94 }} onClick={() => act("racial")} disabled={busy || rcd > 0} title={t(racial.description)}
-            className="col-span-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-ember/80 to-amber-600/80 px-3 py-2 text-left font-display text-sm transition hover:brightness-110 disabled:opacity-40 sm:col-span-1">
-            <Image src={racial.icon} alt="" width={32} height={32} className="shrink-0 rounded" />
-            <span className="leading-tight">{rcd > 0 ? t("Recarga ({n})", { n: rcd }) : t(racial.name)}</span>
-          </motion.button>
-          <ActBtn disabled={busy || battle.skillCooldown > 0} onClick={() => act("skill")} label={battle.skillCooldown > 0 ? `✨ ${t("Recarga ({n})", { n: battle.skillCooldown })}` : t("✨ Habilidade")} accent />
+          {lo.eq.map((id, i) => {
+            const sk = SKILL_BY_ID[id];
+            if (!sk) return null;
+            const cd = battle.cds?.[id] ?? 0;
+            const lv = lo.lv[id] ?? 1;
+            return (
+              <motion.button key={id} whileTap={{ scale: 0.94 }} onClick={() => act(`s${i}` as PlayerAction)} disabled={busy || cd > 0} title={t(sk.description)}
+                className="col-span-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-arcane/80 to-fuchsia-700/70 px-3 py-2 text-left font-display text-sm transition hover:brightness-110 disabled:opacity-40 sm:col-span-1">
+                <Image src={sk.icon} alt="" width={32} height={32} className="shrink-0 rounded" />
+                <span className="min-w-0 leading-tight">
+                  <span className="block truncate">{t(sk.name)}</span>
+                  <span className="block text-[10px] font-sans text-white/70">{cd > 0 ? t("Recarga ({n})", { n: cd }) : `${t("Nv.")} ${lv} · ⏳${skillPower(sk, lv).cooldown}`}</span>
+                </span>
+              </motion.button>
+            );
+          })}
           <ActBtn disabled={busy} onClick={() => act("defend")} label={t("🛡️ Defender")} />
           <ActBtn disabled={busy || !pot} onClick={() => act("potion")} label={t("🧪 Poção ({n})", { n: pot })} />
           <ActBtn disabled={busy} onClick={flee} label={t("🏃 Fugir")} muted />
@@ -281,6 +290,11 @@ function describe(t: TFn, l: LogEntry, me: string, foe: string) {
   const target = l.target === "player" ? me : foe;
   if (l.action === "stunned") return t("💫 {a} está atordoado e perde o turno.", { a: target });
   if (l.action === "poison") return t("☠️ O veneno causa {d} de dano em {a}.", { d: l.dmg ?? 0, a: target });
+  const sk = l.skillId ? SKILL_BY_ID[l.skillId] : undefined;
+  if (sk && !l.dmg && !l.miss) {
+    const parts = [l.heal ? t("recupera {h} de vida", { h: l.heal }) : "", l.effect === "stun" ? t("atordoa {b}", { b: other }) : "", l.effect === "stone" ? t("reduz o dano recebido") : ""].filter(Boolean).join(" · ");
+    return `✨ ${who}: ${t(sk.name)}${parts ? ` — ${parts}` : ""}.`;
+  }
   if (l.action === "racial" && l.effect === "stone") return t("🪨 {a} ativa Pele de Pedra e recupera {h} de vida.", { a: who, h: l.heal ?? 0 });
   if (l.action === "defend") return t("🛡️ {a} se defende e recupera {h} de vida.", { a: who, h: l.heal ?? 0 });
   if (l.action === "potion") return t("🧪 {a} bebe uma poção (+{h}).", { a: who, h: l.heal ?? 0 });
@@ -288,5 +302,7 @@ function describe(t: TFn, l: LogEntry, me: string, foe: string) {
   const icon = l.action === "racial" ? "🔥" : l.action === "skill" ? "✨" : "⚔️";
   const base = l.crit ? t("{a} causa {d} de dano CRÍTICO em {b}", { a: who, d: l.dmg ?? 0, b: other }) : t("{a} causa {d} de dano em {b}", { a: who, d: l.dmg ?? 0, b: other });
   const extra = l.effect === "poison" ? t(" e o envenena") : l.effect === "stun" ? t(" e o atordoa") : l.effect === "rage" ? t(" em fúria") : "";
-  return `${icon} ${base}${extra}.`;
+  const name = sk ? ` [${t(sk.name)}]` : "";
+  const heal = sk && l.heal ? ` (+${l.heal} ❤️)` : "";
+  return `${icon}${name} ${base}${extra}${heal}.`;
 }

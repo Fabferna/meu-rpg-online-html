@@ -1,5 +1,6 @@
 import "server-only";
 import { dailyCounts } from "./dailyLimits";
+import { normalizeLoadout, type SkillLoadout } from "./skills";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data";
 import { xpForNextLevel } from "./rules";
@@ -27,7 +28,7 @@ export type PlayerState = {
     attributes: { str: number; dex: number; con: number; intel: number; wis: number; cha: number };
     hp: number; maxHp: number; energy: number; maxEnergy: number; nextEnergyInSec: number;
     pvpRating: number; pvpWins: number; pvpLosses: number; pveWins: number;
-    frame: string | null; title: string | null; skin: string | null; xpBoostUntil: string | null;
+    frame: string | null; title: string | null; skin: string | null; loadout: SkillLoadout; xpBoostUntil: string | null;
     storyChapter: number;
   };
   wallet: { gold: number; gems: number };
@@ -66,7 +67,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       attributes: v.attributes, hp: v.hp, maxHp: v.maxHp, energy: v.energy, maxEnergy: v.maxEnergy, nextEnergyInSec: v.nextEnergyInSec,
       pvpRating: row.pvp_rating, pvpWins: row.pvp_wins, pvpLosses: row.pvp_losses, pveWins: row.pve_wins,
       frame: row.equipped_frame, title: row.equipped_title ? COSMETIC_BY_ID[row.equipped_title]?.name ?? null : null,
-      skin: row.equipped_skin, xpBoostUntil: row.xp_boost_until, storyChapter: row.story_chapter ?? 0,
+      loadout: normalizeLoadout(race, row.skills, row.level), skin: row.equipped_skin, xpBoostUntil: row.xp_boost_until, storyChapter: row.story_chapter ?? 0,
     },
     wallet: { gold: Number(w.data?.gold ?? 0), gems: Number(w.data?.gems ?? 0) },
     quest: q.data

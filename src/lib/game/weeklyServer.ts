@@ -5,11 +5,17 @@ import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
 
 export type WeeklyRow = { pos: number; userId: string; name: string; level: number; raceName: string; portrait: string; frame: string | null; title: string | null; score: number };
 
-/** Classificação completa de uma semana (usa a service_role). */
+/** Classificação completa de uma temporada de 14 dias (usa a service_role). */
 export async function weeklyBoard(admin: SupabaseClient, start: string): Promise<WeeklyRow[]> {
-  const { data: scores, error } = await admin.rpc("weekly_scores", { p_start: start });
-  if (error) throw error;
-  const list = ((scores ?? []) as { user_id: string; score: number }[]).filter((s) => Number(s.score) > 0);
+  // A função SQL soma 7 dias; a temporada tem 14: somamos as duas semanas.
+  const second = new Date(new Date(start + "T00:00:00Z").getTime() + 7 * 86_400_000).toISOString().slice(0, 10);
+  const parts = await Promise.all([start, second].map((p) => admin.rpc("weekly_scores", { p_start: p })));
+  const total = new Map<string, number>();
+  for (const { data, error } of parts) {
+    if (error) throw error;
+    for (const s of (data ?? []) as { user_id: string; score: number }[]) total.set(s.user_id, (total.get(s.user_id) ?? 0) + Number(s.score));
+  }
+  const list = [...total].map(([user_id, score]) => ({ user_id, score })).filter((s) => s.score > 0);
   if (!list.length) return [];
   const { data: chars } = await admin
     .from("characters")
