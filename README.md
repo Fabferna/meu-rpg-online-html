@@ -4,6 +4,8 @@ RPG de navegador (estilo menus/missões/PVP) feito com **Next.js 15 + Supabase**
 
 ![capa](public/capa_readme.png)
 
+> 🚀 **Vai publicar?** Siga o [`LANCAMENTO.md`](LANCAMENTO.md) (checklist) e o [`DEPLOY.md`](DEPLOY.md) (detalhes).
+
 ## Arquitetura
 
 ```

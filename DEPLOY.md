@@ -1,5 +1,7 @@
 # 🚀 Deploy do Aethelgard Online
 
+> 📋 Para a ordem dos passos e os testes do dia do lançamento, use o [`LANCAMENTO.md`](LANCAMENTO.md).
+
 Guia em duas partes:
 
 - **Parte A — Custo zero (agora):** tudo funcionando em `https://meu-rpg-online-html.vercel.app` com planos gratuitos.
@@ -42,7 +44,7 @@ Guia em duas partes:
    - **Region:** `South America (São Paulo)` (menor latência para jogadores BR).
    - **Plan:** Free.
 3. Aguarde ~2 minutos até o projeto ficar verde.
-4. Menu lateral → **SQL Editor** → **New query**. Cole e rode (**Run**), **um de cada vez e nesta ordem**:
+4. Menu lateral → **SQL Editor** → **New query**. **Jeito mais fácil:** cole o arquivo `supabase/todas_as_migracoes.sql` inteiro e rode (**Run**). Depois rode `supabase/verificar.sql` para conferir. Se preferir, rode as migrações **uma de cada vez e nesta ordem**:
    1. `supabase/migrations/0001_init.sql`
    2. `supabase/migrations/0002_core_loop.sql`
    3. `supabase/migrations/0003_economy.sql`
