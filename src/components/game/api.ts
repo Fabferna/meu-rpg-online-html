@@ -30,6 +30,8 @@ export const ERROR_TEXT: Record<string, string> = {
   item_equipped: "Remova o item antes de vender.",
   bag_full: "Sua bolsa está cheia. Venda ou use itens para abrir espaço.",
   invalid_sale: "Seleção de venda inválida.",
+  not_enough_items: "Você não tem itens suficientes para esta encomenda.",
+  wrong_item: "Este item não serve para esta encomenda.",
   already_in_guild: "Você já está em uma guilda.",
   guild_name_taken: "Já existe uma guilda com esse nome ou tag.",
   guild_full: "Esta guilda está cheia.",
