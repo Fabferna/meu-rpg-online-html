@@ -12,7 +12,7 @@ export const ERROR_TEXT: Record<string, string> = {
   already_requested: "Pedido de amizade já enviado.",
   no_slot: "Sem espaço livre. Compre um espaço de herói com gemas.",
   already_has_character: "Você já está com um herói ativo.",
-  daily_hunts: "Você atingiu o limite de caçadas de hoje. Volte amanhã!",
+  daily_hunts: "Você atingiu o limite de caçadas de hoje. Renove com gemas na Caçada ou volte amanhã!",
   daily_quests: "Você atingiu o limite de missões de hoje. Volte amanhã!",
   quest_already_running: "Você já está em uma missão.",
   quest_not_finished: "A missão ainda não terminou.",

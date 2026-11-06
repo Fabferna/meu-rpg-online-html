@@ -36,7 +36,7 @@ export type PlayerState = {
   battle: { id: string; state: BattleState } | null;
   inventory: InventoryEntry[];
   guild: { id: string; name: string; tag: string; level: number; role: "leader" | "officer" | "member" } | null;
-  daily: { hunts: number; quests: number };
+  daily: { hunts: number; quests: number; huntRefills: number; huntLimit: number };
   serverTime: string;
 };
 

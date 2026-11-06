@@ -7,7 +7,7 @@ import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
 import { ENEMIES, ENEMY_BY_ID } from "@/lib/game/enemies";
-import { DAILY_HUNTS, PVE_ENERGY_COST, xpRate } from "@/lib/game/rules";
+import { HUNT_REFILL, PVE_ENERGY_COST, xpRate } from "@/lib/game/rules";
 import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
 import { ITEM_BY_ID } from "@/lib/game/items";
@@ -111,6 +111,21 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       setBattle(res.battle?.state ?? null);
       await ctx.refresh();
     } catch { /* sem rede: mantém a tela */ }
+  }
+
+  async function refill() {
+    if (!confirm(t("Gastar 💎 {g} para ganhar +{n} caçadas hoje?", { g: HUNT_REFILL.gems, n: HUNT_REFILL.hunts }))) return;
+    setBusy(true);
+    try {
+      await post("/api/battle/refill");
+      play("coin");
+      ctx.toast(t("+{n} caçadas liberadas para hoje!", { n: HUNT_REFILL.hunts }), "reward");
+      await ctx.refresh();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function flee() {
@@ -231,6 +246,8 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     );
   }
 
+  const huntsOut = state.daily.hunts >= state.daily.huntLimit;
+  const refillLeft = state.daily.huntRefills < HUNT_REFILL.perDay;
   const tabs = (
     <div className="mb-4 flex gap-2">
       {([["hunt", "⚔️ Caçada"], ["dungeon", "🗝️ Masmorras"]] as const).map(([k, l]) => (
@@ -246,7 +263,19 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     <div>
       {tabs}
       <p className="mb-4 text-sm text-white/60">{t("Cada caçada custa ⚡ {e} de energia. Sua vida atual: {hp}/{max}", { e: PVE_ENERGY_COST, hp: state.character.hp, max: state.character.maxHp })}
-        {" · "}<span className={state.daily.hunts >= DAILY_HUNTS ? "text-amber-300" : ""}>{t("Caçadas hoje: {a}/{b}", { a: state.daily.hunts, b: DAILY_HUNTS })}</span></p>
+        {" · "}<span className={huntsOut ? "text-amber-300" : ""}>{t("Caçadas hoje: {a}/{b}", { a: state.daily.hunts, b: state.daily.huntLimit })}</span></p>
+      {huntsOut && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sky-500/10 px-4 py-3 text-sm ring-1 ring-sky-400/30">
+          <span className="flex-1">{refillLeft
+            ? t("Acabaram as caçadas de hoje. Renove agora: +{n} caçadas por 💎 {g} (1 vez por dia).", { n: HUNT_REFILL.hunts, g: HUNT_REFILL.gems })
+            : t("Você já renovou as caçadas hoje. Volte amanhã!")}</span>
+          {refillLeft && (
+            <button className="btn-gold min-h-11 px-4" disabled={busy || state.wallet.gems < HUNT_REFILL.gems} onClick={refill}>
+              {state.wallet.gems < HUNT_REFILL.gems ? t("Gemas insuficientes") : t("Renovar · 💎 {g}", { g: HUNT_REFILL.gems })}
+            </button>
+          )}
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {ENEMIES.filter((e) => !e.story).map((e, i) => {
           const region = REGION_OF_ENEMY[e.id];
