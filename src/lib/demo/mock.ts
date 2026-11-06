@@ -39,6 +39,11 @@ export function installDemoFetch() {
     const url = typeof input === "string" ? input : input instanceof URL ? input.pathname : input.url;
     if (!url.startsWith("/api/")) return real(input, init);
     if ((init?.method ?? "GET") !== "GET") return json({ error: "demo" }, 403);
+    if (url === "/api/characters") return json({
+      active: { name: "Kaelen", raceName: "Humano", level: 6, portrait: "/assets/aventureiro_de_aethelgard.webp" },
+      stashed: [{ id: "demo", name: "Lyra", raceName: "Elfo de Sylvandell", level: 3, portrait: "/assets/elfo_de_sylvandell_mulher.webp" }],
+      slots: 2, maxSlots: 5, slotPrice: 200,
+    });
     if (url === "/api/state") return json({ ...demoState(), serverTime: new Date().toISOString() });
     if (url === "/api/pvp/opponents") return json({ opponents: [
       { name: "Lyra", level: 7, rating: 1102, wins: 9, losses: 3, raceName: "Elfo de Sylvandell", portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", title: "Lenda de Aethelgard" },

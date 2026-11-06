@@ -7,9 +7,9 @@ import { eloDelta, playerCombatant, simulateDuel } from "@/lib/game/combat";
 
 export const POST = action(
   "pvp-fight",
-  z.object({ opponent: z.string().min(3).max(16) }).strict(),
+  z.object({ opponent: z.string().regex(/^[A-Za-zÀ-ÿ0-9_]{3,16}$/) }).strict(),
   async ({ user, body, admin }) => {
-    const { data: opp } = await admin.from("characters").select("user_id, level").ilike("name", body.opponent).maybeSingle();
+    const { data: opp } = await admin.from("characters").select("user_id, level").eq("name", body.opponent).maybeSingle();
     if (!opp || opp.user_id === user.id) throw new HttpError(404, "unknown_opponent");
 
     const [me, them] = await Promise.all([loadPlayer(admin, user.id), loadPlayer(admin, opp.user_id)]);

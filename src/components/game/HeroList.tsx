@@ -22,7 +22,7 @@ export default function HeroList({ gems, onError }: { gems?: number; onError?: (
     setBusy(true);
     try { await fn(); } catch (e) { fail(e); setBusy(false); }
   }
-  if (!d) return null;
+  if (!d || !Array.isArray(d.stashed)) return null;
   if (!d.active && !d.stashed.length) return null;
 
   const used = d.stashed.length + (d.active ? 1 : 0);

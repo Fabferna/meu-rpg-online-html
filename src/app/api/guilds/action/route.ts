@@ -11,7 +11,7 @@ const Schema = z.discriminatedUnion("type", [
   }).strict(),
   z.object({ type: z.literal("join"), guildId: z.uuid() }).strict(),
   z.object({ type: z.literal("leave") }).strict(),
-  z.object({ type: z.literal("manage"), target: z.string().min(3).max(16), op: z.enum(["kick", "promote", "demote", "transfer"]) }).strict(),
+  z.object({ type: z.literal("manage"), target: z.string().regex(/^[A-Za-zÀ-ÿ0-9_]{3,16}$/), op: z.enum(["kick", "promote", "demote", "transfer"]) }).strict(),
   z.object({ type: z.literal("donate"), amount: z.number().int().min(10).max(1_000_000) }).strict(),
 ]);
 
@@ -28,7 +28,7 @@ export const POST = action("guild", Schema, async ({ user, body, admin }) => {
     case "leave":
       return rpc(admin, "leave_guild", { p_user: user.id });
     case "manage": {
-      const { data: t } = await admin.from("characters").select("user_id").ilike("name", body.target).maybeSingle();
+      const { data: t } = await admin.from("characters").select("user_id").eq("name", body.target).maybeSingle();
       if (!t) throw new HttpError(404, "not_owner");
       return rpc(admin, "guild_manage", { p_actor: user.id, p_target: t.user_id, p_action: body.op });
     }

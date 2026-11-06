@@ -2,8 +2,8 @@ import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
 import { REFERRAL } from "@/lib/game/referrals";
 
-export const POST = action("ref-claim", z.object({ name: z.string().min(3).max(16) }).strict(), async ({ user, body, admin }) => {
-  const { data: inv } = await admin.from("characters").select("user_id, level").eq("referred_by", user.id).ilike("name", body.name).maybeSingle();
+export const POST = action("ref-claim", z.object({ name: z.string().regex(/^[A-Za-zÀ-ÿ0-9_]{3,16}$/) }).strict(), async ({ user, body, admin }) => {
+  const { data: inv } = await admin.from("characters").select("user_id, level").eq("referred_by", user.id).eq("name", body.name).maybeSingle();
   if (!inv) throw new HttpError(404, "unknown_goal");
   if (inv.level < REFERRAL.levelRequired) throw new HttpError(409, "goal_incomplete");
   const { count } = await admin.from("reward_claims").select("claim_key", { count: "exact", head: true }).eq("user_id", user.id).like("claim_key", "ref:%");

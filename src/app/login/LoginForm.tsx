@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { safeNextPath } from "@/lib/security/safePath";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { LanguageSwitcher, useT } from "@/lib/i18n/client";
@@ -21,7 +22,7 @@ export default function LoginForm() {
   );
 
   const rawNext = params.get("next") ?? "";
-  const next = /^\/(?![/\\])/.test(rawNext) ? rawNext : "/jogo"; // evita open-redirect
+  const next = safeNextPath(rawNext); // evita open-redirect
   const configured = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabase = useMemo(() => (configured ? createClient() : null), [configured]);
   const redirectTo = () =>
