@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import DemoClient from "./DemoClient";
 import { getT } from "@/lib/i18n/server";
 
@@ -7,5 +8,5 @@ export async function generateMetadata() {
 }
 
 export default function DemoPage() {
-  return <DemoClient />;
+  return <Suspense><DemoClient /></Suspense>;
 }
