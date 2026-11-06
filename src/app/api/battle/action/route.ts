@@ -7,6 +7,7 @@ import { normalizeLoadout } from "@/lib/game/skills";
 import type { RaceId } from "@/lib/game/data";
 import { DUNGEON_BY_ID, DUNGEON_REST } from "@/lib/game/dungeons";
 import { CHAPTER_BY_N } from "@/lib/game/story";
+import { xpRate } from "@/lib/game/rules";
 import { enemyCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
 
 // "skill"/"racial" = nomes antigos, tratados como o 1º espaço da barra.
@@ -43,7 +44,7 @@ export const POST = action(
       // Inimigos muito abaixo do seu nível rendem menos XP (anti-farm).
       const gap = Math.max(0, p.row.level - enemy.minLevel - 3);
       next.rewards = {
-        xp: Math.round(enemy.xp * Math.max(0.3, 1 - 0.1 * gap)),
+        xp: xpRate(enemy.xp * Math.max(0.3, 1 - 0.1 * gap)),
         gold: enemy.gold,
         item: enemy.drop && chance(enemy.drop.chance) ? enemy.drop.item : null,
         levelUps: 0,
@@ -56,7 +57,8 @@ export const POST = action(
     const stageCleared = outcome === "won" && !!dg && dg.stage < dg.total - 1;
     const status = stageCleared ? "active" : outcome;
     const won = outcome === "won" ? next.rewards : undefined;
-    const ch = outcome === "won" && next.story ? CHAPTER_BY_N[next.story] : undefined;
+    const chDef = outcome === "won" && next.story ? CHAPTER_BY_N[next.story] : undefined;
+    const ch = chDef && { ...chDef, rewards: { ...chDef.rewards, xp: xpRate(chDef.rewards.xp) } };
     let chest: { gold: number; gems: number; item: string | null } | undefined;
     let saved: BattleState = next;
     if (stageCleared && d && dg) {
