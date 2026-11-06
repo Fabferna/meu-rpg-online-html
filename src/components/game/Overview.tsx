@@ -9,6 +9,8 @@ import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
 import HeroManage from "./HeroManage";
 import HeroList from "./HeroList";
+import { equippedPieces } from "./gearView";
+import { SLOT_LABEL } from "./Inventory";
 
 const ATTRS = [
   { k: "str", label: "Força", hint: "Dano físico" },
@@ -28,6 +30,11 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
   const [busy, setBusy] = useState(false);
   const used = Object.values(add).reduce((a, b) => a + b, 0);
   const left = c.attributePoints - used;
+  // Bônus dos equipamentos (já com aprimoramento e afinidade), por atributo e por peça.
+  const pieces = equippedPieces(ctx.state.inventory, c.race);
+  const gear = (k: string) => pieces.map((p) => ({ slot: p.slot, v: p.piece.stats[k] ?? 0 })).filter((x) => x.v > 0);
+  const gearSum = (k: string) => gear(k).reduce((n, x) => n + x.v, 0);
+  const extra = (["atk", "def"] as const).map((k) => ({ k, v: gearSum(k) })).filter((x) => x.v > 0);
 
   async function confirm() {
     setBusy(true);
@@ -87,11 +94,20 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
               <li key={k} className="flex items-center gap-3 rounded-lg bg-black/30 px-3 py-2">
                 <div className="flex-1">
                   <p className="text-sm">{t(label)}</p>
-                  <p className="text-[11px] text-white/40">{t(hint)}</p>
+                  <p className="text-[11px] text-white/40">{t(k === "wis" && c.race === "aetheliano" ? "Reforça a magia" : hint)}</p>
+                  {gearSum(k) > 0 && (
+                    <p className="text-[11px] text-emerald-300/80">
+                      {gear(k).map((x) => `${t(SLOT_LABEL[x.slot] ?? x.slot)} +${x.v}`).join(" · ")}
+                    </p>
+                  )}
                 </div>
-                <span className="font-display text-xl">
+                <span className="text-right font-display text-xl">
                   {c.attributes[k] + add[k]}
-                  {add[k] > 0 && <span className="ml-1 text-sm text-emerald-400">+{add[k]}</span>}
+                  {add[k] > 0 && <span className="ml-1 text-sm text-gold">+{add[k]}</span>}
+                  {gearSum(k) > 0 && (
+                    <span className="ml-1 text-sm text-emerald-400" title={t("Bônus dos equipamentos")}>(+{gearSum(k)})</span>
+                  )}
+                  {gearSum(k) > 0 && <span className="block font-sans text-[10px] text-white/40">{t("Total {n}", { n: c.attributes[k] + add[k] + gearSum(k) })}</span>}
                 </span>
                 {c.attributePoints > 0 && (
                   <div className="flex gap-1">
@@ -102,6 +118,10 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
               </li>
             ))}
           </ul>
+          <p className="mt-3 text-[11px] text-white/50">
+            <span className="text-emerald-400">(+N)</span> = {t("bônus dos equipamentos (arma, elmo, armadura, botas e acessório)")}
+            {extra.length > 0 && <> · {t("Equipamentos também dão:")} {extra.map((x) => `${t(x.k === "atk" ? "ATQ" : "DEF")} +${x.v}`).join(" · ")}</>}
+          </p>
           {used > 0 && <button className="btn-gold mt-4 w-full" disabled={busy} onClick={confirm}>{t("Confirmar distribuição")}</button>}
         </Panel>
 
