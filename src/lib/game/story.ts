@@ -17,6 +17,7 @@ export type Chapter = {
 };
 
 // Use {heroi} para o nome do jogador.
+// XP de cada capítulo ≈ 35% do nível recomendado (curva de rules.ts): a história é um marco, não o motor do XP.
 export const CHAPTERS: Chapter[] = [
   { n: 1, title: "Sombras em Valerion", region: "valerion", minLevel: 1, enemy: "story_batedor",
     scenes: [
@@ -41,21 +42,21 @@ export const CHAPTERS: Chapter[] = [
       { who: "roric", text: "Um sacerdote do Olho Vazio realiza rituais nestas ruínas. Pare-o e eu conto o que sei." },
     ],
     victory: "Nas vestes do sacerdote, um mapa marca três pontos: Sylvandell, o Deserto Âmbar e as Agulhas Congeladas.",
-    rewards: { xp: 280, gold: 320, gems: 5 } },
+    rewards: { xp: 350, gold: 320, gems: 5 } },
   { n: 4, title: "O Guardião Esquecido", region: "sylvandell", minLevel: 7, enemy: "story_guardiao",
     scenes: [
       { who: "lyra", text: "O primeiro ponto do mapa fica aqui, sob o grande carvalho. Há um selo antigo... e ele está rachado." },
       { who: "lyra", text: "Um espírito guardião protegia o selo. O culto o corrompeu. Liberte-o, {heroi}, e o selo resistirá." },
     ],
     victory: "O espírito encontra paz. Antes de sumir, sussurra: \"O segundo selo queima sob as areias\".",
-    rewards: { xp: 450, gold: 450, gems: 5, item: "estandarte_inspirador" } },
+    rewards: { xp: 800, gold: 450, gems: 5, item: "estandarte_inspirador" } },
   { n: 5, title: "A Rainha das Areias", region: "deserto", minLevel: 10, enemy: "story_rainha",
     scenes: [
       { who: "roric", text: "O Deserto Âmbar. Já perdi duas caravanas aqui. O segundo selo fica numa cidade soterrada, guardada por algo grande." },
       { who: "narrador", text: "A areia treme. Uma carapaça dourada emerge das dunas, maior que uma casa." },
     ],
     victory: "A Rainha Escorpião tomba. Sob ela, o segundo selo — ainda inteiro. Por enquanto.",
-    rewards: { xp: 700, gold: 650, gems: 10 } },
+    rewards: { xp: 2100, gold: 650, gems: 10 } },
   { n: 6, title: "O Ritual Interrompido", region: "deserto", minLevel: 13, enemy: "story_mestre",
     scenes: [
       { who: "kaelen", text: "Recebi sua mensagem e vim o mais rápido que pude. O Mestre dos Rituais está aqui, tentando quebrar o selo à força." },
@@ -63,7 +64,7 @@ export const CHAPTERS: Chapter[] = [
       { who: "kaelen", text: "Essa voz... é Vorlag. Ele está vivo. Acabe com o ritual, {heroi}, eu seguro os acólitos!" },
     ],
     victory: "O ritual se desfaz. O Mestre, antes de cair, ri: \"O terceiro selo já está perdido nas montanhas\".",
-    rewards: { xp: 1000, gold: 900, gems: 5 } },
+    rewards: { xp: 4300, gold: 900, gems: 5 } },
   { n: 7, title: "O Colosso das Agulhas", region: "agulhas", minLevel: 16, enemy: "story_colosso",
     scenes: [
       { who: "narrador", text: "O vento das Agulhas Congeladas corta como lâmina. Nas forjas abandonadas dos anões, algo se move." },
@@ -71,14 +72,14 @@ export const CHAPTERS: Chapter[] = [
       { who: "roric", text: "Se ele cair, o caminho para Meria se abre. Para nós... e para Vorlag." },
     ],
     victory: "O colosso se parte em mil cristais. Mas o selo já foi rompido — e o mar ao sul começa a ferver.",
-    rewards: { xp: 1400, gold: 1200, gems: 5, item: "martelo_forja" } },
+    rewards: { xp: 7500, gold: 1200, gems: 5, item: "martelo_forja" } },
   { n: 8, title: "O Arauto do Abismo", region: "agulhas", minLevel: 19, enemy: "story_arauto",
     scenes: [
       { who: "lyra", text: "Os três selos mantinham Meria no fundo do oceano. Agora o reino abissal está subindo." },
       { who: "lyra", text: "Um arauto guarda a passagem. Derrote-o e entraremos em Meria antes que Vorlag complete o despertar." },
     ],
     victory: "O arauto afunda nas águas negras. Uma escadaria de coral se ergue do mar: o caminho para Meria.",
-    rewards: { xp: 1900, gold: 1500, gems: 5 } },
+    rewards: { xp: 11950, gold: 1500, gems: 5 } },
   { n: 9, title: "O Trono de Vorlag", region: "meria", minLevel: 22, enemy: "story_vorlag",
     scenes: [
       { who: "vorlag", text: "{heroi}. Finalmente. Você destruiu meus servos, libertou espíritos, quebrou meus rituais..." },
@@ -86,7 +87,7 @@ export const CHAPTERS: Chapter[] = [
       { who: "kaelen", text: "Não dê ouvidos! Lute, {heroi}! Nós estamos com você!" },
     ],
     victory: "Vorlag cai de joelhos. \"Tolo... eu era a única coisa que a mantinha dormindo.\" O chão de Meria começa a tremer.",
-    rewards: { xp: 2600, gold: 2000, gems: 10 } },
+    rewards: { xp: 17700, gold: 2000, gems: 10 } },
   { n: 10, title: "Meria, a Serpente Primordial", region: "meria", minLevel: 25, enemy: "story_meria",
     scenes: [
       { who: "narrador", text: "Das profundezas surge Meria, a serpente que dá nome ao reino — a origem de toda a escuridão de Aethelgard." },
@@ -94,7 +95,7 @@ export const CHAPTERS: Chapter[] = [
       { who: "roric", text: "Então cabe a nós terminar o serviço. {heroi}, todo o reino está olhando para você." },
     ],
     victory: "Meria se desfaz em luz. O céu de Aethelgard clareia pela primeira vez em um século. Seu nome será cantado por gerações.",
-    rewards: { xp: 4000, gold: 5000, gems: 30, cosmetic: "title_salvador" } },
+    rewards: { xp: 25000, gold: 5000, gems: 30, cosmetic: "title_salvador" } },
 
   // ── ATO II: O Olho Vazio ──
   { n: 11, title: "O Céu Partido", region: "ilhas", minLevel: 26, enemy: "story_rainha_harpia",
@@ -104,21 +105,21 @@ export const CHAPTERS: Chapter[] = [
       { who: "kaelen", text: "Lendas não descem em bando para atacar vilarejos, {heroi}. Harpias estão caçando nas planícies. Derrube a rainha delas." },
     ],
     victory: "A Rainha das Harpias cai entre as nuvens. Presa ao seu colar, uma pena negra com o desenho de um olho vazio.",
-    rewards: { xp: 5000, gold: 5500, gems: 10, item: "botas_vento" } },
+    rewards: { xp: 27800, gold: 5500, gems: 10, item: "botas_vento" } },
   { n: 12, title: "As Ilhas Flutuantes", region: "ilhas", minLevel: 29, enemy: "story_sentinela",
     scenes: [
       { who: "roric", text: "Achei uma ponte de cristal que liga as ilhas. E adivinha? Alguém andou vendendo mapas dela no Mercado das Sombras." },
       { who: "roric", text: "O culto do Olho Vazio não morreu com Vorlag, {heroi}. Eles estão subindo para o céu. E uma sentinela de pedra não deixa ninguém passar." },
     ],
     victory: "A Sentinela Ancestral se ajoelha e se desfaz em poeira dourada. A ponte de cristal se acende até o pico mais alto.",
-    rewards: { xp: 5800, gold: 6000, gems: 10 } },
+    rewards: { xp: 37300, gold: 6000, gems: 10 } },
   { n: 13, title: "Aurion, o Dragão Celeste", region: "ilhas", minLevel: 32, enemy: "story_aurion",
     scenes: [
       { who: "narrador", text: "No topo das ilhas dorme Aurion, o dragão que guarda o céu há mil anos. Seus olhos agora brilham num roxo doentio." },
       { who: "lyra", text: "Ele está corrompido, {heroi}. Não queremos matá-lo... mas talvez seja a única forma de quebrar o feitiço." },
     ],
     victory: "Aurion cai, e o roxo deixa seus olhos. \"Obrigado, pequeno herói. O culto nunca serviu a Meria. Serviam a Nyx — a fome que vive no Vazio.\"",
-    rewards: { xp: 6800, gold: 7000, gems: 15, item: "lamina_aurora" } },
+    rewards: { xp: 48700, gold: 7000, gems: 15, item: "lamina_aurora" } },
   { n: 14, title: "A Fenda do Vazio", region: "vazio", minLevel: 35, enemy: "story_arauto_vazio",
     scenes: [
       { who: "narrador", text: "Aurion leva você até a borda do mundo. Ali, onde Meria dormia, abriu-se uma fenda que engole até a luz das estrelas." },
@@ -126,7 +127,7 @@ export const CHAPTERS: Chapter[] = [
       { who: "kaelen", text: "Um arauto guarda a fenda. Se ele cair, Nyx terá que vir pessoalmente." },
     ],
     victory: "O Arauto do Vazio se dissolve em estrelas apagadas. Do fundo da fenda, um único olho gigante se abre — e olha diretamente para você.",
-    rewards: { xp: 7800, gold: 8000, gems: 15, item: "coroa_vorlag" } },
+    rewards: { xp: 62000, gold: 8000, gems: 15, item: "coroa_vorlag" } },
   { n: 15, title: "Nyx, o Olho Vazio", region: "vazio", minLevel: 38, enemy: "story_nyx",
     scenes: [
       { who: "narrador", text: "Nyx atravessa a fenda: uma silhueta feita de céu noturno, com um olho no lugar do rosto." },
@@ -134,6 +135,6 @@ export const CHAPTERS: Chapter[] = [
       { who: "roric", text: "E, por favor, não morra. Ainda tenho mapas para vender para você." },
     ],
     victory: "Nyx se parte como vidro negro. A fenda se fecha, e uma chuva de estrelas cai sobre Aethelgard. O Olho Vazio nunca mais se abrirá.",
-    rewards: { xp: 9500, gold: 12000, gems: 40, item: "olho_vazio", cosmetic: "title_estrelas" } },
+    rewards: { xp: 77400, gold: 12000, gems: 40, item: "olho_vazio", cosmetic: "title_estrelas" } },
 ];
 export const CHAPTER_BY_N = Object.fromEntries(CHAPTERS.map((c) => [c.n, c]));

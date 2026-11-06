@@ -7,8 +7,13 @@ export const STARTING_GOLD = 50;
 /** 1 ponto de energia a cada N segundos. */
 export const ENERGY_REGEN_SECONDS = 180;
 
+/**
+ * XP para ir do nível `level` ao seguinte. Espelho EXATO de public.f_xp_next (migração 0020).
+ * Curva íngreme: os primeiros níveis são rápidos, o fim exige dedicação (ver scripts/xp-sim.ts).
+ * Antes era 50 + 25×(nível−1): só a história já dava XP para chegar ao nível 40.
+ */
 export function xpForNextLevel(level: number): number {
-  return 50 + (level - 1) * 25;
+  return Math.round(50 + 12 * Math.pow(level, 2.7));
 }
 
 export function baseAttributes(race: RaceId): Attributes {
