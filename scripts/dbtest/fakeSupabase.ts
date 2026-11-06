@@ -54,7 +54,10 @@ class Query implements PromiseLike<Res> {
 
   private where(params: unknown[]) {
     if (!this.filters.length) return "";
-    return " where " + this.filters.map(([c, op, v]) => {
+    // "state->story" (sintaxe do PostgREST) vira state->'story' no SQL.
+    const col = (c: string) => c.replace(/->(\w+)/g, "->'$1'");
+    return " where " + this.filters.map(([c0, op, v]) => {
+      const c = col(c0);
       if (op.startsWith("is ")) return `t.${c} ${op}`;
       params.push(v);
       return op === "in" ? `t.${c} = any($${params.length})` : `t.${c} ${op} $${params.length}`;
