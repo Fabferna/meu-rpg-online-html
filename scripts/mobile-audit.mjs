@@ -1,7 +1,8 @@
 // Auditoria de celular: abre o modo demo em Pixel 7 e iPhone 13, passa por todas as telas,
 // tira prints e mede problemas comuns (rolagem horizontal, alvos < 44px, coisas fora da tela,
 // textos cortados e o botão do chat por cima de botões).
-// Uso: node scripts/mobile-audit.mjs http://localhost:3000 pasta-dos-prints [rótulo]
+// Uso: node scripts/mobile-audit.mjs http://localhost:3000 pasta-dos-prints [rótulo] [--desktop]
+// --desktop: mesmas medições no computador (1024, 1280 e 1440 px) em vez dos celulares.
 import { createRequire } from "node:module";
 // Playwright já vem instalado no ambiente (fora do package.json): carrega via require.
 const { chromium, devices } = createRequire(import.meta.url)("playwright");
@@ -9,7 +10,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 
 const BASE = process.argv[2] ?? "http://localhost:3000";
 const OUT = process.argv[3] ?? "mobile-shots";
-const LABEL = process.argv[4] ?? "";
+const DESKTOP = process.argv.includes("--desktop");
+const LABEL = process.argv[4] && process.argv[4] !== "--desktop" ? process.argv[4] : "";
 mkdirSync(OUT, { recursive: true });
 
 const TABS = ["Herói", "Mundo", "Objetivos", "Missões", "Caçada", "Arena", "Guilda", "Habilidades", "Inventário", "Forja", "Passe", "Loja", "Ranking"];
@@ -64,8 +66,11 @@ async function audit(page) {
 
 const report = [];
 const browser = await chromium.launch();
-for (const dev of ["Pixel 7", "iPhone 13"]) {
-  const ctx = await browser.newContext({ ...devices[dev] });
+const DEVICES = DESKTOP
+  ? [1024, 1280, 1440].map((w) => [`${w}px`, { viewport: { width: w, height: 860 }, deviceScaleFactor: 1 }])
+  : ["Pixel 7", "iPhone 13"].map((d) => [d, devices[d]]);
+for (const [dev, devOpts] of DEVICES) {
+  const ctx = await browser.newContext({ ...devOpts });
   await ctx.addInitScript(() => { try { localStorage.setItem("aethelgard:tutorial-done", "1"); localStorage.setItem("aethelgard:lang", "pt"); } catch {} });
   const page = await ctx.newPage();
   const shot = async (name) => {
