@@ -11,7 +11,7 @@ import { askNotificationPermission } from "./notify";
 import { Bar, Panel, RankBadge } from "./ui";
 import { REGION_OF_QUEST, regionUnlocked } from "@/lib/game/regions";
 import { useT } from "@/lib/i18n/client";
-import { DAILY_QUESTS, xpRate } from "@/lib/game/rules";
+import { QUEST_REFILL, xpRate } from "@/lib/game/rules";
 
 export default function Quests({ ctx }: { ctx: GameCtx }) {
   const t = useT();
@@ -29,6 +29,23 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
       await post("/api/quests/start", { questId: id });
       askNotificationPermission();
       ctx.toast("📜 Missão iniciada!");
+      await ctx.refresh();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const questsOut = state.daily.quests >= state.daily.questLimit;
+  const refillLeft = state.daily.questRefills < QUEST_REFILL.perDay;
+  async function refill() {
+    if (!confirm(t("Gastar 💎 {g} para ganhar +{n} missões hoje?", { g: QUEST_REFILL.gems, n: QUEST_REFILL.quests }))) return;
+    setBusy(true);
+    try {
+      await post("/api/quests/refill");
+      play("coin");
+      ctx.toast(t("+{n} missões liberadas para hoje!", { n: QUEST_REFILL.quests }), "reward");
       await ctx.refresh();
     } catch (e) {
       ctx.toast((e as Error).message, "error");
@@ -94,7 +111,19 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
 
   return (
     <div className="space-y-3">
-    <p className={`text-sm ${state.daily.quests >= DAILY_QUESTS ? "text-amber-300" : "text-white/60"}`}>{t("Missões hoje: {a}/{b}", { a: state.daily.quests, b: DAILY_QUESTS })}</p>
+    <p className={`text-sm ${questsOut ? "text-amber-300" : "text-white/60"}`}>{t("Missões hoje: {a}/{b}", { a: state.daily.quests, b: state.daily.questLimit })}</p>
+    {questsOut && (
+      <div className="flex flex-wrap items-center gap-3 rounded-lg bg-sky-500/10 px-4 py-3 text-sm ring-1 ring-sky-400/30">
+        <span className="flex-1">{refillLeft
+          ? t("Acabaram as missões de hoje. Renove agora: +{n} missões por 💎 {g} (1 vez por dia).", { n: QUEST_REFILL.quests, g: QUEST_REFILL.gems })
+          : t("Você já renovou as missões hoje. Volte amanhã!")}</span>
+        {refillLeft && (
+          <button className="btn-gold min-h-11 px-4" disabled={busy || state.wallet.gems < QUEST_REFILL.gems} onClick={refill}>
+            {state.wallet.gems < QUEST_REFILL.gems ? t("Gemas insuficientes") : t("Renovar · 💎 {g}", { g: QUEST_REFILL.gems })}
+          </button>
+        )}
+      </div>
+    )}
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {QUESTS.map((q, i) => {
         const region = REGION_OF_QUEST[q.id];
