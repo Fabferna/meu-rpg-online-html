@@ -153,29 +153,68 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   const questReady = state.quest && new Date(state.quest.endsAt).getTime() <= Date.now() + skew;
   const ctx: GameCtx = { state, refresh, toast, skew };
   const [muted, setMutedState] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const compact = new Intl.NumberFormat(t.locale, { notation: "compact", maximumFractionDigits: 1 });
   useEffect(() => setMutedState(isMuted()), []);
   useQuestAlerts(state.quest?.endsAt ?? null, skew);
 
   return (
     <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4">
-      <header className="panel sticky top-2 z-30 flex flex-wrap items-center gap-3 px-4 py-3 backdrop-blur">
-        <Avatar src={c.portrait} frame={c.frame} size={48} />
-        <div className="min-w-0">
+      <header className="panel sticky top-2 z-30 flex flex-wrap items-center gap-2 px-3 py-2 backdrop-blur sm:gap-3 sm:px-4 sm:py-3">
+        <Avatar src={c.portrait} frame={c.frame} size={44} />
+        <div className="min-w-0 flex-1 sm:flex-none">
           <p className="truncate font-display leading-tight">{c.name}</p>
-          <p className="text-xs text-gold">{state.guild && <span className="mr-1 rounded bg-white/10 px-1 font-semibold">[{state.guild.tag}]</span>}{t("Nv.")} {c.level}{c.title ? <span className="ml-1 text-amber-200/80">« {t(c.title)} »</span> : null}</p>
+          <p className="truncate text-xs text-gold">{state.guild && <span className="mr-1 hidden rounded bg-white/10 px-1 font-semibold sm:inline">[{state.guild.tag}]</span>}{t("Nv.")} {c.level}{c.title ? <span className="ml-1 hidden text-amber-200/80 sm:inline">« {t(c.title)} »</span> : null}</p>
         </div>
         <div className="ml-auto hidden w-56 space-y-1 sm:block">
           <Bar value={c.hp} max={c.maxHp} color="bg-life" />
           <Bar value={c.energy} max={c.maxEnergy} color="bg-energy" />
         </div>
-        <div className="flex w-full flex-wrap items-center gap-2 text-sm sm:w-auto sm:gap-3">
+
+        {/* Celular: só o essencial; o resto fica no menu ☰. */}
+        <div className="flex items-center gap-1 text-sm sm:hidden">
+          <span title={`${t("Energia")} · ${energyHint}`} className="px-1">⚡{c.energy}</span>
+          <span title={t("Ouro")} className="px-1">🪙<b>{compact.format(state.wallet.gold)}</b></span>
+          <button onClick={() => setTab("shop")} aria-label={t("Gemas (premium) — comprar")} className="rounded-md bg-sky-500/15 px-1.5">💎<b>{compact.format(state.wallet.gems)}</b></button>
+          <button onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen} aria-label={t("Menu")}
+            className={`relative rounded-md border border-white/15 text-lg ${menuOpen ? "bg-white/10" : ""}`}>
+            ☰{login && !login.claimedToday && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-gold" />}
+          </button>
+        </div>
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+              className="w-full overflow-hidden sm:hidden">
+              <div className="grid gap-2 border-t border-white/10 pt-2">
+                <Bar value={c.hp} max={c.maxHp} color="bg-life" label={t("Vida")} />
+                <Bar value={c.energy} max={c.maxEnergy} color="bg-energy" label={t("Energia")} hint={energyHint} />
+                <div className="flex flex-wrap items-center gap-2">
+                  {login && (
+                    <button onClick={() => { setLoginOpen(true); setMenuOpen(false); }}
+                      className={`rounded-md px-3 ${login.claimedToday ? "bg-white/5" : "bg-gold/20 ring-1 ring-gold"}`}>
+                      🎁 {t("Recompensa diária")}{login.streak > 0 && <span className="ml-1 text-xs">🔥{login.streak}</span>}
+                    </button>
+                  )}
+                  <button onClick={() => { setMuted(!muted); setMutedState(!muted); if (muted) play("click"); }}
+                    className="rounded-md border border-white/15 px-3 text-sm">{muted ? `🔇 ${t("Ativar sons")}` : `🔊 ${t("Silenciar")}`}</button>
+                  <InstallButton />
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <LanguageSwitcher compact />
+                  <form action="/auth/signout" method="post"><button className="rounded-md border border-white/15 px-3 text-sm">{t("Sair")}</button></form>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="hidden items-center gap-3 text-sm sm:flex">
           {login && (
             <button onClick={() => setLoginOpen(true)} title={t("Recompensa diária")}
               className={`relative rounded-md px-2 py-0.5 ${login.claimedToday ? "bg-white/5" : "bg-gold/20 ring-1 ring-gold animate-pulse"}`}>
               🎁{login.streak > 0 && <span className="ml-1 text-xs">🔥{login.streak}</span>}
             </button>
           )}
-          <span title={`${t("Energia")} · ${energyHint}`} className="sm:hidden">⚡ {c.energy}</span>
           <span title={t("Ouro")}>🪙 <b>{state.wallet.gold.toLocaleString(t.locale)}</b></span>
           <button onClick={() => setTab("shop")} title={t("Gemas (premium) — comprar")} className="rounded-md bg-sky-500/15 px-2 py-0.5 hover:bg-sky-500/25">💎 <b>{state.wallet.gems.toLocaleString(t.locale)}</b> <span className="text-sky-300">＋</span></button>
           <LanguageSwitcher compact />
@@ -190,12 +229,12 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
-      <nav className="mt-4 flex gap-0.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <nav className="mt-3 flex gap-1 overflow-x-auto pb-1 pt-2 sm:mt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((tb) => (
           <button
             key={tb.id}
-            onClick={() => { setTab(tb.id); play("click"); }}
-            className={`relative shrink-0 rounded-lg whitespace-nowrap px-1.5 py-2 text-[12.5px] font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
+            onClick={() => { setTab(tb.id); setMenuOpen(false); play("click"); }}
+            className={`relative min-h-11 shrink-0 rounded-lg whitespace-nowrap px-2 py-2 text-[12.5px] font-display transition ${tab === tb.id ? "text-ink" : "text-white/70 hover:text-white bg-white/5"}`}
           >
             {tab === tb.id && <motion.span layoutId="tab" className="absolute inset-0 -z-10 rounded-lg bg-gold" />}
             {tb.icon} {t(tb.label)}
@@ -208,7 +247,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         ))}
       </nav>
 
-      <main className="mt-4">
+      <main className="mt-4 pb-24 sm:pb-6">
         <AnimatePresence mode="wait">
           <motion.div key={tab} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18 }}>
             {tab === "overview" && <Overview ctx={ctx} energyHint={energyHint} />}
@@ -228,7 +267,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         </AnimatePresence>
       </main>
 
-      <ChatDock ctx={ctx} />
+      <ChatDock ctx={ctx} hideFabOnMobile={tab === "battle" && !!state.battle} />
       <LevelUp level={levelUp?.to ?? null} from={levelUp?.from ?? 0} onClose={() => setLevelUp(null)}
         onSpend={() => { setLevelUp(null); setTab("overview"); }} />
       <Tutorial name={c.name} onNavigate={setTab} onDone={() => setTutorialDone(true)} />
@@ -237,7 +276,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           onClaimed={() => setLogin({ claimedToday: true, streak: login.claimedToday ? login.streak : login.streak + 1 })} />
       )}
 
-      <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-72 flex-col gap-2">
+      <div className="pointer-events-none fixed inset-x-3 top-3 z-[60] flex flex-col gap-2 sm:inset-x-auto sm:bottom-4 sm:right-4 sm:top-auto sm:w-72">
         <AnimatePresence>
           {toasts.map((t) => (
             <motion.div key={t.id} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 40 }}

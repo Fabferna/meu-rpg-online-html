@@ -13,7 +13,7 @@ type Friend = { name: string; level: number; raceName: string; portrait: string;
 type Friends = { friends: Friend[]; incoming: Friend[]; outgoing: Friend[] };
 
 /** Botão flutuante 💬 com chat Global / Guilda / Amigos (com conversa privada e perfis). */
-export default function ChatDock({ ctx }: { ctx: GameCtx }) {
+export default function ChatDock({ ctx, hideFabOnMobile = false }: { ctx: GameCtx; hideFabOnMobile?: boolean }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"global" | "guild" | "friends">("global");
@@ -46,7 +46,8 @@ export default function ChatDock({ ctx }: { ctx: GameCtx }) {
   return (
     <>
       <button onClick={() => { setOpen(!open); setUnread(0); }} aria-label={t("Abrir chat")}
-        className="fixed bottom-4 left-4 z-40 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-arcane to-fuchsia-700 text-2xl shadow-xl ring-2 ring-white/10 transition hover:scale-105"
+        className={`fixed bottom-3 right-3 z-40 h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-arcane to-fuchsia-700 text-xl sm:bottom-4 sm:left-4 sm:right-auto sm:grid sm:h-14 sm:w-14 sm:text-2xl shadow-xl ring-2 ring-white/10 transition hover:scale-105 ${open ? "hidden sm:grid" : hideFabOnMobile ? "hidden" : "grid"}`}
+        data-fab="chat"
         style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}>
         💬
         {unread + pending > 0 && <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ember px-1 text-xs font-bold">{unread + pending > 9 ? "9+" : unread + pending}</span>}
@@ -54,7 +55,7 @@ export default function ChatDock({ ctx }: { ctx: GameCtx }) {
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-            className="panel fixed bottom-20 left-4 right-4 z-40 flex !bg-panel shadow-2xl h-[min(520px,70dvh)] flex-col p-3 sm:right-auto sm:w-96">
+            className="panel fixed inset-x-2 bottom-2 z-50 flex h-[min(560px,82dvh)] flex-col !bg-panel p-3 shadow-2xl sm:inset-x-auto sm:bottom-20 sm:left-4 sm:h-[min(520px,70dvh)] sm:w-96" role="dialog" aria-label={t("Chat")}>
             <div className="mb-2 flex items-center gap-1.5">
               {(["global", "guild", "friends"] as const).map((k) => (
                 <button key={k} onClick={() => { setTab(k); setDm(null); }} className={`relative rounded-md px-2.5 py-1 text-xs font-display ${tab === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>
