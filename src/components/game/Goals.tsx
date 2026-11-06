@@ -10,11 +10,17 @@ import { Bar, Panel } from "./ui";
 import { play } from "./sfx";
 import Invite from "./Invite";
 import { useT } from "@/lib/i18n/client";
+import Image from "next/image";
+import type { Order } from "@/lib/game/collector";
+import { orderAccepts } from "@/lib/game/collector";
+import { ITEM_BY_ID, sellPrice } from "@/lib/game/items";
+import { RARITY_LABEL, RARITY_STYLE } from "./api";
 
 type GoalsState = {
   daily: (DailyGoal & { progress: number; claimed: boolean })[];
   bonus: { gold: number; gems: number; ready: boolean; claimed: boolean };
   achievements: (Achievement & { progress: number; claimed: boolean })[];
+  collector?: (Order & { claimed: boolean })[];
 };
 
 export default function Goals({ ctx, onCount }: { ctx: GameCtx; onCount?: (n: number) => void }) {
@@ -30,8 +36,10 @@ export default function Goals({ ctx, onCount }: { ctx: GameCtx; onCount?: (n: nu
   useEffect(() => { load(); const t = setInterval(() => tick((n) => n + 1), 1000); return () => clearInterval(t); }, [load]);
   useEffect(() => {
     if (!g || !onCount) return;
-    onCount(g.daily.filter((d) => !d.claimed && d.progress >= d.target).length + g.achievements.filter((a) => !a.claimed && a.progress >= a.target).length);
-  }, [g, onCount]);
+    const bag = ctx.state.inventory.filter((i) => !i.equipped);
+    const readyOrders = (g.collector ?? []).filter((o) => !o.claimed && bag.filter((i) => orderAccepts(o, i.itemId)).reduce((n, i) => n + i.qty, 0) >= o.qty).length;
+    onCount(g.daily.filter((d) => !d.claimed && d.progress >= d.target).length + g.achievements.filter((a) => !a.claimed && a.progress >= a.target).length + readyOrders);
+  }, [g, onCount, ctx.state.inventory]);
 
   async function claim(body: object) {
     setBusy(true);
@@ -82,6 +90,7 @@ export default function Goals({ ctx, onCount }: { ctx: GameCtx; onCount?: (n: nu
             {g.bonus.claimed ? t("✔ Feito") : t("Resgatar")}
           </button>
         </motion.div>
+        {g.collector && g.collector.length > 0 && <Collector ctx={ctx} orders={g.collector} onDone={() => Promise.all([load(), ctx.refresh()]).then(() => undefined)} />}
         <Invite ctx={ctx} />
       </section>
 
@@ -109,6 +118,68 @@ export default function Goals({ ctx, onCount }: { ctx: GameCtx; onCount?: (n: nu
           })}
         </div>
       </section>
+    </div>
+  );
+}
+
+/** Encomendas do Colecionador: entregue itens da Caçada (eles são consumidos) por ouro, XP e gemas. */
+function Collector({ ctx, orders, onDone }: { ctx: GameCtx; orders: (Order & { claimed: boolean })[]; onDone: () => Promise<void> }) {
+  const t = useT();
+  const [busy, setBusy] = useState(false);
+  const inv = ctx.state.inventory.filter((i) => !i.equipped);
+
+  async function deliver(o: Order) {
+    // Escolhe os itens que valem MENOS (sem aprimoramento primeiro) até completar a quantidade.
+    const value = (i: (typeof inv)[number]) => { const d = ITEM_BY_ID[i.itemId]; return d ? sellPrice(d, i.upgrade) : 0; };
+    const pick: typeof inv = [];
+    let left = o.qty;
+    for (const i of inv.filter((x) => orderAccepts(o, x.itemId)).sort((a, b) => a.upgrade - b.upgrade || value(a) - value(b))) {
+      if (left <= 0) break;
+      pick.push(i); left -= i.qty;
+    }
+    const names = pick.map((i) => `• ${t(i.name)}${i.upgrade ? ` +${i.upgrade}` : ""}`).join("\n");
+    if (!confirm(`${t("Entregar estes itens? Eles serão consumidos.")}\n\n${names}`)) return;
+    setBusy(true);
+    try {
+      const r = await post<{ gold: number; gems: number; xp: number }>("/api/goals/collector", { idx: o.idx, inventoryIds: pick.map((i) => i.id) });
+      play("coin");
+      ctx.toast(`📦 ${[`+${r.gold} 🪙`, r.gems ? `+${r.gems} 💎` : "", `+${r.xp} XP`].filter(Boolean).join(" · ")}`, "reward");
+      await onDone();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2 pt-2">
+      <div>
+        <h2 className="font-display text-xl text-gold">{t("📦 Encomendas do Colecionador")}</h2>
+        <p className="text-xs text-white/50">{t("Itens entregues são consumidos")}</p>
+      </div>
+      {orders.map((o) => {
+        const def = o.item ? ITEM_BY_ID[o.item] : undefined;
+        const have = inv.filter((i) => orderAccepts(o, i.itemId)).reduce((n, i) => n + i.qty, 0);
+        const ready = have >= o.qty;
+        const label = o.kind === "item" ? t(def?.name ?? "") : t("Equipamento {r} (qualquer espaço)", { r: t(RARITY_LABEL[o.rarity ?? "common"]).toLowerCase() });
+        return (
+          <Panel key={o.idx} className={`flex items-center gap-3 p-3 ${o.claimed ? "opacity-60" : ""}`}>
+            <span className={`relative grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-black/40 ring-1 ${RARITY_STYLE[def?.rarity ?? o.rarity ?? "common"]}`}>
+              {def ? <Image src={def.image} alt="" fill sizes="48px" className="object-contain p-1" /> : <span className="text-2xl">🧩</span>}
+            </span>
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-sm leading-tight">{t("Entregue {n}× {x}", { n: o.qty, x: label })}</p>
+              <Bar value={Math.min(have, o.qty)} max={o.qty} color={ready ? "bg-emerald-500" : "bg-gold"} />
+              <p className="text-[11px] text-white/50">{t("Você tem {a}/{b}", { a: Math.min(have, o.qty), b: o.qty })} · 🪙 {o.gold}{o.gems ? ` · 💎 ${o.gems}` : ""} · ✨ {o.xp} XP</p>
+            </div>
+            <button disabled={busy || o.claimed || !ready} onClick={() => deliver(o)}
+              className={`min-h-11 min-w-24 rounded-lg px-3 text-xs font-semibold ${o.claimed ? "bg-white/5 text-white/40" : ready ? "btn-gold" : "bg-white/5 text-white/60"}`}>
+              {o.claimed ? t("✔ Entregue") : t("Entregar")}
+            </button>
+          </Panel>
+        );
+      })}
     </div>
   );
 }

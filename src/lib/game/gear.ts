@@ -65,7 +65,7 @@ export type WeaponInfo = {
   base: number; fromAttr: number; fromLevel: number; total: number;
 };
 
-type ItemLike = { slot?: string; rarity: Rarity; weapon?: WeaponType; weight?: Weight };
+type ItemLike = { id?: string; slot?: string; rarity: Rarity; weapon?: WeaponType; weight?: Weight };
 
 /** Atributo que a arma usa para esta raça e se é do tipo preferido. */
 export function weaponScale(type: WeaponType, race: RaceId) {
