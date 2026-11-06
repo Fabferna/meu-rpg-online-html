@@ -323,3 +323,10 @@ Você já renovou as missões hoje. Volte amanhã!	You already renewed your ques
 Você atingiu o limite de missões de hoje. Renove com gemas em Missões ou volte amanhã!	You've reached today's quest limit. Renew with gems in Quests or come back tomorrow!	Alcanzaste el límite de misiones de hoy. ¡Renueva con gemas en Misiones o vuelve mañana!	你已达到今日任务上限。在任务页用宝石续期，或明天再来！
 Pet	Pet	Mascota	宠物
 bônus dos equipamentos (arma, elmo, armadura, botas e acessório) e do pet ativo	bonus from equipment (weapon, helmet, armor, boots and accessory) and your active pet	bono del equipo (arma, yelmo, armadura, botas y accesorio) y de la mascota activa	装备（武器、头盔、护甲、靴子和饰品）和当前宠物的加成
+Pode deixar cair:	May drop:	Puede soltar:	可能掉落：
+Seu nível é alto demais: sem equipamento aqui.	Your level is too high: no gear here.	Tu nivel es demasiado alto: aquí no cae equipo.	你的等级太高：这里不会掉落装备。
+🎒 Bolsa cheia: {x} virou {g} de ouro	🎒 Bag full: {x} became {g} gold	🎒 Bolsa llena: {x} se convirtió en {g} de oro	🎒 背包已满：{x} 已换成 {g} 金币
+🎁 Itens encontrados	🎁 Items found	🎁 Objetos encontrados	🎁 获得的物品
+🎒 Sua bolsa está cheia: {n} item(ns) viraram ouro (preço de venda). Venda ou use itens para abrir espaço.	🎒 Your bag is full: {n} item(s) became gold (sell price). Sell or use items to free up space.	🎒 Tu bolsa está llena: {n} objeto(s) se convirtieron en oro (precio de venta). Vende o usa objetos para liberar espacio.	🎒 背包已满：{n} 件物品已按出售价换成金币。出售或使用物品以腾出空间。
+🎒 Ver no inventário	🎒 View in inventory	🎒 Ver en el inventario	🎒 在背包中查看
+Itens não equipados. Com a bolsa cheia, itens encontrados viram ouro.	Unequipped items. When the bag is full, items you find become gold.	Objetos no equipados. Con la bolsa llena, los objetos encontrados se convierten en oro.	未装备的物品。背包满时，获得的物品会换成金币。

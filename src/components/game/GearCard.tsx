@@ -49,8 +49,15 @@ export function FilterBar({ value, onChange, count }: { value: GearFilter; onCha
 }
 
 // ── Origem ──────────────────────────────────────────────────────────
+/** Chance em %: uma casa decimal abaixo de 10% (ex.: 0,6%). */
+export function pctText(p: number, locale: string) {
+  const v = p * 100;
+  if (v > 0 && v < 0.1) return `<${(0.1).toLocaleString(locale)}%`;
+  return `${v.toLocaleString(locale, { maximumFractionDigits: v < 10 ? 1 : 0 })}%`;
+}
+
 export function sourceText(t: TFn, s: ItemSource) {
-  const pct = "chance" in s ? ` (${Math.round(s.chance * 100) || "<1"}%)` : "";
+  const pct = "chance" in s ? ` (${pctText(s.chance, t.locale)})` : "";
   switch (s.kind) {
     case "enemy": return `${s.boss ? "👑" : "⚔️"} ${t(s.name)}${pct}`;
     case "dungeon": return `🗝️ ${t(s.name)}${pct}`;

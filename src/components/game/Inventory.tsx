@@ -13,6 +13,7 @@ import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 import { RACES, type RaceId } from "@/lib/game/data";
 import { GearInsight } from "./GearCard";
+import { BAG_LIMIT } from "@/lib/game/loot";
 
 export const SLOT_LABEL: Record<string, string> = { weapon: "Arma", helmet: "Elmo", armor: "Armadura", boots: "Botas", accessory: "Acessório" };
 const STAT_LABEL: Record<string, string> = { atk: "ATQ", def: "DEF", str: "FOR", dex: "DES", con: "CON", intel: "INT", heal: "Cura" };
@@ -40,6 +41,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
   }
 
   const equipped = items.filter((i) => i.equipped);
+  const bagUsed = items.length - equipped.length;
   const race = ctx.state.character.race;
 
   return (
@@ -63,7 +65,8 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
         {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
         ))}
-        <span className="ml-auto self-center text-sm">🪙 <b>{ctx.state.wallet.gold.toLocaleString(t.locale)}</b></span>
+        <span className={`ml-auto self-center text-sm ${bagUsed >= BAG_LIMIT ? "text-amber-300" : "text-white/70"}`} title={t("Itens não equipados. Com a bolsa cheia, itens encontrados viram ouro.")}>🎒 {bagUsed}/{BAG_LIMIT}</span>
+        <span className="self-center text-sm">🪙 <b>{ctx.state.wallet.gold.toLocaleString(t.locale)}</b></span>
       </div>
 
       {view === "pets" ? <Pets ctx={ctx} /> : (
