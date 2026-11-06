@@ -249,3 +249,53 @@ Missão desconhecida.	Unknown quest.	Misión desconocida.	未知的任务。
 Produto indisponível.	Product unavailable.	Producto no disponible.	商品不可用。
 Erro no servidor. Tente de novo em instantes.	Server error. Please try again in a moment.	Error del servidor. Inténtalo de nuevo en un momento.	服务器错误，请稍后再试。
 Você fugiu da batalha.	You fled the battle.	Huiste de la batalla.	你逃离了战斗。
+Ataque	Attack	Ataque	攻击
+Magia	Magic	Magia	魔法
+Defesa	Defense	Defensa	防御
+Esquiva	Dodge	Esquiva	闪避
+Crítico	Critical	Crítico	暴击
+Vida em combate	Combat HP	Vida en combate	战斗生命
+Espada	Sword	Espada	剑
+Arco	Bow	Arco	弓
+Machado	Axe	Hacha	斧
+Martelo	Hammer	Martillo	锤
+Cajado	Staff	Bastón	法杖
+Tridente	Trident	Tridente	三叉戟
+FOR	STR	FUE	力量
+DES	DEX	DES	敏捷
+CON	CON	CON	体质
+INT	INT	INT	智力
+SAB	WIS	SAB	感知
+Leve	Light	Ligera	轻型
+Média	Medium	Media	中型
+Pesada	Heavy	Pesada	重型
++{n}% esquiva	+{n}% dodge	+{n}% esquiva	+{n}% 闪避
++{n}% crítico	+{n}% critical	+{n}% crítico	+{n}% 暴击
++{n}% DEF da peça	+{n}% of the piece's DEF	+{n}% DEF de la pieza	+{n}% 该部件防御
++{n}% vida em combate	+{n}% combat HP	+{n}% vida en combate	+{n}% 战斗生命
++{n}% magia	+{n}% magic	+{n}% magia	+{n}% 魔法
+⚒️ Aprimorar	⚒️ Upgrade	⚒️ Mejorar	⚒️ 强化
+🛒 Ferreiro	🛒 Blacksmith	🛒 Herrero	🛒 铁匠
+📖 Catálogo	📖 Catalog	📖 Catálogo	📖 图鉴
+Sucesso! Agora +{n}	Success! Now +{n}	¡Éxito! Ahora +{n}	成功！现在 +{n}
+A forja falhou… o item continua igual.	The forge failed… the item is unchanged.	La forja falló… el objeto sigue igual.	锻造失败……物品保持不变。
+Atual (+{n})	Current (+{n})	Actual (+{n})	当前 (+{n})
+Dano efetivo para você: {x} (escala com {a})	Effective damage for you: {x} (scales with {a})	Daño efectivo para ti: {x} (escala con {a})	对你的有效伤害：{x}（随{a}成长）
+Espaço	Slot	Espacio	部位
+Todos	All	Todos	全部
+Raridade	Rarity	Rareza	稀有度
+Todas as raridades	All rarities	Todas las rarezas	全部稀有度
+Da minha raça	For my race	Para mi raza	适合我的种族
+{n} itens	{n} items	{n} objetos	{n} 件物品
+Oferta do dia na Loja	Daily deal in the Shop	Oferta del día en la Tienda	商店每日特惠
+Origem: eventos especiais	Source: special events	Origen: eventos especiales	来源：特别活动
+Encontrado em:	Found in:	Se encuentra en:	获取途径：
+arma preferida	favorite weapon	arma preferida	偏好武器
+Arma arcana: reforça suas magias	Arcane weapon: boosts your spells	Arma arcana: refuerza tus hechizos	奥术武器：强化你的法术
+Peso: {p}	Weight: {p}	Peso: {p}	重量：{p}
+Equipado agora	Equipped now	Equipado ahora	当前已装备
+Comparado ao equipamento atual	Compared to your current gear	Comparado con tu equipo actual	与当前装备对比
+Igual ao equipamento atual	Same as your current gear	Igual que tu equipo actual	与当前装备相同
+Nenhum equipamento seu com esses filtros.	None of your gear matches these filters.	Ningún equipo tuyo coincide con estos filtros.	没有符合筛选条件的装备。
+O Ferreiro não vende itens com esses filtros. Veja o 📖 Catálogo.	The Blacksmith doesn't sell items with these filters. Check the 📖 Catalog.	El Herrero no vende objetos con estos filtros. Mira el 📖 Catálogo.	铁匠没有符合筛选条件的物品。去看看📖图鉴。
+Todos os equipamentos do jogo. Os que não estão à venda mostram onde encontrar.	Every piece of gear in the game. Items not for sale show where to find them.	Todo el equipo del juego. Los que no están a la venta muestran dónde encontrarlos.	游戏中的全部装备。非卖品会显示获取途径。

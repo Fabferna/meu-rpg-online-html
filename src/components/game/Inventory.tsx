@@ -12,6 +12,7 @@ import { Panel } from "./ui";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 import { RACES, type RaceId } from "@/lib/game/data";
+import { GearInsight } from "./GearCard";
 
 export const SLOT_LABEL: Record<string, string> = { weapon: "Arma", helmet: "Elmo", armor: "Armadura", boots: "Botas", accessory: "Acessório" };
 const STAT_LABEL: Record<string, string> = { atk: "ATQ", def: "DEF", str: "FOR", dex: "DES", con: "CON", intel: "INT", heal: "Cura" };
@@ -52,7 +53,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
               <div className="relative mt-2 h-16 w-16">
                 {it ? <Image src={ITEM_BY_ID[it.itemId]?.image ?? String(it.data.image)} alt="" fill sizes="64px" className="object-contain" /> : <span className="grid h-full place-items-center text-2xl text-white/20">＋</span>}
               </div>
-              <p className="mt-2 text-center text-xs">{it?.name ?? "Vazio"}{it?.upgrade ? <b className="ml-1 text-gold">+{it.upgrade}</b> : null}</p>
+              <p className="mt-2 text-center text-xs">{it ? t(it.name) : t("Vazio")}{it?.upgrade ? <b className="ml-1 text-gold">+{it.upgrade}</b> : null}</p>
             </div>
           );
         })}
@@ -82,18 +83,19 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                   {it.upgrade > 0 && <span className="absolute left-2 top-2 rounded bg-gold px-1.5 font-display text-xs font-black text-ink">+{it.upgrade}</span>}
                   <p className="mt-2 truncate text-center text-sm">{t(it.name)}</p>
                   <p className="text-center text-[11px] text-white/40">{t(RARITY_LABEL[it.rarity])}</p>
-                  <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(it.data as Record<string, number>, it.upgrade), race))}</p>
+                  <p className="mt-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(it.data as Record<string, number>, it.upgrade), race))}</p>
                   <ItemTags def={def} race={race} level={ctx.state.character.level} />
-                  <div className="mt-2 flex gap-1.5">
+                  {def?.slot && <GearInsight state={ctx.state} def={def} upgrade={it.upgrade} entry={it} />}
+                  <div className="mt-auto flex gap-1.5 pt-2">
                     {it.slot && (
                       <button disabled={busy || (!it.equipped && ctx.state.character.level < (def?.minLevel ?? 1))} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
-                        className={`flex-1 rounded-md py-1.5 text-xs ${it.equipped ? "bg-white/10" : "bg-gold/90 text-ink"}`}>
+                        className={`min-h-11 flex-1 rounded-md py-1.5 text-xs ${it.equipped ? "bg-white/10" : "bg-gold/90 text-ink"}`}>
                         {it.equipped ? t("Remover") : t("Equipar")}
                       </button>
                     )}
                     {def && !it.equipped && (
                       <button disabled={busy} title={t("Vender 1 por {n} de ouro", { n: sellPrice(def, it.upgrade) })} onClick={() => run("/api/smith/sell", { inventoryId: it.id }, t("Vendido por {n} 🪙", { n: sellPrice(def, it.upgrade) }))}
-                        className="flex-1 rounded-md bg-white/5 py-1.5 text-xs hover:bg-white/10">
+                        className="min-h-11 flex-1 rounded-md bg-white/5 py-1.5 text-xs hover:bg-white/10">
                         {t("Vender")} 🪙{sellPrice(def, it.upgrade)}
                       </button>
                     )}
