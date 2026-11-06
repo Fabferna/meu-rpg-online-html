@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Attributes } from "./data";
 import { currentEnergy, currentHp, maxEnergy, maxHp } from "./rules";
 import type { ItemBonus } from "./combat";
-import { upgradedStats } from "./items";
+import { ITEM_BY_ID, itemStatsFor, upgradedStats } from "./items";
 import { petBonus } from "./pets";
 
 export type CharacterRow = {
@@ -47,7 +47,7 @@ export function deriveVitals(row: CharacterRow, now = new Date()) {
 export async function loadPlayer(db: SupabaseClient, userId: string): Promise<LoadedPlayer | null> {
   const [{ data: row }, { data: gear }, { data: pet }] = await Promise.all([
     db.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
-    db.from("inventory").select("upgrade, items(data)").eq("user_id", userId).eq("equipped", true),
+    db.from("inventory").select("item_id, upgrade, items(data)").eq("user_id", userId).eq("equipped", true),
     db.from("owned_pets").select("pet_id, level").eq("user_id", userId).eq("active", true).maybeSingle(),
   ]);
   if (!row) return null;
@@ -59,7 +59,8 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
     maxHp: v.maxHp,
     energy: v.energy,
     maxEnergy: v.maxEnergy,
-    gear: ((gear ?? []) as unknown as { upgrade: number; items: { data: ItemBonus } }[]).map((g) => upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0) as ItemBonus)
+    gear: ((gear ?? []) as unknown as { item_id: string; upgrade: number; items: { data: ItemBonus } }[])
+      .map((g) => itemStatsFor(ITEM_BY_ID[g.item_id], upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0), row.race) as ItemBonus)
       .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
   };
 }

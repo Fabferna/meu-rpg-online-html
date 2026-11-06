@@ -3,10 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { GameCtx } from "./GameApp";
-import { ITEMS, ITEM_BY_ID, MAX_UPGRADE, upgradedStats } from "@/lib/game/items";
+import { ITEMS, ITEM_BY_ID, MAX_UPGRADE, itemStatsFor, upgradedStats } from "@/lib/game/items";
 import type { InventoryEntry } from "@/lib/game/state";
 import Forge from "./Forge";
-import { SLOT_LABEL, statText } from "./Inventory";
+import { ItemTags, SLOT_LABEL, statText } from "./Inventory";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { Panel } from "./ui";
 import { play } from "./sfx";
@@ -61,7 +61,8 @@ export default function Smithy({ ctx }: { ctx: GameCtx }) {
                     {it.equipped && <span className="absolute right-2 top-2 rounded bg-emerald-600/80 px-1.5 text-[10px]">{t("Equipado")}</span>}
                     <p className="mt-2 truncate text-center text-sm">{t(it.name)}</p>
                     <p className="text-center text-[11px] text-white/40">{t(SLOT_LABEL[it.slot!] ?? "")} · {t(RARITY_LABEL[it.rarity])}</p>
-                    <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, upgradedStats(it.data as Record<string, number>, it.upgrade))}</p>
+                    <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(it.data as Record<string, number>, it.upgrade), ctx.state.character.race))}</p>
+                    <ItemTags def={def} race={ctx.state.character.race} level={level} />
                     <button disabled={it.upgrade >= MAX_UPGRADE} onClick={() => setForging(it)}
                       className="mt-2 w-full rounded-md bg-gradient-to-r from-ember/70 to-amber-600/70 py-1.5 text-xs hover:brightness-110 disabled:opacity-50">
                       ⚒️ {it.upgrade >= MAX_UPGRADE ? t("Máximo") : t("Aprimorar (+{n})", { n: it.upgrade + 1 })}
@@ -82,7 +83,8 @@ export default function Smithy({ ctx }: { ctx: GameCtx }) {
                 <div className="relative mx-auto h-20 w-20"><Image src={d.image} alt="" fill sizes="80px" className="object-contain" /></div>
                 <p className="mt-2 truncate text-center text-sm">{t(d.name)}</p>
                 <p className="text-center text-[11px] text-white/40">{d.slot ? t(SLOT_LABEL[d.slot]) : ""} · {t(RARITY_LABEL[d.rarity])}{owned ? ` · ${t("você tem {n}", { n: owned })}` : ""}</p>
-                <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, d.stats)}</p>
+                <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(d, d.stats, ctx.state.character.race))}</p>
+                <ItemTags def={d} race={ctx.state.character.race} level={level} />
                 <button disabled={busy || locked || ctx.state.wallet.gold < d.buy!} onClick={() => buy(d.id, d.name)} className="btn-gold mt-2 w-full !py-1.5 text-xs">
                   {locked ? t("Requer nível {n}", { n: d.minLevel ?? 1 }) : `🪙 ${d.buy}`}
                 </button>

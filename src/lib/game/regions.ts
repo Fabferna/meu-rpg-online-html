@@ -17,6 +17,12 @@ export const REGIONS_MAP: Region[] = [
   { id: "meria", name: "Reino Abissal de Meria", description: "O reino afundado de onde a escuridão nasceu. O fim de tudo — ou o recomeço.",
     image: "/assets/reino_abissal_de_meria.webp", unlockChapter: 8, recommended: "Nv. 19+",
     quests: ["reino_abissal", "coroa_vorlag"], enemies: ["lorde_vorlag", "serpente_abissal"], dungeons: ["fortaleza"] },
+  { id: "ilhas", name: "Ilhas Celestes", description: "Ilhas de pedra flutuando acima das nuvens, ligadas por pontes de cristal e guardadas por um dragão antigo.",
+    image: "/assets/regions/ilhas_celestes.webp", unlockChapter: 10, recommended: "Nv. 26–34",
+    quests: ["patrulha_celeste", "ninho_harpias", "cristal_eter"], enemies: ["harpia_tempestade", "sentinela_eter", "dragao_celeste"], dungeons: ["santuario"] },
+  { id: "vazio", name: "Fenda do Vazio", description: "A borda do mundo, onde a escuridão engole até a luz das estrelas. Lar de Nyx.",
+    image: "/assets/regions/fenda_vazio.webp", unlockChapter: 13, recommended: "Nv. 34+",
+    quests: ["eco_vazio", "olho_que_tudo_ve"], enemies: ["espectro_vazio", "devorador_estrelas", "avatar_nyx"], dungeons: ["abismo"] },
 ];
 export const REGION_BY_ID = Object.fromEntries(REGIONS_MAP.map((r) => [r.id, r]));
 
