@@ -40,6 +40,8 @@ export type GameCtx = {
   toast: (text: string, kind?: Toast["kind"]) => void;
   /** Diferença relógio servidor − cliente, para timers visuais precisos. */
   skew: number;
+  /** Vai para outra aba (ex.: "Ver no inventário" depois de uma vitória). */
+  go?: (tab: string) => void;
 };
 
 const TABS = [
@@ -151,7 +153,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const questReady = state.quest && new Date(state.quest.endsAt).getTime() <= Date.now() + skew;
-  const ctx: GameCtx = { state, refresh, toast, skew };
+  const ctx: GameCtx = { state, refresh, toast, skew, go: (id) => { if (TABS.some((x) => x.id === id)) setTab(id as TabId); } };
   const [muted, setMutedState] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const compact = new Intl.NumberFormat(t.locale, { notation: "compact", maximumFractionDigits: 1 });

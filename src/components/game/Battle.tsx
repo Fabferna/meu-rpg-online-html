@@ -11,8 +11,10 @@ import { HUNT_REFILL, PVE_ENERGY_COST, xpRate } from "@/lib/game/rules";
 import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
 import { ITEM_BY_ID } from "@/lib/game/items";
+import { gearAllowed, topDrops, type LootResult } from "@/lib/game/loot";
+import { pctText } from "./GearCard";
 import { REGION_OF_ENEMY, regionUnlocked } from "@/lib/game/regions";
-import { post } from "./api";
+import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
@@ -77,10 +79,11 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     if (!battle) return;
     setBusy(true);
     try {
-      const res = await post<{ outcome: "won" | "lost" | "active"; state: BattleState; stageCleared?: { stage: number; rewards?: { xp: number; gold: number } } }>("/api/battle/action", { action });
+      const res = await post<{ outcome: "won" | "lost" | "active"; state: BattleState; stageCleared?: { stage: number; rewards?: { xp: number; gold: number; loot?: LootResult[] } } }>("/api/battle/action", { action });
       if (res.stageCleared) {
         play("victory");
         ctx.toast(t("🗝️ Estágio {n} vencido! +{xp} XP · +{gold} 🪙 — você descansa (+25% de vida) e segue!", { n: res.stageCleared.stage, xp: res.stageCleared.rewards?.xp ?? 0, gold: res.stageCleared.rewards?.gold ?? 0 }), "reward");
+        for (const l of res.stageCleared.rewards?.loot ?? []) ctx.toast(lootToast(t, l), "reward");
         setBattle(res.state);
         ctx.refresh();
         return;
@@ -155,7 +158,8 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           <div className="mt-6 space-y-2">
             <p>✨ +{r.xp} XP</p>
             <p>🪙 +{r.gold} {t("ouro")}</p>
-            {r.item && <p className="text-amber-300">{t("🎁 Item encontrado!")}</p>}
+            {r.loot && r.loot.length > 0 ? <LootList loot={r.loot} onBag={() => { setResult(null); setBattle(null); ctx.go?.("inventory"); }} />
+              : r.item && <p className="text-amber-300">🎁 {t(ITEM_BY_ID[r.item]?.name ?? "Item encontrado!")}</p>}
             {result.state.storyResult && (
               <div className="mt-3 rounded-lg bg-gold/10 p-3">
                 <p className="font-display text-gold">{t("📖 Capítulo {n} concluído!", { n: result.state.story ?? 0 })}</p>
@@ -292,12 +296,88 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               <div className="p-3">
                 <p className="font-display text-sm">{t(e.name)}</p>
                 <p className="text-xs text-white/50">{regionLocked ? `🔒 ${t(region!.name)} · ${t("Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: e.minLevel }) : `❤️ ${e.maxHp} · ✨ ${xpRate(e.xp)} XP · 🪙 ${e.gold}`}</p>
+                <DropHint enemyId={e.id} level={state.character.level} />
               </div>
             </motion.button>
           );
         })}
       </div>
       {state.quest && <p className="mt-4 text-center text-sm text-amber-300">{t("Você está em uma missão. Termine-a para caçar.")}</p>}
+    </div>
+  );
+}
+
+/** "Pode deixar cair": os 3 itens mais prováveis da tabela de saque (a mesma do servidor). */
+function DropHint({ enemyId, level }: { enemyId: string; level: number }) {
+  const t = useT();
+  const e = ENEMY_BY_ID[enemyId];
+  if (!e) return null;
+  const noGear = !gearAllowed(e, level);
+  const top = topDrops(e).filter((d) => !noGear || d.kind !== "gear");
+  return (
+    <div className="mt-2 border-t border-white/10 pt-1.5">
+      <p className="text-[10px] uppercase tracking-wider text-white/40">{t("Pode deixar cair:")}</p>
+      <ul className="mt-1 space-y-0.5">
+        {top.map((d) => {
+          const it = ITEM_BY_ID[d.item];
+          if (!it) return null;
+          return (
+            <li key={d.item} className="flex items-center gap-1.5 text-[11px] leading-tight">
+              <span className={`relative h-6 w-6 shrink-0 rounded bg-black/40 ring-1 ${RARITY_STYLE[it.rarity]}`}>
+                <Image src={it.image} alt="" fill sizes="24px" className="object-contain p-0.5" />
+              </span>
+              <span className="line-clamp-2 min-w-0 flex-1 break-words text-white/75">{t(it.name)}</span>
+              <span className="shrink-0 text-white/45">{pctText(d.chance, t.locale)}</span>
+            </li>
+          );
+        })}
+      </ul>
+      {noGear && <p className="mt-1 text-[10px] text-amber-300/80">{t("Seu nível é alto demais: sem equipamento aqui.")}</p>}
+    </div>
+  );
+}
+
+const GLOW: Record<string, string> = {
+  common: "", rare: "from-sky-400/25", epic: "from-fuchsia-400/30", legendary: "from-amber-300/40",
+};
+
+function lootToast(t: TFn, l: LootResult) {
+  const name = t(ITEM_BY_ID[l.item]?.name ?? l.item);
+  return l.gold > 0 ? t("🎒 Bolsa cheia: {x} virou {g} de ouro", { x: name, g: l.gold }) : `🎁 ${name}${l.qty > 1 ? ` ×${l.qty}` : ""}`;
+}
+
+/** Itens da vitória: imagem, raridade, brilho por raridade e aviso de bolsa cheia. */
+function LootList({ loot, onBag }: { loot: LootResult[]; onBag: () => void }) {
+  const t = useT();
+  const full = loot.filter((l) => l.gold > 0);
+  return (
+    <div className="mt-3 rounded-lg bg-black/25 p-3">
+      <p className="font-display text-gold">{t("🎁 Itens encontrados")}</p>
+      <ul className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {loot.map((l, i) => {
+          const it = ITEM_BY_ID[l.item];
+          if (!it) return null;
+          return (
+            <motion.li key={`${l.item}-${i}`} initial={{ opacity: 0, y: 12, scale: 0.85 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.25 + i * 0.18, type: "spring" }}
+              className={`relative overflow-hidden rounded-lg bg-black/40 p-2 ring-1 ${RARITY_STYLE[it.rarity]} ${l.gold > 0 ? "opacity-70" : ""}`}>
+              {GLOW[it.rarity] && <span aria-hidden className={`pointer-events-none absolute inset-0 bg-gradient-to-t ${GLOW[it.rarity]} to-transparent ${it.rarity === "legendary" ? "animate-pulse" : ""}`} />}
+              <div className="relative mx-auto h-14 w-14">
+                <Image src={it.image} alt="" fill sizes="56px" className="object-contain" />
+                {l.qty > 1 && <span className="absolute -right-1 -top-1 rounded-full bg-gold px-1.5 text-xs font-bold text-ink">x{l.qty}</span>}
+              </div>
+              <p className="relative mt-1 line-clamp-2 text-xs leading-tight">{t(it.name)}</p>
+              <p className="relative text-[10px] text-white/50">{t(RARITY_LABEL[it.rarity])}</p>
+              {l.gold > 0 && <p className="relative text-[10px] text-amber-300">→ 🪙 {l.gold}</p>}
+            </motion.li>
+          );
+        })}
+      </ul>
+      {full.length > 0 && (
+        <p className="mt-2 text-xs text-amber-300">{t("🎒 Sua bolsa está cheia: {n} item(ns) viraram ouro (preço de venda). Venda ou use itens para abrir espaço.", { n: full.length })}</p>
+      )}
+      {full.length < loot.length && (
+        <button onClick={onBag} className="mt-3 min-h-11 w-full rounded-lg bg-white/10 px-3 text-sm hover:bg-white/15">{t("🎒 Ver no inventário")}</button>
+      )}
     </div>
   );
 }
