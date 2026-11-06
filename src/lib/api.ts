@@ -15,7 +15,7 @@ const BUSINESS_ERRORS = new Set([
   "not_enough_points", "invalid_points", "not_owner", "not_equippable", "no_character",
   "insufficient_funds", "energy_full", "already_owned", "daily_limit", "sold_out", "offer_expired",
   "already_claimed", "quest_already_done", "unknown_offer", "item_equipped",
-  "already_in_guild", "guild_name_taken", "unknown_guild", "guild_full", "not_in_guild", "no_permission", "invalid_target", "boss_defeated", "muted", "max_upgrade", "region_locked", "guild_leader", "stale_battle", "invalid_action", "no_slot", "already_has_character", "friend_limit", "already_friends", "already_requested",
+  "already_in_guild", "guild_name_taken", "unknown_guild", "guild_full", "not_in_guild", "no_permission", "invalid_target", "boss_defeated", "muted", "max_upgrade", "region_locked", "guild_leader", "stale_battle", "invalid_action", "no_slot", "already_has_character", "friend_limit", "already_friends", "already_requested", "invalid_sale",
 ]);
 
 /**
@@ -42,12 +42,14 @@ export function action<S extends z.ZodType>(
       const result = await handler({ user, body: parsed.data, admin: createAdminClient() });
       return NextResponse.json(result ?? { ok: true }, { headers: { "Cache-Control": "no-store" } });
     } catch (err) {
+      // Erro lançado pela própria rota: respeita o status escolhido (antes, um código que também está
+      // em BUSINESS_ERRORS — ex.: 404 not_owner, 403 region_locked — virava 409).
+      if (err instanceof HttpError) return jsonError(err.status, err.code);
       const msg = err instanceof Error ? err.message : typeof err === "object" && err && "message" in err ? String((err as { message: unknown }).message) : "";
       const code = [...BUSINESS_ERRORS].find((c) => msg.includes(c));
       if (code) return jsonError(409, code);
       // Pedidos simultâneos repetidos batem na chave única do banco: é "já feito", não erro interno.
       if (/duplicate key value|unique constraint|23505/i.test(msg)) return jsonError(409, "already_claimed");
-      if (err instanceof HttpError) return jsonError(err.status, err.code);
       console.error(`[${name}]`, err);
       return jsonError(500, "internal_error");
     }
