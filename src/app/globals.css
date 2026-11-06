@@ -65,3 +65,10 @@ body {
 .legal h2 { font-family: var(--font-display); color: var(--color-gold); font-size: 1.2rem; margin-top: 2rem; }
 .legal ul { list-style: disc; padding-left: 1.4rem; display: grid; gap: .35rem; }
 .legal a { color: var(--color-gold); text-decoration: underline; }
+
+/* Telas de toque: todo botão/seletor com pelo menos 44×44px (recomendação da Apple/Google). */
+@media (pointer: coarse) {
+  button, select, [role="button"], summary { min-height: 44px; }
+  button, [role="button"] { min-width: 44px; }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]) { min-height: 44px; }
+}

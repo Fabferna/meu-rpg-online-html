@@ -57,9 +57,9 @@ export default function Invite({ ctx }: { ctx: GameCtx }) {
             <button onClick={copy} className="btn-gold shrink-0 !px-3 !py-2 text-xs">{copied ? t("Copiado!") : t("Copiar")}</button>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
-            <a href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="rounded-md bg-[#25d366] px-3 py-1.5 font-semibold text-ink">{t("WhatsApp")}</a>
-            <a href={`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="rounded-md bg-[#229ed9] px-3 py-1.5 font-semibold">{t("Telegram")}</a>
-            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="rounded-md bg-white/10 px-3 py-1.5 font-semibold">{t("X / Twitter")}</a>
+            <a href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-md bg-[#25d366] px-3 py-1.5 font-semibold text-ink">{t("WhatsApp")}</a>
+            <a href={`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-md bg-[#229ed9] px-3 py-1.5 font-semibold">{t("Telegram")}</a>
+            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-md bg-white/10 px-3 py-1.5 font-semibold">{t("X / Twitter")}</a>
           </div>
         </>
       ) : (

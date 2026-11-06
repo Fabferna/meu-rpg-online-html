@@ -2072,3 +2072,459 @@ $$;
 
 revoke execute on function public.complete_chapter(uuid, int, int, int, int, text, text) from public, anon, authenticated;
 grant execute on function public.complete_chapter(uuid, int, int, int, int, text, text) to service_role;
+
+-- >>> 0014_skills_reset.sql
+-- 0014: árvore de habilidades por classe + resetar/excluir personagem.
+
+-- Habilidades: { "lv": { "<skill>": nível }, "eq": ["<skill>", ...] }
+alter table public.characters add column if not exists skills jsonb not null default '{}'::jsonb;
+
+-- Quantas vezes o jogador já resetou/excluiu (a 1ª é grátis).
+alter table public.profiles
+  add column if not exists resets_used  int not null default 0,
+  add column if not exists deletes_used int not null default 0;
+
+-- Aprende/melhora uma habilidade, cobrando ouro de forma atômica.
+-- p_from = nível atual esperado (evita cobrança dupla em cliques simultâneos).
+create or replace function public.upgrade_skill(p_user uuid, p_skill text, p_from int, p_cost int, p_max int)
+returns int
+language plpgsql security definer set search_path = '' as $$
+declare v_sk jsonb; v_lv int;
+begin
+  select skills into v_sk from public.characters where user_id = p_user for update;
+  if not found then raise exception 'no_character'; end if;
+  v_lv := coalesce((v_sk -> 'lv' ->> p_skill)::int, 0);
+  if v_lv <> p_from then raise exception 'stale_battle'; end if;
+  if v_lv >= p_max then raise exception 'max_upgrade'; end if;
+  if p_cost > 0 then perform public.charge(p_user, 'gold', p_cost, 'skill:' || p_skill); end if;
+  update public.characters
+     set skills = jsonb_set(coalesce(v_sk, '{}'::jsonb), '{lv}', coalesce(v_sk -> 'lv', '{}'::jsonb) || jsonb_build_object(p_skill, v_lv + 1)),
+         updated_at = now()
+   where user_id = p_user;
+  return v_lv + 1;
+end;
+$$;
+
+-- Define a barra de combate (a validação de quais habilidades valem é feita no servidor da aplicação).
+create or replace function public.equip_skills(p_user uuid, p_eq jsonb)
+returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  if jsonb_typeof(p_eq) <> 'array' or jsonb_array_length(p_eq) > 3 then raise exception 'invalid_action'; end if;
+  update public.characters
+     set skills = jsonb_set(coalesce(skills, '{}'::jsonb), '{eq}', p_eq), updated_at = now()
+   where user_id = p_user;
+  if not found then raise exception 'no_character'; end if;
+end;
+$$;
+
+-- Apaga o progresso do herói (usado por resetar e excluir).
+-- Mantém: ouro, gemas, cosméticos, pets, passe, contadores do ranking e recompensas já resgatadas (anti-farm).
+-- A 1ª vez de cada tipo é grátis; depois custa p_cost de ouro (cobrado antes de zerar).
+create or replace function public.wipe_character(p_user uuid, p_mode text, p_cost int)
+returns void
+language plpgsql security definer set search_path = '' as $$
+declare v_used int; v_gid uuid; v_role text; v_members int;
+begin
+  if p_mode not in ('reset', 'delete') then raise exception 'invalid_action'; end if;
+  perform 1 from public.characters where user_id = p_user for update;
+  if not found then raise exception 'no_character'; end if;
+
+  select case when p_mode = 'reset' then resets_used else deletes_used end into v_used
+    from public.profiles where id = p_user for update;
+  if coalesce(v_used, 0) > 0 and p_cost > 0 then
+    perform public.charge(p_user, 'gold', p_cost, p_mode || '_character');
+  end if;
+  if p_mode = 'reset' then update public.profiles set resets_used = resets_used + 1 where id = p_user;
+  else update public.profiles set deletes_used = deletes_used + 1 where id = p_user; end if;
+
+  -- Guilda: ao excluir, sai da guilda (líder com outros membros precisa passar a liderança antes).
+  if p_mode = 'delete' then
+    select guild_id, role into v_gid, v_role from public.guild_members where user_id = p_user;
+    if v_gid is not null then
+      select count(*) into v_members from public.guild_members where guild_id = v_gid;
+      if v_role = 'leader' and v_members > 1 then raise exception 'guild_leader'; end if;
+      delete from public.guild_members where user_id = p_user;
+      if v_members = 1 then delete from public.guilds where id = v_gid; end if;
+    end if;
+  end if;
+
+  delete from public.battles where user_id = p_user;
+  delete from public.quest_runs where user_id = p_user;
+  delete from public.inventory where user_id = p_user;
+
+  delete from public.characters where user_id = p_user;
+end;
+$$;
+
+-- História: depois de um reset, rejogar um capítulo não entrega o prêmio de novo (nem trava o avanço).
+create or replace function public.complete_chapter(
+  p_user uuid, p_chapter int, p_xp int, p_gold int, p_gems int, p_item text, p_cosmetic text
+) returns int
+language plpgsql security definer set search_path = '' as $$
+declare v_cur int; v_ups int;
+begin
+  select story_chapter into v_cur from public.characters where user_id = p_user for update;
+  if v_cur is null then raise exception 'no_character'; end if;
+  if p_chapter <> v_cur + 1 then raise exception 'invalid_action'; end if;
+  update public.characters set story_chapter = p_chapter where user_id = p_user;
+  if not exists (select 1 from public.reward_claims where user_id = p_user and claim_key = 'story:' || p_chapter) then
+    perform public.claim_bundle(p_user, 'story:' || p_chapter, 0, p_gems, p_cosmetic, p_item, case when p_item is null then 0 else 1 end, 0, null);
+  end if;
+  v_ups := public.grant_rewards(p_user, p_xp, p_gold, null, 'story:' || p_chapter, 'story-gold:' || p_user || ':' || p_chapter);
+  return v_ups;
+end;
+$$;
+
+revoke execute on function public.upgrade_skill(uuid, text, int, int, int) from public, anon, authenticated;
+revoke execute on function public.equip_skills(uuid, jsonb) from public, anon, authenticated;
+revoke execute on function public.wipe_character(uuid, text, int) from public, anon, authenticated;
+grant execute on function public.upgrade_skill(uuid, text, int, int, int) to service_role;
+grant execute on function public.equip_skills(uuid, jsonb) to service_role;
+grant execute on function public.wipe_character(uuid, text, int) to service_role;
+
+-- >>> 0015_multi_characters.sql
+-- 0015: vários heróis por conta.
+-- O herói ATIVO continua em public.characters (1 por conta), então todo o resto do jogo não muda.
+-- Os outros heróis ficam guardados em public.character_stash (personagem + itens).
+-- Compartilhado pela conta: ouro, gemas, cosméticos, pets, passe, guilda e contadores.
+
+alter table public.profiles add column if not exists char_slots int not null default 2 check (char_slots between 1 and 10);
+
+create table if not exists public.character_stash (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid        not null references auth.users (id) on delete cascade,
+  name       citext      not null unique,
+  data       jsonb       not null,
+  inventory  jsonb       not null default '[]'::jsonb,
+  stashed_at timestamptz not null default now()
+);
+create index if not exists character_stash_user_idx on public.character_stash (user_id);
+alter table public.character_stash enable row level security;
+create policy "own stash" on public.character_stash for select to authenticated using (user_id = auth.uid());
+
+-- Regras ao criar/restaurar um herói: nome livre (inclusive entre os guardados) e espaço disponível.
+create or replace function public.tg_character_limits() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare v_slots int; v_n int;
+begin
+  if exists (select 1 from public.character_stash where name = new.name) then
+    raise exception using errcode = '23505', message = 'name_taken';
+  end if;
+  select coalesce((select char_slots from public.profiles where id = new.user_id), 2) into v_slots;
+  select count(*) into v_n from public.character_stash where user_id = new.user_id;
+  if v_n + 1 > v_slots then raise exception 'no_slot'; end if;
+  return new;
+end;
+$$;
+drop trigger if exists character_limits on public.characters;
+create trigger character_limits before insert on public.characters for each row execute function public.tg_character_limits();
+
+-- Guarda o herói ativo (fora de batalha e de missão).
+create or replace function public.stash_character(p_user uuid) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare c public.characters; v_inv jsonb; v_id uuid;
+begin
+  select * into c from public.characters where user_id = p_user for update;
+  if not found then raise exception 'no_character'; end if;
+  if exists (select 1 from public.battles where user_id = p_user and status = 'active') then raise exception 'in_battle'; end if;
+  if exists (select 1 from public.quest_runs where user_id = p_user and status = 'running') then raise exception 'quest_already_running'; end if;
+  select coalesce(jsonb_agg(to_jsonb(i)), '[]'::jsonb) into v_inv from public.inventory i where i.user_id = p_user;
+  insert into public.character_stash (user_id, name, data, inventory) values (p_user, c.name, to_jsonb(c), v_inv) returning id into v_id;
+  delete from public.inventory where user_id = p_user;
+  delete from public.characters where user_id = p_user;
+  return v_id;
+end;
+$$;
+
+-- Traz de volta um herói guardado (a conta não pode ter herói ativo).
+-- Obs.: se uma migração futura criar coluna NOT NULL em characters/inventory, atualize também os dados guardados.
+create or replace function public.restore_character(p_user uuid, p_stash uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+declare s public.character_stash;
+begin
+  if exists (select 1 from public.characters where user_id = p_user) then raise exception 'already_has_character'; end if;
+  select * into s from public.character_stash where id = p_stash and user_id = p_user for update;
+  if not found then raise exception 'invalid_target'; end if;
+  delete from public.character_stash where id = s.id;
+  insert into public.characters select * from jsonb_populate_record(null::public.characters, s.data);
+  insert into public.inventory select * from jsonb_populate_recordset(null::public.inventory, s.inventory);
+end;
+$$;
+
+-- Compra +1 espaço de herói com gemas.
+create or replace function public.buy_char_slot(p_user uuid, p_price int, p_max int) returns int
+language plpgsql security definer set search_path = '' as $$
+declare v int;
+begin
+  select char_slots into v from public.profiles where id = p_user for update;
+  if v is null then raise exception 'no_character'; end if;
+  if v >= p_max then raise exception 'max_upgrade'; end if;
+  perform public.charge(p_user, 'gems', p_price, 'char_slot');
+  update public.profiles set char_slots = v + 1 where id = p_user;
+  return v + 1;
+end;
+$$;
+
+revoke execute on function public.stash_character(uuid) from public, anon, authenticated;
+revoke execute on function public.restore_character(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.buy_char_slot(uuid, int, int) from public, anon, authenticated;
+revoke execute on function public.tg_character_limits() from public, anon, authenticated;
+grant execute on function public.stash_character(uuid) to service_role;
+grant execute on function public.restore_character(uuid, uuid) to service_role;
+grant execute on function public.buy_char_slot(uuid, int, int) to service_role;
+
+-- >>> 0016_friends.sql
+-- 0016: amigos, chat privado (DM) entre amigos.
+-- Amizade é da CONTA (user_id); o nome exibido é o do herói ativo.
+
+create table if not exists public.friendships (
+  id           uuid primary key default gen_random_uuid(),
+  user_a       uuid        not null references auth.users (id) on delete cascade,
+  user_b       uuid        not null references auth.users (id) on delete cascade,
+  requested_by uuid        not null references auth.users (id) on delete cascade,
+  status       text        not null default 'pending' check (status in ('pending', 'accepted')),
+  created_at   timestamptz not null default now(),
+  check (user_a < user_b),
+  unique (user_a, user_b)
+);
+create index if not exists friendships_b_idx on public.friendships (user_b);
+alter table public.friendships enable row level security;
+create policy "own friendships" on public.friendships for select to authenticated
+  using (auth.uid() = user_a or auth.uid() = user_b);
+
+-- Canal de DM: 'dm:<id da amizade>'.
+alter table public.chat_messages drop constraint if exists chat_messages_channel_check;
+alter table public.chat_messages add constraint chat_messages_channel_check
+  check (channel = 'global' or channel like 'guild:%' or channel like 'dm:%');
+
+drop policy if exists "read chat" on public.chat_messages;
+create policy "read chat" on public.chat_messages for select to authenticated using (
+  (not hidden or user_id = auth.uid())
+  and (channel = 'global'
+       or channel = 'guild:' || (select m.guild_id::text from public.guild_members m where m.user_id = auth.uid())
+       or (channel like 'dm:%' and exists (
+             select 1 from public.friendships f
+             where 'dm:' || f.id::text = channel and f.status = 'accepted' and auth.uid() in (f.user_a, f.user_b))))
+);
+
+-- Pedido de amizade (se o outro já tinha pedido, aceita direto). Limite de 100 amigos.
+create or replace function public.friend_request(p_user uuid, p_target uuid) returns text
+language plpgsql security definer set search_path = '' as $$
+declare a uuid := least(p_user, p_target); b uuid := greatest(p_user, p_target); f public.friendships;
+begin
+  if p_user = p_target then raise exception 'invalid_target'; end if;
+  if (select count(*) from public.friendships where (user_a = p_user or user_b = p_user)) >= 100 then raise exception 'friend_limit'; end if;
+  select * into f from public.friendships where user_a = a and user_b = b for update;
+  if found then
+    if f.status = 'accepted' then raise exception 'already_friends'; end if;
+    if f.requested_by = p_user then raise exception 'already_requested'; end if;
+    update public.friendships set status = 'accepted' where id = f.id;
+    return 'accepted';
+  end if;
+  insert into public.friendships (user_a, user_b, requested_by) values (a, b, p_user);
+  return 'requested';
+end;
+$$;
+
+-- Aceitar / recusar / remover (recusar e remover apagam a ligação).
+create or replace function public.friend_respond(p_user uuid, p_other uuid, p_accept boolean) returns void
+language plpgsql security definer set search_path = '' as $$
+declare a uuid := least(p_user, p_other); b uuid := greatest(p_user, p_other); f public.friendships;
+begin
+  select * into f from public.friendships where user_a = a and user_b = b for update;
+  if not found then raise exception 'invalid_target'; end if;
+  if p_accept then
+    if f.status <> 'pending' or f.requested_by = p_user then raise exception 'invalid_action'; end if;
+    update public.friendships set status = 'accepted' where id = f.id;
+  else
+    delete from public.chat_messages where channel = 'dm:' || f.id::text;
+    delete from public.friendships where id = f.id;
+  end if;
+end;
+$$;
+
+-- post_chat com suporte a DM entre amigos.
+create or replace function public.post_chat(p_user uuid, p_channel text, p_body text) returns bigint
+language plpgsql security definer set search_path = '' as $$
+declare c public.characters; v_tag text; v_guild uuid; v_id bigint; p public.profiles;
+begin
+  select * into p from public.profiles where id = p_user;
+  if p.is_banned then raise exception 'no_permission'; end if;
+  if p.muted_until is not null and p.muted_until > now() then raise exception 'muted'; end if;
+  select * into c from public.characters where user_id = p_user;
+  if not found then raise exception 'no_character'; end if;
+  select m.guild_id, g.tag into v_guild, v_tag from public.guild_members m join public.guilds g on g.id = m.guild_id where m.user_id = p_user;
+  if p_channel = 'guild' then
+    if v_guild is null then raise exception 'not_in_guild'; end if;
+    p_channel := 'guild:' || v_guild;
+  elsif p_channel like 'dm:%' then
+    if not exists (select 1 from public.friendships f where 'dm:' || f.id::text = p_channel and f.status = 'accepted' and p_user in (f.user_a, f.user_b)) then
+      raise exception 'no_permission';
+    end if;
+  elsif p_channel <> 'global' then
+    raise exception 'invalid_action';
+  end if;
+  insert into public.chat_messages (channel, user_id, name, tag, title, frame, body)
+    values (p_channel, p_user, c.name, v_tag, c.equipped_title, c.equipped_frame, p_body)
+    returning id into v_id;
+  if random() < 0.02 then
+    delete from public.chat_messages where created_at < now() - interval '3 days' and channel not like 'dm:%';
+    delete from public.chat_messages where created_at < now() - interval '30 days';
+  end if;
+  return v_id;
+end;
+$$;
+
+revoke execute on function public.friend_request(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.friend_respond(uuid, uuid, boolean) from public, anon, authenticated;
+revoke execute on function public.post_chat(uuid, text, text) from public, anon, authenticated;
+grant execute on function public.friend_request(uuid, uuid) to service_role;
+grant execute on function public.friend_respond(uuid, uuid, boolean) to service_role;
+grant execute on function public.post_chat(uuid, text, text) to service_role;
+
+-- >>> 0017_equipment_act2.sql
+-- 0017: revisão de equipamentos (5 espaços: arma, elmo, armadura, botas, acessório),
+-- novos itens do Ato II. Gerado por scripts/gen-items-sql.ts a partir de src/lib/game/items.ts.
+-- Elmos e botas usam kind 'armor' no catálogo; o espaço real fica em data.slot / inventory.slot.
+
+insert into public.items (id, name, kind, rarity, data) values
+  ('pocao_vida', 'Poção de Vida', 'consumable', 'common', '{"heal":60,"image":"/assets/shop/potion_hp.webp"}'),
+  ('espada_curta', 'Espada Curta Funcional', 'weapon', 'common', '{"slot":"weapon","atk":4,"image":"/assets/espada_curta_funcional.webp"}'),
+  ('machado_bronze', 'Machado de Bronze', 'weapon', 'common', '{"slot":"weapon","atk":5,"str":1,"image":"/assets/items/machado_bronze.webp"}'),
+  ('arco_elfico', 'Arco Élfico Elegante', 'weapon', 'rare', '{"slot":"weapon","atk":7,"dex":2,"image":"/assets/arco_elfico_elegante.webp"}'),
+  ('cajado_luminoso', 'Cajado Mágico Luminoso', 'weapon', 'rare', '{"slot":"weapon","atk":3,"intel":4,"image":"/assets/cajado_magico_luminoso.webp"}'),
+  ('lamina_valerion', 'Lâmina de Valerion', 'weapon', 'rare', '{"slot":"weapon","atk":9,"dex":1,"image":"/assets/items/lamina_valerion.webp"}'),
+  ('martelo_forja', 'Martelo da Forja Ancestral', 'weapon', 'epic', '{"slot":"weapon","atk":11,"str":2,"image":"/assets/icone_forja_ancestral.webp"}'),
+  ('arco_lunar', 'Arco Lunar', 'weapon', 'epic', '{"slot":"weapon","atk":13,"dex":4,"image":"/assets/items/arco_lunar.webp"}'),
+  ('cajado_eter', 'Cajado do Éter', 'weapon', 'epic', '{"slot":"weapon","atk":6,"intel":10,"image":"/assets/items/cajado_eter.webp"}'),
+  ('machado_escarlate', 'Machado Escarlate', 'weapon', 'epic', '{"slot":"weapon","atk":17,"str":3,"image":"/assets/items/machado_escarlate.webp"}'),
+  ('lamina_aurora', 'Lâmina da Aurora', 'weapon', 'legendary', '{"slot":"weapon","atk":22,"str":3,"dex":3,"image":"/assets/items/lamina_aurora.webp"}'),
+  ('tridente_meria', 'Tridente de Meria', 'weapon', 'legendary', '{"slot":"weapon","atk":20,"intel":8,"image":"/assets/items/tridente_meria.webp"}'),
+  ('capuz_viajante', 'Capuz do Viajante', 'armor', 'common', '{"slot":"helmet","def":1,"dex":1,"image":"/assets/items/capuz_viajante.webp"}'),
+  ('elmo_ferro', 'Elmo de Ferro', 'armor', 'rare', '{"slot":"helmet","def":3,"con":1,"image":"/assets/items/elmo_ferro.webp"}'),
+  ('tiara_lunar', 'Tiara Lunar', 'armor', 'epic', '{"slot":"helmet","def":2,"intel":4,"image":"/assets/items/tiara_lunar.webp"}'),
+  ('coroa_vorlag', 'Coroa de Vorlag', 'armor', 'legendary', '{"slot":"helmet","def":5,"atk":3,"intel":3,"image":"/assets/items/coroa_vorlag.webp"}'),
+  ('gibao_couro', 'Gibão de Couro', 'armor', 'common', '{"slot":"armor","def":3,"image":"/assets/items/gibao_couro.webp"}'),
+  ('cota_malha', 'Cota de Malha', 'armor', 'rare', '{"slot":"armor","def":6,"con":1,"image":"/assets/items/cota_malha.webp"}'),
+  ('peitoral_anao', 'Peitoral de Placas Anão', 'armor', 'epic', '{"slot":"armor","def":8,"con":2,"image":"/assets/peitoral_de_placas_anao.webp"}'),
+  ('manto_arcano', 'Manto Arcano', 'armor', 'epic', '{"slot":"armor","def":6,"intel":5,"image":"/assets/items/manto_arcano.webp"}'),
+  ('armadura_celeste', 'Armadura Celeste', 'armor', 'legendary', '{"slot":"armor","def":16,"con":4,"image":"/assets/items/armadura_celeste.webp"}'),
+  ('botas_couro', 'Botas de Couro', 'armor', 'common', '{"slot":"boots","dex":1,"def":1,"image":"/assets/items/botas_couro.webp"}'),
+  ('botas_patrulheiro', 'Botas do Patrulheiro', 'armor', 'rare', '{"slot":"boots","dex":3,"def":1,"image":"/assets/items/botas_patrulheiro.webp"}'),
+  ('grevas_runicas', 'Grevas Rúnicas', 'armor', 'epic', '{"slot":"boots","def":4,"dex":2,"image":"/assets/items/grevas_runicas.webp"}'),
+  ('botas_vento', 'Botas do Vento Celeste', 'armor', 'legendary', '{"slot":"boots","dex":7,"def":3,"image":"/assets/items/botas_vento.webp"}'),
+  ('anel_vigor', 'Anel do Vigor', 'accessory', 'rare', '{"slot":"accessory","con":3,"image":"/assets/items/anel_vigor.webp"}'),
+  ('estandarte_inspirador', 'Estandarte Inspirador', 'accessory', 'rare', '{"slot":"accessory","atk":2,"con":2,"image":"/assets/estandarte_inspirador.webp"}'),
+  ('foco_arcano', 'Foco de Canalização Arcana', 'accessory', 'epic', '{"slot":"accessory","intel":6,"def":1,"image":"/assets/canalizacao_de_magia.webp"}'),
+  ('amuleto_serpente', 'Amuleto da Serpente Sinistra', 'accessory', 'legendary', '{"slot":"accessory","atk":4,"def":3,"intel":3,"image":"/assets/amuleto_da_serpente_sinistra.webp"}'),
+  ('olho_vazio', 'Olho do Vazio', 'accessory', 'legendary', '{"slot":"accessory","atk":6,"def":4,"intel":6,"str":2,"image":"/assets/items/olho_vazio.webp"}')
+on conflict (id) do update set name = excluded.name, kind = excluded.kind, rarity = excluded.rarity, data = excluded.data;
+
+-- Itens já no inventário herdam o espaço do catálogo (para o caso de algum ter mudado).
+update public.inventory i set slot = it.data->>'slot'
+  from public.items it where it.id = i.item_id and i.slot is distinct from it.data->>'slot';
+
+-- >>> 0018_battle_commit.sql
+-- 0018: fim de turno ATÔMICO nas lutas PvE (caçada, história e masmorras).
+--
+-- Antes, a rota gravava "venceu" na batalha e só depois entregava XP, capítulo e baú
+-- em chamadas separadas. Se uma delas falhasse (ex.: item da recompensa ainda não
+-- existia na tabela `items`), o jogador via "Algo deu errado", a luta sumia como
+-- vencida e o capítulo NÃO era concluído. Agora tudo acontece numa transação só:
+-- ou grava tudo, ou nada (e o jogador pode clicar de novo).
+
+create or replace function public.battle_commit(
+  p_user uuid, p_battle uuid, p_version int, p_state jsonb, p_status text, p_hp int,
+  -- Recompensa da luta (null = não venceu este estágio).
+  p_xp int, p_gold int, p_item text, p_reason text, p_ref text, p_boss boolean,
+  -- História (null = não é capítulo).
+  p_chapter int, p_ch_xp int, p_ch_gold int, p_ch_gems int, p_ch_item text, p_ch_cosmetic text,
+  -- Baú da masmorra (null = sem baú).
+  p_chest_key text, p_chest_gold int, p_chest_gems int, p_chest_item text
+) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare v_ups int; v_story int; v_cur int;
+begin
+  if p_status not in ('active', 'won', 'lost') then raise exception 'invalid_action'; end if;
+
+  -- Concorrência otimista: dois cliques simultâneos → só um grava.
+  update public.battles
+     set state = p_state, status = p_status, version = version + 1, updated_at = now()
+   where id = p_battle and user_id = p_user and status = 'active' and version = p_version;
+  if not found then raise exception 'stale_battle'; end if;
+
+  if p_status <> 'active' then perform public.set_hp(p_user, p_hp); end if;
+
+  -- Item de recompensa que não existe no banco não pode travar a luta inteira.
+  if p_item is not null and not exists (select 1 from public.items where id = p_item) then
+    raise warning 'battle_commit: item % não existe na tabela items', p_item; p_item := null;
+  end if;
+  if p_ch_item is not null and not exists (select 1 from public.items where id = p_ch_item) then
+    raise warning 'battle_commit: item % não existe na tabela items', p_ch_item; p_ch_item := null;
+  end if;
+  if p_chest_item is not null and not exists (select 1 from public.items where id = p_chest_item) then
+    raise warning 'battle_commit: item % não existe na tabela items', p_chest_item; p_chest_item := null;
+  end if;
+
+  if p_xp is not null then
+    v_ups := public.grant_rewards(p_user, p_xp, coalesce(p_gold, 0), p_item, p_reason, p_ref);
+    perform public.record_event(p_user, 'pve_win', 1);
+    if p_boss then perform public.record_event(p_user, 'boss_win', 1); end if;
+  end if;
+
+  -- Capítulo: só conclui se for exatamente o próximo (repetir não dá erro nem recompensa).
+  if p_chapter is not null then
+    select story_chapter into v_cur from public.characters where user_id = p_user;
+    if v_cur = p_chapter - 1 then
+      v_story := public.complete_chapter(p_user, p_chapter, p_ch_xp, p_ch_gold, p_ch_gems, p_ch_item, p_ch_cosmetic);
+    end if;
+  end if;
+
+  if p_chest_key is not null then
+    perform public.claim_bundle(p_user, p_chest_key, coalesce(p_chest_gold, 0), coalesce(p_chest_gems, 0), null,
+      p_chest_item, case when p_chest_item is null then 0 else 1 end, 0, null);
+  end if;
+
+  return jsonb_build_object('level_ups', coalesce(v_ups, 0), 'story_ups', v_story, 'story_done', v_story is not null);
+end;
+$$;
+
+revoke execute on function public.battle_commit(uuid, uuid, int, jsonb, text, int, int, int, text, text, text, boolean, int, int, int, int, text, text, text, int, int, text) from public, anon, authenticated;
+grant execute on function public.battle_commit(uuid, uuid, int, jsonb, text, int, int, int, text, text, text, boolean, int, int, int, int, text, text, text, int, int, text) to service_role;
+
+-- >>> 0019_items_art_v2.sql
+-- 0019: novos caminhos das artes do Ato II (sufixo -v2, para furar o cache da CDN/navegador).
+-- Gerado por scripts/gen-items-sql.ts a partir de src/lib/game/items.ts.
+insert into public.items (id, name, kind, rarity, data) values
+  ('pocao_vida', 'Poção de Vida', 'consumable', 'common', '{"heal":60,"image":"/assets/shop/potion_hp.webp"}'),
+  ('espada_curta', 'Espada Curta Funcional', 'weapon', 'common', '{"slot":"weapon","atk":4,"image":"/assets/espada_curta_funcional.webp"}'),
+  ('machado_bronze', 'Machado de Bronze', 'weapon', 'common', '{"slot":"weapon","atk":5,"str":1,"image":"/assets/items/machado_bronze-v2.webp"}'),
+  ('arco_elfico', 'Arco Élfico Elegante', 'weapon', 'rare', '{"slot":"weapon","atk":7,"dex":2,"image":"/assets/arco_elfico_elegante.webp"}'),
+  ('cajado_luminoso', 'Cajado Mágico Luminoso', 'weapon', 'rare', '{"slot":"weapon","atk":3,"intel":4,"image":"/assets/cajado_magico_luminoso.webp"}'),
+  ('lamina_valerion', 'Lâmina de Valerion', 'weapon', 'rare', '{"slot":"weapon","atk":9,"dex":1,"image":"/assets/items/lamina_valerion-v2.webp"}'),
+  ('martelo_forja', 'Martelo da Forja Ancestral', 'weapon', 'epic', '{"slot":"weapon","atk":11,"str":2,"image":"/assets/icone_forja_ancestral.webp"}'),
+  ('arco_lunar', 'Arco Lunar', 'weapon', 'epic', '{"slot":"weapon","atk":13,"dex":4,"image":"/assets/items/arco_lunar-v2.webp"}'),
+  ('cajado_eter', 'Cajado do Éter', 'weapon', 'epic', '{"slot":"weapon","atk":6,"intel":10,"image":"/assets/items/cajado_eter-v2.webp"}'),
+  ('machado_escarlate', 'Machado Escarlate', 'weapon', 'epic', '{"slot":"weapon","atk":17,"str":3,"image":"/assets/items/machado_escarlate-v2.webp"}'),
+  ('lamina_aurora', 'Lâmina da Aurora', 'weapon', 'legendary', '{"slot":"weapon","atk":22,"str":3,"dex":3,"image":"/assets/items/lamina_aurora-v2.webp"}'),
+  ('tridente_meria', 'Tridente de Meria', 'weapon', 'legendary', '{"slot":"weapon","atk":20,"intel":8,"image":"/assets/items/tridente_meria-v2.webp"}'),
+  ('capuz_viajante', 'Capuz do Viajante', 'armor', 'common', '{"slot":"helmet","def":1,"dex":1,"image":"/assets/items/capuz_viajante-v2.webp"}'),
+  ('elmo_ferro', 'Elmo de Ferro', 'armor', 'rare', '{"slot":"helmet","def":3,"con":1,"image":"/assets/items/elmo_ferro-v2.webp"}'),
+  ('tiara_lunar', 'Tiara Lunar', 'armor', 'epic', '{"slot":"helmet","def":2,"intel":4,"image":"/assets/items/tiara_lunar-v2.webp"}'),
+  ('coroa_vorlag', 'Coroa de Vorlag', 'armor', 'legendary', '{"slot":"helmet","def":5,"atk":3,"intel":3,"image":"/assets/items/coroa_vorlag-v2.webp"}'),
+  ('gibao_couro', 'Gibão de Couro', 'armor', 'common', '{"slot":"armor","def":3,"image":"/assets/items/gibao_couro-v2.webp"}'),
+  ('cota_malha', 'Cota de Malha', 'armor', 'rare', '{"slot":"armor","def":6,"con":1,"image":"/assets/items/cota_malha-v2.webp"}'),
+  ('peitoral_anao', 'Peitoral de Placas Anão', 'armor', 'epic', '{"slot":"armor","def":8,"con":2,"image":"/assets/peitoral_de_placas_anao.webp"}'),
+  ('manto_arcano', 'Manto Arcano', 'armor', 'epic', '{"slot":"armor","def":6,"intel":5,"image":"/assets/items/manto_arcano-v2.webp"}'),
+  ('armadura_celeste', 'Armadura Celeste', 'armor', 'legendary', '{"slot":"armor","def":16,"con":4,"image":"/assets/items/armadura_celeste-v2.webp"}'),
+  ('botas_couro', 'Botas de Couro', 'armor', 'common', '{"slot":"boots","dex":1,"def":1,"image":"/assets/items/botas_couro-v2.webp"}'),
+  ('botas_patrulheiro', 'Botas do Patrulheiro', 'armor', 'rare', '{"slot":"boots","dex":3,"def":1,"image":"/assets/items/botas_patrulheiro-v2.webp"}'),
+  ('grevas_runicas', 'Grevas Rúnicas', 'armor', 'epic', '{"slot":"boots","def":4,"dex":2,"image":"/assets/items/grevas_runicas-v2.webp"}'),
+  ('botas_vento', 'Botas do Vento Celeste', 'armor', 'legendary', '{"slot":"boots","dex":7,"def":3,"image":"/assets/items/botas_vento-v2.webp"}'),
+  ('anel_vigor', 'Anel do Vigor', 'accessory', 'rare', '{"slot":"accessory","con":3,"image":"/assets/items/anel_vigor-v2.webp"}'),
+  ('estandarte_inspirador', 'Estandarte Inspirador', 'accessory', 'rare', '{"slot":"accessory","atk":2,"con":2,"image":"/assets/estandarte_inspirador.webp"}'),
+  ('foco_arcano', 'Foco de Canalização Arcana', 'accessory', 'epic', '{"slot":"accessory","intel":6,"def":1,"image":"/assets/canalizacao_de_magia.webp"}'),
+  ('amuleto_serpente', 'Amuleto da Serpente Sinistra', 'accessory', 'legendary', '{"slot":"accessory","atk":4,"def":3,"intel":3,"image":"/assets/amuleto_da_serpente_sinistra.webp"}'),
+  ('olho_vazio', 'Olho do Vazio', 'accessory', 'legendary', '{"slot":"accessory","atk":6,"def":4,"intel":6,"str":2,"image":"/assets/items/olho_vazio-v2.webp"}')
+on conflict (id) do update set name = excluded.name, kind = excluded.kind, rarity = excluded.rarity, data = excluded.data;

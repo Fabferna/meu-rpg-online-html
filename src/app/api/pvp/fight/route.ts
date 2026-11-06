@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
-import { loadPlayer } from "@/lib/game/player";
+import { battleVitals, heroCombatant, loadPlayer } from "@/lib/game/player";
 import { PVP_ENERGY_COST } from "@/lib/game/rules";
 import { rateLimit } from "@/lib/security/rateLimit";
-import { eloDelta, playerCombatant, simulateDuel } from "@/lib/game/combat";
+import { eloDelta, simulateDuel } from "@/lib/game/combat";
 
 export const POST = action(
   "pvp-fight",
@@ -22,8 +22,9 @@ export const POST = action(
     await rpc(admin, "spend_energy", { p_user: user.id, p_amount: PVP_ENERGY_COST });
 
     // PVP usa HP cheio dos dois lados (luta de arena).
-    const a = playerCombatant(me.row.name, me.attributes, me.row.level, me.maxHp, me.maxHp, me.gear);
-    const b = playerCombatant(them.row.name, them.attributes, them.row.level, them.maxHp, them.maxHp, them.gear);
+    const va = battleVitals({ ...me, hp: me.maxHp }), vb = battleVitals({ ...them, hp: them.maxHp });
+    const a = heroCombatant(me, va.hp, va.maxHp);
+    const b = heroCombatant(them, vb.hp, vb.maxHp);
     const duel = simulateDuel(a, b);
 
     const [winner, loser] = duel.aWins ? [me, them] : [them, me];

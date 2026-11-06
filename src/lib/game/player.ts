@@ -1,10 +1,11 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Attributes } from "./data";
+import type { Attributes, RaceId } from "./data";
 import { currentEnergy, currentHp, maxEnergy, maxHp } from "./rules";
-import type { ItemBonus } from "./combat";
+import { playerCombatant, type ItemBonus } from "./combat";
 import { ITEM_BY_ID, itemStatsFor, upgradedStats } from "./items";
 import { petBonus } from "./pets";
+import { heroStats, type Piece } from "./gear";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -25,6 +26,8 @@ export type LoadedPlayer = {
   energy: number;
   maxEnergy: number;
   gear: ItemBonus[];
+  /** Peças equipadas (do catálogo) com atributos finais: arma com tipo, peças com peso. */
+  pieces: Piece[];
 };
 
 export function deriveVitals(row: CharacterRow, now = new Date()) {
@@ -52,6 +55,12 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
   ]);
   if (!row) return null;
   const v = deriveVitals(row);
+  const pieces: Piece[] = ((gear ?? []) as unknown as { item_id: string; upgrade: number; items: { data: Record<string, number | string> } }[])
+    .map((g) => {
+      const def = ITEM_BY_ID[g.item_id];
+      const stats = itemStatsFor(def, upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0), row.race) as Record<string, number>;
+      return { item: { slot: def?.slot ?? String(g.items.data.slot ?? ""), rarity: def?.rarity ?? "common", weapon: def?.weapon, weight: def?.weight }, stats };
+    });
   return {
     row,
     attributes: v.attributes,
@@ -59,8 +68,21 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
     maxHp: v.maxHp,
     energy: v.energy,
     maxEnergy: v.maxEnergy,
-    gear: ((gear ?? []) as unknown as { item_id: string; upgrade: number; items: { data: ItemBonus } }[])
-      .map((g) => itemStatsFor(ITEM_BY_ID[g.item_id], upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0), row.race) as ItemBonus)
-      .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
+    gear: pieces.map((x) => x.stats as ItemBonus).concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
+    pieces,
   };
+}
+
+/** Herói pronto para lutar (arma escala com atributo; peças com peso dão bônus por raça). */
+export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
+  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces);
+}
+
+/**
+ * Vida no início de uma luta: peças pesadas (anão/gronar) dão vida extra SÓ em combate.
+ * Ao terminar, o banco limita a vida ao máximo normal (set_hp), então o extra é o primeiro a ir embora.
+ */
+export function battleVitals(p: LoadedPlayer) {
+  const bonus = Math.round(p.maxHp * heroStats(p.attributes, p.row.level, p.gear, p.row.race as RaceId, p.pieces).hpPct);
+  return { hp: p.hp + bonus, maxHp: p.maxHp + bonus };
 }

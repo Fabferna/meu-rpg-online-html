@@ -2,7 +2,7 @@ import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
 import { DUNGEON_BY_ID, DUNGEON_DAILY } from "@/lib/game/dungeons";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
-import { loadPlayer } from "@/lib/game/player";
+import { battleVitals, loadPlayer } from "@/lib/game/player";
 import { PASS_DUNGEON_BONUS, seasonOf } from "@/lib/game/seasonPass";
 import type { BattleState } from "@/lib/game/combat";
 import { REGION_OF_DUNGEON, regionUnlocked } from "@/lib/game/regions";
@@ -22,7 +22,7 @@ export const POST = action("dungeon-enter", z.object({ dungeonId: z.string().max
   const first = ENEMY_BY_ID[d.stages[0]];
   const state: BattleState = {
     enemyId: first.id, enemy: { name: first.name, image: first.image, hp: first.maxHp, maxHp: first.maxHp, boss: first.boss },
-    player: { hp: p.hp, maxHp: p.maxHp }, turn: 0, skillCooldown: 0, log: [],
+    player: battleVitals(p), turn: 0, skillCooldown: 0, log: [],
     dungeon: { id: d.id, name: d.name, stage: 0, total: d.stages.length },
   };
   const { error } = await admin.from("battles").insert({ user_id: user.id, kind: "pve", state });

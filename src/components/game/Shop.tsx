@@ -233,7 +233,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
                     x.kind === "skin" ? <Image src={x.image!} alt="" width={80} height={96} className="h-24 w-20 rounded-lg object-cover" /> :
                     <span className="rounded-md bg-black/40 px-3 py-2 font-display text-sm text-amber-200">« {t(x.name)} »</span>}
                 </div>
-                <p className="mt-2 truncate text-sm">{t(x.name)}</p>
+                <p className="mt-2 line-clamp-2 text-sm leading-tight">{t(x.name)}</p>
                 <p className="text-[11px] text-white/40">{x.kind === "frame" ? t("Moldura") : x.kind === "title" ? t("Título") : t("Visual")} · {t(RARITY_LABEL[x.rarity])}</p>
                 {owned ? (
                   <button disabled={busy} className={`mt-2 w-full rounded-md py-1.5 text-xs ${equipped ? "bg-white/10" : "bg-emerald-600"}`}

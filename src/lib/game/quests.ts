@@ -37,12 +37,12 @@ export const QUESTS: Quest[] = ([
   {
     id: "forja_das_agulhas", title: "A Forja das Agulhas", rank: "A", minLevel: 10, energy: 20, durationSec: 3600,
     description: "Escolte um mestre ferreiro anão através das montanhas geladas.",
-    xp: [520, 640], gold: [220, 300], drop: { item: "peitoral_anao", chance: 0.1 }, image: "/assets/as_agulhas_congeladas.webp",
+    xp: [520, 640], gold: [220, 300], drop: { item: "grevas_runicas", chance: 0.1 }, image: "/assets/as_agulhas_congeladas.webp",
   },
   {
     id: "reino_abissal", title: "Portal do Reino Abissal", rank: "S", minLevel: 18, energy: 28, durationSec: 7200,
     description: "Feche o portal antes que Meria desperte por completo.",
-    xp: [1400, 1700], gold: [600, 800], drop: { item: "amuleto_serpente", chance: 0.06 }, image: "/assets/reino_abissal_de_meria.webp",
+    xp: [1400, 1700], gold: [600, 800], drop: { item: "manto_arcano", chance: 0.08 }, image: "/assets/reino_abissal_de_meria.webp",
   },
   {
     id: "raizes_corrompidas", title: "Raízes Corrompidas", rank: "C", minLevel: 3, energy: 10, durationSec: 420,
@@ -67,7 +67,7 @@ export const QUESTS: Quest[] = ([
   {
     id: "coracao_gelo", title: "Coração de Gelo", rank: "A", minLevel: 13, energy: 28, durationSec: 5400,
     description: "Recupere o núcleo de um golem antigo nas Agulhas Congeladas.",
-    xp: [800, 980], gold: [320, 420], drop: { item: "peitoral_anao", chance: 0.12 }, image: "/assets/as_agulhas_congeladas.webp",
+    xp: [800, 980], gold: [320, 420], drop: { item: "arco_lunar", chance: 0.08 }, image: "/assets/as_agulhas_congeladas.webp",
   },
   {
     id: "coroa_vorlag", title: "A Coroa de Vorlag", rank: "S", minLevel: 22, energy: 40, durationSec: 10800,
@@ -77,27 +77,27 @@ export const QUESTS: Quest[] = ([
   {
     id: "patrulha_celeste", title: "Patrulha Celeste", rank: "A", minLevel: 26, energy: 26, durationSec: 3600,
     description: "Percorra as pontes de cristal e afaste as harpias das ilhas habitadas.",
-    xp: [1800, 2100], gold: [700, 900], drop: { item: "botas_patrulheiro", chance: 0.15 }, image: "/assets/regions/ilhas_celestes.webp",
+    xp: [1800, 2100], gold: [700, 900], drop: { item: "botas_patrulheiro", chance: 0.15 }, image: "/assets/regions/ilhas_celestes-v2.webp",
   },
   {
     id: "ninho_harpias", title: "O Ninho das Harpias", rank: "S", minLevel: 28, energy: 34, durationSec: 7200,
     description: "Encontre o ninho da rainha e recupere os tesouros roubados dos vilarejos.",
-    xp: [3000, 3500], gold: [1200, 1500], drop: { item: "botas_vento", chance: 0.05 }, image: "/assets/regions/ilhas_celestes.webp",
+    xp: [3000, 3500], gold: [1200, 1500], drop: { item: "botas_vento", chance: 0.05 }, image: "/assets/regions/ilhas_celestes-v2.webp",
   },
   {
     id: "cristal_eter", title: "Cristal de Éter", rank: "S", minLevel: 31, energy: 38, durationSec: 10800,
     description: "Extraia um cristal de éter puro sem acordar as sentinelas.",
-    xp: [4200, 4800], gold: [1600, 2000], drop: { item: "cajado_eter", chance: 0.08 }, image: "/assets/regions/ilhas_celestes.webp",
+    xp: [4200, 4800], gold: [1600, 2000], drop: { item: "cajado_eter", chance: 0.08 }, image: "/assets/regions/ilhas_celestes-v2.webp",
   },
   {
     id: "eco_vazio", title: "Ecos do Vazio", rank: "S", minLevel: 34, energy: 40, durationSec: 10800,
     description: "Feche as pequenas fendas que se abrem pelo reino antes que algo atravesse.",
-    xp: [5200, 5900], gold: [2000, 2500], drop: { item: "machado_escarlate", chance: 0.08 }, image: "/assets/regions/fenda_vazio.webp",
+    xp: [5200, 5900], gold: [2000, 2500], drop: { item: "machado_escarlate", chance: 0.08 }, image: "/assets/regions/fenda_vazio-v2.webp",
   },
   {
     id: "olho_que_tudo_ve", title: "O Olho que Tudo Vê", rank: "S", minLevel: 38, energy: 45, durationSec: 14400,
     description: "Espione o último templo do culto e descubra como Nyx pretende voltar.",
-    xp: [7000, 8000], gold: [2800, 3400], drop: { item: "tridente_meria", chance: 0.06 }, image: "/assets/regions/fenda_vazio.webp",
+    xp: [7000, 8000], gold: [2800, 3400], drop: { item: "tridente_meria", chance: 0.06 }, image: "/assets/regions/fenda_vazio-v2.webp",
   },
 ] as Quest[]).sort((a, b) => a.minLevel - b.minLevel || a.durationSec - b.durationSec);
 

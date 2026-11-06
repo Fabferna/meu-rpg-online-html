@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "@/lib/supabase/admin": ["./scripts/dbtest/stubs/admin.ts"],
+      "@/lib/supabase/server": ["./scripts/dbtest/stubs/server.ts"],
+      "@/lib/security/rateLimit": ["./scripts/dbtest/stubs/rateLimit.ts"],
+      "@/*": ["./src/*"]
+    }
+  }
+}

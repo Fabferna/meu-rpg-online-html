@@ -3,8 +3,9 @@ import { chance, roll } from "./rng";
 import type { Attributes, RaceId } from "./data";
 import { SKILL_BY_ID, skillPower, type SkillLoadout } from "./skills";
 import type { Enemy } from "./enemies";
+import { heroStats, type ItemBonus, type Piece } from "./gear";
 
-export type ItemBonus = Partial<{ atk: number; def: number; str: number; dex: number; con: number; intel: number }>;
+export type { ItemBonus } from "./gear";
 
 export type Combatant = {
   name: string;
@@ -14,6 +15,9 @@ export type Combatant = {
   magic: [number, number];
   def: number;
   agility: number;
+  /** Bônus de esquiva/crítico vindos do peso das peças (0.02 = +2 p.p.). */
+  dodge?: number;
+  crit?: number;
 };
 
 export type LogEntry = {
@@ -58,24 +62,15 @@ export type PlayerAction = "attack" | "defend" | "potion" | "s0" | "s1" | "s2";
 export const SKILL_COOLDOWN = 3;
 export const POTION_ITEM = "pocao_vida";
 
-export function playerCombatant(name: string, a: Attributes, level: number, hp: number, maxHp: number, gear: ItemBonus[]): Combatant {
-  const b = gear.reduce<Required<ItemBonus>>(
-    (acc, g) => ({
-      atk: acc.atk + (g.atk ?? 0), def: acc.def + (g.def ?? 0), str: acc.str + (g.str ?? 0),
-      dex: acc.dex + (g.dex ?? 0), con: acc.con + (g.con ?? 0), intel: acc.intel + (g.intel ?? 0),
-    }),
-    { atk: 0, def: 0, str: 0, dex: 0, con: 0, intel: 0 },
-  );
-  const str = a.str + b.str, dex = a.dex + b.dex, con = a.con + b.con, intel = a.intel + b.intel;
-  return {
-    name,
-    hp,
-    maxHp,
-    atk: [str + level + b.atk, Math.round(str * 1.4 + level * 2) + b.atk],
-    magic: [intel + level, Math.round(intel * 1.7 + level * 2)],
-    def: Math.round(con * 0.5 + b.def),
-    agility: dex,
-  };
+/**
+ * Herói em combate. Com `race` e `pieces`, aplica a escala das armas e o peso das peças (gear.ts);
+ * sem eles, usa só os bônus somados (compatível com chamadas antigas).
+ */
+export function playerCombatant(
+  name: string, a: Attributes, level: number, hp: number, maxHp: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = [],
+): Combatant {
+  const h = heroStats(a, level, gear, race, pieces);
+  return { name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit };
 }
 
 export function enemyCombatant(e: Enemy, hp = e.maxHp): Combatant {
@@ -85,9 +80,9 @@ export function enemyCombatant(e: Enemy, hp = e.maxHp): Combatant {
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 function strike(att: Combatant, def: Combatant, kind: "attack" | "skill", defending: boolean, mult = 1, sure = false) {
-  const dodge = clamp(0.04 + (def.agility - att.agility) * 0.01, 0.02, 0.25);
+  const dodge = clamp(0.04 + (def.agility - att.agility) * 0.01 + (def.dodge ?? 0), 0.02, 0.3);
   if (kind === "attack" && !sure && chance(dodge)) return { dmg: 0, miss: true, crit: false };
-  const crit = chance(clamp(0.05 + att.agility * 0.004, 0.05, 0.35));
+  const crit = chance(clamp(0.05 + att.agility * 0.004 + (att.crit ?? 0), 0.05, 0.4));
   const base = (kind === "skill" ? roll(...att.magic) * 1.8 : roll(...att.atk)) * mult;
   const armor = kind === "skill" ? def.def * 0.3 : def.def * 0.6;
   let dmg = Math.max(1, Math.round((base - armor) * (crit ? 1.6 : 1)));

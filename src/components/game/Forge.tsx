@@ -9,6 +9,8 @@ import { ITEM_BY_ID, MAX_UPGRADE, upgradeChance, upgradeCost, upgradedStats } fr
 import { post } from "./api";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
+import { viewItem } from "./gearView";
+import { ATTR_LABEL } from "@/lib/game/gear";
 
 const LABEL: Record<string, string> = { atk: "ATQ", def: "DEF", str: "FOR", dex: "DES", con: "CON", intel: "INT" };
 
@@ -43,10 +45,10 @@ export default function Forge({ ctx, item, onClose }: { ctx: GameCtx; item: Inve
     <AnimatePresence>
       {live && def && (
         <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => !busy && onClose()}>
-          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="panel w-full max-w-md p-6" role="dialog" aria-modal="true" aria-labelledby="forge-title" onClick={(e) => e.stopPropagation()}>
+          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="panel max-h-[90dvh] w-full max-w-md overflow-y-auto p-5 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="forge-title" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between">
               <h2 id="forge-title" className="font-display text-xl text-gold">{t("⚒️ Forja")}</h2>
-              <button onClick={onClose} aria-label={t("Fechar")} className="px-2 text-white/50 hover:text-white">✕</button>
+              <button onClick={onClose} aria-label={t("Fechar")} className="grid h-11 w-11 place-items-center text-white/50 hover:text-white">✕</button>
             </div>
             <div className="relative mx-auto mt-4 grid h-36 w-36 place-items-center">
               <motion.div aria-hidden key={`${result}-${lvl}`} className="absolute inset-0 rounded-full"
@@ -60,11 +62,11 @@ export default function Forge({ ctx, item, onClose }: { ctx: GameCtx; item: Inve
             <p className="mt-2 text-center font-display">{t(def.name)}{lvl > 0 ? ` +${lvl}` : ""}</p>
             {result && (
               <motion.p initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`mt-1 text-center font-display text-lg ${result === "ok" ? "text-gold" : "text-red-300"}`}>
-                {result === "ok" ? `Sucesso! Agora +${lvl}` : "A forja falhou… o item continua igual."}
+                {result === "ok" ? t("Sucesso! Agora +{n}", { n: lvl }) : t("A forja falhou… o item continua igual.")}
               </motion.p>
             )}
             <div className="mt-4 grid grid-cols-2 gap-2 rounded-lg bg-black/30 p-3 text-sm">
-              <p className="text-white/50">Atual (+{lvl})</p>
+              <p className="text-white/50">{t("Atual (+{n})", { n: lvl })}</p>
               <p className="text-white/50">{maxed ? t("Máximo") : t("Próximo (+{n})", { n: next })}</p>
               {Object.entries(def.stats).filter(([k]) => k in LABEL).map(([k]) => {
                 const cur = upgradedStats(def.stats as Record<string, number>, lvl)[k];
@@ -75,6 +77,14 @@ export default function Forge({ ctx, item, onClose }: { ctx: GameCtx; item: Inve
                 ];
               })}
             </div>
+            {def.weapon && (() => {
+              const cur = viewItem(ctx.state, def, lvl).weapon, nx = viewItem(ctx.state, def, Math.min(MAX_UPGRADE, next)).weapon;
+              return cur && nx ? (
+                <p className="mt-2 text-center text-sm text-amber-200">
+                  🗡️ {t("Dano efetivo para você: {x} (escala com {a})", { x: cur.total, a: t(ATTR_LABEL[cur.attr]) })}{!maxed && nx.total !== cur.total ? <b className="text-emerald-300"> → {nx.total}</b> : null}
+                </p>
+              ) : null;
+            })()}
             {maxed ? (
               <p className="mt-5 text-center text-sm text-gold">{t("Este item atingiu o poder máximo!")}</p>
             ) : (

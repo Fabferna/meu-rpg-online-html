@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useAnimate } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
-import { ENEMIES } from "@/lib/game/enemies";
+import { ENEMIES, ENEMY_BY_ID } from "@/lib/game/enemies";
 import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
 import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
@@ -98,9 +98,19 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       }
     } catch (e) {
       ctx.toast((e as Error).message, "error");
+      // A tela pode ter ficado para trás (outra aba, clique duplo, luta já encerrada): busca o estado real.
+      await resync();
     } finally {
       setBusy(false);
     }
+  }
+
+  async function resync() {
+    try {
+      const res = await fetch("/api/state", { cache: "no-store" }).then((r) => r.json());
+      setBattle(res.battle?.state ?? null);
+      await ctx.refresh();
+    } catch { /* sem rede: mantém a tela */ }
   }
 
   async function flee() {
@@ -108,8 +118,11 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     try {
       await post("/api/battle/flee");
       setBattle(null);
-      ctx.toast("Você fugiu da batalha.");
+      ctx.toast(t("Você fugiu da batalha."));
       await ctx.refresh();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+      await resync();
     } finally {
       setBusy(false);
     }
@@ -159,9 +172,9 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     const fx = battle.effects ?? {};
     const lo = state.character.loadout;
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 pb-40 sm:space-y-4 sm:pb-0">
         {battle.dungeon && (
-          <div className="flex items-center gap-3 rounded-lg bg-black/30 px-4 py-2 text-sm">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg bg-black/30 px-3 py-2 text-sm sm:px-4">
             <span className="font-display text-gold">🗝️ {battle.dungeon.name}</span>
             <span className="flex gap-1">{Array.from({ length: battle.dungeon.total }, (_, i) => (
               <span key={i} className={`h-2 w-8 rounded-full ${i < battle.dungeon!.stage ? "bg-emerald-500" : i === battle.dungeon!.stage ? "bg-gold animate-pulse" : "bg-white/10"}`} />
@@ -172,34 +185,43 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
           <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
             badges={[fx.pPoison ? `☠️ ${t("Veneno")} ${fx.pPoison}` : "", fx.pStun ? `💫 ${t("Atordoado")}` : "", fx.pStone ? `🪨 ${t("Pele de Pedra")} ${fx.pStone}` : ""]} />
-          <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
-            badges={[fx.ePoison ? `☠️ Veneno ${fx.ePoison}` : "", fx.eStun ? "💫 Atordoado" : ""]} />
+          <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={ENEMY_BY_ID[battle.enemyId]?.image ?? battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
+            badges={[fx.ePoison ? `☠️ ${t("Veneno")} ${fx.ePoison}` : "", fx.eStun ? `💫 ${t("Atordoado")}` : ""]} />
         </div>
-        <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-4 lg:grid-cols-7">
-          <ActBtn disabled={busy} onClick={() => act("attack")} label={t("⚔️ Atacar")} />
-          {lo.eq.map((id, i) => {
-            const sk = SKILL_BY_ID[id];
-            if (!sk) return null;
-            const cd = battle.cds?.[id] ?? 0;
-            const lv = lo.lv[id] ?? 1;
-            return (
-              <motion.button key={id} whileTap={{ scale: 0.94 }} onClick={() => act(`s${i}` as PlayerAction)} disabled={busy || cd > 0} title={t(sk.description)}
-                className="col-span-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-arcane/80 to-fuchsia-700/70 px-3 py-2 text-left font-display text-sm transition hover:brightness-110 disabled:opacity-40 sm:col-span-1">
-                <Image src={sk.icon} alt="" width={32} height={32} className="shrink-0 rounded" />
-                <span className="min-w-0 leading-tight">
-                  <span className="block truncate">{t(sk.name)}</span>
-                  <span className="block text-[10px] font-sans text-white/70">{cd > 0 ? t("Recarga ({n})", { n: cd }) : `${t("Nv.")} ${lv} · ⏳${skillPower(sk, lv).cooldown}`}</span>
-                </span>
-              </motion.button>
-            );
-          })}
-          <ActBtn disabled={busy} onClick={() => act("defend")} label={t("🛡️ Defender")} />
-          <ActBtn disabled={busy || !pot} onClick={() => act("potion")} label={t("🧪 Poção ({n})", { n: pot })} />
-          <ActBtn disabled={busy} onClick={flee} label={t("🏃 Fugir")} muted />
-        </Panel>
-        <Panel className="p-4 text-sm">
+        {/* Celular: ações fixas no rodapé, sempre ao alcance do polegar. */}
+        <div className="fixed inset-x-0 bottom-0 z-40 space-y-1.5 rounded-t-2xl border-t border-white/10 bg-ink/95 p-2 shadow-[0_-8px_24px_#0008] backdrop-blur sm:static sm:z-auto sm:rounded-xl sm:border sm:bg-panel/60 sm:p-4 sm:shadow-none"
+          style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
+          {lo.eq.length > 0 && (
+            <div className={`grid gap-1.5 sm:gap-2 ${lo.eq.length === 1 ? "grid-cols-1" : lo.eq.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+              {lo.eq.map((id, i) => {
+                const sk = SKILL_BY_ID[id];
+                if (!sk) return null;
+                const cd = battle.cds?.[id] ?? 0;
+                const lv = lo.lv[id] ?? 1;
+                return (
+                  <motion.button key={id} whileTap={{ scale: 0.94 }} onClick={() => act(`s${i}` as PlayerAction)} disabled={busy || cd > 0} title={t(sk.description)}
+                    className="flex min-h-11 min-w-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-arcane/80 to-fuchsia-700/70 px-2 py-1.5 text-left font-display text-xs transition hover:brightness-110 disabled:opacity-40 sm:gap-2 sm:px-3 sm:text-sm">
+                    <Image src={sk.icon} alt="" width={28} height={28} className="shrink-0 rounded" />
+                    <span className="min-w-0 leading-tight">
+                      <span className="block truncate">{t(sk.name)}</span>
+                      <span className="block text-[10px] font-sans text-white/70">{cd > 0 ? t("Recarga ({n})", { n: cd }) : `${t("Nv.")} ${lv} · ⏳${skillPower(sk, lv).cooldown}`}</span>
+                    </span>
+                  </motion.button>
+                );
+              })}
+            </div>
+          )}
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+            <ActBtn disabled={busy} onClick={() => act("attack")} label={t("⚔️ Atacar")} />
+            <ActBtn disabled={busy} onClick={() => act("defend")} label={t("🛡️ Defender")} />
+            <ActBtn disabled={busy || !pot} onClick={() => act("potion")} label={t("🧪 Poção ({n})", { n: pot })} />
+            <ActBtn disabled={busy} onClick={flee} label={t("🏃 Fugir")} muted />
+          </div>
+          {fx.pStun ? <p className="text-center text-[11px] text-sky-300">{t("💫 Você está atordoado: a próxima ação será perdida (a poção não é gasta).")}</p> : null}
+        </div>
+        <Panel className="p-3 text-sm sm:p-4">
           <p className="mb-2 font-display text-gold">{t("Turno {n}", { n: battle.turn })}</p>
-          <ul className="space-y-1 text-white/70">
+          <ul className="max-h-36 space-y-1 overflow-y-auto pr-1 text-white/70 sm:max-h-none" aria-live="polite">
             {last.map((l, i) => (
               <li key={`${l.turn}-${i}`}>{describe(t, l, state.character.name, t(battle.enemy.name))}</li>
             ))}
@@ -254,11 +276,11 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
 function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[]; badges?: string[] }) {
   const t = useT();
   return (
-    <div ref={props.refEl} className={`panel relative overflow-hidden p-3 ${props.boss ? "ring-2 ring-ember/70" : ""}`}>
-      <div className="relative aspect-square overflow-hidden rounded-lg">
-        <Image src={props.image} alt="" fill sizes="400px" className={`object-cover ${props.hp <= 0 ? "grayscale" : ""}`} />
-        <div className="absolute left-2 top-2 flex flex-col gap-1">
-          {props.badges?.filter(Boolean).map((b) => <span key={b} className="rounded bg-black/70 px-2 py-0.5 text-[11px]">{b}</span>)}
+    <div ref={props.refEl} className={`panel relative overflow-hidden p-2 sm:p-3 ${props.boss ? "ring-2 ring-ember/70" : ""}`}>
+      <div className="relative aspect-[4/3] overflow-hidden rounded-lg sm:aspect-square">
+        <Image src={props.image} alt="" fill sizes="(max-width: 640px) 50vw, 400px" className={`object-cover ${props.hp <= 0 ? "grayscale" : ""}`} />
+        <div className="absolute left-1 top-1 flex flex-col gap-1 sm:left-2 sm:top-2">
+          {props.badges?.filter(Boolean).map((b) => <span key={b} className="rounded bg-black/70 px-1.5 py-0.5 text-[10px] sm:px-2 sm:text-[11px]">{b}</span>)}
         </div>
         <AnimatePresence>
           {props.floats.map((f) => (
@@ -269,7 +291,7 @@ function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image:
           ))}
         </AnimatePresence>
       </div>
-      <p className="mt-2 truncate font-display text-sm">{props.name}</p>
+      <p className="mt-1.5 truncate font-display text-xs sm:mt-2 sm:text-sm">{props.name}</p>
       <Bar value={props.hp} max={props.max} color="bg-life" label={t("Vida")} />
     </div>
   );
@@ -278,7 +300,7 @@ function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image:
 function ActBtn({ label, onClick, disabled, accent, muted }: { label: string; onClick: () => void; disabled?: boolean; accent?: boolean; muted?: boolean }) {
   return (
     <motion.button whileTap={{ scale: 0.94 }} onClick={onClick} disabled={disabled}
-      className={`rounded-lg px-3 py-3 font-display text-sm transition disabled:opacity-40 ${accent ? "bg-arcane/70 hover:bg-arcane" : muted ? "bg-white/5 hover:bg-white/10" : "bg-gold/90 text-ink hover:bg-gold"}`}>
+      className={`min-h-11 rounded-lg px-1 py-2 font-display text-[11px] leading-tight transition disabled:opacity-40 sm:px-3 sm:py-3 sm:text-sm ${accent ? "bg-arcane/70 hover:bg-arcane" : muted ? "bg-white/5 hover:bg-white/10" : "bg-gold/90 text-ink hover:bg-gold"}`}>
       {label}
     </motion.button>
   );
