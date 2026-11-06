@@ -77,27 +77,27 @@ export const QUESTS: Quest[] = ([
   {
     id: "patrulha_celeste", title: "Patrulha Celeste", rank: "A", minLevel: 26, energy: 26, durationSec: 3600,
     description: "Percorra as pontes de cristal e afaste as harpias das ilhas habitadas.",
-    xp: [1800, 2100], gold: [700, 900], drop: { item: "botas_patrulheiro", chance: 0.15 }, image: "/assets/regions/ilhas_celestes.webp",
+    xp: [1800, 2100], gold: [700, 900], drop: { item: "botas_patrulheiro", chance: 0.15 }, image: "/assets/regions/ilhas_celestes-v2.webp",
   },
   {
     id: "ninho_harpias", title: "O Ninho das Harpias", rank: "S", minLevel: 28, energy: 34, durationSec: 7200,
     description: "Encontre o ninho da rainha e recupere os tesouros roubados dos vilarejos.",
-    xp: [3000, 3500], gold: [1200, 1500], drop: { item: "botas_vento", chance: 0.05 }, image: "/assets/regions/ilhas_celestes.webp",
+    xp: [3000, 3500], gold: [1200, 1500], drop: { item: "botas_vento", chance: 0.05 }, image: "/assets/regions/ilhas_celestes-v2.webp",
   },
   {
     id: "cristal_eter", title: "Cristal de Éter", rank: "S", minLevel: 31, energy: 38, durationSec: 10800,
     description: "Extraia um cristal de éter puro sem acordar as sentinelas.",
-    xp: [4200, 4800], gold: [1600, 2000], drop: { item: "cajado_eter", chance: 0.08 }, image: "/assets/regions/ilhas_celestes.webp",
+    xp: [4200, 4800], gold: [1600, 2000], drop: { item: "cajado_eter", chance: 0.08 }, image: "/assets/regions/ilhas_celestes-v2.webp",
   },
   {
     id: "eco_vazio", title: "Ecos do Vazio", rank: "S", minLevel: 34, energy: 40, durationSec: 10800,
     description: "Feche as pequenas fendas que se abrem pelo reino antes que algo atravesse.",
-    xp: [5200, 5900], gold: [2000, 2500], drop: { item: "machado_escarlate", chance: 0.08 }, image: "/assets/regions/fenda_vazio.webp",
+    xp: [5200, 5900], gold: [2000, 2500], drop: { item: "machado_escarlate", chance: 0.08 }, image: "/assets/regions/fenda_vazio-v2.webp",
   },
   {
     id: "olho_que_tudo_ve", title: "O Olho que Tudo Vê", rank: "S", minLevel: 38, energy: 45, durationSec: 14400,
     description: "Espione o último templo do culto e descubra como Nyx pretende voltar.",
-    xp: [7000, 8000], gold: [2800, 3400], drop: { item: "tridente_meria", chance: 0.06 }, image: "/assets/regions/fenda_vazio.webp",
+    xp: [7000, 8000], gold: [2800, 3400], drop: { item: "tridente_meria", chance: 0.06 }, image: "/assets/regions/fenda_vazio-v2.webp",
   },
 ] as Quest[]).sort((a, b) => a.minLevel - b.minLevel || a.durationSec - b.durationSec);
 

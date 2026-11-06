@@ -20,7 +20,8 @@ export type ItemDef = {
 export const AFFINITY_BONUS = 0.2;
 
 const A = (f: string) => `/assets/${f}.webp`;
-const IT = (f: string) => `/assets/items/${f}.webp`;
+// Sufixo -v2: as artes do Ato II foram trocadas com o mesmo nome; o novo nome fura o cache da CDN/navegador.
+const IT = (f: string) => `/assets/items/${f}-v2.webp`;
 
 export const ITEMS: ItemDef[] = [
   { id: "pocao_vida", name: "Poção de Vida", rarity: "common", stats: { heal: 60 }, image: "/assets/shop/potion_hp.webp", sell: 8 },
