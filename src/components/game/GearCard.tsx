@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { PlayerState, InventoryEntry } from "@/lib/game/state";
 import { RARITY_COEF, RACE_PROFILE, WEAPON_TYPES, WEIGHT_LABEL, ATTR_LABEL, weightBonusText, weightMatches } from "@/lib/game/gear";
-import { SLOTS, itemStatsFor, upgradedStats, type ItemDef, type Slot } from "@/lib/game/items";
+import { ITEM_BY_ID, SLOTS, itemStatsFor, upgradedStats, type ItemDef, type Slot } from "@/lib/game/items";
 import { ITEM_SOURCES, type ItemSource } from "@/lib/game/itemSources";
 import type { RaceId } from "@/lib/game/data";
 import type { TFn } from "@/lib/i18n/translate";
@@ -11,6 +11,7 @@ import { useT } from "@/lib/i18n/client";
 import { RARITY_LABEL, RARITY_STYLE } from "./api";
 import { ItemTags, SLOT_LABEL, statText } from "./Inventory";
 import { viewItem } from "./gearView";
+import { SET_OF_ITEM, activeSets } from "@/lib/game/sets";
 
 // ── Filtros ─────────────────────────────────────────────────────────
 export type GearFilter = { slot: Slot | "all"; rarity: ItemDef["rarity"] | "all"; mine: boolean };
@@ -129,6 +130,22 @@ export function GearInsight({ state, def, upgrade = 0, entry }: { state: PlayerS
   );
 }
 
+/** Selo do conjunto: nome, peças equipadas e os bônus de 2 e 3 peças (o ativo em destaque). */
+export function SetTag({ itemId, state }: { itemId: string; state: PlayerState }) {
+  const t = useT();
+  const set = SET_OF_ITEM[itemId];
+  if (!set) return null;
+  const n = activeSets(state.inventory.filter((i) => i.equipped).map((i) => i.itemId)).find((a) => a.set.id === set.id)?.count ?? 0;
+  return (
+    <div className="mt-1 rounded bg-indigo-950/60 px-1.5 py-1 text-[10px] leading-snug ring-1 ring-indigo-400/30" title={set.pieces.map((p) => t(ITEM_BY_ID[p]?.name ?? p)).join(" · ")}>
+      <p className="font-semibold text-indigo-200">🧩 {t(set.name)} <span className="text-indigo-300/70">({n}/{set.pieces.length})</span></p>
+      {([2, 3] as const).map((k) => (
+        <p key={k} className={n >= k ? "text-emerald-300" : "text-white/40"}>{n >= k ? "✓" : "○"} {t("{n} peças:", { n: k })} {statText(t, set.bonus[k])}</p>
+      ))}
+    </div>
+  );
+}
+
 /** Linha "Espada · escala FOR" / "Armadura · Pesada". */
 export function kindText(t: TFn, def: ItemDef) {
   if (def.weapon) return `${t(WEAPON_TYPES[def.weapon].label)} · ${t(ATTR_LABEL[WEAPON_TYPES[def.weapon].scale])} ×${RARITY_COEF[def.rarity]}`;
@@ -153,6 +170,7 @@ export function GearCard({ state, def, entry, owned = 0, locked, children }: {
       <p className="text-center text-[11px] text-white/40">{kindText(t, def)} · {t(RARITY_LABEL[def.rarity])}</p>
       <p className="mt-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(def.stats as Record<string, number>, up), race))}</p>
       <ItemTags def={def} race={race} level={state.character.level} />
+      <SetTag itemId={def.id} state={state} />
       <div className="flex-1"><GearInsight state={state} def={def} upgrade={up} entry={entry} /></div>
       {children}
     </div>

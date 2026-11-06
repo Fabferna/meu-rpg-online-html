@@ -9,7 +9,7 @@ import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
 import HeroManage from "./HeroManage";
 import HeroList from "./HeroList";
-import { equippedPieces, petStats } from "./gearView";
+import { equippedPieces, petStats, setStats } from "./gearView";
 import { SLOT_LABEL } from "./Inventory";
 
 const ATTRS = [
@@ -33,7 +33,8 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
   // Bônus dos equipamentos (já com aprimoramento e afinidade), por atributo e por peça.
   const pieces = equippedPieces(ctx.state.inventory, c.race);
   const pet = petStats(ctx.state);
-  const gear = (k: string) => [...pieces.map((p) => ({ slot: p.slot, v: p.piece.stats[k] ?? 0 })), { slot: "pet", v: pet[k] ?? 0 }].filter((x) => x.v > 0);
+  const sets = setStats(pieces.map((p) => p.piece));
+  const gear = (k: string) => [...pieces.map((p) => ({ slot: p.slot, v: p.piece.stats[k] ?? 0 })), { slot: "set", v: sets.reduce((n, b) => n + (b[k] ?? 0), 0) }, { slot: "pet", v: pet[k] ?? 0 }].filter((x) => x.v > 0);
   const gearSum = (k: string) => gear(k).reduce((n, x) => n + x.v, 0);
   const extra = (["atk", "def"] as const).map((k) => ({ k, v: gearSum(k) })).filter((x) => x.v > 0);
 
@@ -98,7 +99,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
                   <p className="text-[11px] text-white/40">{t(k === "wis" && c.race === "aetheliano" ? "Reforça a magia" : hint)}</p>
                   {gearSum(k) > 0 && (
                     <p className="text-[11px] text-emerald-300/80">
-                      {gear(k).map((x) => `${x.slot === "pet" ? `🐾 ${t("Pet")}` : t(SLOT_LABEL[x.slot] ?? x.slot)} +${x.v}`).join(" · ")}
+                      {gear(k).map((x) => `${x.slot === "pet" ? `🐾 ${t("Pet")}` : x.slot === "set" ? `🧩 ${t("Conjunto")}` : t(SLOT_LABEL[x.slot] ?? x.slot)} +${x.v}`).join(" · ")}
                     </p>
                   )}
                 </div>
@@ -120,7 +121,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
             ))}
           </ul>
           <p className="mt-3 text-[11px] text-white/50">
-            <span className="text-emerald-400">(+N)</span> = {t("bônus dos equipamentos (arma, elmo, armadura, botas e acessório) e do pet ativo")}
+            <span className="text-emerald-400">(+N)</span> = {t("bônus dos equipamentos (arma, elmo, armadura, botas e acessório), dos conjuntos e do pet ativo")}
             {extra.length > 0 && <> · {t("Equipamentos também dão:")} {extra.map((x) => `${t(x.k === "atk" ? "ATQ" : "DEF")} +${x.v}`).join(" · ")}</>}
           </p>
           {used > 0 && <button className="btn-gold mt-4 w-full" disabled={busy} onClick={confirm}>{t("Confirmar distribuição")}</button>}
