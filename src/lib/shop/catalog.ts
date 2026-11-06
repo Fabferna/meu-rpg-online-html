@@ -120,16 +120,21 @@ export const CONVENIENCE: DailyDeal[] = [
 export const DAILY_POOL: DailyDeal[] = [
   { key: "daily_potions", name: "Oferta: 10 Poções", description: "-50% só hoje!", image: "/assets/shop/potion_hp.webp", currency: "gems", price: 10, limit: 1, item: { id: "pocao_vida", qty: 10 } },
   { key: "daily_boost", name: "Oferta: Elixir 3h", description: "-40% só hoje!", image: "/assets/shop/potion_energy.webp", currency: "gems", price: 110, limit: 1, boostMinutes: 180 },
-  { key: "daily_bow", name: "Oferta: Arco Élfico", description: "Arma rara por ouro.", image: "/assets/arco_elfico_elegante.webp", currency: "gold", price: 350, limit: 1, item: { id: "arco_elfico", qty: 1 } },
-  { key: "daily_staff", name: "Oferta: Cajado Luminoso", description: "Arma rara por ouro.", image: "/assets/cajado_magico_luminoso.webp", currency: "gold", price: 350, limit: 1, item: { id: "cajado_luminoso", qty: 1 } },
-  { key: "daily_armor", name: "Oferta: Peitoral Anão", description: "Armadura épica -30%.", image: "/assets/peitoral_de_placas_anao.webp", currency: "gems", price: 140, limit: 1, item: { id: "peitoral_anao", qty: 1 } },
+  { key: "daily_bow", name: "Oferta: Arco Élfico", description: "Arma rara -30%.", image: "/assets/arco_elfico_elegante.webp", currency: "gold", price: 290, limit: 1, item: { id: "arco_elfico", qty: 1 } },
+  { key: "daily_staff", name: "Oferta: Cajado Luminoso", description: "Arma rara -30%.", image: "/assets/cajado_magico_luminoso.webp", currency: "gold", price: 290, limit: 1, item: { id: "cajado_luminoso", qty: 1 } },
+  { key: "daily_boots", name: "Oferta: Botas de Cavaleiro", description: "Botas médias -30%.", image: "/assets/items/botas_cavaleiro.webp", currency: "gold", price: 840, limit: 1, item: { id: "botas_cavaleiro", qty: 1 } },
+  { key: "daily_longbow", name: "Oferta: Arco Longo de Teixo", description: "Arma rara -30%.", image: "/assets/items/arco_longo.webp", currency: "gold", price: 1540, limit: 1, item: { id: "arco_longo", qty: 1 } },
+  { key: "daily_armor", name: "Oferta: Peitoral Anão", description: "Armadura épica -30%.", image: "/assets/peitoral_de_placas_anao.webp", currency: "gold", price: 980, limit: 1, item: { id: "peitoral_anao", qty: 1 } },
 ];
 
 export function todaysDeals(now = new Date()): DailyDeal[] {
   const day = Math.floor(now.getTime() / 86_400_000);
-  const a = DAILY_POOL[day % DAILY_POOL.length];
-  const b = DAILY_POOL[(day * 7 + 3) % DAILY_POOL.length];
-  const picks = a.key === b.key ? [a, DAILY_POOL[(day + 1) % DAILY_POOL.length]] : [a, b];
+  const n = DAILY_POOL.length;
+  // 2ª oferta = 1ª + um passo entre 1 e n−1 (nunca repete a 1ª e muda de dia para dia,
+  // qualquer que seja o tamanho da lista; a fórmula antiga "dia×7+3" travava com 7 ofertas).
+  const a = DAILY_POOL[day % n];
+  const b = DAILY_POOL[(day + 1 + (Math.floor(day / n) % (n - 1))) % n];
+  const picks = [a, b];
   // A chave inclui o dia: cada dia é uma oferta nova com seu próprio limite.
   return picks.map((d) => ({ ...d, key: `${d.key}_${day}` }));
 }
