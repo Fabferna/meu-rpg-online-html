@@ -2,7 +2,9 @@ import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { heroCombatant, loadPlayer } from "@/lib/game/player";
-import { chance } from "@/lib/game/rng";
+import { chance, roll } from "@/lib/game/rng";
+import { BAG_LIMIT, rollLoot, type LootDrop, type LootResult } from "@/lib/game/loot";
+import { ITEM_BY_ID } from "@/lib/game/items";
 import { normalizeLoadout } from "@/lib/game/skills";
 import type { RaceId } from "@/lib/game/data";
 import { DUNGEON_BY_ID, DUNGEON_REST } from "@/lib/game/dungeons";
@@ -13,7 +15,7 @@ import { enemyCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/li
 // "skill"/"racial" = nomes antigos, tratados como o 1º espaço da barra.
 const Schema = z.object({ action: z.enum(["attack", "defend", "potion", "s0", "s1", "s2", "skill", "racial"]) }).strict();
 
-type Commit = { level_ups: number; story_ups: number | null; story_done: boolean };
+type Commit = { level_ups: number; story_ups: number | null; story_done: boolean; loot?: LootResult[] };
 
 export const POST = action(
   "battle-action",
@@ -40,13 +42,26 @@ export const POST = action(
     const loadout = normalizeLoadout(p.row.race as RaceId, p.row.skills, p.row.level);
     const { state: next, outcome } = resolveTurn(state, act, pc, ec, hasPotion, loadout, enemy.traits);
 
+    let drops: LootDrop[] = [];
+    let pity: "reset" | "bump" | null = null;
     if (outcome === "won") {
       // Inimigos muito abaixo do seu nível rendem menos XP (anti-farm).
       const gap = Math.max(0, p.row.level - enemy.minLevel - 3);
+      if (!state.dungeon && !state.story) {
+        // Caçada: tabela de saque completa (poções, equipamento da faixa, drop especial, proteção contra azar).
+        const { data: pc } = await admin.from("user_counters").select("value").eq("user_id", user.id).eq("key", "loot_pity").eq("day", "2000-01-01").maybeSingle();
+        const r = rollLoot(enemy, { heroLevel: p.row.level, pity: Number(pc?.value ?? 0) }, { chance, roll });
+        drops = r.drops; pity = r.pity;
+      } else if (enemy.drop && chance(enemy.drop.chance)) {
+        // Masmorra/história: só o drop especial do inimigo (o baú e o capítulo têm recompensa própria).
+        drops = [{ item: enemy.drop.item, qty: 1 }];
+      }
+      drops = drops.filter((d) => ITEM_BY_ID[d.item]);
       next.rewards = {
         xp: xpRate(enemy.xp * Math.max(0.3, 1 - 0.1 * gap)),
         gold: enemy.gold,
-        item: enemy.drop && chance(enemy.drop.chance) ? enemy.drop.item : null,
+        item: null,
+        loot: drops.map((d) => ({ ...d, gold: 0 })),
         levelUps: 0,
       };
     }
@@ -83,14 +98,16 @@ export const POST = action(
     // Uma transação só: estado da luta + vida + recompensas + capítulo + baú.
     const res = await rpc<Commit>(admin, "battle_commit", {
       p_user: user.id, p_battle: battle.id, p_version: battle.version, p_state: saved, p_status: status, p_hp: saved.player.hp,
-      p_xp: won?.xp ?? null, p_gold: won?.gold ?? null, p_item: won?.item ?? null,
+      p_xp: won?.xp ?? null, p_gold: won?.gold ?? null,
+      p_loot: won ? drops.map((d) => ({ item: d.item, qty: d.qty, sell: ITEM_BY_ID[d.item].sell })) : null,
       p_reason: `pve:${enemy.id}`, p_ref: `battle:${battle.id}${dg ? `:${dg.stage}` : ""}`, p_boss: !!enemy.boss,
       p_chapter: ch?.n ?? null, p_ch_xp: ch?.rewards.xp ?? null, p_ch_gold: ch?.rewards.gold ?? null, p_ch_gems: ch?.rewards.gems ?? null,
       p_ch_item: ch?.rewards.item ?? null, p_ch_cosmetic: ch?.rewards.cosmetic ?? null,
       p_chest_key: chest ? `dungeon:${battle.id}` : null, p_chest_gold: chest?.gold ?? null, p_chest_gems: chest?.gems ?? null, p_chest_item: chest?.item ?? null,
+      p_bag_limit: BAG_LIMIT, p_pity: won ? pity : null,
     });
 
-    if (won) won.levelUps = res.level_ups;
+    if (won) { won.levelUps = res.level_ups; won.loot = res.loot ?? []; }
     if (ch) {
       if (res.story_done) saved.storyResult = { ...ch.rewards, levelUps: res.story_ups ?? 0 };
       else delete saved.storyResult;

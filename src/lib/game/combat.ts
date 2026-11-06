@@ -1,4 +1,5 @@
 import "server-only";
+import type { LootResult } from "./loot";
 import { chance, roll } from "./rng";
 import type { Attributes, RaceId } from "./data";
 import { SKILL_BY_ID, skillPower, type SkillLoadout } from "./skills";
@@ -49,7 +50,7 @@ export type BattleState = {
   cds?: Record<string, number>;
   effects?: Effects;
   log: LogEntry[];
-  rewards?: { xp: number; gold: number; item: string | null; levelUps: number };
+  rewards?: { xp: number; gold: number; item: string | null; levelUps: number; loot?: LootResult[] };
   /** História: número do capítulo e, ao vencer, a recompensa entregue. */
   story?: number;
   storyResult?: { xp: number; gold: number; gems: number; item?: string; cosmetic?: string; levelUps: number };
