@@ -13,7 +13,7 @@ const LABEL = process.argv[4] ?? "";
 mkdirSync(OUT, { recursive: true });
 
 const TABS = ["Herói", "Mundo", "Objetivos", "Missões", "Caçada", "Arena", "Guilda", "Habilidades", "Inventário", "Forja", "Passe", "Loja", "Ranking"];
-const slug = (s) => s.normalize("NFD").replace(/[^\w]+/g, "-").toLowerCase();
+const slug = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]+/g, "-").toLowerCase();
 
 // Luta de exemplo (o demo não tem backend): /api/battle/start "dá certo" e /api/state devolve esta luta.
 const BATTLE = {
