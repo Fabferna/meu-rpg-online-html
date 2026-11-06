@@ -9,6 +9,7 @@ import { QUESTS } from "../../src/lib/game/quests";
 import { DUNGEONS } from "../../src/lib/game/dungeons";
 import { CHAPTERS } from "../../src/lib/game/story";
 import { CONVENIENCE, DAILY_POOL } from "../../src/lib/shop/catalog";
+import { ITEM_SOURCES } from "../../src/lib/game/itemSources";
 
 async function main() {
   const problems: string[] = [];
@@ -36,6 +37,8 @@ async function main() {
     if (!ITEM_BY_ID[id]) problems.push(`${where}: item "${id}" não está no catálogo`);
     if (!db[id]) problems.push(`${where}: item "${id}" não está no banco`);
   }
+  // Equipamento fora do Ferreiro precisa de pelo menos uma origem (senão ninguém consegue).
+  for (const it of ITEMS) if (it.slot && !it.buy && !ITEM_SOURCES[it.id]?.length) problems.push(`${it.id}: não está à venda e nenhum inimigo/masmorra/missão/capítulo o entrega`);
   console.log(`${ITEMS.length} itens no catálogo, ${rows.length} no banco, ${refs.length} recompensas conferidas.`);
   console.log(problems.length ? `PROBLEMAS:\n- ${problems.join("\n- ")}` : "OK: catálogo e banco batem.");
   await pool.end();

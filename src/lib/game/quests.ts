@@ -37,12 +37,12 @@ export const QUESTS: Quest[] = ([
   {
     id: "forja_das_agulhas", title: "A Forja das Agulhas", rank: "A", minLevel: 10, energy: 20, durationSec: 3600,
     description: "Escolte um mestre ferreiro anão através das montanhas geladas.",
-    xp: [520, 640], gold: [220, 300], drop: { item: "peitoral_anao", chance: 0.1 }, image: "/assets/as_agulhas_congeladas.webp",
+    xp: [520, 640], gold: [220, 300], drop: { item: "grevas_runicas", chance: 0.1 }, image: "/assets/as_agulhas_congeladas.webp",
   },
   {
     id: "reino_abissal", title: "Portal do Reino Abissal", rank: "S", minLevel: 18, energy: 28, durationSec: 7200,
     description: "Feche o portal antes que Meria desperte por completo.",
-    xp: [1400, 1700], gold: [600, 800], drop: { item: "amuleto_serpente", chance: 0.06 }, image: "/assets/reino_abissal_de_meria.webp",
+    xp: [1400, 1700], gold: [600, 800], drop: { item: "manto_arcano", chance: 0.08 }, image: "/assets/reino_abissal_de_meria.webp",
   },
   {
     id: "raizes_corrompidas", title: "Raízes Corrompidas", rank: "C", minLevel: 3, energy: 10, durationSec: 420,
@@ -67,7 +67,7 @@ export const QUESTS: Quest[] = ([
   {
     id: "coracao_gelo", title: "Coração de Gelo", rank: "A", minLevel: 13, energy: 28, durationSec: 5400,
     description: "Recupere o núcleo de um golem antigo nas Agulhas Congeladas.",
-    xp: [800, 980], gold: [320, 420], drop: { item: "peitoral_anao", chance: 0.12 }, image: "/assets/as_agulhas_congeladas.webp",
+    xp: [800, 980], gold: [320, 420], drop: { item: "arco_lunar", chance: 0.08 }, image: "/assets/as_agulhas_congeladas.webp",
   },
   {
     id: "coroa_vorlag", title: "A Coroa de Vorlag", rank: "S", minLevel: 22, energy: 40, durationSec: 10800,
