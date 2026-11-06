@@ -7,17 +7,18 @@ import { ENEMIES } from "../src/lib/game/enemies";
 import { QUESTS } from "../src/lib/game/quests";
 import { CHAPTERS } from "../src/lib/game/story";
 import { REGION_OF_ENEMY, REGION_OF_QUEST, regionUnlocked } from "../src/lib/game/regions";
-import { DAILY_HUNTS, DAILY_QUESTS, PVE_ENERGY_COST, xpForNextLevel, ENERGY_REGEN_SECONDS } from "../src/lib/game/rules";
+import { DAILY_HUNTS, DAILY_QUESTS, PVE_ENERGY_COST, xpForNextLevel, ENERGY_REGEN_SECONDS, XP_RATE } from "../src/lib/game/rules";
 
 type Curve = (l: number) => number;
 const OLD: Curve = (l) => 50 + (l - 1) * 25;
 
-export function simulate(curve: Curve, opts: { dailyMinutes?: number; days?: number } = {}) {
+export function simulate(curve: Curve, opts: { dailyMinutes?: number; days?: number; rate?: number } = {}) {
+  const rate = opts.rate ?? 1;
   let level = 1, xp = 0, chapter = 0;
   const reached: Record<number, number> = {};
   const energyPerDay = Math.floor(86400 / ENERGY_REGEN_SECONDS);
   const gain = (amount: number, mult: number) => {
-    xp += Math.round(amount * mult);
+    xp += Math.round(amount * mult * rate);
     while (level < 200 && xp >= curve(level)) { xp -= curve(level); level++; reached[level] ??= day; }
   };
   let day = 0;
@@ -48,6 +49,7 @@ export function simulate(curve: Curve, opts: { dailyMinutes?: number; days?: num
 
 const fmt = (r: Record<number, number>) => [5, 10, 15, 20, 26, 30, 35, 40].map((l) => `nv${l}: ${r[l] ?? ">400"}d`).join("  ");
 console.log("ANTES   ", fmt(simulate(OLD).reached));
-console.log("PROPOSTA", fmt(simulate(xpForNextLevel).reached));
+console.log("RATE=1  ", fmt(simulate(xpForNextLevel).reached));
+console.log(`ATUAL ×${XP_RATE}`, fmt(simulate(xpForNextLevel, { rate: XP_RATE }).reached));
 console.log("\nXP para o próximo nível (proposta):", [1, 5, 10, 15, 20, 26, 30, 35, 40].map((l) => `${l}→${xpForNextLevel(l)}`).join("  "));
 console.log("Total até o 40: antes", Array.from({ length: 39 }, (_, i) => OLD(i + 1)).reduce((a, b) => a + b), "· proposta", Array.from({ length: 39 }, (_, i) => xpForNextLevel(i + 1)).reduce((a, b) => a + b));

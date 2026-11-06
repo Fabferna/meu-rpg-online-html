@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { xpRate } from "@/lib/game/rules";
 import { action, HttpError, rpc } from "@/lib/api";
 import { QUEST_BY_ID } from "@/lib/game/quests";
 import { chance, roll } from "@/lib/game/rng";
@@ -18,7 +19,7 @@ export const POST = action("quest-start", z.object({ questId: z.string().max(64)
 
   // Recompensa sorteada AGORA, no servidor, e gravada junto com a missão.
   const rewards = {
-    xp: roll(...quest.xp),
+    xp: xpRate(roll(...quest.xp)),
     gold: roll(...quest.gold),
     item: quest.drop && chance(quest.drop.chance) ? quest.drop.item : null,
   };

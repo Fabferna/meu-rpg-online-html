@@ -1,5 +1,6 @@
 "use client";
 
+import { xpRate } from "@/lib/game/rules";
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
@@ -170,7 +171,7 @@ function StoryReader({ ch, hero, canFight, busy, onFight, onClose, replay }: { c
             </div>
             {!replay && last && reward && (
               <p className="border-t border-white/10 bg-black/30 px-5 py-2 text-xs text-white/70">
-                {t("Recompensa:")} ✨ {reward.xp} XP · 🪙 {reward.gold}{reward.gems ? ` · 💎 ${reward.gems}` : ""}
+                {t("Recompensa:")} ✨ {xpRate(reward.xp)} XP · 🪙 {reward.gold}{reward.gems ? ` · 💎 ${reward.gems}` : ""}
                 {reward.item ? ` · ${t(ITEM_BY_ID[reward.item]?.name ?? "")}` : ""}{reward.cosmetic ? ` · ${t("título “{x}”", { x: t(COSMETIC_BY_ID[reward.cosmetic]?.name ?? "") })}` : ""} · {t("sem custo de energia")}
               </p>
             )}

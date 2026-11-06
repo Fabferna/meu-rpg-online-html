@@ -51,6 +51,14 @@ export function currentHp(stored: number, updatedAt: Date, max: number, now: Dat
 }
 
 export const ATTRIBUTE_POINTS_PER_LEVEL = 3;
+
+/**
+ * Multiplicador GLOBAL de XP: caçadas, masmorras, missões, duelos (PvP) e história.
+ * Ajuste só este número para acelerar/desacelerar o jogo (simule com scripts/xp-sim.ts).
+ * O servidor aplica ao entregar o XP; as telas aplicam ao mostrar, para os números baterem.
+ */
+export const XP_RATE = 0.75;
+export const xpRate = (xp: number) => Math.round(xp * XP_RATE);
 export const PVE_ENERGY_COST = 4;
 /** Teto diário (UTC) além da energia: evita maratonas e mantém o ranking justo. */
 export const DAILY_HUNTS = 40;

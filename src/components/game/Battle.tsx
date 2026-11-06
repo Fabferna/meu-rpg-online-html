@@ -7,7 +7,7 @@ import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
 import { ENEMIES, ENEMY_BY_ID } from "@/lib/game/enemies";
-import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
+import { DAILY_HUNTS, PVE_ENERGY_COST, xpRate } from "@/lib/game/rules";
 import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
 import { ITEM_BY_ID } from "@/lib/game/items";
@@ -262,7 +262,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               </div>
               <div className="p-3">
                 <p className="font-display text-sm">{t(e.name)}</p>
-                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${t(region!.name)} · ${t("Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: e.minLevel }) : `❤️ ${e.maxHp} · ✨ ${e.xp} XP · 🪙 ${e.gold}`}</p>
+                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${t(region!.name)} · ${t("Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: e.minLevel }) : `❤️ ${e.maxHp} · ✨ ${xpRate(e.xp)} XP · 🪙 ${e.gold}`}</p>
               </div>
             </motion.button>
           );

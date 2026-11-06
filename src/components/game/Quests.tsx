@@ -11,7 +11,7 @@ import { askNotificationPermission } from "./notify";
 import { Bar, Panel, RankBadge } from "./ui";
 import { REGION_OF_QUEST, regionUnlocked } from "@/lib/game/regions";
 import { useT } from "@/lib/i18n/client";
-import { DAILY_QUESTS } from "@/lib/game/rules";
+import { DAILY_QUESTS, xpRate } from "@/lib/game/rules";
 
 export default function Quests({ ctx }: { ctx: GameCtx }) {
   const t = useT();
@@ -115,7 +115,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
               <div className="flex flex-wrap gap-2 text-xs text-white/80">
                 <span className="rounded bg-black/40 px-2 py-1">⏱ {fmtTime(q.durationSec)}</span>
                 <span className={`rounded bg-black/40 px-2 py-1 ${noEnergy ? "text-red-300" : ""}`}>⚡ {q.energy}</span>
-                <span className="rounded bg-black/40 px-2 py-1">✨ {q.xp[0]}–{q.xp[1]}</span>
+                <span className="rounded bg-black/40 px-2 py-1">✨ {xpRate(q.xp[0])}–{xpRate(q.xp[1])}</span>
                 <span className="rounded bg-black/40 px-2 py-1">🪙 {q.gold[0]}–{q.gold[1]}</span>
               </div>
               <button className="btn-gold w-full !py-2 text-sm" disabled={busy || locked || noEnergy || !!state.battle} onClick={() => start(q.id)}>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { xpRate } from "@/lib/game/rules";
 import { action, HttpError, rpc } from "@/lib/api";
 import { battleVitals, heroCombatant, loadPlayer } from "@/lib/game/player";
 import { PVP_ENERGY_COST } from "@/lib/game/rules";
@@ -32,7 +33,7 @@ export const POST = action(
     await rpc(admin, "apply_pvp_result", { p_winner: winner.row.user_id, p_loser: loser.row.user_id, p_delta: delta });
 
     const gold = duel.aWins ? 10 + me.row.level * 3 : 0;
-    const xp = duel.aWins ? 20 + me.row.level * 4 : 5 + me.row.level;
+    const xp = xpRate(duel.aWins ? 20 + me.row.level * 4 : 5 + me.row.level);
     const { data: rec } = await admin
       .from("battles")
       .insert({
