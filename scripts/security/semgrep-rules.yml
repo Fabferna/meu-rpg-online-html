@@ -1,0 +1,39 @@
+rules:
+  - id: xss-dangerously-set-inner-html
+    languages: [typescript]
+    severity: WARNING
+    message: dangerouslySetInnerHTML pode causar XSS
+    pattern: <$E dangerouslySetInnerHTML={...} />
+  - id: eval-usage
+    languages: [typescript]
+    severity: ERROR
+    message: eval/new Function
+    pattern-either: [{pattern: eval(...)}, {pattern: new Function(...)}]
+  - id: service-role-in-client
+    languages: [typescript]
+    severity: ERROR
+    message: cliente admin (service_role) importado em arquivo de cliente
+    patterns:
+      - pattern: import { createAdminClient } from "..."
+      - pattern-inside: |
+          "use client";
+          ...
+  - id: body-amount-to-rpc
+    languages: [typescript]
+    severity: WARNING
+    message: valor de moeda/energia/XP vindo do corpo da requisição indo para RPC
+    pattern-either:
+      - pattern: 'rpc($A, $F, { ..., p_gold: body.$X, ... })'
+      - pattern: 'rpc($A, $F, { ..., p_gems: body.$X, ... })'
+      - pattern: 'rpc($A, $F, { ..., p_xp: body.$X, ... })'
+      - pattern: 'rpc($A, $F, { ..., p_price: body.$X, ... })'
+      - pattern: 'rpc($A, $F, { ..., p_cost: body.$X, ... })'
+      - pattern: 'rpc($A, $F, { ..., p_energy: body.$X, ... })'
+      - pattern: 'rpc($A, $F, { ..., p_amount: body.$X, ... })'
+  - id: open-redirect
+    languages: [typescript]
+    severity: WARNING
+    message: redirect com parâmetro da URL
+    pattern-either:
+      - pattern: 'NextResponse.redirect(new URL($U.searchParams.get(...), ...))'
+      - pattern: 'redirect($U.searchParams.get(...))'

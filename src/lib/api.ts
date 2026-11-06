@@ -45,6 +45,8 @@ export function action<S extends z.ZodType>(
       const msg = err instanceof Error ? err.message : typeof err === "object" && err && "message" in err ? String((err as { message: unknown }).message) : "";
       const code = [...BUSINESS_ERRORS].find((c) => msg.includes(c));
       if (code) return jsonError(409, code);
+      // Pedidos simultâneos repetidos batem na chave única do banco: é "já feito", não erro interno.
+      if (/duplicate key value|unique constraint|23505/i.test(msg)) return jsonError(409, "already_claimed");
       if (err instanceof HttpError) return jsonError(err.status, err.code);
       console.error(`[${name}]`, err);
       return jsonError(500, "internal_error");

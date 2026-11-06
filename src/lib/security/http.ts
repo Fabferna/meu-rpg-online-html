@@ -21,8 +21,4 @@ export function isSameOrigin(request: Request): boolean {
   }
 }
 
-/** Evita open-redirect: só aceita caminhos internos. */
-export function safeNextPath(next: string | null | undefined, fallback = "/jogo"): string {
-  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return fallback;
-  return next;
-}
+export { safeNextPath } from "./safePath";
