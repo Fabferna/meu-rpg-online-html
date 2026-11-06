@@ -12,7 +12,7 @@ import { DAILY_HUNTS, DAILY_QUESTS, PVE_ENERGY_COST, xpForNextLevel, ENERGY_REGE
 type Curve = (l: number) => number;
 const OLD: Curve = (l) => 50 + (l - 1) * 25;
 
-export function simulate(curve: Curve, opts: { dailyMinutes?: number; days?: number; rate?: number } = {}) {
+export function simulate(curve: Curve, opts: { dailyMinutes?: number; days?: number; rate?: number; collector?: boolean } = {}) {
   const rate = opts.rate ?? 1;
   let level = 1, xp = 0, chapter = 0;
   const reached: Record<number, number> = {};
@@ -43,6 +43,8 @@ export function simulate(curve: Curve, opts: { dailyMinutes?: number; days?: num
       const qq = list[0]; if (!qq) break;
       gain((qq.xp[0] + qq.xp[1]) / 2, mult); energy -= qq.energy; time -= qq.durationSec;
     }
+    // Encomendas do Colecionador (collector.ts): 1% + 1,5% + 2% do XP do próximo nível por dia.
+    if (opts.collector) gain(curve(level) * 0.045, mult);
   }
   return { reached, chapter };
 }
@@ -51,5 +53,6 @@ const fmt = (r: Record<number, number>) => [5, 10, 15, 20, 26, 30, 35, 40].map((
 console.log("ANTES   ", fmt(simulate(OLD).reached));
 console.log("RATE=1  ", fmt(simulate(xpForNextLevel).reached));
 console.log(`ATUAL ×${XP_RATE}`, fmt(simulate(xpForNextLevel, { rate: XP_RATE }).reached));
+console.log("+ENCOMENDAS", fmt(simulate(xpForNextLevel, { rate: XP_RATE, collector: true }).reached));
 console.log("\nXP para o próximo nível (proposta):", [1, 5, 10, 15, 20, 26, 30, 35, 40].map((l) => `${l}→${xpForNextLevel(l)}`).join("  "));
 console.log("Total até o 40: antes", Array.from({ length: 39 }, (_, i) => OLD(i + 1)).reduce((a, b) => a + b), "· proposta", Array.from({ length: 39 }, (_, i) => xpForNextLevel(i + 1)).reduce((a, b) => a + b));
