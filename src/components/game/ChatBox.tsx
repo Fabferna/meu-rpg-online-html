@@ -11,7 +11,7 @@ export type ChatMsg = { id: number; channel: string; name: string; tag: string |
 const realtimeEnabled = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 /** Lista de mensagens + campo de envio. Tempo real via Supabase Realtime, com consulta periódica de reserva. */
-export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global" | "guild"; ctx: GameCtx; onIncoming?: (m: ChatMsg) => void }) {
+export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel: "global" | "guild" | `dm:${string}`; ctx: GameCtx; onIncoming?: (m: ChatMsg) => void; onName?: (name: string) => void }) {
   const t = useT();
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [text, setText] = useState("");
@@ -22,7 +22,7 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
   const listRef = useRef<HTMLDivElement>(null);
   const lastId = useRef(0);
   const guildId = ctx.state.guild?.id;
-  const dbChannel = channel === "global" ? "global" : guildId ? `guild:${guildId}` : null;
+  const dbChannel = channel === "global" || channel.startsWith("dm:") ? channel : guildId ? `guild:${guildId}` : null;
 
   const add = useCallback((incoming: ChatMsg[], notify = false) => {
     if (!incoming.length) return;
@@ -115,7 +115,7 @@ export default function ChatBox({ channel, ctx, onIncoming }: { channel: "global
               )}
               <p className="text-[11px] text-white/50">
                 {m.tag && <span className="mr-1 rounded bg-white/10 px-1 font-semibold text-gold">[{m.tag}]</span>}
-                <b className={mine ? "text-gold" : "text-white/90"}>{m.name}</b>
+                <button type="button" onClick={() => onName?.(m.name)} className={`font-bold hover:underline ${mine ? "text-gold" : "text-white/90"}`}>{m.name}</button>
                 {title && <span className="ml-1 text-amber-200/70">« {title} »</span>}
                 <span className="ml-1">· {new Date(m.created_at).toLocaleTimeString(t.locale, { hour: "2-digit", minute: "2-digit" })}</span>
               </p>
