@@ -330,3 +330,52 @@ Seu nível é alto demais: sem equipamento aqui.	Your level is too high: no gear
 🎒 Sua bolsa está cheia: {n} item(ns) viraram ouro (preço de venda). Venda ou use itens para abrir espaço.	🎒 Your bag is full: {n} item(s) became gold (sell price). Sell or use items to free up space.	🎒 Tu bolsa está llena: {n} objeto(s) se convirtieron en oro (precio de venta). Vende o usa objetos para liberar espacio.	🎒 背包已满：{n} 件物品已按出售价换成金币。出售或使用物品以腾出空间。
 🎒 Ver no inventário	🎒 View in inventory	🎒 Ver en el inventario	🎒 在背包中查看
 Itens não equipados. Com a bolsa cheia, itens encontrados viram ouro.	Unequipped items. When the bag is full, items you find become gold.	Objetos no equipados. Con la bolsa llena, los objetos encontrados se convierten en oro.	未装备的物品。背包满时，获得的物品会换成金币。
+Martelo de Guerra	War Hammer	Martillo de Guerra	战锤
+Machado de Guerra	War Axe	Hacha de Guerra	战斧
+Cajado de Carvalho Rúnico	Runic Oak Staff	Báculo de Roble Rúnico	符文橡木法杖
+Arco Longo de Teixo	Yew Longbow	Arco Largo de Tejo	紫杉长弓
+Espada do Capitão	Captain's Sword	Espada del Capitán	队长之剑
+Arco da Tempestade	Storm Bow	Arco de la Tempestad	风暴之弓
+Martelo do Trovão Rúnico	Runic Thunder Hammer	Martillo del Trueno Rúnico	符文雷霆之锤
+Machado do Colosso	Colossus Axe	Hacha del Coloso	巨像之斧
+Cajado Astral	Astral Staff	Báculo Astral	星界法杖
+Capuz da Sentinela	Sentinel Hood	Capucha del Centinela	哨兵兜帽
+Elmo de Aço Estelar	Star-Steel Helm	Yelmo de Acero Estelar	星钢头盔
+Couraça de Escamas	Scale Cuirass	Coraza de Escamas	鳞甲胸甲
+Veste Lunar das Sombras	Shadow Moon Vestment	Vestidura Lunar de las Sombras	暗影月袍
+Botas de Cavaleiro	Knight Boots	Botas de Caballero	骑士靴
+Botas do Guardião	Guardian Boots	Botas del Guardián	守护者之靴
+Grevas de Éter	Aether Greaves	Grebas de Éter	以太护胫
+Anel da Tempestade	Storm Ring	Anillo de la Tempestad	风暴戒指
+Talismã Estelar	Star Talisman	Talismán Estelar	星辰护符
+Arma rara -30%.	Rare weapon -30%.	Arma rara -30%.	稀有武器 -30%。
+Oferta: Botas de Cavaleiro	Deal: Knight Boots	Oferta: Botas de Caballero	特惠：骑士靴
+Botas médias -30%.	Medium boots -30%.	Botas medias -30%.	中型靴子 -30%。
+Oferta: Arco Longo de Teixo	Deal: Yew Longbow	Oferta: Arco Largo de Tejo	特惠：紫杉长弓
+▲ Melhor que o equipado	▲ Better than equipped	▲ Mejor que lo equipado	▲ 优于当前装备
+▼ Pior que o equipado	▼ Worse than equipped	▼ Peor que lo equipado	▼ 不如当前装备
+⇅ Troca: ganha e perde	⇅ Trade-off: gains and losses	⇅ Cambio: gana y pierde	⇅ 取舍：有得有失
+Sua bolsa está cheia. Venda ou use itens para abrir espaço.	Your bag is full. Sell or use items to free up space.	Tu bolsa está llena. Vende o usa objetos para liberar espacio.	背包已满。出售或使用物品以腾出空间。
+Seleção de venda inválida.	Invalid sale selection.	Selección de venta no válida.	出售选择无效。
+…e mais {n}	…and {n} more	…y {n} más	……还有 {n} 件
+Vender {n} item(ns) por {g} de ouro?	Sell {n} item(s) for {g} gold?	¿Vender {n} objeto(s) por {g} de oro?	以 {g} 金币出售 {n} 件物品？
+Inclui itens épicos/lendários ou aprimorados.	Includes epic/legendary or upgraded items.	Incluye objetos épicos/legendarios o mejorados.	包含史诗/传说或已强化的物品。
+Vendidos {n} item(ns) por {g} 🪙	Sold {n} item(s) for {g} 🪙	Vendidos {n} objeto(s) por {g} 🪙	已出售 {n} 件物品，获得 {g} 🪙
+🎒 Bolsa cheia: itens encontrados viram ouro e o Ferreiro não vende até você abrir espaço.	🎒 Bag full: items you find become gold, and the Blacksmith won't sell until you free up space.	🎒 Bolsa llena: los objetos encontrados se convierten en oro y el Herrero no vende hasta que liberes espacio.	🎒 背包已满：获得的物品会换成金币，铁匠在你腾出空间前不会出售。
+Nenhum item com esses filtros.	No items match these filters.	Ningún objeto con estos filtros.	没有符合筛选条件的物品。
+Selecionar {x}	Select {x}	Seleccionar {x}	选择 {x}
+{n} selecionado(s)	{n} selected	{n} seleccionado(s)	已选 {n} 件
+Vender selecionados	Sell selected	Vender seleccionados	出售所选
+Consumíveis	Consumables	Consumibles	消耗品
+Equipados	Equipped	Equipados	已装备
+Equipados e na bolsa	Equipped and in bag	Equipados y en la bolsa	已装备和背包中
+Só equipados	Equipped only	Solo equipados	仅已装备
+Só na bolsa	In bag only	Solo en la bolsa	仅背包中
+Ordenar	Sort	Ordenar	排序
+Ordem: mais antigos	Sort: oldest first	Orden: más antiguos	排序：最早获得
+Ordem: raridade	Sort: rarity	Orden: rareza	排序：稀有度
+Ordem: nível	Sort: level	Orden: nivel	排序：等级
+Ordem: valor de venda	Sort: sell value	Orden: valor de venta	排序：出售价格
+Ordem: nome	Sort: name	Orden: nombre	排序：名称
+Selecionar visíveis	Select visible	Seleccionar visibles	选择可见项
+Vender vários	Sell several	Vender varios	批量出售

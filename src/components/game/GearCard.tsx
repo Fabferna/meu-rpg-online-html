@@ -102,18 +102,27 @@ export function GearInsight({ state, def, upgrade = 0, entry }: { state: PlayerS
       )}
       {v.same ? (
         <p className="text-white/40">{t("Equipado agora")}</p>
-      ) : v.deltas.length > 0 ? (
-        <ul className="flex flex-wrap gap-1" aria-label={t("Comparado ao equipamento atual")}>
-          {v.deltas.map((d) => {
-            const up = d.to > d.from;
-            return (
-              <li key={d.key} className={`rounded px-1 ${up ? "bg-emerald-900/50 text-emerald-200" : "bg-red-900/50 text-red-200"}`}>
-                {t(d.label)} {d.from}{d.unit ?? ""}→{d.to}{d.unit ?? ""} {up ? "↑" : "↓"}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
+      ) : v.deltas.length > 0 ? (() => {
+        const ups = v.deltas.filter((d) => d.to > d.from).length, downs = v.deltas.length - ups;
+        const verdict = downs === 0 ? { k: "▲ Melhor que o equipado", c: "text-emerald-300" } : ups === 0 ? { k: "▼ Pior que o equipado", c: "text-red-300" } : { k: "⇅ Troca: ganha e perde", c: "text-amber-200" };
+        return (
+          <div>
+            <p className={`font-semibold ${verdict.c}`}>{t(verdict.k)}</p>
+            <ul className="mt-0.5 flex flex-wrap gap-1" aria-label={t("Comparado ao equipamento atual")}>
+              {v.deltas.map((d) => {
+                const up = d.to > d.from;
+                const diff = Math.round((d.to - d.from) * 10) / 10;
+                return (
+                  <li key={d.key} title={`${d.from}${d.unit ?? ""} → ${d.to}${d.unit ?? ""}`}
+                    className={`rounded px-1 font-medium ${up ? "bg-emerald-900/60 text-emerald-200" : "bg-red-900/60 text-red-200"}`}>
+                    {up ? "▲" : "▼"} {t(d.label)} {diff > 0 ? "+" : "−"}{Math.abs(diff)}{d.unit ?? ""}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })() : (
         <p className="text-white/40">{t("Igual ao equipamento atual")}</p>
       )}
     </div>

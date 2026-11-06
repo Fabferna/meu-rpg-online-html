@@ -28,6 +28,8 @@ export const ERROR_TEXT: Record<string, string> = {
   stale_battle: "Ação duplicada ignorada.",
   goal_incomplete: "Objetivo ainda não concluído.",
   item_equipped: "Remova o item antes de vender.",
+  bag_full: "Sua bolsa está cheia. Venda ou use itens para abrir espaço.",
+  invalid_sale: "Seleção de venda inválida.",
   already_in_guild: "Você já está em uma guilda.",
   guild_name_taken: "Já existe uma guilda com esse nome ou tag.",
   guild_full: "Esta guilda está cheia.",
