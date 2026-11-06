@@ -49,6 +49,28 @@ export const ERROR_TEXT: Record<string, string> = {
   already_claimed: "Você já recebeu a recompensa de hoje.",
   quest_already_done: "A missão já terminou.",
   provider_unavailable: "Forma de pagamento indisponível.",
+  // Códigos que antes caíam no genérico "Algo deu errado".
+  no_battle: "Esta batalha já terminou.",
+  no_character: "Herói não encontrado. Recarregue a página.",
+  invalid_action: "Ação inválida neste momento.",
+  invalid_input: "Dados inválidos.",
+  unknown_enemy: "Inimigo desconhecido.",
+  unknown_item: "Item desconhecido.",
+  unauthorized: "Sua sessão expirou. Entre novamente.",
+  bad_origin: "Sua sessão expirou. Recarregue a página.",
+  not_owner: "Este item não é seu.",
+  not_equippable: "Este item não pode ser equipado.",
+  not_found: "Não encontrado.",
+  invalid_points: "Distribuição de pontos inválida.",
+  invalid_target: "Alvo inválido.",
+  no_quest: "Nenhuma missão em andamento.",
+  unknown_goal: "Objetivo desconhecido.",
+  unknown_guild: "Guilda não encontrada.",
+  unknown_offer: "Oferta indisponível.",
+  unknown_opponent: "Oponente não encontrado.",
+  unknown_quest: "Missão desconhecida.",
+  unknown_product: "Produto indisponível.",
+  internal_error: "Erro no servidor. Tente de novo em instantes.",
 };
 
 export async function post<T = { ok: true }>(url: string, body: unknown = {}): Promise<T> {

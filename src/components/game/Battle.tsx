@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useAnimate } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
-import { ENEMIES } from "@/lib/game/enemies";
+import { ENEMIES, ENEMY_BY_ID } from "@/lib/game/enemies";
 import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
 import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
@@ -98,9 +98,19 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       }
     } catch (e) {
       ctx.toast((e as Error).message, "error");
+      // A tela pode ter ficado para trás (outra aba, clique duplo, luta já encerrada): busca o estado real.
+      await resync();
     } finally {
       setBusy(false);
     }
+  }
+
+  async function resync() {
+    try {
+      const res = await fetch("/api/state", { cache: "no-store" }).then((r) => r.json());
+      setBattle(res.battle?.state ?? null);
+      await ctx.refresh();
+    } catch { /* sem rede: mantém a tela */ }
   }
 
   async function flee() {
@@ -108,8 +118,11 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     try {
       await post("/api/battle/flee");
       setBattle(null);
-      ctx.toast("Você fugiu da batalha.");
+      ctx.toast(t("Você fugiu da batalha."));
       await ctx.refresh();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+      await resync();
     } finally {
       setBusy(false);
     }
@@ -172,7 +185,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
           <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
             badges={[fx.pPoison ? `☠️ ${t("Veneno")} ${fx.pPoison}` : "", fx.pStun ? `💫 ${t("Atordoado")}` : "", fx.pStone ? `🪨 ${t("Pele de Pedra")} ${fx.pStone}` : ""]} />
-          <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
+          <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={ENEMY_BY_ID[battle.enemyId]?.image ?? battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
             badges={[fx.ePoison ? `☠️ Veneno ${fx.ePoison}` : "", fx.eStun ? "💫 Atordoado" : ""]} />
         </div>
         <Panel className="grid grid-cols-2 gap-2 p-4 sm:grid-cols-4 lg:grid-cols-7">
