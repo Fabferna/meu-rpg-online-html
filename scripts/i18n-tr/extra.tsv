@@ -379,3 +379,25 @@ Ordem: valor de venda	Sort: sell value	Orden: valor de venta	排序：出售价�
 Ordem: nome	Sort: name	Orden: nombre	排序：名称
 Selecionar visíveis	Select visible	Seleccionar visibles	选择可见项
 Vender vários	Sell several	Vender varios	批量出售
+Conjunto do Viajante	Traveler's Set	Conjunto del Viajero	旅人套装
+Conjunto do Patrulheiro	Ranger's Set	Conjunto del Explorador	游侠套装
+Guarda de Valerion	Valerion Guard	Guardia de Valerion	瓦勒里昂卫队
+Guerreiro Escarlate	Scarlet Warrior	Guerrero Escarlata	猩红战士
+Forja Rúnica	Runic Forge	Forja Rúnica	符文熔炉
+Vestes do Arcano	Arcane Vestments	Vestiduras Arcanas	奥术法衣
+Céu Eterno	Eternal Sky	Cielo Eterno	永恒苍穹
+Sombra Lunar	Lunar Shadow	Sombra Lunar	月影
+Você não tem itens suficientes para esta encomenda.	You don't have enough items for this order.	No tienes suficientes objetos para este encargo.	你的物品不足以完成此订单。
+Este item não serve para esta encomenda.	This item doesn't fit this order.	Este objeto no sirve para este encargo.	此物品不符合该订单。
+{n} peças:	{n} pieces:	{n} piezas:	{n} 件：
+Entregar estes itens? Eles serão consumidos.	Deliver these items? They will be consumed.	¿Entregar estos objetos? Se consumirán.	交付这些物品？它们将被消耗。
+📦 Encomendas do Colecionador	📦 Collector's Orders	📦 Encargos del Coleccionista	📦 收藏家订单
+Itens entregues são consumidos	Delivered items are consumed	Los objetos entregados se consumen	交付的物品会被消耗
+Equipamento {r} (qualquer espaço)	{r} equipment (any slot)	Equipo {r} (cualquier ranura)	{r}装备（任意部位）
+Entregue {n}× {x}	Deliver {n}× {x}	Entrega {n}× {x}	交付 {n}× {x}
+Você tem {a}/{b}	You have {a}/{b}	Tienes {a}/{b}	你拥有 {a}/{b}
+✔ Entregue	✔ Delivered	✔ Entregado	✔ 已交付
+Entregar	Deliver	Entregar	交付
+falta {n} para o bônus	{n} more for the bonus	falta {n} para el bono	再差 {n} 件获得加成
+Conjunto	Set	Conjunto	套装
+bônus dos equipamentos (arma, elmo, armadura, botas e acessório), dos conjuntos e do pet ativo	bonus from equipment (weapon, helmet, armor, boots and accessory), sets and your active pet	bono del equipo (arma, yelmo, armadura, botas y accesorio), de los conjuntos y de la mascota activa	装备（武器、头盔、护甲、靴子和饰品）、套装和当前宠物的加成

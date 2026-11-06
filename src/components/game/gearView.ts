@@ -5,11 +5,12 @@ import type { PlayerState, InventoryEntry } from "@/lib/game/state";
 import { ITEM_BY_ID, itemStatsFor, upgradedStats, type ItemDef } from "@/lib/game/items";
 import { heroStats, weaponDamage, type Piece, type WeaponInfo } from "@/lib/game/gear";
 import { petBonus } from "@/lib/game/pets";
+import { setBonuses } from "@/lib/game/sets";
 
 type Ch = PlayerState["character"];
 
 const pieceOf = (def: ItemDef | undefined, data: Record<string, unknown>, upgrade: number, race: string): Piece => ({
-  item: { slot: def?.slot ?? String(data.slot ?? ""), rarity: def?.rarity ?? "common", weapon: def?.weapon, weight: def?.weight },
+  item: { id: def?.id, slot: def?.slot ?? String(data.slot ?? ""), rarity: def?.rarity ?? "common", weapon: def?.weapon, weight: def?.weight },
   stats: itemStatsFor(def, upgradedStats(data as Record<string, number>, upgrade), race) as Record<string, number>,
 });
 
@@ -22,7 +23,7 @@ export function equippedPieces(inv: InventoryEntry[], race: string) {
 export const petStats = (state: PlayerState) => (state.pet ? (petBonus(state.pet.petId, state.pet.level) as Record<string, number>) : {});
 
 const summary = (ch: Ch, pieces: Piece[], pet: Record<string, number> = {}) => {
-  const h = heroStats(ch.attributes, ch.level, [...pieces.map((p) => p.stats), pet], ch.race, pieces);
+  const h = heroStats(ch.attributes, ch.level, [...pieces.map((p) => p.stats), ...setStats(pieces), pet], ch.race, pieces);
   return {
     h,
     atk: Math.round((h.atk[0] + h.atk[1]) / 2),
@@ -62,9 +63,12 @@ export function viewItem(state: PlayerState, def: ItemDef, upgrade = 0, inventor
   return { weapon, deltas, same };
 }
 
+/** Bônus de conjunto das peças (mesma conta do servidor em loadPlayer). */
+export const setStats = (pieces: Piece[]) => setBonuses(pieces.map((p) => p.item.id ?? "")) as Record<string, number>[];
+
 /** Atributos do herói com os bônus das peças (para a escala da arma). */
 function attrsWith(ch: Ch, pieces: Piece[]) {
   const a = { ...ch.attributes };
-  for (const p of pieces) for (const k of ["str", "dex", "con", "intel"] as const) a[k] += p.stats[k] ?? 0;
+  for (const s of [...pieces.map((p) => p.stats), ...setStats(pieces)]) for (const k of ["str", "dex", "con", "intel"] as const) a[k] += s[k] ?? 0;
   return a;
 }

@@ -13,7 +13,8 @@ import { Panel } from "./ui";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 import { RACES, type RaceId } from "@/lib/game/data";
-import { GearInsight } from "./GearCard";
+import { GearInsight, SetTag } from "./GearCard";
+import { activeSets } from "@/lib/game/sets";
 import { BAG_LIMIT } from "@/lib/game/loot";
 
 export const SLOT_LABEL: Record<string, string> = { weapon: "Arma", helmet: "Elmo", armor: "Armadura", boots: "Botas", accessory: "Acessório" };
@@ -43,6 +44,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
 
   const equipped = items.filter((i) => i.equipped);
   const bagUsed = items.length - equipped.length;
+  const sets = activeSets(equipped.map((i) => i.itemId));
   const [f, setF] = useState<BagFilter>(NO_BAG_FILTER);
   const [picking, setPicking] = useState(false);
   const [picked, setPicked] = useState<Set<string>>(new Set());
@@ -90,6 +92,16 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
         })}
       </Panel>
 
+      {sets.length > 0 && (
+        <Panel className="flex flex-wrap gap-2 p-3 text-xs">
+          {sets.map((a) => (
+            <span key={a.set.id} className={`rounded-full px-3 py-1.5 ring-1 ${a.bonus ? "bg-indigo-900/50 text-indigo-100 ring-indigo-400/50" : "bg-white/5 text-white/50 ring-white/10"}`}>
+              🧩 {t(a.set.name)} {a.count}/{a.set.pieces.length}{a.bonus ? ` · ${statText(t, a.bonus)}` : ` · ${t("falta {n} para o bônus", { n: 2 - a.count })}`}
+            </span>
+          ))}
+        </Panel>
+      )}
+
       <div className="flex gap-2">
         {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
@@ -133,6 +145,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                     {it.equipped && <span className="ml-1 rounded bg-emerald-600/80 px-1.5 text-[10px] text-white">{t("Equipado")}</span>}</p>
                   <p className="mt-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(it.data as Record<string, number>, it.upgrade), race))}</p>
                   <ItemTags def={def} race={race} level={ctx.state.character.level} />
+                  <SetTag itemId={it.itemId} state={ctx.state} />
                   {def?.slot && <GearInsight state={ctx.state} def={def} upgrade={it.upgrade} entry={it} />}
                   {!picking && <div className="mt-auto flex gap-1.5 pt-2">
                     {it.slot && (

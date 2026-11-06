@@ -4,6 +4,7 @@
 import type { PlayerState } from "@/lib/game/state";
 import { COSMETICS, CONVENIENCE, todaysDeals, secondsToUtcMidnight } from "@/lib/shop/catalog";
 import { ACHIEVEMENTS, DAILY_BONUS, DAILY_GOALS } from "@/lib/game/goals";
+import { collectorOrders } from "@/lib/game/collector";
 
 export function demoState(): PlayerState {
   return {
@@ -125,6 +126,7 @@ export function installDemoFetch() {
         daily: DAILY_GOALS.map((g) => ({ ...g, progress: Math.min(g.target, prog[g.id] ?? 0), claimed: g.id === "quests" })),
         bonus: { ...DAILY_BONUS, ready: false, claimed: false },
         achievements: ACHIEVEMENTS.map((a) => ({ ...a, progress: Math.min(a.target, stats[a.stat] ?? 0), claimed: a.id === "level_5" })),
+        collector: collectorOrders(new Date().toISOString().slice(0, 10), stats.level).map((o) => ({ ...o, claimed: false })),
       });
     }
     if (url === "/api/shop") return json({
