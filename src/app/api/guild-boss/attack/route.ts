@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
-import { loadPlayer } from "@/lib/game/player";
-import { playerCombatant, raidDamage } from "@/lib/game/combat";
+import { heroCombatant, loadPlayer } from "@/lib/game/player";
+import { raidDamage } from "@/lib/game/combat";
 import { bossForWeek, bossMaxHp, GUILD_BOSS_RULES, BOSS_BY_ID } from "@/lib/game/guildBoss";
 import { myGuild, weekStart } from "@/lib/game/guildServer";
 
@@ -19,7 +19,7 @@ export const POST = action("guild-boss", z.object({}).strict(), async ({ user, a
   const boss = existing ? BOSS_BY_ID[existing.boss_id] : bossForWeek(week);
 
   // Dano calculado no servidor com os atributos e equipamentos reais.
-  const pc = playerCombatant(p.row.name, p.attributes, p.row.level, p.maxHp, p.maxHp, p.gear);
+  const pc = heroCombatant(p, p.maxHp, p.maxHp);
   const r = raidDamage(pc, boss.def, boss.agility, GUILD_BOSS_RULES.rounds);
   const res = await rpc<{ dealt: number; hp: number; defeated: boolean }>(admin, "guild_boss_attack", {
     p_user: user.id, p_week: week, p_boss_id: boss.id, p_max_hp: bossMaxHp(count ?? 1), p_damage: r.total,

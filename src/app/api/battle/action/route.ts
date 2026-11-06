@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
-import { loadPlayer } from "@/lib/game/player";
+import { heroCombatant, loadPlayer } from "@/lib/game/player";
 import { chance } from "@/lib/game/rng";
 import { normalizeLoadout } from "@/lib/game/skills";
 import type { RaceId } from "@/lib/game/data";
 import { DUNGEON_BY_ID, DUNGEON_REST } from "@/lib/game/dungeons";
 import { CHAPTER_BY_N } from "@/lib/game/story";
-import { enemyCombatant, playerCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
+import { enemyCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
 
 // "skill"/"racial" = nomes antigos, tratados como o 1º espaço da barra.
 const Schema = z.object({ action: z.enum(["attack", "defend", "potion", "s0", "s1", "s2", "skill", "racial"]) }).strict();
@@ -27,7 +27,7 @@ export const POST = action(
     const p = await loadPlayer(admin, user.id);
     if (!p || !enemy) throw new HttpError(404, "no_character");
 
-    const pc = playerCombatant(p.row.name, p.attributes, p.row.level, state.player.hp, state.player.maxHp, p.gear);
+    const pc = heroCombatant(p, state.player.hp, state.player.maxHp);
     const ec = enemyCombatant(enemy, state.enemy.hp);
 
     // Atordoado: o turno é perdido de qualquer jeito, então a poção não é gasta.

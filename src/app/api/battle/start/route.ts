@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
-import { loadPlayer } from "@/lib/game/player";
+import { battleVitals, loadPlayer } from "@/lib/game/player";
 import { DAILY_HUNTS, PVE_ENERGY_COST } from "@/lib/game/rules";
 import { dailyCounts } from "@/lib/game/dailyLimits";
 import type { BattleState } from "@/lib/game/combat";
@@ -27,7 +27,7 @@ export const POST = action("battle-start", z.object({ enemyId: z.string().max(64
   const state: BattleState = {
     enemyId: enemy.id,
     enemy: { name: enemy.name, image: enemy.image, hp: enemy.maxHp, maxHp: enemy.maxHp, boss: enemy.boss },
-    player: { hp: p.hp, maxHp: p.maxHp },
+    player: battleVitals(p),
     turn: 0,
     skillCooldown: 0,
     log: [],
