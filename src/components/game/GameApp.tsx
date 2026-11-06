@@ -251,7 +251,8 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         ))}
       </nav>
 
-      <main className="mt-4 pb-24 sm:pb-6">
+      {/* Espaço no fim para o botão flutuante do chat (canto inferior) não cobrir botões — celular E computador. */}
+      <main className="mt-4 pb-24">
         <AnimatePresence mode="wait">
           <motion.div key={tab} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18 }}>
             {tab === "overview" && <Overview ctx={ctx} energyHint={energyHint} />}
