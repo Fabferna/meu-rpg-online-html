@@ -65,7 +65,10 @@ export const DAILY_HUNTS = 30;
 /** Renovação de caçadas com gemas: +30 caçadas no dia, 1 compra por dia (migração 0022). */
 export const HUNT_REFILL = { hunts: 30, gems: 150, perDay: 1 };
 export const huntLimit = (refills: number) => DAILY_HUNTS + refills * HUNT_REFILL.hunts;
-export const DAILY_QUESTS = 20;
+export const DAILY_QUESTS = 30;
+/** Renovação de missões com gemas: +30 missões no dia, 1 compra por dia (migração 0023). */
+export const QUEST_REFILL = { quests: 30, gems: 150, perDay: 1 };
+export const questLimit = (refills: number) => DAILY_QUESTS + refills * QUEST_REFILL.quests;
 export const PVP_ENERGY_COST = 8;
 
 /** Resetar/excluir o herói: a 1ª vez de cada é grátis; depois custa ouro. */
