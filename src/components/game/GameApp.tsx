@@ -229,7 +229,9 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
-      <nav className="mt-3 flex gap-1 overflow-x-auto pb-1 pt-2 sm:mt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {/* Celular: abas deslizam para o lado (com sombra na borda indicando que há mais).
+          Tablet e computador: 2 linhas iguais (7 + 6), nada cortado. */}
+      <nav className="mt-3 flex gap-1 overflow-x-auto pb-1 pt-2 [mask-image:linear-gradient(to_right,#000_88%,transparent)] [scrollbar-width:none] sm:mt-4 sm:grid sm:grid-cols-7 sm:overflow-visible sm:[mask-image:none] min-[1200px]:flex [&::-webkit-scrollbar]:hidden">
         {TABS.map((tb) => (
           <button
             key={tb.id}
