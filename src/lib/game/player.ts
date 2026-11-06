@@ -6,6 +6,7 @@ import { playerCombatant, type ItemBonus } from "./combat";
 import { ITEM_BY_ID, itemStatsFor, upgradedStats } from "./items";
 import { petBonus } from "./pets";
 import { heroStats, type Piece } from "./gear";
+import { setBonuses } from "./sets";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -59,7 +60,7 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
     .map((g) => {
       const def = ITEM_BY_ID[g.item_id];
       const stats = itemStatsFor(def, upgradedStats(g.items.data as Record<string, number>, g.upgrade ?? 0), row.race) as Record<string, number>;
-      return { item: { slot: def?.slot ?? String(g.items.data.slot ?? ""), rarity: def?.rarity ?? "common", weapon: def?.weapon, weight: def?.weight }, stats };
+      return { item: { id: g.item_id, slot: def?.slot ?? String(g.items.data.slot ?? ""), rarity: def?.rarity ?? "common", weapon: def?.weapon, weight: def?.weight }, stats };
     });
   return {
     row,
@@ -68,7 +69,10 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
     maxHp: v.maxHp,
     energy: v.energy,
     maxEnergy: v.maxEnergy,
-    gear: pieces.map((x) => x.stats as ItemBonus).concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
+    // Peças + bônus de conjunto (2 ou 3 peças do mesmo conjunto, sets.ts) + pet ativo.
+    gear: pieces.map((x) => x.stats as ItemBonus)
+      .concat(setBonuses(pieces.map((x) => x.item.id ?? "")) as ItemBonus[])
+      .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
     pieces,
   };
 }
