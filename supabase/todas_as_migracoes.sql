@@ -2528,3 +2528,11 @@ insert into public.items (id, name, kind, rarity, data) values
   ('amuleto_serpente', 'Amuleto da Serpente Sinistra', 'accessory', 'legendary', '{"slot":"accessory","atk":4,"def":3,"intel":3,"image":"/assets/amuleto_da_serpente_sinistra.webp"}'),
   ('olho_vazio', 'Olho do Vazio', 'accessory', 'legendary', '{"slot":"accessory","atk":6,"def":4,"intel":6,"str":2,"image":"/assets/items/olho_vazio-v2.webp"}')
 on conflict (id) do update set name = excluded.name, kind = excluded.kind, rarity = excluded.rarity, data = excluded.data;
+
+-- >>> 0020_xp_curve.sql
+-- 0020: nova curva de XP por nível (espelho de xpForNextLevel em src/lib/game/rules.ts).
+-- Antes: 50 + 25×(nível−1) → do 1 ao 40 bastavam ~20 mil XP, e só a história dava 49 mil.
+-- Agora: 50 + 12 × nível^2,7 → primeiros níveis rápidos, fim do jogo bem mais longo.
+-- Heróis existentes mantêm o nível e o XP que já têm (ninguém perde nível).
+create or replace function public.f_xp_next(p_level int) returns int
+language sql immutable as $$ select round(50 + 12 * power(p_level::numeric, 2.7))::int $$;
