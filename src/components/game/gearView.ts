@@ -4,6 +4,7 @@
 import type { PlayerState, InventoryEntry } from "@/lib/game/state";
 import { ITEM_BY_ID, itemStatsFor, upgradedStats, type ItemDef } from "@/lib/game/items";
 import { heroStats, weaponDamage, type Piece, type WeaponInfo } from "@/lib/game/gear";
+import { petBonus } from "@/lib/game/pets";
 
 type Ch = PlayerState["character"];
 
@@ -17,8 +18,11 @@ export function equippedPieces(inv: InventoryEntry[], race: string) {
   return inv.filter((i) => i.equipped && i.slot).map((i) => ({ slot: i.slot!, entry: i, piece: pieceOf(ITEM_BY_ID[i.itemId], i.data, i.upgrade, race) }));
 }
 
-const summary = (ch: Ch, pieces: Piece[]) => {
-  const h = heroStats(ch.attributes, ch.level, pieces.map((p) => p.stats), ch.race, pieces);
+/** Bônus do pet ativo (mesma conta do servidor em loadPlayer). */
+export const petStats = (state: PlayerState) => (state.pet ? (petBonus(state.pet.petId, state.pet.level) as Record<string, number>) : {});
+
+const summary = (ch: Ch, pieces: Piece[], pet: Record<string, number> = {}) => {
+  const h = heroStats(ch.attributes, ch.level, [...pieces.map((p) => p.stats), pet], ch.race, pieces);
   return {
     h,
     atk: Math.round((h.atk[0] + h.atk[1]) / 2),
@@ -43,9 +47,10 @@ export function viewItem(state: PlayerState, def: ItemDef, upgrade = 0, inventor
   const cand = pieceOf(def, def.stats as Record<string, unknown>, upgrade, ch.race);
   const now = eq.map((e) => e.piece);
   const withIt = eq.filter((e) => e.slot !== def.slot).map((e) => e.piece).concat(cand);
-  const a = summary(ch, now), b = summary(ch, withIt);
+  const pet = petStats(state);
+  const a = summary(ch, now, pet), b = summary(ch, withIt, pet);
   const same = !!inventoryId && eq.some((e) => e.entry.id === inventoryId);
-  const weapon = weaponDamage(cand.item, cand.stats, ch.race, attrsWith(ch, withIt), ch.level);
+  const weapon = weaponDamage(cand.item, cand.stats, ch.race, attrsWith(ch, [...withIt, { item: { rarity: "common" }, stats: pet }]), ch.level);
   const deltas: Delta[] = [
     { key: "atk", label: "Ataque", from: a.atk, to: b.atk },
     { key: "magic", label: "Magia", from: a.magic, to: b.magic },

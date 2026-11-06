@@ -36,13 +36,15 @@ export type PlayerState = {
   battle: { id: string; state: BattleState } | null;
   inventory: InventoryEntry[];
   guild: { id: string; name: string; tag: string; level: number; role: "leader" | "officer" | "member" } | null;
+  /** Pet ativo (o bônus dele soma aos atributos e ao combate). */
+  pet: { petId: string; level: number } | null;
   daily: { hunts: number; quests: number; huntRefills: number; huntLimit: number; questRefills: number; questLimit: number };
   serverTime: string;
 };
 
 /** Estado completo do jogador, lido com o cliente do usuário (RLS). */
 export async function getPlayerState(supabase: SupabaseClient, userId: string): Promise<PlayerState | null> {
-  const [c, w, q, b, inv, gm, daily] = await Promise.all([
+  const [c, w, q, b, inv, gm, daily, pet] = await Promise.all([
     supabase.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     supabase.from("wallets").select("gold, gems").eq("user_id", userId).maybeSingle(),
     supabase.from("quest_runs").select("*").eq("user_id", userId).eq("status", "running").maybeSingle(),
@@ -50,6 +52,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
     supabase.from("inventory").select("id, item_id, qty, equipped, slot, upgrade, items(name, kind, rarity, data)").eq("user_id", userId).order("acquired_at"),
     supabase.from("guild_members").select("role, guilds(id, name, tag, level)").eq("user_id", userId).maybeSingle(),
     dailyCounts(supabase, userId),
+    supabase.from("owned_pets").select("pet_id, level").eq("user_id", userId).eq("active", true).maybeSingle(),
   ]);
   for (const r of [c, w, q, b, inv]) if (r.error) throw r.error;
   const row = c.data;
@@ -82,6 +85,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       ? { ...(gm.data.guilds as unknown as { id: string; name: string; tag: string; level: number }), role: gm.data.role as "leader" | "officer" | "member" }
       : null,
     daily,
+    pet: pet.data ? { petId: pet.data.pet_id as string, level: Number(pet.data.level) } : null,
     serverTime: new Date().toISOString(),
   };
 }
