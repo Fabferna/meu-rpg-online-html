@@ -17,6 +17,8 @@ export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () =
   const [busy, setBusy] = useState(false);
   useEffect(() => { fetch("/api/dungeons", { cache: "no-store" }).then((r) => r.json()).then(setInfo).catch(() => {}); }, []);
   const c = ctx.state.character;
+  // O servidor (dungeons/enter) exige pelo menos metade da vida para entrar.
+  const lowHp = c.hp < Math.ceil(c.maxHp * 0.5);
 
   async function enter(id: string) {
     setBusy(true);
@@ -70,8 +72,9 @@ export default function Dungeons({ ctx, onEnter }: { ctx: GameCtx; onEnter: () =
                 <span className="text-2xl" title={t("Baú")}>🎁</span>
               </div>
               <p className="text-xs text-white/70">{t("Baú:")} 🪙 {d.chest.gold}{d.chest.gems ? ` + 💎 ${d.chest.gems}` : ""}{d.chest.item ? ` · ${t("{p}% de chance: {item}", { p: Math.round(d.chest.item.chance * 100), item: t(ITEM_BY_ID[d.chest.item.id]?.name ?? "") })}` : ""}</p>
-              <button className="btn-gold" disabled={busy || locked || left <= 0 || c.energy < d.energy || !!ctx.state.battle || !!ctx.state.quest} onClick={() => enter(d.id)}>
-                {regionLocked ? `🔒 ${t("Libera no Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: d.minLevel }) : left <= 0 ? t("Volte amanhã") : t("Entrar ({n} hoje)", { n: left })}
+              <button className="btn-gold min-h-11" disabled={busy || locked || left <= 0 || c.energy < d.energy || lowHp || !!ctx.state.battle || !!ctx.state.quest} onClick={() => enter(d.id)}>
+                {regionLocked ? `🔒 ${t("Libera no Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: d.minLevel }) : left <= 0 ? t("Volte amanhã")
+                  : lowHp ? t("❤️ Precisa de metade da vida") : c.energy < d.energy ? t("⚡ Precisa de {n} de energia", { n: d.energy }) : t("Entrar ({n} hoje)", { n: left })}
               </button>
             </div>
           </Panel>

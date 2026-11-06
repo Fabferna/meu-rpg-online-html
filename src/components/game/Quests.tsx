@@ -147,7 +147,7 @@ export default function Quests({ ctx }: { ctx: GameCtx }) {
                 <span className="rounded bg-black/40 px-2 py-1">✨ {xpRate(q.xp[0])}–{xpRate(q.xp[1])}</span>
                 <span className="rounded bg-black/40 px-2 py-1">🪙 {q.gold[0]}–{q.gold[1]}</span>
               </div>
-              <button className="btn-gold w-full !py-2 text-sm" disabled={busy || locked || noEnergy || !!state.battle} onClick={() => start(q.id)}>
+              <button className="btn-gold w-full !py-2 text-sm" disabled={busy || locked || noEnergy || questsOut || !!state.battle} onClick={() => start(q.id)}>
                 {regionLocked ? t("Libera no Capítulo {n}", { n: region!.unlockChapter }) : locked ? t("Requer nível {n}", { n: q.minLevel }) : noEnergy ? t("Sem energia") : t("Iniciar")}
               </button>
             </div>

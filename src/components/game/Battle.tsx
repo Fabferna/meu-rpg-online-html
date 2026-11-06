@@ -252,6 +252,10 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
 
   const huntsOut = state.daily.hunts >= state.daily.huntLimit;
   const refillLeft = state.daily.huntRefills < HUNT_REFILL.perDay;
+  // Mesmas travas do servidor (battle/start): sem isso o jogador só descobre pelo erro depois de clicar.
+  const lowHp = state.character.hp < Math.ceil(state.character.maxHp * 0.15);
+  const noEnergy = state.character.energy < PVE_ENERGY_COST;
+  const cantHunt = huntsOut || lowHp || noEnergy || !!state.quest;
   const tabs = (
     <div className="mb-4 flex gap-2">
       {([["hunt", "⚔️ Caçada"], ["dungeon", "🗝️ Masmorras"]] as const).map(([k, l]) => (
@@ -268,6 +272,11 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       {tabs}
       <p className="mb-4 text-sm text-white/60">{t("Cada caçada custa ⚡ {e} de energia. Sua vida atual: {hp}/{max}", { e: PVE_ENERGY_COST, hp: state.character.hp, max: state.character.maxHp })}
         {" · "}<span className={huntsOut ? "text-amber-300" : ""}>{t("Caçadas hoje: {a}/{b}", { a: state.daily.hunts, b: state.daily.huntLimit })}</span></p>
+      {(lowHp || noEnergy) && !huntsOut && (
+        <p className="mb-4 rounded-lg bg-amber-500/10 px-4 py-3 text-sm text-amber-200 ring-1 ring-amber-400/30">
+          {lowHp ? t("❤️ Vida baixa demais para caçar. Descanse um pouco (a vida volta sozinha) ou beba uma poção no Inventário.") : t("⚡ Sem energia para caçar. A energia volta com o tempo, ou recarregue na Loja.")}
+        </p>
+      )}
       {huntsOut && (
         <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sky-500/10 px-4 py-3 text-sm ring-1 ring-sky-400/30">
           <span className="flex-1">{refillLeft
@@ -286,7 +295,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           const regionLocked = !regionUnlocked(region, state.character.storyChapter);
           const locked = state.character.level < e.minLevel || regionLocked;
           return (
-            <motion.button key={e.id} disabled={busy || locked || !!state.quest} onClick={() => start(e.id)}
+            <motion.button key={e.id} disabled={busy || locked || cantHunt} onClick={() => start(e.id)}
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
               className={`panel group flex flex-col justify-start overflow-hidden text-left transition hover:-translate-y-1 disabled:cursor-not-allowed ${locked ? "opacity-50 grayscale" : ""} ${e.boss ? "ring-2 ring-ember/70" : ""}`}>
               <div className="relative aspect-[3/4] w-full shrink-0">

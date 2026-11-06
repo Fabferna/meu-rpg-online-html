@@ -379,3 +379,7 @@ Ordem: valor de venda	Sort: sell value	Orden: valor de venta	排序：出售价�
 Ordem: nome	Sort: name	Orden: nombre	排序：名称
 Selecionar visíveis	Select visible	Seleccionar visibles	选择可见项
 Vender vários	Sell several	Vender varios	批量出售
+❤️ Vida baixa demais para caçar. Descanse um pouco (a vida volta sozinha) ou beba uma poção no Inventário.	❤️ Health too low to hunt. Rest a bit (health comes back on its own) or drink a potion in the Inventory.	❤️ Vida demasiado baja para cazar. Descansa un poco (la vida vuelve sola) o bebe una poción en el Inventario.	❤️ 生命值太低，无法狩猎。稍作休息（生命会自动恢复）或在背包中喝一瓶药水。
+⚡ Sem energia para caçar. A energia volta com o tempo, ou recarregue na Loja.	⚡ Not enough energy to hunt. Energy comes back over time, or refill it in the Shop.	⚡ Sin energía para cazar. La energía vuelve con el tiempo, o recárgala en la Tienda.	⚡ 能量不足，无法狩猎。能量会随时间恢复，或在商店补充。
+❤️ Precisa de metade da vida	❤️ Needs half health	❤️ Necesitas la mitad de la vida	❤️ 需要一半生命值
+⚡ Precisa de {n} de energia	⚡ Needs {n} energy	⚡ Necesitas {n} de energía	⚡ 需要 {n} 点能量
