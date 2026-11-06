@@ -1,5 +1,7 @@
 // Testa a migração 0021 (reset de progresso): cria heróis avançados, roda o reset e confere.
-// Uso: banco com 0001–0020 aplicadas (ver README), depois: TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json npx tsx --conditions=react-server scripts/dbtest/test-reset.ts
+// Uso: npm run test:db:setup && TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json npx tsx --conditions=react-server scripts/dbtest/test-reset.ts
+// O setup já aplica a 0021 (com trava "só uma vez"); o teste solta a trava para rodar o reset de novo.
+// ⚠️ O reset vale para TODOS os jogadores do banco de teste: rode este teste por último (ou sozinho).
 import { readFileSync } from "node:fs";
 import { pool } from "./fakeSupabase";
 import { makeHero, call } from "./helpers";
@@ -16,11 +18,13 @@ async function main() {
   await q("insert into owned_cosmetics (user_id, cosmetic_id) values ($1, 'title_salvador')", [a.userId]);
   await q("insert into reward_claims (user_id, claim_key) values ($1,'story:1'),($1,'ach:lvl10'),($1,'pass:x:1:free'),($1,'season:2026-01-01')", [a.userId]);
   await q("insert into user_counters (user_id, key, day, value) values ($1, 'ev:pve_win', current_date, 50)", [a.userId]);
-  const g = (await q("insert into guilds (name, tag, level, xp, treasury) values ('Teste Reset','TRS',5,900,5000) returning id"))[0].id;
+  const tag = `R${Math.floor(Math.random() * 900 + 100)}`;
+  const g = (await q("insert into guilds (name, tag, level, xp, treasury) values ($1,$2,5,900,5000) returning id", [`Teste Reset ${tag}`, tag]))[0].id;
   await q("insert into guild_members (user_id, guild_id, role, contributed) values ($1,$2,'leader',300)", [a.userId, g]);
   // Herói guardado (troca de herói) do jogador B.
   await q("select public.stash_character($1)", [b.userId]);
 
+  await q("delete from game_resets where id = 'reset-progresso-1'");
   const sql = readFileSync("supabase/migrations/0021_reset_progresso.sql", "utf8");
   await pool.query(sql);
 
