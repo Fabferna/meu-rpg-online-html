@@ -1,4 +1,4 @@
-// História principal: 10 capítulos. Cada um termina numa luta única.
+// História principal: Ato I (1–10) e Ato II (11–15). Cada um termina numa luta única.
 export type Speaker = "lyra" | "kaelen" | "roric" | "vorlag" | "narrador";
 export const SPEAKERS: Record<Speaker, { name: string; portrait: string | null }> = {
   lyra: { name: "Lyra, Sacerdotisa da Lua", portrait: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
@@ -95,5 +95,45 @@ export const CHAPTERS: Chapter[] = [
     ],
     victory: "Meria se desfaz em luz. O céu de Aethelgard clareia pela primeira vez em um século. Seu nome será cantado por gerações.",
     rewards: { xp: 4000, gold: 5000, gems: 30, cosmetic: "title_salvador" } },
+
+  // ── ATO II: O Olho Vazio ──
+  { n: 11, title: "O Céu Partido", region: "ilhas", minLevel: 26, enemy: "story_rainha_harpia",
+    scenes: [
+      { who: "narrador", text: "Três dias depois da queda de Meria, um estrondo racha o céu de Aethelgard. Por uma fenda de luz, ilhas de pedra flutuam acima das nuvens." },
+      { who: "lyra", text: "A luz que libertou Meria rasgou o véu do céu. Eu nunca vi as Ilhas Celestes... só ouvi lendas." },
+      { who: "kaelen", text: "Lendas não descem em bando para atacar vilarejos, {heroi}. Harpias estão caçando nas planícies. Derrube a rainha delas." },
+    ],
+    victory: "A Rainha das Harpias cai entre as nuvens. Presa ao seu colar, uma pena negra com o desenho de um olho vazio.",
+    rewards: { xp: 5000, gold: 5500, gems: 10, item: "botas_vento" } },
+  { n: 12, title: "As Ilhas Flutuantes", region: "ilhas", minLevel: 29, enemy: "story_sentinela",
+    scenes: [
+      { who: "roric", text: "Achei uma ponte de cristal que liga as ilhas. E adivinha? Alguém andou vendendo mapas dela no Mercado das Sombras." },
+      { who: "roric", text: "O culto do Olho Vazio não morreu com Vorlag, {heroi}. Eles estão subindo para o céu. E uma sentinela de pedra não deixa ninguém passar." },
+    ],
+    victory: "A Sentinela Ancestral se ajoelha e se desfaz em poeira dourada. A ponte de cristal se acende até o pico mais alto.",
+    rewards: { xp: 5800, gold: 6000, gems: 10 } },
+  { n: 13, title: "Aurion, o Dragão Celeste", region: "ilhas", minLevel: 32, enemy: "story_aurion",
+    scenes: [
+      { who: "narrador", text: "No topo das ilhas dorme Aurion, o dragão que guarda o céu há mil anos. Seus olhos agora brilham num roxo doentio." },
+      { who: "lyra", text: "Ele está corrompido, {heroi}. Não queremos matá-lo... mas talvez seja a única forma de quebrar o feitiço." },
+    ],
+    victory: "Aurion cai, e o roxo deixa seus olhos. \"Obrigado, pequeno herói. O culto nunca serviu a Meria. Serviam a Nyx — a fome que vive no Vazio.\"",
+    rewards: { xp: 6800, gold: 7000, gems: 15, item: "lamina_aurora" } },
+  { n: 14, title: "A Fenda do Vazio", region: "vazio", minLevel: 35, enemy: "story_arauto_vazio",
+    scenes: [
+      { who: "narrador", text: "Aurion leva você até a borda do mundo. Ali, onde Meria dormia, abriu-se uma fenda que engole até a luz das estrelas." },
+      { who: "vorlag", text: "(um eco da voz de Vorlag) Eu prendi Meria para que Nyx não tivesse por onde entrar. Agora a porta está aberta, {heroi}." },
+      { who: "kaelen", text: "Um arauto guarda a fenda. Se ele cair, Nyx terá que vir pessoalmente." },
+    ],
+    victory: "O Arauto do Vazio se dissolve em estrelas apagadas. Do fundo da fenda, um único olho gigante se abre — e olha diretamente para você.",
+    rewards: { xp: 7800, gold: 8000, gems: 15, item: "coroa_vorlag" } },
+  { n: 15, title: "Nyx, o Olho Vazio", region: "vazio", minLevel: 38, enemy: "story_nyx",
+    scenes: [
+      { who: "narrador", text: "Nyx atravessa a fenda: uma silhueta feita de céu noturno, com um olho no lugar do rosto." },
+      { who: "lyra", text: "Todos estão aqui, {heroi}. Aurion, os anões, os elfos, Valerion inteira. Nós seguramos a fenda. Você segura Nyx." },
+      { who: "roric", text: "E, por favor, não morra. Ainda tenho mapas para vender para você." },
+    ],
+    victory: "Nyx se parte como vidro negro. A fenda se fecha, e uma chuva de estrelas cai sobre Aethelgard. O Olho Vazio nunca mais se abrirá.",
+    rewards: { xp: 9500, gold: 12000, gems: 40, item: "olho_vazio", cosmetic: "title_estrelas" } },
 ];
 export const CHAPTER_BY_N = Object.fromEntries(CHAPTERS.map((c) => [c.n, c]));

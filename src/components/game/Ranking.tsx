@@ -7,6 +7,7 @@ import { WEEKLY_PARTICIPATION, WEEKLY_POINTS, WEEKLY_REWARDS, type WeeklyTier } 
 import { fmtTime, post } from "./api";
 import { Panel } from "./ui";
 import Avatar from "./Avatar";
+import ProfileCard from "./ProfileCard";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 import type { TFn } from "@/lib/i18n/translate";
@@ -30,6 +31,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
   const [week, setWeek] = useState<Week | null>(null);
   const [global, setGlobal] = useState<GlobalRow[] | null>(null);
   const [busy, setBusy] = useState(false);
+  const [profile, setProfile] = useState<string | null>(null);
   const [loadedAt, setLoadedAt] = useState(Date.now());
   const [, tick] = useState(0);
 
@@ -88,7 +90,7 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
                 {t("Você está em")} <b>{week.me.pos}º</b> {t("com")} <b>{week.me.score}</b> {t("pontos")}{week.me.reward ? ` · ${t("prêmio atual:")} ${prize(t, week.me.reward)}` : ""}.
               </p>
             )}
-            <Table rows={week?.rows ?? null} me={ctx.state.character.name} cols={[[t("Pontos"), (r) => <span className="font-display text-gold">{(r as WeekRow).score}</span>]]}
+            <Table onName={setProfile} rows={week?.rows ?? null} me={ctx.state.character.name} cols={[[t("Pontos"), (r) => <span className="font-display text-gold">{(r as WeekRow).score}</span>]]}
               empty={t("Ninguém pontuou ainda nesta temporada. Seja o primeiro!")} />
           </Panel>
           <div className="space-y-4">
@@ -113,17 +115,18 @@ export default function Ranking({ ctx }: { ctx: GameCtx }) {
         </div>
       ) : (
         <Panel className="overflow-x-auto p-2">
-          <Table rows={global} me={ctx.state.character.name} cols={[
+          <Table onName={setProfile} rows={global} me={ctx.state.character.name} cols={[
             [t("Rating"), (r) => <span className="font-display text-gold">{(r as GlobalRow).pvp_rating}</span>],
             [t("V/D"), (r) => <span className="text-white/60">{(r as GlobalRow).pvp_wins}/{(r as GlobalRow).pvp_losses}</span>],
           ]} empty={t("Ninguém no ranking ainda.")} />
         </Panel>
       )}
+      <ProfileCard name={profile} onClose={() => setProfile(null)} onError={(m) => ctx.toast(m, "error")} />
     </div>
   );
 }
 
-function Table({ rows, cols, me, empty }: { rows: Base[] | null; cols: [string, (r: Base) => React.ReactNode][]; me: string; empty: string }) {
+function Table({ rows, cols, me, empty, onName }: { rows: Base[] | null; cols: [string, (r: Base) => React.ReactNode][]; me: string; empty: string; onName?: (n: string) => void }) {
   const t = useT();
   if (!rows) return <p className="p-6 text-center text-white/50">{t("Carregando…")}</p>;
   if (!rows.length) return <p className="p-6 text-center text-white/50">{empty}</p>;
@@ -136,7 +139,7 @@ function Table({ rows, cols, me, empty }: { rows: Base[] | null; cols: [string, 
         {rows.map((r) => (
           <tr key={r.name} className={`border-t border-white/5 ${r.name === me ? "bg-gold/10" : ""}`}>
             <td className="p-3 font-display">{medal[r.pos - 1] ?? r.pos}</td>
-            <td><div className="flex items-center gap-2 py-1"><Avatar src={r.portrait} frame={r.frame} size={36} /><div className="min-w-0"><p className="truncate font-display">{r.name}</p>{r.title && <p className="text-[11px] text-amber-200/80">« {r.title} »</p>}</div></div></td>
+            <td><div className="flex items-center gap-2 py-1"><Avatar src={r.portrait} frame={r.frame} size={36} /><div className="min-w-0"><button type="button" onClick={() => onName?.(r.name)} className="truncate font-display hover:underline">{r.name}</button>{r.title && <p className="text-[11px] text-amber-200/80">« {r.title} »</p>}</div></div></td>
             <td className="hidden text-white/60 sm:table-cell">{r.raceName}</td>
             <td>{r.level}</td>
             {cols.map(([h, f]) => <td key={h}>{f(r)}</td>)}

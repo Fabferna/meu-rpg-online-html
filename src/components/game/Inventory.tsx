@@ -4,15 +4,16 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import { ITEM_BY_ID, sellPrice, upgradedStats } from "@/lib/game/items";
+import { type ItemDef, ITEM_BY_ID, SLOTS, itemStatsFor, sellPrice, upgradedStats } from "@/lib/game/items";
 import type { TFn } from "@/lib/i18n/translate";
 import Pets from "./Pets";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { Panel } from "./ui";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
+import { RACES, type RaceId } from "@/lib/game/data";
 
-export const SLOT_LABEL: Record<string, string> = { weapon: "Arma", armor: "Armadura", accessory: "Acessório" };
+export const SLOT_LABEL: Record<string, string> = { weapon: "Arma", helmet: "Elmo", armor: "Armadura", boots: "Botas", accessory: "Acessório" };
 const STAT_LABEL: Record<string, string> = { atk: "ATQ", def: "DEF", str: "FOR", dex: "DES", con: "CON", intel: "INT", heal: "Cura" };
 export const statText = (t: TFn, d: Record<string, unknown>) =>
   Object.entries(d).filter(([k]) => k in STAT_LABEL).map(([k, v]) => `${t(STAT_LABEL[k])} +${v}`).join(" · ");
@@ -38,11 +39,12 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
   }
 
   const equipped = items.filter((i) => i.equipped);
+  const race = ctx.state.character.race;
 
   return (
     <div className="space-y-5">
-      <Panel className="grid grid-cols-3 gap-3 p-4">
-        {["weapon", "armor", "accessory"].map((slot) => {
+      <Panel className="grid grid-cols-3 gap-2 p-3 sm:grid-cols-5 sm:gap-3 sm:p-4">
+        {SLOTS.map((slot) => {
           const it = equipped.find((i) => i.slot === slot);
           return (
             <div key={slot} className={`flex flex-col items-center rounded-lg bg-black/30 p-3 ring-1 ${it ? RARITY_STYLE[it.rarity] : "ring-white/10"}`}>
@@ -80,10 +82,11 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                   {it.upgrade > 0 && <span className="absolute left-2 top-2 rounded bg-gold px-1.5 font-display text-xs font-black text-ink">+{it.upgrade}</span>}
                   <p className="mt-2 truncate text-center text-sm">{t(it.name)}</p>
                   <p className="text-center text-[11px] text-white/40">{t(RARITY_LABEL[it.rarity])}</p>
-                  <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, upgradedStats(it.data as Record<string, number>, it.upgrade))}</p>
+                  <p className="mt-1 flex-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(it.data as Record<string, number>, it.upgrade), race))}</p>
+                  <ItemTags def={def} race={race} level={ctx.state.character.level} />
                   <div className="mt-2 flex gap-1.5">
                     {it.slot && (
-                      <button disabled={busy} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
+                      <button disabled={busy || (!it.equipped && ctx.state.character.level < (def?.minLevel ?? 1))} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
                         className={`flex-1 rounded-md py-1.5 text-xs ${it.equipped ? "bg-white/10" : "bg-gold/90 text-ink"}`}>
                         {it.equipped ? t("Remover") : t("Equipar")}
                       </button>
@@ -102,5 +105,19 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
         )
       )}
     </div>
+  );
+}
+
+/** Selos do item: nível exigido e afinidade de raça. */
+export function ItemTags({ def, race, level }: { def?: ItemDef; race: string; level: number }) {
+  const t = useT();
+  if (!def?.slot) return null;
+  const low = level < (def.minLevel ?? 1);
+  const aff = def.affinity?.includes(race);
+  return (
+    <p className="mt-0.5 flex flex-wrap justify-center gap-1 text-[10px]">
+      {(def.minLevel ?? 1) > 1 && <span className={`rounded px-1 ${low ? "bg-red-900/60 text-red-200" : "bg-white/5 text-white/50"}`}>{t("Nv. {n}+", { n: def.minLevel ?? 1 })}</span>}
+      {def.affinity && <span className={`rounded px-1 ${aff ? "bg-emerald-800/60 text-emerald-200" : "bg-white/5 text-white/40"}`} title={t("Afinidade: +20% nos atributos para estas raças")}>{aff ? `★ ${t("Afinidade +20%")}` : `☆ ${def.affinity.map((r) => t(RACES[r as RaceId]?.name ?? r)).join(", ")}`}</span>}
+    </p>
   );
 }

@@ -73,6 +73,7 @@ export const COSMETICS: Cosmetic[] = [
   { id: "title_campeao", kind: "title", name: "Campeão Semanal", rarity: "legendary" },
   { id: "title_fiel", kind: "title", name: "Fiel ao Reino", rarity: "epic" },
   { id: "title_salvador", kind: "title", name: "Salvador de Aethelgard", rarity: "legendary" },
+  { id: "title_estrelas", kind: "title", name: "Guardião das Estrelas", rarity: "legendary" },
   { id: "title_heroi_temporada", kind: "title", name: "Herói da Temporada", rarity: "legendary" },
   { id: "frame_temporada", kind: "frame", name: "Moldura da Temporada", rarity: "epic", ring: "ring-4 ring-fuchsia-400 shadow-[0_0_14px_#e879f9]" },
   { id: "skin_kaelen", kind: "skin", race: "humano", gender: "male", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
