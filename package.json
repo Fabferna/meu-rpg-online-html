@@ -15,6 +15,7 @@
     "test:db:items": "tsx --conditions=react-server scripts/dbtest/check-items.ts",
     "test:db:ch11": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/repro-ch11.ts",
     "test:db:loot": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-loot.ts",
+    "test:db:shop": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-shop.ts",
     "sim:act2": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/sim-act2.ts"
   },
   "dependencies": {
