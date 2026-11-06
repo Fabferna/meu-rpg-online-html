@@ -197,7 +197,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
                   )}
                   <button onClick={() => { setMuted(!muted); setMutedState(!muted); if (muted) play("click"); }}
                     className="rounded-md border border-white/15 px-3 text-sm">{muted ? `🔇 ${t("Ativar sons")}` : `🔊 ${t("Silenciar")}`}</button>
-                  <InstallButton />
+                  <InstallButton big />
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <LanguageSwitcher compact />
