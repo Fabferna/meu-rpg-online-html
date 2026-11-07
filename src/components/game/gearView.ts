@@ -7,6 +7,7 @@ import { heroStats, weaponDamage, type Piece, type WeaponInfo } from "@/lib/game
 import { petBonus } from "@/lib/game/pets";
 import { setBonuses } from "@/lib/game/sets";
 import { talentMods } from "@/lib/game/talents";
+import { withBlessing } from "@/lib/game/encounters";
 
 type Ch = PlayerState["character"];
 
@@ -82,21 +83,26 @@ export function combatSummary(state: PlayerState) {
   const ch = state.character;
   const pieces = equippedPieces(state.inventory, ch.race).map((e) => e.piece);
   const extra = [...pieces.map((p) => p.stats), ...setStats(pieces), petStats(state)];
-  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces, talentMods(ch.talents ?? {}));
+  // Três camadas: só atributos (bare) → + equipamentos/conjuntos/pet (gear) → + talentos e Bênção (full).
+  const blessed = !!state.daily.blessedUntil && Date.parse(state.daily.blessedUntil) > Date.now();
+  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces, withBlessing(talentMods(ch.talents ?? {}), blessed));
+  const gear = heroStats(ch.attributes, ch.level, extra, ch.race, pieces);
   const bare = heroStats(ch.attributes, ch.level, [], ch.race, []);
   const pct = (x: number) => Math.round(x * 1000) / 10;
   const dodge = (h: typeof full) => pct(Math.min(0.3, Math.max(0.02, 0.04 + h.dodge)));
   const crit = (h: typeof full) => pct(Math.min(0.4, Math.max(0.05, 0.05 + h.agility * 0.004 + h.crit)));
   const avg = (r: [number, number]) => Math.round((r[0] + r[1]) / 2);
-  const hpBonus = Math.round(ch.maxHp * full.hpPct);
+  const hpGear = Math.round(ch.maxHp * gear.hpPct), hpAll = Math.round(ch.maxHp * full.hpPct);
+  const d1 = (x: number) => Math.round(x * 10) / 10;
   return {
-    hp: { value: ch.maxHp + hpBonus, bonus: hpBonus },
-    energy: { value: ch.maxEnergy, bonus: 0 },
-    atk: { range: full.atk, value: avg(full.atk), bonus: avg(full.atk) - avg(bare.atk) },
-    magic: { range: full.magic, value: avg(full.magic), bonus: avg(full.magic) - avg(bare.magic) },
-    def: { value: full.def, bonus: full.def - bare.def },
-    dodge: { value: dodge(full), bonus: Math.round((dodge(full) - dodge(bare)) * 10) / 10 },
-    crit: { value: crit(full), bonus: Math.round((crit(full) - crit(bare)) * 10) / 10 },
+    hp: { value: ch.maxHp + hpAll, bonus: hpGear, talent: hpAll - hpGear },
+    energy: { value: ch.maxEnergy, bonus: 0, talent: 0 },
+    atk: { range: full.atk, value: avg(full.atk), bonus: avg(gear.atk) - avg(bare.atk), talent: avg(full.atk) - avg(gear.atk) },
+    magic: { range: full.magic, value: avg(full.magic), bonus: avg(gear.magic) - avg(bare.magic), talent: avg(full.magic) - avg(gear.magic) },
+    def: { value: full.def, bonus: gear.def - bare.def, talent: full.def - gear.def },
+    dodge: { value: dodge(full), bonus: d1(dodge(gear) - dodge(bare)), talent: d1(dodge(full) - dodge(gear)) },
+    crit: { value: crit(full), bonus: d1(crit(gear) - crit(bare)), talent: d1(crit(full) - crit(gear)) },
     weapon: full.weapon,
+    blessed,
   };
 }

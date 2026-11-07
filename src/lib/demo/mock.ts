@@ -12,7 +12,7 @@ export function demoState(): PlayerState {
       name: "Kaelen", race: "humano", raceName: "Humano", region: "sylvandell", regionName: "Sylvandell", gender: "male",
       portrait: "/assets/guerreiro_fantastico_determinado.webp", level: 6, xp: 80, xpToNext: 175, attributePoints: 3,
       attributes: { str: 14, dex: 12, con: 12, intel: 10, wis: 10, cha: 10 }, hp: 170, maxHp: 196, energy: 41, maxEnergy: 74, nextEnergyInSec: 120,
-      pvpRating: 1048, pvpWins: 5, pvpLosses: 2, pveWins: 23, frame: "frame_arcano", title: "Caçador de Sombras", skin: null, loadout: { lv: { h_adaptavel: 2, h_demolidor: 1, h_estandarte: 1 }, eq: ["h_adaptavel", "h_demolidor"] }, xpBoostUntil: null, element: "fogo", talents: { f_lamina: 4 }, storyTrail: 1, storyChapter: 3,
+      pvpRating: 1048, pvpWins: 5, pvpLosses: 2, pveWins: 23, frame: "frame_arcano", title: "Caçador de Sombras", skin: null, loadout: { lv: { h_adaptavel: 2, h_demolidor: 1, h_estandarte: 1 }, eq: ["h_adaptavel", "h_demolidor"] }, xpBoostUntil: null, element: "fogo", talents: { f_lamina: 4, b_ferro: 2 }, storyTrail: 1, storyChapter: 3,
     },
     wallet: { gold: 1840, gems: 120 },
     quest: null,

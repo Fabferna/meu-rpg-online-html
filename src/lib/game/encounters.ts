@@ -2,12 +2,12 @@
 //
 // • Errante: depois de vencer uma caçada comum há chance de aparecer a versão de elite daquele monstro.
 //   Mais forte, dá 3× XP e ouro, não gasta energia e SEMPRE deixa cair equipamento (raro ou melhor).
-//   Fica esperando até o fim do dia (UTC); no máximo 5 lutas contra Errantes por dia.
+//   Fica esperando até o fim do dia (UTC); no máximo 3 lutas contra Errantes por dia.
 // • Bênção: ao resgatar a recompensa diária há um sorteio. Quem ganha fica 24 h abençoado
 //   (+10% ataque, magia e defesa, +5% vida). Cada dia sem ganhar aumenta a chance do próximo.
 import type { TalentMods } from "./talents";
 
-export const RARE_RULES = { spawnChance: 0.12, perDay: 5, xpMult: 3, goldMult: 3, statMult: 1.3, levelUp: 2 };
+export const RARE_RULES = { spawnChance: 0.04, perDay: 3, xpMult: 3, goldMult: 3, statMult: 1.3, levelUp: 2 };
 
 export const BLESSING = {
   minutes: 24 * 60,
