@@ -1,4 +1,5 @@
 import "server-only";
+import { NO_TALENTS, type TalentMods } from "./talents";
 import { elementMult, type Element } from "./elements";
 import type { LootResult } from "./loot";
 import { chance, roll } from "./rng";
@@ -74,8 +75,9 @@ export const POTION_ITEM = "pocao_vida";
  */
 export function playerCombatant(
   name: string, a: Attributes, level: number, hp: number, maxHp: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = [], element?: Element | null,
+  tal: TalentMods = NO_TALENTS,
 ): Combatant {
-  const h = heroStats(a, level, gear, race, pieces);
+  const h = heroStats(a, level, gear, race, pieces, tal);
   return { name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit, element: element ?? null };
 }
 
