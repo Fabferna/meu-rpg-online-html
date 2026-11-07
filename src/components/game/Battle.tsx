@@ -34,10 +34,12 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
   const [mode, setMode] = useState<"hunt" | "dungeon">("hunt");
   const [playerRef, animatePlayer] = useAnimate();
 
-  async function start(enemyId: string) {
+  async function start(enemyId: string | null) {
     setBusy(true);
     try {
-      await post("/api/battle/start", { enemyId });
+      // null = enfrentar o Errante que está esperando (encontro raro).
+      if (enemyId) await post("/api/battle/start", { enemyId });
+      else await post("/api/rare/start");
       await ctx.refresh();
       const res = await fetch("/api/state", { cache: "no-store" }).then((r) => r.json());
       setBattle(res.battle?.state ?? null);
@@ -161,6 +163,12 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
             <p>🪙 +{r.gold} {t("ouro")}</p>
             {r.loot && r.loot.length > 0 ? <LootList loot={r.loot} onBag={() => { setResult(null); setBattle(null); ctx.go?.("inventory"); }} />
               : r.item && <p className="text-amber-300">🎁 {t(ITEM_BY_ID[r.item]?.name ?? "Item encontrado!")}</p>}
+            {result.state.rareSpawn && ENEMY_BY_ID[result.state.rareSpawn] && (
+              <div className="mt-3 rounded-lg bg-amber-500/15 p-3 ring-1 ring-amber-400/50">
+                <p className="font-display text-amber-200">{t("⭐ Um Errante apareceu: {x}!", { x: t(ENEMY_BY_ID[result.state.rareSpawn].name) })}</p>
+                <p className="text-xs text-white/70">{t("Ele espera por você na Caçada até o fim do dia: 3× XP e ouro, equipamento garantido e sem gastar energia.")}</p>
+              </div>
+            )}
             {result.state.storyResult && (
               <div className="mt-3 rounded-lg bg-gold/10 p-3">
                 <p className="font-display text-gold">{t("📖 Capítulo {n} concluído!", { n: result.state.story ?? 0 })}</p>
@@ -290,6 +298,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           )}
         </div>
       )}
+      <RareBanner ctx={ctx} busy={busy} onFight={() => start(null)} />
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {ENEMIES.filter((e) => !e.story).map((e, i) => {
           const region = REGION_OF_ENEMY[e.id];
@@ -315,6 +324,28 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       </div>
       {state.quest && <p className="mt-4 text-center text-sm text-amber-300">{t("Você está em uma missão. Termine-a para caçar.")}</p>}
     </div>
+  );
+}
+
+/** Encontro raro esperando: o Errante (versão de elite) que apareceu depois de uma caçada. */
+function RareBanner({ ctx, busy, onFight }: { ctx: GameCtx; busy: boolean; onFight: () => void }) {
+  const t = useT();
+  const d = ctx.state.daily;
+  const e = d.rarePending ? ENEMY_BY_ID[d.rarePending] : null;
+  if (!e) return d.rareFights > 0 ? <p className="mb-3 text-xs text-white/50">{t("⭐ Errantes enfrentados hoje: {a}/{b}", { a: d.rareFights, b: d.rareLimit })}</p> : null;
+  const left = d.rareFights < d.rareLimit;
+  return (
+    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="panel mb-4 flex flex-wrap items-center gap-3 p-3 ring-2 ring-amber-400/70">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg ring-2 ring-amber-300">
+        <Image src={e.image} alt="" fill sizes="64px" className="object-cover" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-display text-amber-200">⭐ {t("Encontro raro!")} {t(e.name)}</p>
+        <p className="text-xs text-white/70">{t("Nv. {n}+ · 3× XP e ouro · equipamento garantido (raro ou melhor) · sem gastar energia", { n: e.minLevel })}{e.element ? ` · ${ELEMENT_INFO[e.element].icon}` : ""}</p>
+        <p className="text-[11px] text-white/50">{t("Errantes hoje: {a}/{b} · some na virada do dia (UTC)", { a: d.rareFights, b: d.rareLimit })}</p>
+      </div>
+      <button className="btn-gold min-h-11 w-full px-5 sm:w-auto" disabled={busy || !left || !!ctx.state.quest} onClick={onFight}>⚔️ {t("Enfrentar")}</button>
+    </motion.div>
   );
 }
 

@@ -1,3 +1,4 @@
+import { RARE_RULES } from "./encounters";
 import { elementOfArt, type Element } from "./elements";
 export type Enemy = {
   id: string;
@@ -18,6 +19,8 @@ export type Enemy = {
   traits?: { poison?: number; stun?: number };
   /** Elemento (elements.ts). Vem da família da arte se não for definido. */
   element?: Element;
+  /** Errante (encontro raro, encounters.ts): versão de elite de um monstro da Caçada. */
+  rare?: boolean;
 };
 
 const RAW: Enemy[] = [
@@ -112,6 +115,18 @@ function tune(e: Enemy): Enemy {
 // Curva aproximada que gerou a tabela RAW original (para extrair as proporções).
 function RAW_REF(L: number) { return { hp: 45 + 26 * L, atk: 6 + 1.9 * L, def: 1.5 + 0.95 * L }; }
 
-export const ENEMIES: Enemy[] = RAW.map(tune);
+// Errantes: versão de elite de cada monstro da Caçada (aparecem só como encontro raro; ocultos da lista).
+const RARE_RAW: Enemy[] = RAW.filter((e) => !e.story).map((e) => ({
+  ...e, id: `rare_${e.id}`, name: `${e.name} Errante`, rare: true, story: true, drop: undefined,
+  minLevel: e.minLevel + RARE_RULES.levelUp,
+  maxHp: Math.round(e.maxHp * RARE_RULES.statMult),
+  atk: [Math.round(e.atk[0] * RARE_RULES.statMult), Math.round(e.atk[1] * RARE_RULES.statMult)],
+  xp: e.xp * RARE_RULES.xpMult, gold: e.gold * RARE_RULES.goldMult,
+}));
+
+export const ENEMIES: Enemy[] = [...RAW, ...RARE_RAW].map(tune);
+/** Errantes na ordem fixa (o índice é o que fica salvo no banco). */
+export const RARE_ENEMIES = ENEMIES.filter((e) => e.rare);
+export const rareOf = (baseId: string) => RARE_ENEMIES.findIndex((e) => e.id === `rare_${baseId}`);
 
 export const ENEMY_BY_ID = Object.fromEntries(ENEMIES.map((e) => [e.id, e]));

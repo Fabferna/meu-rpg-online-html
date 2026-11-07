@@ -26,7 +26,7 @@ export function demoState(): PlayerState {
     ],
     guild: { id: "g1", name: "Ordem da Chama", tag: "ODC", level: 3, role: "leader" },
     pet: { petId: "lobo", level: 3 },
-    daily: { hunts: 12, quests: 3, huntRefills: 0, huntLimit: 30, questRefills: 0, questLimit: 30, duels: 4, duelRefills: 0, duelLimit: 15 },
+    daily: { hunts: 12, quests: 3, huntRefills: 0, huntLimit: 30, questRefills: 0, questLimit: 30, duels: 4, duelRefills: 0, duelLimit: 15, rareFights: 1, rareLimit: 5, rarePending: "rare_lobo_corrompido", blessedUntil: new Date(Date.now() + 15 * 3600_000).toISOString(), blessChance: 0.1, blessRolled: true },
     serverTime: new Date().toISOString(),
   };
 }

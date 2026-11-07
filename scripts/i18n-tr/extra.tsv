@@ -733,3 +733,32 @@ Arquimago	Archmage	Archimago	大法师
 +6% de poder mágico.	+6% magic power.	+6% de poder mágico.	+6% 法术强度。
 Sabedoria Ancestral	Ancestral Wisdom	Sabiduría Ancestral	先祖智慧
 +3% de magia e +4% de defesa.	+3% magic and +4% defense.	+3% de magia y +4% de defensa.	+3% 法术和 +4% 防御。
+⭐ Um Errante apareceu: {x}!	⭐ A Wanderer appeared: {x}!	⭐ ¡Apareció un Errante: {x}!	⭐ 游荡者出现了：{x}！
+Ele espera por você na Caçada até o fim do dia: 3× XP e ouro, equipamento garantido e sem gastar energia.	It waits for you in the Hunt until the end of the day: 3× XP and gold, guaranteed gear and no energy cost.	Te espera en la Cacería hasta el fin del día: 3× XP y oro, equipo garantizado y sin gastar energía.	它会在狩猎中等你到今天结束：3 倍经验和金币，必掉装备，不消耗能量。
+⭐ Errantes enfrentados hoje: {a}/{b}	⭐ Wanderers fought today: {a}/{b}	⭐ Errantes enfrentados hoy: {a}/{b}	⭐ 今日已挑战游荡者：{a}/{b}
+Encontro raro!	Rare encounter!	¡Encuentro raro!	稀有遭遇！
+Nv. {n}+ · 3× XP e ouro · equipamento garantido (raro ou melhor) · sem gastar energia	Lv. {n}+ · 3× XP and gold · guaranteed gear (rare or better) · no energy cost	Nv. {n}+ · 3× XP y oro · equipo garantizado (raro o mejor) · sin gastar energía	{n} 级+ · 3 倍经验和金币 · 必掉装备（稀有或更好）· 不消耗能量
+Errantes hoje: {a}/{b} · some na virada do dia (UTC)	Wanderers today: {a}/{b} · disappears at day change (UTC)	Errantes hoy: {a}/{b} · desaparece al cambiar el día (UTC)	今日游荡者：{a}/{b} · 跨日（UTC）时消失
+✨ BÊNÇÃO DOS ANCESTRAIS! Por 24 horas: +10% de ataque, magia e defesa e +5% de vida.	✨ ANCESTORS' BLESSING! For 24 hours: +10% attack, magic and defense and +5% health.	✨ ¡BENDICIÓN DE LOS ANCESTROS! Durante 24 horas: +10% de ataque, magia y defensa y +5% de vida.	✨ 先祖祝福！24 小时内：攻击、法术和防御 +10%，生命 +5%。
+Sorteio da Bênção: não foi desta vez ({c}%). Amanhã sua chance sobe para {n}%.	Blessing draw: not this time ({c}%). Tomorrow your chance rises to {n}%.	Sorteo de la Bendición: esta vez no ({c}%). Mañana tu probabilidad sube a {n}%.	祝福抽奖：这次没中（{c}%）。明天你的几率提升到 {n}%。
+Bênção dos Ancestrais ativa	Ancestors' Blessing active	Bendición de los Ancestros activa	先祖祝福生效中
++10% ataque, magia e defesa, +5% vida	+10% attack, magic and defense, +5% health	+10% ataque, magia y defensa, +5% vida	攻击、法术、防御 +10%，生命 +5%
+✨ Bênção dos Ancestrais: sorteada ao resgatar a recompensa diária. Sua chance {q}: {n}%.	✨ Ancestors' Blessing: drawn when you claim the daily reward. Your chance {q}: {n}%.	✨ Bendición de los Ancestros: se sortea al reclamar la recompensa diaria. Tu probabilidad {q}: {n}%.	✨ 先祖祝福：领取每日奖励时抽取。你{q}的几率：{n}%。
+amanhã	tomorrow	mañana	明天
+hoje	today	hoy	今天
+Criatura das Sombras Errante	Wandering Shadow Creature	Criatura de las Sombras Errante	游荡暗影生物
+Lobo das Sombras Errante	Wandering Shadow Wolf	Lobo de las Sombras Errante	游荡暗影狼
+Acólito do Olho Vazio Errante	Wandering Empty Eye Acolyte	Acólito del Ojo Vacío Errante	游荡空洞之眼侍僧
+Vulto Atormentado Errante	Wandering Tormented Wraith	Espectro Atormentado Errante	游荡受苦魅影
+Javali das Sombras Errante	Wandering Shadow Boar	Jabalí de las Sombras Errante	游荡暗影野猪
+Mestre dos Rituais Errante	Wandering Ritual Master	Maestro de los Rituales Errante	游荡仪式大师
+Escorpião Âmbar Errante	Wandering Amber Scorpion	Escorpión Ámbar Errante	游荡琥珀蝎
+Golem de Gelo Errante	Wandering Ice Golem	Gólem de Hielo Errante	游荡冰霜魔像
+Lorde Vorlag, o Sombrio Errante	Wandering Lord Vorlag, the Dark	Lord Vorlag, el Sombrío Errante	游荡的黑暗领主沃拉格
+Serpente Abissal de Meria Errante	Wandering Abyssal Serpent of Meria	Serpiente Abisal de Meria Errante	游荡梅里亚深渊巨蛇
+Harpia da Tempestade Errante	Wandering Storm Harpy	Arpía de la Tormenta Errante	游荡风暴鹰身女妖
+Sentinela de Éter Errante	Wandering Ether Sentinel	Centinela de Éter Errante	游荡以太哨兵
+Dragão Celeste Errante	Wandering Celestial Dragon	Dragón Celeste Errante	游荡天穹之龙
+Espectro do Vazio Errante	Wandering Void Specter	Espectro del Vacío Errante	游荡虚空幽魂
+Devorador de Estrelas Errante	Wandering Star Devourer	Devorador de Estrellas Errante	游荡噬星者
+Avatar de Nyx Errante	Wandering Avatar of Nyx	Avatar de Nyx Errante	游荡尼克斯化身
