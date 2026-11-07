@@ -209,6 +209,17 @@ export const ITEMS: ItemDef[] = [
   { id: "selo_do_paladino", name: "Selo do Paladino", rarity: "epic", slot: "accessory", stats: { str: 6, atk: 4, def: 2 }, image: TI("selo_do_paladino"), minLevel: 26, sell: 1900, affinity: ["humano"] },
   { id: "totem_de_guerra", name: "Totem de Guerra", rarity: "epic", slot: "accessory", stats: { str: 6, atk: 4, con: 3 }, image: TI("totem_de_guerra"), minLevel: 26, sell: 1900, affinity: ["gronar"] },
   { id: "presa_do_tita", name: "Presa do Titã", rarity: "legendary", slot: "accessory", stats: { str: 9, atk: 7, con: 3 }, image: TI("presa_do_tita"), minLevel: 35, sell: 3600, affinity: ["gronar"] },
+  // Exclusivos do Chefe do Mundo (só caem lá, com chance pequena; worldBoss.ts). Artes no Canva.
+  { id: "lamina_eclipse_solar", name: "Lâmina do Eclipse Solar", rarity: "legendary", slot: "weapon", stats: { atk: 22, str: 4, dex: 3 }, image: TI("lamina_eclipse_solar"), minLevel: 20, sell: 3000, affinity: ["humano"], weapon: "espada" },
+  { id: "arco_cometa_errante", name: "Arco do Cometa Errante", rarity: "legendary", slot: "weapon", stats: { atk: 21, dex: 6 }, image: TI("arco_cometa_errante"), minLevel: 20, sell: 3000, affinity: ["elfo"], weapon: "arco" },
+  { id: "martelo_nucleo_ardente", name: "Martelo do Núcleo Ardente", rarity: "legendary", slot: "weapon", stats: { atk: 22, str: 4, con: 3 }, image: TI("martelo_nucleo_ardente"), minLevel: 20, sell: 3000, affinity: ["anao"], weapon: "martelo" },
+  { id: "machado_devorador_mundos", name: "Machado do Devorador de Mundos", rarity: "legendary", slot: "weapon", stats: { atk: 23, str: 5 }, image: TI("machado_devorador_mundos"), minLevel: 20, sell: 3000, affinity: ["gronar"], weapon: "machado" },
+  { id: "cajado_abismo_estelar", name: "Cajado do Abismo Estelar", rarity: "legendary", slot: "weapon", stats: { atk: 10, intel: 14 }, image: TI("cajado_abismo_estelar"), minLevel: 20, sell: 3000, affinity: ["aetheliano"], weapon: "cajado" },
+  { id: "selo_rei_dourado", name: "Selo do Rei Dourado", rarity: "legendary", slot: "accessory", stats: { str: 6, atk: 5, def: 2 }, image: TI("selo_rei_dourado"), minLevel: 20, sell: 2600, affinity: ["humano"] },
+  { id: "lagrima_lua_prateada", name: "Lágrima da Lua Prateada", rarity: "legendary", slot: "accessory", stats: { dex: 8, atk: 4 }, image: TI("lagrima_lua_prateada"), minLevel: 20, sell: 2600, affinity: ["elfo"] },
+  { id: "runa_coracao_ferro", name: "Runa do Coração de Ferro", rarity: "legendary", slot: "accessory", stats: { con: 9, def: 4, str: 2 }, image: TI("runa_coracao_ferro"), minLevel: 20, sell: 2600, affinity: ["anao"] },
+  { id: "presa_leviata", name: "Presa do Leviatã", rarity: "legendary", slot: "accessory", stats: { str: 7, atk: 5, con: 2 }, image: TI("presa_leviata"), minLevel: 20, sell: 2600, affinity: ["gronar"] },
+  { id: "olho_firmamento", name: "Olho do Firmamento", rarity: "legendary", slot: "accessory", stats: { intel: 11, def: 2, con: 2 }, image: TI("olho_firmamento"), minLevel: 20, sell: 2600, affinity: ["aetheliano"] },
   { id: "insignia_do_campeao", name: "Insígnia do Campeão", rarity: "legendary", slot: "accessory", stats: { str: 8, atk: 6 }, image: TI("insignia_do_campeao"), minLevel: 30, sell: 3150, affinity: ["gronar", "humano"] },
   { id: "medalhao_do_tita", name: "Medalhão do Titã", rarity: "legendary", slot: "accessory", stats: { str: 10, atk: 7 }, image: TI("medalhao_do_tita"), minLevel: 38, sell: 4650, affinity: ["gronar", "humano"] },
   // Acessórios de guarda
