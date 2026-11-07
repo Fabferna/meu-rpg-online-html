@@ -1,0 +1,230 @@
+-- 0035: Chefe do Mundo — todos os dias às 21h (Brasília), 1 hora, vida compartilhada por todos os jogadores.
+-- Horário, dano (combat.ts), vida e sorteio de itens são decididos no servidor (src/lib/game/worldBoss.ts).
+-- Aqui: o chefe do dia, os golpes de cada jogador e o ataque atômico (limite + energia + vida numa transação).
+
+create table if not exists public.world_bosses (
+  day          date        primary key,          -- data do evento no horário de Brasília
+  boss_id      text        not null,
+  hp           bigint      not null check (hp >= 0),
+  max_hp       bigint      not null check (max_hp > 0),
+  starts_at    timestamptz not null,
+  ends_at      timestamptz not null,
+  defeated_at  timestamptz
+);
+
+create table if not exists public.world_boss_hits (
+  day      date   not null references public.world_bosses (day) on delete cascade,
+  user_id  uuid   not null references auth.users (id) on delete cascade,
+  damage   bigint not null default 0,
+  attacks  int    not null default 0,
+  primary key (day, user_id)
+);
+create index if not exists world_boss_hits_rank on public.world_boss_hits (day, damage desc);
+
+alter table public.world_bosses    enable row level security;
+alter table public.world_boss_hits enable row level security;
+drop policy if exists "world boss visible" on public.world_bosses;
+drop policy if exists "world hits visible" on public.world_boss_hits;
+create policy "world boss visible" on public.world_bosses    for select to authenticated using (true);
+create policy "world hits visible" on public.world_boss_hits for select to authenticated using (true);
+revoke all on public.world_bosses, public.world_boss_hits from anon;
+revoke insert, update, delete, truncate on public.world_bosses, public.world_boss_hits from authenticated;
+grant select on public.world_bosses, public.world_boss_hits to authenticated;
+
+-- Um ataque. p_boss_id/p_max_hp/p_starts/p_ends só valem na criação do chefe do dia (1º ataque).
+create or replace function public.world_boss_attack(
+  p_user uuid, p_day date, p_boss_id text, p_max_hp bigint, p_starts timestamptz, p_ends timestamptz,
+  p_damage bigint, p_limit int, p_energy int
+) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare b public.world_bosses; v_dealt bigint; v_used int;
+begin
+  insert into public.world_bosses (day, boss_id, hp, max_hp, starts_at, ends_at)
+    values (p_day, p_boss_id, p_max_hp, p_max_hp, p_starts, p_ends) on conflict do nothing;
+  select * into b from public.world_bosses where day = p_day for update;
+  if now() < b.starts_at or now() >= b.ends_at then raise exception 'world_boss_closed'; end if;
+  if b.hp <= 0 then raise exception 'boss_defeated'; end if;
+
+  select coalesce(attacks, 0) into v_used from public.world_boss_hits where day = p_day and user_id = p_user;
+  if coalesce(v_used, 0) >= p_limit then raise exception 'daily_limit'; end if;
+  perform public.spend_energy(p_user, p_energy);
+
+  v_dealt := least(b.hp, greatest(0, p_damage));
+  update public.world_bosses set hp = hp - v_dealt,
+    defeated_at = case when hp - v_dealt <= 0 then now() else null end
+    where day = p_day;
+  insert into public.world_boss_hits (day, user_id, damage, attacks) values (p_day, p_user, v_dealt, 1)
+    on conflict (day, user_id) do update set damage = public.world_boss_hits.damage + v_dealt, attacks = public.world_boss_hits.attacks + 1;
+  perform public.record_event(p_user, 'world_boss', 1);
+
+  return jsonb_build_object('dealt', v_dealt, 'hp', b.hp - v_dealt, 'defeated', b.hp - v_dealt <= 0);
+end;
+$$;
+revoke execute on function public.world_boss_attack(uuid, date, text, bigint, timestamptz, timestamptz, bigint, int, int) from public, anon, authenticated;
+grant execute on function public.world_boss_attack(uuid, date, text, bigint, timestamptz, timestamptz, bigint, int, int) to service_role;
+
+-- Itens exclusivos do Chefe do Mundo (regera a tabela items inteira, upsert: seguro rodar mais de uma vez).
+insert into public.items (id, name, kind, rarity, data) values
+  ('pocao_vida', 'Poção de Vida', 'consumable', 'common', '{"heal":60,"image":"/assets/shop/potion_hp.webp"}'),
+  ('espada_curta', 'Espada Curta Funcional', 'weapon', 'common', '{"slot":"weapon","atk":4,"image":"/assets/espada_curta_funcional.webp"}'),
+  ('machado_bronze', 'Machado de Bronze', 'weapon', 'common', '{"slot":"weapon","atk":5,"str":1,"image":"/assets/items/machado_bronze-v2.webp"}'),
+  ('arco_elfico', 'Arco Élfico Elegante', 'weapon', 'rare', '{"slot":"weapon","atk":7,"dex":2,"image":"/assets/arco_elfico_elegante.webp"}'),
+  ('cajado_luminoso', 'Cajado Mágico Luminoso', 'weapon', 'rare', '{"slot":"weapon","atk":3,"intel":4,"image":"/assets/cajado_magico_luminoso.webp"}'),
+  ('lamina_valerion', 'Lâmina de Valerion', 'weapon', 'rare', '{"slot":"weapon","atk":9,"dex":1,"image":"/assets/items/lamina_valerion-v2.webp"}'),
+  ('martelo_guerra', 'Martelo de Guerra', 'weapon', 'rare', '{"slot":"weapon","atk":8,"str":1,"image":"/assets/items/martelo_guerra-v2.webp"}'),
+  ('machado_guerra', 'Machado de Guerra', 'weapon', 'rare', '{"slot":"weapon","atk":10,"str":2,"image":"/assets/items/machado_guerra-v2.webp"}'),
+  ('cajado_carvalho', 'Cajado de Carvalho Rúnico', 'weapon', 'rare', '{"slot":"weapon","atk":4,"intel":7,"image":"/assets/items/cajado_carvalho-v2.webp"}'),
+  ('arco_longo', 'Arco Longo de Teixo', 'weapon', 'rare', '{"slot":"weapon","atk":11,"dex":3,"image":"/assets/items/arco_longo-v2.webp"}'),
+  ('martelo_forja', 'Martelo da Forja Ancestral', 'weapon', 'epic', '{"slot":"weapon","atk":11,"str":2,"image":"/assets/icone_forja_ancestral.webp"}'),
+  ('arco_lunar', 'Arco Lunar', 'weapon', 'epic', '{"slot":"weapon","atk":13,"dex":4,"image":"/assets/items/arco_lunar-v2.webp"}'),
+  ('espada_capitao', 'Espada do Capitão', 'weapon', 'epic', '{"slot":"weapon","atk":15,"str":2,"dex":1,"image":"/assets/items/espada_capitao-v2.webp"}'),
+  ('cajado_eter', 'Cajado do Éter', 'weapon', 'epic', '{"slot":"weapon","atk":6,"intel":10,"image":"/assets/items/cajado_eter-v2.webp"}'),
+  ('machado_escarlate', 'Machado Escarlate', 'weapon', 'epic', '{"slot":"weapon","atk":17,"str":3,"image":"/assets/items/machado_escarlate-v2.webp"}'),
+  ('lamina_aurora', 'Lâmina da Aurora', 'weapon', 'legendary', '{"slot":"weapon","atk":22,"str":3,"dex":3,"image":"/assets/items/lamina_aurora-v2.webp"}'),
+  ('tridente_meria', 'Tridente de Meria', 'weapon', 'legendary', '{"slot":"weapon","atk":20,"intel":8,"image":"/assets/items/tridente_meria-v2.webp"}'),
+  ('arco_tempestade', 'Arco da Tempestade', 'weapon', 'legendary', '{"slot":"weapon","atk":21,"dex":6,"image":"/assets/items/arco_tempestade-v2.webp"}'),
+  ('martelo_trovao', 'Martelo do Trovão Rúnico', 'weapon', 'legendary', '{"slot":"weapon","atk":23,"str":4,"con":2,"image":"/assets/items/martelo_trovao-v2.webp"}'),
+  ('machado_colosso', 'Machado do Colosso', 'weapon', 'legendary', '{"slot":"weapon","atk":25,"str":4,"image":"/assets/items/machado_colosso-v2.webp"}'),
+  ('cajado_astral', 'Cajado Astral', 'weapon', 'legendary', '{"slot":"weapon","atk":10,"intel":14,"image":"/assets/items/cajado_astral-v2.webp"}'),
+  ('capuz_viajante', 'Capuz do Viajante', 'armor', 'common', '{"slot":"helmet","def":1,"dex":1,"image":"/assets/items/capuz_viajante-v2.webp"}'),
+  ('elmo_ferro', 'Elmo de Ferro', 'armor', 'rare', '{"slot":"helmet","def":3,"con":1,"image":"/assets/items/elmo_ferro-v2.webp"}'),
+  ('tiara_lunar', 'Tiara Lunar', 'armor', 'epic', '{"slot":"helmet","def":3,"intel":5,"image":"/assets/items/tiara_lunar-v2.webp"}'),
+  ('capuz_sentinela', 'Capuz da Sentinela', 'armor', 'rare', '{"slot":"helmet","def":3,"dex":2,"intel":1,"image":"/assets/items/capuz_sentinela-v2.webp"}'),
+  ('coroa_vorlag', 'Coroa de Vorlag', 'armor', 'legendary', '{"slot":"helmet","def":5,"atk":3,"intel":3,"image":"/assets/items/coroa_vorlag-v2.webp"}'),
+  ('elmo_estelar', 'Elmo de Aço Estelar', 'armor', 'epic', '{"slot":"helmet","def":7,"con":3,"image":"/assets/items/elmo_estelar-v2.webp"}'),
+  ('gibao_couro', 'Gibão de Couro', 'armor', 'common', '{"slot":"armor","def":3,"image":"/assets/items/gibao_couro-v2.webp"}'),
+  ('cota_malha', 'Cota de Malha', 'armor', 'rare', '{"slot":"armor","def":6,"con":1,"image":"/assets/items/cota_malha-v2.webp"}'),
+  ('peitoral_anao', 'Peitoral de Placas Anão', 'armor', 'epic', '{"slot":"armor","def":8,"con":2,"image":"/assets/peitoral_de_placas_anao.webp"}'),
+  ('manto_arcano', 'Manto Arcano', 'armor', 'epic', '{"slot":"armor","def":6,"intel":5,"image":"/assets/items/manto_arcano-v2.webp"}'),
+  ('couraca_escamas', 'Couraça de Escamas', 'armor', 'rare', '{"slot":"armor","def":10,"con":2,"image":"/assets/items/couraca_escamas-v2.webp"}'),
+  ('armadura_celeste', 'Armadura Celeste', 'armor', 'legendary', '{"slot":"armor","def":16,"con":4,"image":"/assets/items/armadura_celeste-v2.webp"}'),
+  ('veste_lunar', 'Veste Lunar das Sombras', 'armor', 'legendary', '{"slot":"armor","def":11,"dex":5,"intel":4,"image":"/assets/items/veste_lunar-v2.webp"}'),
+  ('botas_couro', 'Botas de Couro', 'armor', 'common', '{"slot":"boots","dex":1,"def":1,"image":"/assets/items/botas_couro-v2.webp"}'),
+  ('botas_patrulheiro', 'Botas do Patrulheiro', 'armor', 'rare', '{"slot":"boots","dex":3,"def":1,"image":"/assets/items/botas_patrulheiro-v2.webp"}'),
+  ('botas_cavaleiro', 'Botas de Cavaleiro', 'armor', 'rare', '{"slot":"boots","def":2,"con":1,"str":1,"image":"/assets/items/botas_cavaleiro-v2.webp"}'),
+  ('grevas_runicas', 'Grevas Rúnicas', 'armor', 'epic', '{"slot":"boots","def":4,"dex":2,"image":"/assets/items/grevas_runicas-v2.webp"}'),
+  ('botas_vento', 'Botas do Vento Celeste', 'armor', 'legendary', '{"slot":"boots","dex":7,"def":3,"image":"/assets/items/botas_vento-v2.webp"}'),
+  ('botas_guardiao', 'Botas do Guardião', 'armor', 'epic', '{"slot":"boots","def":5,"con":2,"dex":2,"image":"/assets/items/botas_guardiao-v2.webp"}'),
+  ('grevas_eter', 'Grevas de Éter', 'armor', 'epic', '{"slot":"boots","def":7,"con":3,"image":"/assets/items/grevas_eter-v2.webp"}'),
+  ('anel_vigor', 'Anel do Vigor', 'accessory', 'rare', '{"slot":"accessory","con":4,"def":1,"image":"/assets/items/anel_vigor-v2.webp"}'),
+  ('estandarte_inspirador', 'Estandarte Inspirador', 'accessory', 'rare', '{"slot":"accessory","atk":2,"con":2,"image":"/assets/estandarte_inspirador.webp"}'),
+  ('foco_arcano', 'Foco de Canalização Arcana', 'accessory', 'epic', '{"slot":"accessory","intel":6,"def":1,"image":"/assets/canalizacao_de_magia.webp"}'),
+  ('amuleto_serpente', 'Amuleto da Serpente Sinistra', 'accessory', 'legendary', '{"slot":"accessory","atk":4,"def":3,"intel":3,"image":"/assets/amuleto_da_serpente_sinistra.webp"}'),
+  ('anel_tempestade', 'Anel da Tempestade', 'accessory', 'rare', '{"slot":"accessory","atk":2,"dex":3,"image":"/assets/items/anel_tempestade-v2.webp"}'),
+  ('talisma_estelar', 'Talismã Estelar', 'accessory', 'epic', '{"slot":"accessory","intel":6,"con":3,"def":2,"image":"/assets/items/talisma_estelar-v2.webp"}'),
+  ('olho_vazio', 'Olho do Vazio', 'accessory', 'legendary', '{"slot":"accessory","atk":6,"def":4,"intel":6,"str":2,"image":"/assets/items/olho_vazio-v2.webp"}'),
+  ('espada_do_recruta', 'Espada do Recruta', 'weapon', 'common', '{"slot":"weapon","atk":5,"str":2,"image":"/assets/items/tier/espada_do_recruta.webp"}'),
+  ('gladio_de_ferro', 'Gládio de Ferro', 'weapon', 'rare', '{"slot":"weapon","atk":9,"str":2,"image":"/assets/items/tier/gladio_de_ferro.webp"}'),
+  ('espada_da_guarda', 'Espada da Guarda', 'weapon', 'rare', '{"slot":"weapon","atk":11,"str":3,"image":"/assets/items/tier/espada_da_guarda.webp"}'),
+  ('sabre_do_veterano', 'Sabre do Veterano', 'weapon', 'rare', '{"slot":"weapon","atk":12,"str":3,"image":"/assets/items/tier/sabre_do_veterano.webp"}'),
+  ('lamina_do_juramento', 'Lâmina do Juramento', 'weapon', 'epic', '{"slot":"weapon","atk":16,"str":4,"dex":1,"image":"/assets/items/tier/lamina_do_juramento.webp"}'),
+  ('espada_runica', 'Espada Rúnica', 'weapon', 'epic', '{"slot":"weapon","atk":18,"str":4,"dex":2,"image":"/assets/items/tier/espada_runica.webp"}'),
+  ('espada_do_alvorecer', 'Espada do Alvorecer', 'weapon', 'epic', '{"slot":"weapon","atk":20,"str":5,"dex":2,"image":"/assets/items/tier/espada_do_alvorecer.webp"}'),
+  ('montante_real', 'Montante Real', 'weapon', 'legendary', '{"slot":"weapon","atk":26,"str":6,"dex":2,"image":"/assets/items/tier/montante_real.webp"}'),
+  ('lamina_do_firmamento', 'Lâmina do Firmamento', 'weapon', 'legendary', '{"slot":"weapon","atk":28,"str":6,"dex":2,"image":"/assets/items/tier/lamina_do_firmamento.webp"}'),
+  ('espada_do_rei_eterno', 'Espada do Rei Eterno', 'weapon', 'legendary', '{"slot":"weapon","atk":30,"str":6,"dex":3,"image":"/assets/items/tier/espada_do_rei_eterno.webp"}'),
+  ('arco_do_cacador', 'Arco do Caçador', 'weapon', 'common', '{"slot":"weapon","atk":5,"dex":2,"image":"/assets/items/tier/arco_do_cacador.webp"}'),
+  ('arco_de_teixo', 'Arco de Teixo', 'weapon', 'rare', '{"slot":"weapon","atk":7,"dex":2,"image":"/assets/items/tier/arco_de_teixo.webp"}'),
+  ('arco_do_batedor', 'Arco do Batedor', 'weapon', 'rare', '{"slot":"weapon","atk":9,"dex":2,"image":"/assets/items/tier/arco_do_batedor.webp"}'),
+  ('arco_do_vento_norte', 'Arco do Vento Norte', 'weapon', 'epic', '{"slot":"weapon","atk":16,"dex":4,"image":"/assets/items/tier/arco_do_vento_norte.webp"}'),
+  ('arco_de_prata_elfica', 'Arco de Prata Élfica', 'weapon', 'epic', '{"slot":"weapon","atk":18,"dex":4,"image":"/assets/items/tier/arco_de_prata_elfica.webp"}'),
+  ('arco_estrelado', 'Arco Estrelado', 'weapon', 'epic', '{"slot":"weapon","atk":20,"dex":5,"image":"/assets/items/tier/arco_estrelado.webp"}'),
+  ('arco_do_crepusculo', 'Arco do Crepúsculo', 'weapon', 'legendary', '{"slot":"weapon","atk":26,"dex":6,"image":"/assets/items/tier/arco_do_crepusculo.webp"}'),
+  ('arco_da_aurora_boreal', 'Arco da Aurora Boreal', 'weapon', 'legendary', '{"slot":"weapon","atk":28,"dex":6,"image":"/assets/items/tier/arco_da_aurora_boreal.webp"}'),
+  ('arco_do_ultimo_luar', 'Arco do Último Luar', 'weapon', 'legendary', '{"slot":"weapon","atk":30,"dex":6,"image":"/assets/items/tier/arco_do_ultimo_luar.webp"}'),
+  ('martelo_de_pedra', 'Martelo de Pedra', 'weapon', 'rare', '{"slot":"weapon","atk":9,"str":2,"image":"/assets/items/tier/martelo_de_pedra.webp"}'),
+  ('martelo_do_ferreiro', 'Martelo do Ferreiro', 'weapon', 'rare', '{"slot":"weapon","atk":12,"str":3,"image":"/assets/items/tier/martelo_do_ferreiro.webp"}'),
+  ('malho_de_bronze', 'Malho de Bronze', 'weapon', 'rare', '{"slot":"weapon","atk":14,"str":3,"image":"/assets/items/tier/malho_de_bronze.webp"}'),
+  ('martelo_da_montanha', 'Martelo da Montanha', 'weapon', 'epic', '{"slot":"weapon","atk":17,"str":4,"con":1,"image":"/assets/items/tier/martelo_da_montanha.webp"}'),
+  ('martelo_runico_de_guerra', 'Martelo Rúnico de Guerra', 'weapon', 'epic', '{"slot":"weapon","atk":19,"str":4,"con":2,"image":"/assets/items/tier/martelo_runico_de_guerra.webp"}'),
+  ('malho_do_trovao_profundo', 'Malho do Trovão Profundo', 'weapon', 'epic', '{"slot":"weapon","atk":21,"str":5,"con":2,"image":"/assets/items/tier/malho_do_trovao_profundo.webp"}'),
+  ('martelo_do_rei_anao', 'Martelo do Rei Anão', 'weapon', 'legendary', '{"slot":"weapon","atk":27,"str":6,"con":2,"image":"/assets/items/tier/martelo_do_rei_anao.webp"}'),
+  ('martelo_ancestral', 'Martelo Ancestral', 'weapon', 'legendary', '{"slot":"weapon","atk":29,"str":6,"con":2,"image":"/assets/items/tier/martelo_ancestral.webp"}'),
+  ('martelo_do_coracao_da_terra', 'Martelo do Coração da Terra', 'weapon', 'legendary', '{"slot":"weapon","atk":31,"str":6,"con":3,"image":"/assets/items/tier/martelo_do_coracao_da_terra.webp"}'),
+  ('machado_do_lenhador', 'Machado do Lenhador', 'weapon', 'common', '{"slot":"weapon","atk":5,"str":2,"image":"/assets/items/tier/machado_do_lenhador.webp"}'),
+  ('machado_tribal', 'Machado Tribal', 'weapon', 'rare', '{"slot":"weapon","atk":7,"str":2,"image":"/assets/items/tier/machado_tribal.webp"}'),
+  ('machado_de_duas_laminas', 'Machado de Duas Lâminas', 'weapon', 'rare', '{"slot":"weapon","atk":11,"str":3,"image":"/assets/items/tier/machado_de_duas_laminas.webp"}'),
+  ('machado_do_berserker', 'Machado do Berserker', 'weapon', 'rare', '{"slot":"weapon","atk":12,"str":3,"image":"/assets/items/tier/machado_do_berserker.webp"}'),
+  ('machado_sanguinario', 'Machado Sanguinário', 'weapon', 'rare', '{"slot":"weapon","atk":14,"str":3,"image":"/assets/items/tier/machado_sanguinario.webp"}'),
+  ('machado_do_chefe_guerreiro', 'Machado do Chefe Guerreiro', 'weapon', 'epic', '{"slot":"weapon","atk":17,"str":4,"image":"/assets/items/tier/machado_do_chefe_guerreiro.webp"}'),
+  ('machado_da_furia', 'Machado da Fúria', 'weapon', 'epic', '{"slot":"weapon","atk":21,"str":5,"image":"/assets/items/tier/machado_da_furia.webp"}'),
+  ('machado_rachador_de_cranios', 'Machado Rachador de Crânios', 'weapon', 'epic', '{"slot":"weapon","atk":23,"str":5,"image":"/assets/items/tier/machado_rachador_de_cranios.webp"}'),
+  ('machado_do_tita', 'Machado do Titã', 'weapon', 'legendary', '{"slot":"weapon","atk":29,"str":6,"image":"/assets/items/tier/machado_do_tita.webp"}'),
+  ('machado_do_fim_dos_tempos', 'Machado do Fim dos Tempos', 'weapon', 'legendary', '{"slot":"weapon","atk":31,"str":6,"image":"/assets/items/tier/machado_do_fim_dos_tempos.webp"}'),
+  ('cajado_do_aprendiz', 'Cajado do Aprendiz', 'weapon', 'common', '{"slot":"weapon","atk":2,"intel":3,"image":"/assets/items/tier/cajado_do_aprendiz.webp"}'),
+  ('cajado_de_cristal_azul', 'Cajado de Cristal Azul', 'weapon', 'rare', '{"slot":"weapon","atk":3,"intel":5,"image":"/assets/items/tier/cajado_de_cristal_azul.webp"}'),
+  ('cajado_do_iniciado', 'Cajado do Iniciado', 'weapon', 'rare', '{"slot":"weapon","atk":4,"intel":6,"image":"/assets/items/tier/cajado_do_iniciado.webp"}'),
+  ('cajado_das_mares', 'Cajado das Marés', 'weapon', 'rare', '{"slot":"weapon","atk":6,"intel":8,"image":"/assets/items/tier/cajado_das_mares.webp"}'),
+  ('cajado_do_arcanista', 'Cajado do Arcanista', 'weapon', 'rare', '{"slot":"weapon","atk":6,"intel":8,"image":"/assets/items/tier/cajado_do_arcanista.webp"}'),
+  ('cajado_da_lua_crescente', 'Cajado da Lua Crescente', 'weapon', 'epic', '{"slot":"weapon","atk":8,"intel":10,"image":"/assets/items/tier/cajado_da_lua_crescente.webp"}'),
+  ('cajado_do_arquimago', 'Cajado do Arquimago', 'weapon', 'epic', '{"slot":"weapon","atk":10,"intel":13,"image":"/assets/items/tier/cajado_do_arquimago.webp"}'),
+  ('cajado_das_constelacoes', 'Cajado das Constelações', 'weapon', 'epic', '{"slot":"weapon","atk":10,"intel":14,"image":"/assets/items/tier/cajado_das_constelacoes.webp"}'),
+  ('cajado_do_veu_etereo', 'Cajado do Véu Etéreo', 'weapon', 'legendary', '{"slot":"weapon","atk":12,"intel":16,"image":"/assets/items/tier/cajado_do_veu_etereo.webp"}'),
+  ('cajado_do_primeiro_arcano', 'Cajado do Primeiro Arcano', 'weapon', 'legendary', '{"slot":"weapon","atk":14,"intel":19,"image":"/assets/items/tier/cajado_do_primeiro_arcano.webp"}'),
+  ('capuz_de_la', 'Capuz de Lã', 'armor', 'common', '{"slot":"helmet","def":1,"dex":1,"intel":1,"image":"/assets/items/tier/capuz_de_la.webp"}'),
+  ('capuz_do_arqueiro', 'Capuz do Arqueiro', 'armor', 'rare', '{"slot":"helmet","def":2,"dex":1,"intel":1,"image":"/assets/items/tier/capuz_do_arqueiro.webp"}'),
+  ('diadema_etereo', 'Diadema Etéreo', 'armor', 'epic', '{"slot":"helmet","def":5,"dex":2,"intel":2,"image":"/assets/items/tier/diadema_etereo.webp"}'),
+  ('capuz_das_sombras_celestes', 'Capuz das Sombras Celestes', 'armor', 'legendary', '{"slot":"helmet","def":7,"dex":3,"intel":3,"image":"/assets/items/tier/capuz_das_sombras_celestes.webp"}'),
+  ('diadema_da_noite_eterna', 'Diadema da Noite Eterna', 'armor', 'legendary', '{"slot":"helmet","def":8,"dex":3,"intel":3,"image":"/assets/items/tier/diadema_da_noite_eterna.webp"}'),
+  ('elmo_de_bronze', 'Elmo de Bronze', 'armor', 'common', '{"slot":"helmet","def":2,"con":1,"image":"/assets/items/tier/elmo_de_bronze.webp"}'),
+  ('elmo_do_soldado', 'Elmo do Soldado', 'armor', 'rare', '{"slot":"helmet","def":4,"con":1,"image":"/assets/items/tier/elmo_do_soldado.webp"}'),
+  ('elmo_de_placas', 'Elmo de Placas', 'armor', 'rare', '{"slot":"helmet","def":5,"con":1,"image":"/assets/items/tier/elmo_de_placas.webp"}'),
+  ('elmo_do_guardiao', 'Elmo do Guardião', 'armor', 'epic', '{"slot":"helmet","def":7,"con":2,"image":"/assets/items/tier/elmo_do_guardiao.webp"}'),
+  ('elmo_runico', 'Elmo Rúnico', 'armor', 'epic', '{"slot":"helmet","def":9,"con":2,"image":"/assets/items/tier/elmo_runico.webp"}'),
+  ('elmo_do_colosso', 'Elmo do Colosso', 'armor', 'legendary', '{"slot":"helmet","def":11,"con":3,"image":"/assets/items/tier/elmo_do_colosso.webp"}'),
+  ('elmo_do_rei_da_montanha', 'Elmo do Rei da Montanha', 'armor', 'legendary', '{"slot":"helmet","def":12,"con":3,"image":"/assets/items/tier/elmo_do_rei_da_montanha.webp"}'),
+  ('tunica_do_aprendiz', 'Túnica do Aprendiz', 'armor', 'common', '{"slot":"armor","def":2,"dex":1,"intel":1,"image":"/assets/items/tier/tunica_do_aprendiz.webp"}'),
+  ('veste_do_batedor', 'Veste do Batedor', 'armor', 'rare', '{"slot":"armor","def":4,"dex":2,"intel":2,"image":"/assets/items/tier/veste_do_batedor.webp"}'),
+  ('manto_do_arcanista', 'Manto do Arcanista', 'armor', 'epic', '{"slot":"armor","def":8,"dex":3,"intel":3,"image":"/assets/items/tier/manto_do_arcanista.webp"}'),
+  ('manto_das_estrelas', 'Manto das Estrelas', 'armor', 'epic', '{"slot":"armor","def":10,"dex":4,"intel":4,"image":"/assets/items/tier/manto_das_estrelas.webp"}'),
+  ('veste_do_crepusculo', 'Veste do Crepúsculo', 'armor', 'legendary', '{"slot":"armor","def":12,"dex":5,"intel":5,"image":"/assets/items/tier/veste_do_crepusculo.webp"}'),
+  ('manto_do_veu_etereo', 'Manto do Véu Etéreo', 'armor', 'legendary', '{"slot":"armor","def":14,"dex":5,"intel":5,"image":"/assets/items/tier/manto_do_veu_etereo.webp"}'),
+  ('cota_de_bronze', 'Cota de Bronze', 'armor', 'common', '{"slot":"armor","def":4,"con":1,"image":"/assets/items/tier/cota_de_bronze.webp"}'),
+  ('armadura_de_placas', 'Armadura de Placas', 'armor', 'rare', '{"slot":"armor","def":7,"con":2,"image":"/assets/items/tier/armadura_de_placas.webp"}'),
+  ('couraca_do_guardiao', 'Couraça do Guardião', 'armor', 'rare', '{"slot":"armor","def":10,"con":3,"image":"/assets/items/tier/couraca_do_guardiao.webp"}'),
+  ('armadura_runica', 'Armadura Rúnica', 'armor', 'epic', '{"slot":"armor","def":13,"con":3,"image":"/assets/items/tier/armadura_runica.webp"}'),
+  ('armadura_do_colosso', 'Armadura do Colosso', 'armor', 'legendary', '{"slot":"armor","def":20,"con":5,"image":"/assets/items/tier/armadura_do_colosso.webp"}'),
+  ('armadura_do_rei_da_montanha', 'Armadura do Rei da Montanha', 'armor', 'legendary', '{"slot":"armor","def":22,"con":6,"image":"/assets/items/tier/armadura_do_rei_da_montanha.webp"}'),
+  ('sapatilhas_do_batedor', 'Sapatilhas do Batedor', 'armor', 'rare', '{"slot":"boots","def":2,"dex":1,"image":"/assets/items/tier/sapatilhas_do_batedor.webp"}'),
+  ('botas_do_andarilho', 'Botas do Andarilho', 'armor', 'rare', '{"slot":"boots","def":3,"dex":1,"image":"/assets/items/tier/botas_do_andarilho.webp"}'),
+  ('botas_da_brisa', 'Botas da Brisa', 'armor', 'epic', '{"slot":"boots","def":4,"dex":2,"image":"/assets/items/tier/botas_da_brisa.webp"}'),
+  ('botas_etereas', 'Botas Etéreas', 'armor', 'legendary', '{"slot":"boots","def":6,"dex":2,"image":"/assets/items/tier/botas_etereas.webp"}'),
+  ('botas_do_passo_estelar', 'Botas do Passo Estelar', 'armor', 'legendary', '{"slot":"boots","def":7,"dex":3,"image":"/assets/items/tier/botas_do_passo_estelar.webp"}'),
+  ('botas_de_bronze', 'Botas de Bronze', 'armor', 'common', '{"slot":"boots","def":2,"con":1,"image":"/assets/items/tier/botas_de_bronze.webp"}'),
+  ('grevas_do_soldado', 'Grevas do Soldado', 'armor', 'rare', '{"slot":"boots","def":4,"con":1,"image":"/assets/items/tier/grevas_do_soldado.webp"}'),
+  ('grevas_de_placas', 'Grevas de Placas', 'armor', 'epic', '{"slot":"boots","def":6,"con":2,"image":"/assets/items/tier/grevas_de_placas.webp"}'),
+  ('grevas_do_guardiao', 'Grevas do Guardião', 'armor', 'epic', '{"slot":"boots","def":8,"con":2,"image":"/assets/items/tier/grevas_do_guardiao.webp"}'),
+  ('grevas_do_colosso', 'Grevas do Colosso', 'armor', 'legendary', '{"slot":"boots","def":10,"con":2,"image":"/assets/items/tier/grevas_do_colosso.webp"}'),
+  ('grevas_do_rei_da_montanha', 'Grevas do Rei da Montanha', 'armor', 'legendary', '{"slot":"boots","def":11,"con":3,"image":"/assets/items/tier/grevas_do_rei_da_montanha.webp"}'),
+  ('anel_do_aprendiz', 'Anel do Aprendiz', 'accessory', 'rare', '{"slot":"accessory","intel":4,"def":1,"image":"/assets/items/tier/anel_do_aprendiz.webp"}'),
+  ('pingente_arcano', 'Pingente Arcano', 'accessory', 'rare', '{"slot":"accessory","intel":6,"def":1,"image":"/assets/items/tier/pingente_arcano.webp"}'),
+  ('orbe_das_mares', 'Orbe das Marés', 'accessory', 'epic', '{"slot":"accessory","intel":10,"def":2,"image":"/assets/items/tier/orbe_das_mares.webp"}'),
+  ('coracao_do_primeiro_arcano', 'Coração do Primeiro Arcano', 'accessory', 'legendary', '{"slot":"accessory","intel":15,"def":3,"image":"/assets/items/tier/coracao_do_primeiro_arcano.webp"}'),
+  ('anel_da_agilidade', 'Anel da Agilidade', 'accessory', 'rare', '{"slot":"accessory","dex":3,"atk":1,"image":"/assets/items/tier/anel_da_agilidade.webp"}'),
+  ('bracelete_do_cacador', 'Bracelete do Caçador', 'accessory', 'rare', '{"slot":"accessory","dex":4,"atk":2,"image":"/assets/items/tier/bracelete_do_cacador.webp"}'),
+  ('anel_do_vento_veloz', 'Anel do Vento Veloz', 'accessory', 'legendary', '{"slot":"accessory","dex":9,"atk":3,"image":"/assets/items/tier/anel_do_vento_veloz.webp"}'),
+  ('pena_da_fenix_prateada', 'Pena da Fênix Prateada', 'accessory', 'legendary', '{"slot":"accessory","dex":11,"atk":4,"image":"/assets/items/tier/pena_da_fenix_prateada.webp"}'),
+  ('bracelete_de_couro', 'Bracelete de Couro', 'accessory', 'rare', '{"slot":"accessory","str":2,"atk":2,"image":"/assets/items/tier/bracelete_de_couro.webp"}'),
+  ('anel_do_guerreiro', 'Anel do Guerreiro', 'accessory', 'rare', '{"slot":"accessory","str":4,"atk":3,"image":"/assets/items/tier/anel_do_guerreiro.webp"}'),
+  ('brasao_de_valerion', 'Brasão de Valerion', 'accessory', 'rare', '{"slot":"accessory","str":3,"atk":2,"dex":1,"image":"/assets/items/tier/brasao_de_valerion.webp"}'),
+  ('colar_de_presas', 'Colar de Presas', 'accessory', 'rare', '{"slot":"accessory","str":3,"atk":2,"con":1,"image":"/assets/items/tier/colar_de_presas.webp"}'),
+  ('selo_do_paladino', 'Selo do Paladino', 'accessory', 'epic', '{"slot":"accessory","str":6,"atk":4,"def":2,"image":"/assets/items/tier/selo_do_paladino.webp"}'),
+  ('totem_de_guerra', 'Totem de Guerra', 'accessory', 'epic', '{"slot":"accessory","str":6,"atk":4,"con":3,"image":"/assets/items/tier/totem_de_guerra.webp"}'),
+  ('presa_do_tita', 'Presa do Titã', 'accessory', 'legendary', '{"slot":"accessory","str":9,"atk":7,"con":3,"image":"/assets/items/tier/presa_do_tita.webp"}'),
+  ('lamina_eclipse_solar', 'Lâmina do Eclipse Solar', 'weapon', 'legendary', '{"slot":"weapon","atk":22,"str":4,"dex":3,"image":"/assets/items/tier/lamina_eclipse_solar.webp"}'),
+  ('arco_cometa_errante', 'Arco do Cometa Errante', 'weapon', 'legendary', '{"slot":"weapon","atk":21,"dex":6,"image":"/assets/items/tier/arco_cometa_errante.webp"}'),
+  ('martelo_nucleo_ardente', 'Martelo do Núcleo Ardente', 'weapon', 'legendary', '{"slot":"weapon","atk":22,"str":4,"con":3,"image":"/assets/items/tier/martelo_nucleo_ardente.webp"}'),
+  ('machado_devorador_mundos', 'Machado do Devorador de Mundos', 'weapon', 'legendary', '{"slot":"weapon","atk":23,"str":5,"image":"/assets/items/tier/machado_devorador_mundos.webp"}'),
+  ('cajado_abismo_estelar', 'Cajado do Abismo Estelar', 'weapon', 'legendary', '{"slot":"weapon","atk":10,"intel":14,"image":"/assets/items/tier/cajado_abismo_estelar.webp"}'),
+  ('selo_rei_dourado', 'Selo do Rei Dourado', 'accessory', 'legendary', '{"slot":"accessory","str":6,"atk":5,"def":2,"image":"/assets/items/tier/selo_rei_dourado.webp"}'),
+  ('lagrima_lua_prateada', 'Lágrima da Lua Prateada', 'accessory', 'legendary', '{"slot":"accessory","dex":8,"atk":4,"image":"/assets/items/tier/lagrima_lua_prateada.webp"}'),
+  ('runa_coracao_ferro', 'Runa do Coração de Ferro', 'accessory', 'legendary', '{"slot":"accessory","con":9,"def":4,"str":2,"image":"/assets/items/tier/runa_coracao_ferro.webp"}'),
+  ('presa_leviata', 'Presa do Leviatã', 'accessory', 'legendary', '{"slot":"accessory","str":7,"atk":5,"con":2,"image":"/assets/items/tier/presa_leviata.webp"}'),
+  ('olho_firmamento', 'Olho do Firmamento', 'accessory', 'legendary', '{"slot":"accessory","intel":11,"def":2,"con":2,"image":"/assets/items/tier/olho_firmamento.webp"}'),
+  ('insignia_do_campeao', 'Insígnia do Campeão', 'accessory', 'legendary', '{"slot":"accessory","str":8,"atk":6,"image":"/assets/items/tier/insignia_do_campeao.webp"}'),
+  ('medalhao_do_tita', 'Medalhão do Titã', 'accessory', 'legendary', '{"slot":"accessory","str":10,"atk":7,"image":"/assets/items/tier/medalhao_do_tita.webp"}'),
+  ('amuleto_de_pedra', 'Amuleto de Pedra', 'accessory', 'rare', '{"slot":"accessory","con":4,"def":2,"image":"/assets/items/tier/amuleto_de_pedra.webp"}'),
+  ('pingente_do_guardiao', 'Pingente do Guardião', 'accessory', 'rare', '{"slot":"accessory","con":6,"def":2,"image":"/assets/items/tier/pingente_do_guardiao.webp"}'),
+  ('amuleto_da_montanha', 'Amuleto da Montanha', 'accessory', 'epic', '{"slot":"accessory","con":8,"def":4,"image":"/assets/items/tier/amuleto_da_montanha.webp"}'),
+  ('coracao_do_colosso', 'Coração do Colosso', 'accessory', 'legendary', '{"slot":"accessory","con":13,"def":6,"image":"/assets/items/tier/coracao_do_colosso.webp"}')
+on conflict (id) do update set name = excluded.name, kind = excluded.kind, rarity = excluded.rarity, data = excluded.data;
