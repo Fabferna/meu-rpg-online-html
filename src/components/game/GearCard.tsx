@@ -141,8 +141,8 @@ export function SetTag({ itemId, state }: { itemId: string; state: PlayerState }
   return (
     <div className="mt-1 rounded bg-indigo-950/60 px-1.5 py-1 text-[10px] leading-snug ring-1 ring-indigo-400/30" title={set.pieces.map((p) => t(ITEM_BY_ID[p]?.name ?? p)).join(" · ")}>
       <p className="font-semibold text-indigo-200">🧩 {t(set.name)} <span className="text-indigo-300/70">({n}/{set.pieces.length})</span></p>
-      {([2, 3] as const).map((k) => (
-        <p key={k} className={n >= k ? "text-emerald-300" : "text-white/40"}>{n >= k ? "✓" : "○"} {t("{n} peças:", { n: k })} {statText(t, set.bonus[k])}</p>
+      {([2, 3] as const).map((k) => set.bonus[k] && (
+        <p key={k} className={n >= k ? "text-emerald-300" : "text-white/40"}>{n >= k ? "✓" : "○"} {t("{n} peças:", { n: k })} {statText(t, set.bonus[k]!)}</p>
       ))}
     </div>
   );

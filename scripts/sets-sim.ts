@@ -26,7 +26,7 @@ for (const s of GEAR_SETS) {
   const a = typicalAttrs(race, L);
   const pieces: Piece[] = defs.map((d) => ({ item: { id: d.id, slot: d.slot, rarity: d.rarity, weapon: d.weapon, weight: d.weight }, stats: itemStatsFor(d, d.stats as Record<string, number>, race) as Record<string, number> }));
   const base = heroStats(a, L, pieces.map((p) => p.stats as ItemBonus), race, pieces);
-  const withSet = heroStats(a, L, [...pieces.map((p) => p.stats as ItemBonus), s.bonus[3]], race, pieces);
+  const withSet = heroStats(a, L, [...pieces.map((p) => p.stats as ItemBonus), (s.bonus[3] ?? s.bonus[2])], race, pieces);
   const mid = (x: [number, number]) => (x[0] + x[1]) / 2;
   console.log(`| ${s.name} | ${race} | ${L} | ${pct(mid(base.atk), mid(withSet.atk))} | ${pct(mid(base.magic), mid(withSet.magic))} | ${pct(base.def, withSet.def)} |`);
 }
