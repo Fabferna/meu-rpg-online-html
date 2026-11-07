@@ -28,8 +28,8 @@ export const AFFINITY_BONUS = 0.2;
 const A = (f: string) => `/assets/${f}.webp`;
 // Sufixo -v2: as artes do Ato II foram trocadas com o mesmo nome; o novo nome fura o cache da CDN/navegador.
 const IT = (f: string) => `/assets/items/${f}-v2.webp`;
-// Itens novos (revisão do catálogo): artes geradas por scripts/gen-item-variants.py. Arte definitiva = nome novo.
-const NW = (f: string) => `/assets/items/${f}.webp`;
+// Itens novos (revisão do catálogo): artes feitas no Canva (sufixo -v2 = nome novo para furar o cache da CDN).
+const NW = (f: string) => `/assets/items/${f}-v2.webp`;
 
 export const ITEMS: ItemDef[] = [
   { id: "pocao_vida", name: "Poção de Vida", rarity: "common", stats: { heal: 60 }, image: "/assets/shop/potion_hp.webp", sell: 8 },
