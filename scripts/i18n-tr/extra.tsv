@@ -405,3 +405,118 @@ Entregar	Deliver	Entregar	交付
 falta {n} para o bônus	{n} more for the bonus	falta {n} para el bono	再差 {n} 件获得加成
 Conjunto	Set	Conjunto	套装
 bônus dos equipamentos (arma, elmo, armadura, botas e acessório), dos conjuntos e do pet ativo	bonus from equipment (weapon, helmet, armor, boots and accessory), sets and your active pet	bono del equipo (arma, yelmo, armadura, botas y accesorio), de los conjuntos y de la mascota activa	装备（武器、头盔、护甲、靴子和饰品）、套装和当前宠物的加成
+Vida máxima	Max HP	Vida máxima	最大生命
+Quanto dano você aguenta	How much damage you can take	Cuánto daño aguantas	你能承受的伤害
+Energia máxima	Max energy	Energía máxima	最大能量
+Gasta em caçadas e missões	Spent on hunts and quests	Se gasta en cacerías y misiones	狩猎和任务消耗
+Ataque físico	Physical attack	Ataque físico	物理攻击
+Dano do ataque básico	Basic attack damage	Daño del ataque básico	普通攻击伤害
+Poder mágico	Magic power	Poder mágico	魔法强度
+Base das habilidades mágicas	Base for magic skills	Base de las habilidades mágicas	魔法技能的基础
+Reduz o dano recebido	Reduces damage taken	Reduce el daño recibido	减少受到的伤害
+Contra inimigo de mesma agilidade	Against an enemy with equal agility	Contra un enemigo de igual agilidad	对抗同等敏捷的敌人
+Chance de crítico	Critical chance	Probabilidad de crítico	暴击率
+Crítico causa ×1,6 de dano	Critical hits deal ×1.6 damage	El crítico causa ×1,6 de daño	暴击造成 ×1.6 伤害
+Status de combate	Combat stats	Estado de combate	战斗属性
+quanto vem dos equipamentos, conjuntos e pet	how much comes from gear, sets and pet	cuánto viene del equipo, conjuntos y mascota	来自装备、套装和宠物的部分
+Cópia do item equipado: está na bolsa e pode ser vendida.	Copy of your equipped item: it's in your bag and can be sold.	Copia del objeto equipado: está en la bolsa y se puede vender.	已装备物品的副本：在背包中，可以出售。
+Na bolsa	In bag	En la bolsa	在背包中
+Espada do Recruta	Recruit's Sword	Espada del Recluta	新兵之剑
+Gládio de Ferro	Iron Gladius	Gladio de Hierro	铁制短剑
+Espada da Guarda	Guard's Sword	Espada de la Guardia	卫兵之剑
+Sabre do Veterano	Veteran's Saber	Sable del Veterano	老兵军刀
+Lâmina do Juramento	Blade of the Oath	Hoja del Juramento	誓约之刃
+Espada Rúnica	Runic Sword	Espada Rúnica	符文剑
+Espada do Alvorecer	Dawn Sword	Espada del Alba	黎明之剑
+Montante Real	Royal Greatsword	Mandoble Real	皇家巨剑
+Lâmina do Firmamento	Blade of the Firmament	Hoja del Firmamento	苍穹之刃
+Espada do Rei Eterno	Sword of the Eternal King	Espada del Rey Eterno	永恒之王之剑
+Arco do Caçador	Hunter's Bow	Arco del Cazador	猎人之弓
+Arco de Teixo	Yew Bow	Arco de Tejo	紫杉弓
+Arco do Batedor	Scout's Bow	Arco del Explorador	斥候之弓
+Arco do Vento Norte	North Wind Bow	Arco del Viento del Norte	北风之弓
+Arco de Prata Élfica	Elven Silver Bow	Arco de Plata Élfica	精灵银弓
+Arco Estrelado	Starry Bow	Arco Estrellado	星辰之弓
+Arco do Crepúsculo	Twilight Bow	Arco del Crepúsculo	暮光之弓
+Arco da Aurora Boreal	Northern Lights Bow	Arco de la Aurora Boreal	极光之弓
+Arco do Último Luar	Bow of the Last Moonlight	Arco del Último Claro de Luna	最后月光之弓
+Martelo de Pedra	Stone Hammer	Martillo de Piedra	石锤
+Martelo do Ferreiro	Blacksmith's Hammer	Martillo del Herrero	铁匠之锤
+Malho de Bronze	Bronze Maul	Mazo de Bronce	青铜大锤
+Martelo da Montanha	Mountain Hammer	Martillo de la Montaña	山岳之锤
+Martelo Rúnico de Guerra	Runic War Hammer	Martillo Rúnico de Guerra	符文战锤
+Malho do Trovão Profundo	Maul of the Deep Thunder	Mazo del Trueno Profundo	深雷大锤
+Martelo do Rei Anão	Dwarf King's Hammer	Martillo del Rey Enano	矮人王之锤
+Martelo Ancestral	Ancestral Hammer	Martillo Ancestral	先祖之锤
+Martelo do Coração da Terra	Hammer of the Earth's Heart	Martillo del Corazón de la Tierra	大地之心战锤
+Machado do Lenhador	Woodcutter's Axe	Hacha del Leñador	樵夫之斧
+Machado Tribal	Tribal Axe	Hacha Tribal	部落之斧
+Machado de Duas Lâminas	Double-Bladed Axe	Hacha de Dos Hojas	双刃斧
+Machado do Berserker	Berserker's Axe	Hacha del Berserker	狂战士之斧
+Machado Sanguinário	Bloodthirsty Axe	Hacha Sanguinaria	嗜血之斧
+Machado do Chefe Guerreiro	Warchief's Axe	Hacha del Jefe Guerrero	战酋之斧
+Machado da Fúria	Axe of Fury	Hacha de la Furia	狂怒之斧
+Machado Rachador de Crânios	Skullsplitter Axe	Hacha Rompecráneos	碎颅斧
+Machado do Titã	Titan's Axe	Hacha del Titán	泰坦之斧
+Machado do Fim dos Tempos	Axe of the End of Times	Hacha del Fin de los Tiempos	末日之斧
+Cajado do Aprendiz	Apprentice's Staff	Báculo del Aprendiz	学徒法杖
+Cajado de Cristal Azul	Blue Crystal Staff	Báculo de Cristal Azul	蓝水晶法杖
+Cajado do Iniciado	Initiate's Staff	Báculo del Iniciado	入门者法杖
+Cajado das Marés	Staff of the Tides	Báculo de las Mareas	潮汐法杖
+Cajado do Arcanista	Arcanist's Staff	Báculo del Arcanista	奥术师法杖
+Cajado da Lua Crescente	Crescent Moon Staff	Báculo de la Luna Creciente	新月法杖
+Cajado do Arquimago	Archmage's Staff	Báculo del Archimago	大法师法杖
+Cajado das Constelações	Staff of the Constellations	Báculo de las Constelaciones	星座法杖
+Cajado do Véu Etéreo	Ethereal Veil Staff	Báculo del Velo Etéreo	虚灵之幕法杖
+Cajado do Primeiro Arcano	Staff of the First Arcane	Báculo del Primer Arcano	初代奥术法杖
+Capuz de Lã	Wool Hood	Capucha de Lana	羊毛兜帽
+Capuz do Arqueiro	Archer's Hood	Capucha del Arquero	弓箭手兜帽
+Diadema Etéreo	Ethereal Diadem	Diadema Etérea	虚灵头冠
+Capuz das Sombras Celestes	Hood of Celestial Shadows	Capucha de las Sombras Celestes	天影兜帽
+Diadema da Noite Eterna	Diadem of the Eternal Night	Diadema de la Noche Eterna	永夜头冠
+Elmo de Bronze	Bronze Helm	Yelmo de Bronce	青铜头盔
+Elmo do Soldado	Soldier's Helm	Yelmo del Soldado	士兵头盔
+Elmo de Placas	Plate Helm	Yelmo de Placas	板甲头盔
+Elmo do Guardião	Guardian's Helm	Yelmo del Guardián	守护者头盔
+Elmo Rúnico	Runic Helm	Yelmo Rúnico	符文头盔
+Elmo do Colosso	Colossus Helm	Yelmo del Coloso	巨像头盔
+Elmo do Rei da Montanha	Mountain King's Helm	Yelmo del Rey de la Montaña	山岳之王头盔
+Túnica do Aprendiz	Apprentice's Tunic	Túnica del Aprendiz	学徒长袍
+Veste do Batedor	Scout's Garb	Vestimenta del Explorador	斥候外衣
+Manto do Arcanista	Arcanist's Mantle	Manto del Arcanista	奥术师斗篷
+Manto das Estrelas	Mantle of the Stars	Manto de las Estrellas	星辰斗篷
+Veste do Crepúsculo	Twilight Garb	Vestimenta del Crepúsculo	暮光外衣
+Manto do Véu Etéreo	Ethereal Veil Mantle	Manto del Velo Etéreo	虚灵之幕斗篷
+Cota de Bronze	Bronze Mail	Cota de Bronce	青铜锁甲
+Armadura de Placas	Plate Armor	Armadura de Placas	板甲
+Couraça do Guardião	Guardian's Cuirass	Coraza del Guardián	守护者胸甲
+Armadura Rúnica	Runic Armor	Armadura Rúnica	符文铠甲
+Armadura do Colosso	Colossus Armor	Armadura del Coloso	巨像铠甲
+Armadura do Rei da Montanha	Mountain King's Armor	Armadura del Rey de la Montaña	山岳之王铠甲
+Sapatilhas do Batedor	Scout's Slippers	Zapatillas del Explorador	斥候软鞋
+Botas do Andarilho	Wanderer's Boots	Botas del Caminante	漫游者之靴
+Botas da Brisa	Breeze Boots	Botas de la Brisa	微风之靴
+Botas Etéreas	Ethereal Boots	Botas Etéreas	虚灵之靴
+Botas do Passo Estelar	Starstep Boots	Botas del Paso Estelar	星步之靴
+Botas de Bronze	Bronze Boots	Botas de Bronce	青铜靴
+Grevas do Soldado	Soldier's Greaves	Grebas del Soldado	士兵护胫
+Grevas de Placas	Plate Greaves	Grebas de Placas	板甲护胫
+Grevas do Guardião	Guardian's Greaves	Grebas del Guardián	守护者护胫
+Grevas do Colosso	Colossus Greaves	Grebas del Coloso	巨像护胫
+Grevas do Rei da Montanha	Mountain King's Greaves	Grebas del Rey de la Montaña	山岳之王护胫
+Anel do Aprendiz	Apprentice's Ring	Anillo del Aprendiz	学徒戒指
+Pingente Arcano	Arcane Pendant	Colgante Arcano	奥术吊坠
+Orbe das Marés	Orb of the Tides	Orbe de las Mareas	潮汐宝珠
+Coração do Primeiro Arcano	Heart of the First Arcane	Corazón del Primer Arcano	初代奥术之心
+Anel da Agilidade	Ring of Agility	Anillo de la Agilidad	敏捷戒指
+Bracelete do Caçador	Hunter's Bracelet	Brazalete del Cazador	猎人手镯
+Anel do Vento Veloz	Swift Wind Ring	Anillo del Viento Veloz	疾风戒指
+Pena da Fênix Prateada	Silver Phoenix Feather	Pluma del Fénix Plateado	银凤凰之羽
+Bracelete de Couro	Leather Bracelet	Brazalete de Cuero	皮革手镯
+Anel do Guerreiro	Warrior's Ring	Anillo del Guerrero	战士戒指
+Insígnia do Campeão	Champion's Insignia	Insignia del Campeón	冠军徽章
+Medalhão do Titã	Titan's Medallion	Medallón del Titán	泰坦奖章
+Amuleto de Pedra	Stone Amulet	Amuleto de Piedra	石之护符
+Pingente do Guardião	Guardian's Pendant	Colgante del Guardián	守护者吊坠
+Amuleto da Montanha	Mountain Amulet	Amuleto de la Montaña	山岳护符
+Coração do Colosso	Heart of the Colossus	Corazón del Coloso	巨像之心

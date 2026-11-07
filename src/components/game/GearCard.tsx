@@ -103,6 +103,8 @@ export function GearInsight({ state, def, upgrade = 0, entry }: { state: PlayerS
       )}
       {v.same ? (
         <p className="text-white/40">{t("Equipado agora")}</p>
+      ) : entry && !entry.equipped && state.inventory.some((i) => i.equipped && i.itemId === entry.itemId && i.id !== entry.id) && v.deltas.length === 0 ? (
+        <p className="font-semibold text-sky-200">🔁 {t("Cópia do item equipado: está na bolsa e pode ser vendida.")}</p>
       ) : v.deltas.length > 0 ? (() => {
         const ups = v.deltas.filter((d) => d.to > d.from).length, downs = v.deltas.length - ups;
         const verdict = downs === 0 ? { k: "▲ Melhor que o equipado", c: "text-emerald-300" } : ups === 0 ? { k: "▼ Pior que o equipado", c: "text-red-300" } : { k: "⇅ Troca: ganha e perde", c: "text-amber-200" };
