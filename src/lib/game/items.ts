@@ -203,6 +203,12 @@ export const ITEMS: ItemDef[] = [
   // Acessórios de força
   { id: "bracelete_de_couro", name: "Bracelete de Couro", rarity: "rare", slot: "accessory", stats: { str: 2, atk: 2 }, image: TI("bracelete_de_couro"), buy: 740, minLevel: 7, sell: 250, affinity: ["gronar", "humano"] },
   { id: "anel_do_guerreiro", name: "Anel do Guerreiro", rarity: "rare", slot: "accessory", stats: { str: 4, atk: 3 }, image: TI("anel_do_guerreiro"), buy: 2620, minLevel: 15, sell: 870, affinity: ["gronar", "humano"] },
+  // Acessórios dos conjuntos de humano e gronar (artes no Canva).
+  { id: "brasao_de_valerion", name: "Brasão de Valerion", rarity: "rare", slot: "accessory", stats: { str: 3, atk: 2, dex: 1 }, image: TI("brasao_de_valerion"), buy: 1340, minLevel: 10, sell: 450, affinity: ["humano"] },
+  { id: "colar_de_presas", name: "Colar de Presas", rarity: "rare", slot: "accessory", stats: { str: 3, atk: 2, con: 1 }, image: TI("colar_de_presas"), buy: 1340, minLevel: 10, sell: 450, affinity: ["gronar"] },
+  { id: "selo_do_paladino", name: "Selo do Paladino", rarity: "epic", slot: "accessory", stats: { str: 6, atk: 4, def: 2 }, image: TI("selo_do_paladino"), minLevel: 26, sell: 1900, affinity: ["humano"] },
+  { id: "totem_de_guerra", name: "Totem de Guerra", rarity: "epic", slot: "accessory", stats: { str: 6, atk: 4, con: 3 }, image: TI("totem_de_guerra"), minLevel: 26, sell: 1900, affinity: ["gronar"] },
+  { id: "presa_do_tita", name: "Presa do Titã", rarity: "legendary", slot: "accessory", stats: { str: 9, atk: 7, con: 3 }, image: TI("presa_do_tita"), minLevel: 35, sell: 3600, affinity: ["gronar"] },
   { id: "insignia_do_campeao", name: "Insígnia do Campeão", rarity: "legendary", slot: "accessory", stats: { str: 8, atk: 6 }, image: TI("insignia_do_campeao"), minLevel: 30, sell: 3150, affinity: ["gronar", "humano"] },
   { id: "medalhao_do_tita", name: "Medalhão do Titã", rarity: "legendary", slot: "accessory", stats: { str: 10, atk: 7 }, image: TI("medalhao_do_tita"), minLevel: 38, sell: 4650, affinity: ["gronar", "humano"] },
   // Acessórios de guarda
