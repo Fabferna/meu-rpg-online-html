@@ -1,5 +1,5 @@
 // Simula quantos DIAS um jogador leva para chegar a cada nível (curva atual × proposta).
-// Jogador "dedicado": usa toda a energia do dia (regenera 1 a cada 3 min = 480/dia), faz as
+// Jogador "dedicado": usa toda a energia do dia (regenera 1 por minuto = 1440/dia), faz as
 // caçadas permitidas no melhor inimigo liberado, missões com a energia que sobrar e os
 // capítulos da história assim que o nível permite. Fim de semana = XP ×2.
 // Uso: npx tsx --conditions=react-server scripts/xp-sim.ts

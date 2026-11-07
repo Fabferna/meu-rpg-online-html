@@ -169,8 +169,8 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
           <p className="truncate text-xs text-gold">{state.guild && <span className="mr-1 hidden rounded bg-white/10 px-1 font-semibold sm:inline">[{state.guild.tag}]</span>}{t("Nv.")} {c.level}{c.title ? <span className="ml-1 hidden text-amber-200/80 sm:inline">« {t(c.title)} »</span> : null}</p>
         </div>
         <div className="ml-auto hidden w-56 space-y-1 sm:block">
-          <Bar value={c.hp} max={c.maxHp} color="bg-life" />
-          <Bar value={c.energy} max={c.maxEnergy} color="bg-energy" />
+          <div title={t("Vida")}><Bar value={c.hp} max={c.maxHp} color="bg-life" inside /></div>
+          <div title={`${t("Energia")} · ${energyHint}`}><Bar value={c.energy} max={c.maxEnergy} color="bg-energy" inside /></div>
         </div>
 
         {/* Celular: só o essencial; o resto fica no menu ☰. */}

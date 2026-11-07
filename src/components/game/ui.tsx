@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 
-export function Bar({ label, value, max, color, hint }: { label?: string; value: number; max: number; color: string; hint?: string }) {
+export function Bar({ label, value, max, color, hint, inside }: { label?: string; value: number; max: number; color: string; hint?: string; inside?: boolean }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
     <div>
@@ -11,8 +11,14 @@ export function Bar({ label, value, max, color, hint }: { label?: string; value:
           <span>{value}/{max}{hint ? ` · ${hint}` : ""}</span>
         </div>
       )}
-      <div className="h-2.5 overflow-hidden rounded-full bg-black/50">
+      <div className={`relative overflow-hidden rounded-full bg-black/50 ${inside ? "h-4" : "h-2.5"}`}>
         <motion.div className={`h-full ${color}`} initial={false} animate={{ width: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
+        {/* Número dentro da barra (cabeçalho): legível em qualquer cor de fundo. */}
+        {inside && (
+          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold leading-none text-white [text-shadow:0_1px_2px_rgba(0,0,0,.9)]">
+            {value}/{max}
+          </span>
+        )}
       </div>
     </div>
   );
