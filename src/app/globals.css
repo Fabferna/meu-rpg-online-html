@@ -13,6 +13,8 @@
   --color-arcane: #7b5cff;
   --color-life: #c9364b;
   --color-energy: #3fb8d8;
+  --color-mana: #5b6cff;
+  --color-stamina: #8fc93a;
 }
 
 :root { color-scheme: dark; }

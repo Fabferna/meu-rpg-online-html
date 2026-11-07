@@ -1,4 +1,5 @@
 import "server-only";
+import { RES, maxMana, maxStamina, skillCost, spCost } from "./resources";
 import { NO_TALENTS, type TalentMods } from "./talents";
 import { elementMult, type Element } from "./elements";
 import type { LootResult } from "./loot";
@@ -23,6 +24,11 @@ export type Combatant = {
   crit?: number;
   /** Elemento (elements.ts): +15% contra quem ele vence, −10% contra quem o vence. */
   element?: Element | null;
+  /** Mana e stamina máximas (só o herói; resources.ts). */
+  maxMp?: number;
+  maxSp?: number;
+  /** Nível do herói (custos de stamina escalam com ele). */
+  level?: number;
 };
 
 export type LogEntry = {
@@ -46,7 +52,8 @@ export type Effects = { pPoison?: number; pStun?: number; pStone?: number; ePois
 export type BattleState = {
   enemyId: string;
   enemy: { name: string; image: string; hp: number; maxHp: number; boss?: boolean };
-  player: { hp: number; maxHp: number };
+  /** mp/sp: mana e stamina na luta (resources.ts). Lutas antigas sem esses campos começam cheias. */
+  player: { hp: number; maxHp: number; mp?: number; maxMp?: number; sp?: number; maxSp?: number };
   turn: number;
   skillCooldown: number;
   racialCooldown?: number;
@@ -82,7 +89,13 @@ export function playerCombatant(
   tal: TalentMods = NO_TALENTS,
 ): Combatant {
   const h = heroStats(a, level, gear, race, pieces, tal);
-  return { name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit, element: element ?? null };
+  // Mana e stamina usam os atributos com bônus dos equipamentos.
+  let intel = a.intel, con = a.con, dex = a.dex;
+  for (const g of gear) { intel += g.intel ?? 0; con += g.con ?? 0; dex += g.dex ?? 0; }
+  return {
+    name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit, element: element ?? null,
+    maxMp: maxMana({ intel, wis: a.wis }, level), maxSp: maxStamina({ con, dex }, level), level,
+  };
 }
 
 export function enemyCombatant(e: Enemy, hp = e.maxHp): Combatant {
@@ -91,14 +104,14 @@ export function enemyCombatant(e: Enemy, hp = e.maxHp): Combatant {
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
-function strike(att: Combatant, def: Combatant, kind: "attack" | "skill", defending: boolean, mult = 1, sure = false) {
+function strike(att: Combatant, def: Combatant, kind: "attack" | "skill", defending: boolean, mult = 1, sure = false, defendMult = RES.defend) {
   const dodge = clamp(0.04 + (def.agility - att.agility) * 0.01 + (def.dodge ?? 0), 0.02, 0.3);
   if (kind === "attack" && !sure && chance(dodge)) return { dmg: 0, miss: true, crit: false };
   const crit = chance(clamp(0.05 + att.agility * 0.004 + (att.crit ?? 0), 0.05, 0.4));
   const base = (kind === "skill" ? roll(...att.magic) * 1.8 : roll(...att.atk)) * mult;
   const armor = kind === "skill" ? def.def * 0.3 : def.def * 0.6;
   let dmg = Math.max(1, Math.round((base - armor) * (crit ? 1.6 : 1) * elementMult(att.element, def.element)));
-  if (defending) dmg = Math.max(1, Math.round(dmg * 0.45));
+  if (defending) dmg = Math.max(1, Math.round(dmg * defendMult));
   return { dmg, miss: false, crit };
 }
 
@@ -116,12 +129,22 @@ export function resolveTurn(
   let defending = false;
   let potionUsed = false;
   const log = (l: Omit<LogEntry, "turn">) => s.log.push({ turn: s.turn, ...l });
+  // Mana e stamina (resources.ts): começam cheias; lutas antigas sem os campos também.
+  const P = s.player;
+  P.maxMp = p.maxMp ?? P.maxMp ?? 0; P.maxSp = p.maxSp ?? P.maxSp ?? 0;
+  P.mp = Math.min(P.maxMp, P.mp ?? P.maxMp); P.sp = Math.min(P.maxSp, P.sp ?? P.maxSp);
+  let defendMult = RES.defend;
+  const lv = p.level ?? 1;
+  const atkSp = spCost(RES.attackSp, lv), dodgeSp = spCost(RES.dodgeSp, lv), defSp = spCost(RES.defendSp, lv);
 
-  // Habilidade da barra (s0/s1/s2): precisa estar equipada e fora de recarga.
+  // Habilidade da barra (s0/s1/s2): precisa estar equipada, fora de recarga e com mana/stamina suficiente.
   let skillId: string | undefined;
   if (action === "s0" || action === "s1" || action === "s2") {
     skillId = loadout.eq[Number(action[1])];
-    if (!skillId || !SKILL_BY_ID[skillId] || (cds[skillId] ?? 0) > 0) action = "attack";
+    const sk = skillId ? SKILL_BY_ID[skillId] : undefined;
+    const cost = sk ? skillCost(sk) : null;
+    if (!sk || (cds[skillId!] ?? 0) > 0 || !cost || (P[cost.res] ?? 0) < cost.amount) { action = "attack"; skillId = undefined; }
+    else P[cost.res] = (P[cost.res] ?? 0) - cost.amount;
   }
   if (action === "potion" && !hasPotion) action = "defend";
 
@@ -130,7 +153,10 @@ export function resolveTurn(
     fx.pStun -= 1;
     log({ actor: "player", action: "stunned", target: "player" });
   } else if (action === "attack") {
-    const r = strike({ ...p, hp: s.player.hp }, e, "attack", false);
+    // Ataque básico gasta stamina; sem stamina sai "cansado" (menos dano).
+    const tired = P.sp < atkSp;
+    if (!tired) P.sp -= atkSp;
+    const r = strike({ ...p, hp: s.player.hp }, e, "attack", false, tired ? RES.tiredMult : 1);
     s.enemy.hp = Math.max(0, s.enemy.hp - r.dmg);
     log({ actor: "player", action, ...r });
   } else if (skillId) {
@@ -158,6 +184,9 @@ export function resolveTurn(
     log({ actor: "player", action: "skill", skillId, ...(pw.mult ? { dmg, crit, miss } : {}), ...(heal ? { heal } : {}), effect });
   } else if (action === "defend") {
     defending = true;
+    // Defender gasta um pouco de stamina (sem ela protege menos) e recupera mana.
+    if (P.sp >= defSp) P.sp -= defSp; else defendMult = RES.defendTired;
+    P.mp = Math.min(P.maxMp, P.mp + Math.round(P.maxMp * RES.defendMp));
     const heal = Math.round(s.player.maxHp * 0.05);
     s.player.hp = Math.min(s.player.maxHp, s.player.hp + heal);
     log({ actor: "player", action, heal });
@@ -182,7 +211,9 @@ export function resolveTurn(
       fx.eStun -= 1;
       log({ actor: "enemy", action: "stunned", target: "enemy" });
     } else {
-      const r = strike(e, { ...p, hp: s.player.hp }, "attack", defending);
+      // Esquivar gasta stamina: sem stamina o golpe do inimigo não pode ser esquivado.
+      const r = strike(e, { ...p, hp: s.player.hp }, "attack", defending, 1, P.sp < dodgeSp, defendMult);
+      if (r.miss) P.sp = Math.max(0, P.sp - dodgeSp);
       if (fx.pStone && !r.miss) r.dmg = Math.max(1, Math.round(r.dmg * 0.5));
       s.player.hp = Math.max(0, s.player.hp - r.dmg);
       let effect: LogEntry["effect"];
@@ -199,6 +230,10 @@ export function resolveTurn(
     fx.pPoison -= 1;
     log({ actor: "enemy", action: "poison", target: "player", dmg });
   }
+
+  // Recuperação de mana e stamina no fim do turno.
+  P.mp = Math.min(P.maxMp, P.mp + Math.round(P.maxMp * RES.regenMp));
+  P.sp = Math.min(P.maxSp, P.sp + Math.round(P.maxSp * RES.regenSp));
 
   if (fx.pStone) fx.pStone -= 1;
   for (const k of Object.keys(cds)) if (cds[k] > 0) cds[k] -= 1;

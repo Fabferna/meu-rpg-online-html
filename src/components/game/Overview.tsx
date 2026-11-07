@@ -16,10 +16,10 @@ import { SLOT_LABEL } from "./Inventory";
 
 const ATTRS = [
   { k: "str", label: "Força", hint: "Dano físico" },
-  { k: "dex", label: "Destreza", hint: "Esquiva, crítico, energia máx." },
-  { k: "con", label: "Constituição", hint: "Vida e defesa" },
-  { k: "intel", label: "Inteligência", hint: "Dano da habilidade" },
-  { k: "wis", label: "Sabedoria", hint: "(em breve)" },
+  { k: "dex", label: "Destreza", hint: "Esquiva, crítico, energia e stamina" },
+  { k: "con", label: "Constituição", hint: "Vida, defesa e stamina" },
+  { k: "intel", label: "Inteligência", hint: "Magia e mana" },
+  { k: "wis", label: "Sabedoria", hint: "Mana" },
   { k: "cha", label: "Carisma", hint: "(em breve)" },
 ] as const;
 type K = (typeof ATTRS)[number]["k"];
@@ -164,6 +164,8 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
   const rows: { icon: string; label: string; hint: string; value: string; bonus: number; talent: number; unit?: string }[] = [
     { icon: "❤️", label: "Vida máxima", hint: "Quanto dano você aguenta", value: String(s.hp.value), bonus: s.hp.bonus, talent: s.hp.talent },
     { icon: "⚡", label: "Energia máxima", hint: "Gasta em caçadas e missões", value: String(s.energy.value), bonus: 0, talent: 0 },
+    { icon: "💧", label: "Mana", hint: "Habilidades mágicas e de suporte (INT e SAB)", value: String(s.mana.value), bonus: s.mana.bonus, talent: 0 },
+    { icon: "💪", label: "Stamina", hint: "Ataque, esquiva, defesa e golpes físicos (CON e DES)", value: String(s.stamina.value), bonus: s.stamina.bonus, talent: 0 },
     { icon: "⚔️", label: "Ataque físico", hint: "Dano do ataque básico", value: `${s.atk.range[0]}–${s.atk.range[1]}`, bonus: s.atk.bonus, talent: s.atk.talent },
     { icon: "✨", label: "Poder mágico", hint: "Base das habilidades mágicas", value: `${s.magic.range[0]}–${s.magic.range[1]}`, bonus: s.magic.bonus, talent: s.magic.talent },
     { icon: "🛡️", label: "Defesa", hint: "Reduz o dano recebido", value: String(s.def.value), bonus: s.def.bonus, talent: s.def.talent },
