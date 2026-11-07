@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import { PVP_ENERGY_COST } from "@/lib/game/rules";
+import { DUEL_REFILL, PVP_ENERGY_COST } from "@/lib/game/rules";
 import { post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
@@ -55,6 +55,21 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
     }
   }
 
+  async function refill() {
+    if (!confirm(t("Gastar 💎 {g} para ganhar +{n} duelos hoje?", { g: DUEL_REFILL.gems, n: DUEL_REFILL.duels }))) return;
+    setBusy(true);
+    try {
+      await post("/api/pvp/refill");
+      play("coin");
+      ctx.toast(t("+{n} duelos liberados para hoje!", { n: DUEL_REFILL.duels }), "reward");
+      await ctx.refresh();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (fight) {
     const shown = fight.log.slice(0, step);
     const hpA = fight.me.maxHp - shown.filter((l) => l.side === "b").reduce((a, l) => a + (l.dmg ?? 0), 0);
@@ -79,11 +94,27 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
     );
   }
 
+  const { daily, wallet, character } = ctx.state;
+  const duelsOut = daily.duels >= daily.duelLimit;
+  const refillLeft = daily.duelRefills < DUEL_REFILL.perDay;
   return (
     <div>
       <p className="mb-4 text-sm text-white/60">
-        {t("Desafie heróis de nível próximo. Cada luta custa ⚡ {e}. Seu rating:", { e: PVP_ENERGY_COST })} <b className="text-gold">{ctx.state.character.pvpRating}</b>
+        {t("Desafie heróis de nível próximo. Cada luta custa ⚡ {e}. Seu rating:", { e: PVP_ENERGY_COST })} <b className="text-gold">{character.pvpRating}</b>
+        {" · "}<span className={duelsOut ? "text-amber-300" : ""}>{t("Duelos hoje: {a}/{b}", { a: daily.duels, b: daily.duelLimit })}</span>
       </p>
+      {duelsOut && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sky-500/10 px-4 py-3 text-sm ring-1 ring-sky-400/30">
+          <span className="flex-1">{refillLeft
+            ? t("Acabaram os duelos de hoje. Renove agora: +{n} duelos por 💎 {g} (1 vez por dia).", { n: DUEL_REFILL.duels, g: DUEL_REFILL.gems })
+            : t("Você já renovou os duelos hoje. Volte amanhã!")}</span>
+          {refillLeft && (
+            <button className="btn-gold min-h-11 px-4" disabled={busy || wallet.gems < DUEL_REFILL.gems} onClick={refill}>
+              {wallet.gems < DUEL_REFILL.gems ? t("Gemas insuficientes") : t("Renovar · 💎 {g}", { g: DUEL_REFILL.gems })}
+            </button>
+          )}
+        </div>
+      )}
       {!opps ? (
         <p className="text-white/50">{t("Procurando adversários…")}</p>
       ) : opps.length === 0 ? (
@@ -98,7 +129,7 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
                 <p className="truncate font-display">{o.name}{o.title && <span className="ml-1 text-xs text-amber-200/80">« {t(o.title)} »</span>}</p>
                 <p className="text-xs text-white/50">{t("Nv.")} {o.level} · {t(o.raceName)} · ⭐ {o.rating} · {t("{w}V/{l}D", { w: o.wins, l: o.losses })}</p>
               </div>
-              <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || ctx.state.character.energy < PVP_ENERGY_COST} onClick={() => challenge(o)}>{t("Desafiar")}</button>
+              <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || duelsOut || character.energy < PVP_ENERGY_COST} onClick={() => challenge(o)}>{t("Desafiar")}</button>
             </motion.div>
           ))}
         </div>

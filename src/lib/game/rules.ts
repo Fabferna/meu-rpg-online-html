@@ -69,7 +69,11 @@ export const DAILY_QUESTS = 30;
 /** Renovação de missões com gemas: +30 missões no dia, 1 compra por dia (migração 0023). */
 export const QUEST_REFILL = { quests: 30, gems: 150, perDay: 1 };
 export const questLimit = (refills: number) => DAILY_QUESTS + refills * QUEST_REFILL.quests;
-export const PVP_ENERGY_COST = 6;
+export const PVP_ENERGY_COST = 10;
+/** Teto diário (UTC) de duelos na Arena. Renovação com gemas: +15 duelos, 1 compra por dia (migração 0033). */
+export const DAILY_DUELS = 15;
+export const DUEL_REFILL = { duels: 15, gems: 150, perDay: 1 };
+export const duelLimit = (refills: number) => DAILY_DUELS + refills * DUEL_REFILL.duels;
 
 /** Resetar/excluir o herói: a 1ª vez de cada é grátis; depois custa ouro. */
 export const RESET_COST = 500;

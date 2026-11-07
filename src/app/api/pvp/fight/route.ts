@@ -3,6 +3,7 @@ import { xpRate } from "@/lib/game/rules";
 import { action, HttpError, rpc } from "@/lib/api";
 import { battleVitals, heroCombatant, loadPlayer } from "@/lib/game/player";
 import { PVP_ENERGY_COST } from "@/lib/game/rules";
+import { dailyCounts } from "@/lib/game/dailyLimits";
 import { rateLimit } from "@/lib/security/rateLimit";
 import { eloDelta, simulateDuel } from "@/lib/game/combat";
 
@@ -19,6 +20,10 @@ export const POST = action(
 
     // Máx. 3 ataques ao mesmo alvo por hora (anti "farm" de ranking).
     if (!(await rateLimit(`pvp-target:${user.id}:${opp.user_id}`, 3, 3600))) throw new HttpError(429, "target_cooldown");
+
+    // Limite diário de duelos (15 + renovação com gemas), conferido antes de gastar energia.
+    const daily = await dailyCounts(admin, user.id);
+    if (daily.duels >= daily.duelLimit) throw new HttpError(429, "daily_duels");
 
     await rpc(admin, "spend_energy", { p_user: user.id, p_amount: PVP_ENERGY_COST });
 
