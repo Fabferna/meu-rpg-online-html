@@ -39,7 +39,7 @@ export type RaceProfile = {
 
 export const RACE_PROFILE: Record<RaceId, RaceProfile> = {
   humano: { main: ["str", "dex"], prefers: ["espada"], build: "versatil", weight: "qualquer" },
-  elfo: { main: ["dex", "str"], prefers: ["arco", "espada"], scaleOverride: { espada: "dex" }, build: "agil", weight: "leve" },
+  elfo: { main: ["dex", "str"], prefers: ["arco"], build: "agil", weight: "leve" },
   anao: { main: ["str", "con"], prefers: ["martelo", "machado"], build: "resistente", weight: "pesada" },
   gronar: { main: ["str", "con"], prefers: ["machado"], build: "resistente", weight: "pesada" },
   aetheliano: { main: ["intel", "wis"], prefers: ["cajado", "tridente"], build: "arcano", weight: "leve" },

@@ -52,7 +52,7 @@ export const ITEMS: ItemDef[] = [
   { id: "cajado_eter", name: "Cajado do Éter", rarity: "epic", slot: "weapon", stats: { atk: 6, intel: 10 }, image: IT("cajado_eter"), minLevel: 22, sell: 1200, affinity: ["aetheliano"], weapon: "cajado" },
   { id: "machado_escarlate", name: "Machado Escarlate", rarity: "epic", slot: "weapon", stats: { atk: 17, str: 3 }, image: IT("machado_escarlate"), minLevel: 22, sell: 1200, affinity: ["gronar"], weapon: "machado" },
   { id: "lamina_aurora", name: "Lâmina da Aurora", rarity: "legendary", slot: "weapon", stats: { atk: 22, str: 3, dex: 3 }, image: IT("lamina_aurora"), minLevel: 28, sell: 2500, affinity: ["humano"], weapon: "espada" },
-  { id: "tridente_meria", name: "Tridente de Meria", rarity: "legendary", slot: "weapon", stats: { atk: 20, intel: 8 }, image: IT("tridente_meria"), minLevel: 30, sell: 2800, weapon: "tridente" },
+  { id: "tridente_meria", name: "Tridente de Meria", rarity: "legendary", slot: "weapon", stats: { atk: 20, intel: 8 }, image: IT("tridente_meria"), minLevel: 30, sell: 2800, affinity: ["aetheliano"], weapon: "tridente" },
   { id: "arco_tempestade", name: "Arco da Tempestade", rarity: "legendary", slot: "weapon", stats: { atk: 21, dex: 6 }, image: NW("arco_tempestade"), minLevel: 30, sell: 2800, affinity: ["elfo"], weapon: "arco" },
   { id: "martelo_trovao", name: "Martelo do Trovão Rúnico", rarity: "legendary", slot: "weapon", stats: { atk: 23, str: 4, con: 2 }, image: NW("martelo_trovao"), minLevel: 30, sell: 2800, affinity: ["anao"], weapon: "martelo" },
   { id: "machado_colosso", name: "Machado do Colosso", rarity: "legendary", slot: "weapon", stats: { atk: 25, str: 4 }, image: NW("machado_colosso"), minLevel: 32, sell: 3000, affinity: ["gronar"], weapon: "machado" },
