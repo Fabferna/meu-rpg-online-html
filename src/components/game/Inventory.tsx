@@ -142,7 +142,9 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                   {it.upgrade > 0 && <span className="absolute left-2 top-2 rounded bg-gold px-1.5 font-display text-xs font-black text-ink">+{it.upgrade}</span>}
                   <p className="mt-2 line-clamp-2 text-center text-sm leading-tight">{t(it.name)}</p>
                   <p className="text-center text-[11px] text-white/40">{t(RARITY_LABEL[it.rarity])}
-                    {it.equipped && <span className="ml-1 rounded bg-emerald-600/80 px-1.5 text-[10px] text-white">{t("Equipado")}</span>}</p>
+                    {it.equipped
+                      ? <span className="ml-1 rounded bg-emerald-600/80 px-1.5 text-[10px] text-white">{t("Equipado")}</span>
+                      : it.slot && <span className="ml-1 rounded bg-white/10 px-1.5 text-[10px] text-white/70">{t("Na bolsa")}</span>}</p>
                   <p className="mt-1 text-center text-[11px] text-emerald-300">{statText(t, itemStatsFor(def, upgradedStats(it.data as Record<string, number>, it.upgrade), race))}</p>
                   <ItemTags def={def} race={race} level={ctx.state.character.level} />
                   <SetTag itemId={it.itemId} state={ctx.state} />
