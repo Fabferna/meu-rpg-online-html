@@ -8,6 +8,7 @@ import { petBonus } from "@/lib/game/pets";
 import { setBonuses } from "@/lib/game/sets";
 import { talentMods } from "@/lib/game/talents";
 import { withBlessing } from "@/lib/game/encounters";
+import { maxMana, maxStamina } from "@/lib/game/resources";
 
 type Ch = PlayerState["character"];
 
@@ -93,10 +94,17 @@ export function combatSummary(state: PlayerState) {
   const crit = (h: typeof full) => pct(Math.min(0.4, Math.max(0.05, 0.05 + h.agility * 0.004 + h.crit)));
   const avg = (r: [number, number]) => Math.round((r[0] + r[1]) / 2);
   const hpGear = Math.round(ch.maxHp * gear.hpPct), hpAll = Math.round(ch.maxHp * full.hpPct);
+  // Mana e stamina de combate (resources.ts) com os atributos dos equipamentos.
+  const add = (k: "intel" | "con" | "dex") => extra.reduce((n, x) => n + ((x as Record<string, number>)[k] ?? 0), 0);
+  const a = ch.attributes;
+  const mpBare = maxMana(a, ch.level), spBare = maxStamina(a, ch.level);
+  const mp = maxMana({ intel: a.intel + add("intel"), wis: a.wis }, ch.level), sp = maxStamina({ con: a.con + add("con"), dex: a.dex + add("dex") }, ch.level);
   const d1 = (x: number) => Math.round(x * 10) / 10;
   return {
     hp: { value: ch.maxHp + hpAll, bonus: hpGear, talent: hpAll - hpGear },
     energy: { value: ch.maxEnergy, bonus: 0, talent: 0 },
+    mana: { value: mp, bonus: mp - mpBare, talent: 0 },
+    stamina: { value: sp, bonus: sp - spBare, talent: 0 },
     atk: { range: full.atk, value: avg(full.atk), bonus: avg(gear.atk) - avg(bare.atk), talent: avg(full.atk) - avg(gear.atk) },
     magic: { range: full.magic, value: avg(full.magic), bonus: avg(gear.magic) - avg(bare.magic), talent: avg(full.magic) - avg(gear.magic) },
     def: { value: full.def, bonus: gear.def - bare.def, talent: full.def - gear.def },

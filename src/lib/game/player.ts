@@ -98,5 +98,7 @@ export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
  */
 export function battleVitals(p: LoadedPlayer) {
   const bonus = Math.round(p.maxHp * heroStats(p.attributes, p.row.level, p.gear, p.row.race as RaceId, p.pieces, p.talents).hpPct);
-  return { hp: p.hp + bonus, maxHp: p.maxHp + bonus };
+  // Mana e stamina começam cheias em toda luta (resources.ts).
+  const c = heroCombatant(p, p.hp, p.maxHp);
+  return { hp: p.hp + bonus, maxHp: p.maxHp + bonus, mp: c.maxMp, maxMp: c.maxMp, sp: c.maxSp, maxSp: c.maxSp };
 }

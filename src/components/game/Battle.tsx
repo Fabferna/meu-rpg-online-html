@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { skillCost } from "@/lib/game/resources";
 import { ELEMENT_INFO, matchup, type Element } from "@/lib/game/elements";
 import Image from "next/image";
 import { AnimatePresence, motion, useAnimate } from "motion/react";
@@ -212,6 +213,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
         )}
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
           <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
+            mp={battle.player.mp} maxMp={battle.player.maxMp} sp={battle.player.sp} maxSp={battle.player.maxSp}
             badges={[fx.pPoison ? `☠️ ${t("Veneno")} ${fx.pPoison}` : "", fx.pStun ? `💫 ${t("Atordoado")}` : "", fx.pStone ? `🪨 ${t("Pele de Pedra")} ${fx.pStone}` : ""]} />
           <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={ENEMY_BY_ID[battle.enemyId]?.image ?? battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
             badges={[fx.ePoison ? `☠️ ${t("Veneno")} ${fx.ePoison}` : "", fx.eStun ? `💫 ${t("Atordoado")}` : ""]} />
@@ -226,13 +228,19 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
                 if (!sk) return null;
                 const cd = battle.cds?.[id] ?? 0;
                 const lv = lo.lv[id] ?? 1;
+                const cost = skillCost(sk);
+                const have = (cost.res === "mp" ? battle.player.mp ?? battle.player.maxMp : battle.player.sp ?? battle.player.maxSp) ?? 999;
+                const short = have < cost.amount;
                 return (
-                  <motion.button key={id} whileTap={{ scale: 0.94 }} onClick={() => act(`s${i}` as PlayerAction)} disabled={busy || cd > 0} title={t(sk.description)}
+                  <motion.button key={id} whileTap={{ scale: 0.94 }} onClick={() => act(`s${i}` as PlayerAction)} disabled={busy || cd > 0 || short} title={t(sk.description)}
                     className="flex min-h-11 min-w-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-arcane/80 to-fuchsia-700/70 px-2 py-1.5 text-left font-display text-xs transition hover:brightness-110 disabled:opacity-40 sm:gap-2 sm:px-3 sm:text-sm">
                     <Image src={sk.icon} alt="" width={28} height={28} className="shrink-0 rounded" />
                     <span className="min-w-0 leading-tight">
                       <span className="block truncate">{t(sk.name)}</span>
-                      <span className="block text-[10px] font-sans text-white/70">{cd > 0 ? t("Recarga ({n})", { n: cd }) : `${t("Nv.")} ${lv} · ⏳${skillPower(sk, lv).cooldown}`}</span>
+                      <span className="block text-[10px] font-sans text-white/70">
+                        {cd > 0 ? t("Recarga ({n})", { n: cd }) : `${t("Nv.")} ${lv} · ⏳${skillPower(sk, lv).cooldown}`}
+                        {" · "}<span className={short ? "text-red-300" : cost.res === "mp" ? "text-sky-300" : "text-lime-300"}>{cost.res === "mp" ? "💧" : "💪"}{cost.amount}</span>
+                      </span>
                     </span>
                   </motion.button>
                 );
@@ -437,7 +445,8 @@ function LootList({ loot, onBag }: { loot: LootResult[]; onBag: () => void }) {
   );
 }
 
-function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[]; badges?: string[] }) {
+function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[]; badges?: string[];
+  mp?: number; maxMp?: number; sp?: number; maxSp?: number }) {
   const t = useT();
   return (
     <div ref={props.refEl} className={`panel relative overflow-hidden p-2 sm:p-3 ${props.boss ? "ring-2 ring-ember/70" : ""}`}>
@@ -457,6 +466,9 @@ function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image:
       </div>
       <p className="mt-1.5 truncate font-display text-xs sm:mt-2 sm:text-sm">{props.name}</p>
       <Bar value={props.hp} max={props.max} color="bg-life" label={t("Vida")} />
+      {/* Herói: mana (habilidades mágicas/suporte) e stamina (ataque, esquiva, defesa, habilidades físicas). */}
+      {!!props.maxMp && <div className="mt-1"><Bar value={props.mp ?? props.maxMp} max={props.maxMp} color="bg-mana" label={t("Mana")} /></div>}
+      {!!props.maxSp && <div className="mt-1"><Bar value={props.sp ?? props.maxSp} max={props.maxSp} color="bg-stamina" label={t("Stamina")} /></div>}
     </div>
   );
 }
