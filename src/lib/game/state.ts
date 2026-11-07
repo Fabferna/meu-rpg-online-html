@@ -38,7 +38,7 @@ export type PlayerState = {
   guild: { id: string; name: string; tag: string; level: number; role: "leader" | "officer" | "member" } | null;
   /** Pet ativo (o bônus dele soma aos atributos e ao combate). */
   pet: { petId: string; level: number } | null;
-  daily: { hunts: number; quests: number; huntRefills: number; huntLimit: number; questRefills: number; questLimit: number };
+  daily: { hunts: number; quests: number; huntRefills: number; huntLimit: number; questRefills: number; questLimit: number; duels: number; duelRefills: number; duelLimit: number };
   serverTime: string;
 };
 

@@ -26,7 +26,7 @@ export function demoState(): PlayerState {
     ],
     guild: { id: "g1", name: "Ordem da Chama", tag: "ODC", level: 3, role: "leader" },
     pet: { petId: "lobo", level: 3 },
-    daily: { hunts: 12, quests: 3, huntRefills: 0, huntLimit: 30, questRefills: 0, questLimit: 30 },
+    daily: { hunts: 12, quests: 3, huntRefills: 0, huntLimit: 30, questRefills: 0, questLimit: 30, duels: 4, duelRefills: 0, duelLimit: 15 },
     serverTime: new Date().toISOString(),
   };
 }
