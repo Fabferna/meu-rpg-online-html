@@ -47,9 +47,9 @@ export const ITEMS: ItemDef[] = [
   { id: "cajado_carvalho", name: "Cajado de Carvalho Rúnico", rarity: "rare", slot: "weapon", stats: { atk: 4, intel: 7 }, image: NW("cajado_carvalho"), buy: 1600, minLevel: 12, sell: 520, affinity: ["aetheliano"], weapon: "cajado" },
   { id: "arco_longo", name: "Arco Longo de Teixo", rarity: "rare", slot: "weapon", stats: { atk: 11, dex: 3 }, image: NW("arco_longo"), buy: 2200, minLevel: 14, sell: 720, affinity: ["elfo"], weapon: "arco" },
   { id: "martelo_forja", name: "Martelo da Forja Ancestral", rarity: "epic", slot: "weapon", stats: { atk: 11, str: 2 }, image: A("icone_forja_ancestral"), buy: 1800, minLevel: 12, sell: 650, affinity: ["anao"], weapon: "martelo" },
-  { id: "arco_lunar", name: "Arco Lunar", rarity: "epic", slot: "weapon", stats: { atk: 13, dex: 4 }, image: IT("arco_lunar"), minLevel: 16, sell: 900, affinity: ["elfo"], weapon: "arco" },
+  { id: "arco_lunar", name: "Arco Lunar", rarity: "epic", slot: "weapon", stats: { atk: 13, dex: 4 }, image: IT("arco_lunar"), minLevel: 15, sell: 900, affinity: ["elfo"], weapon: "arco" },
   { id: "espada_capitao", name: "Espada do Capitão", rarity: "epic", slot: "weapon", stats: { atk: 15, str: 2, dex: 1 }, image: NW("espada_capitao"), buy: 3600, minLevel: 18, sell: 1100, affinity: ["humano"], weapon: "espada" },
-  { id: "cajado_eter", name: "Cajado do Éter", rarity: "epic", slot: "weapon", stats: { atk: 6, intel: 10 }, image: IT("cajado_eter"), minLevel: 22, sell: 1200, affinity: ["aetheliano"], weapon: "cajado" },
+  { id: "cajado_eter", name: "Cajado do Éter", rarity: "epic", slot: "weapon", stats: { atk: 6, intel: 10 }, image: IT("cajado_eter"), minLevel: 23, sell: 1200, affinity: ["aetheliano"], weapon: "cajado" },
   { id: "machado_escarlate", name: "Machado Escarlate", rarity: "epic", slot: "weapon", stats: { atk: 17, str: 3 }, image: IT("machado_escarlate"), minLevel: 22, sell: 1200, affinity: ["gronar"], weapon: "machado" },
   { id: "lamina_aurora", name: "Lâmina da Aurora", rarity: "legendary", slot: "weapon", stats: { atk: 22, str: 3, dex: 3 }, image: IT("lamina_aurora"), minLevel: 28, sell: 2500, affinity: ["humano"], weapon: "espada" },
   { id: "tridente_meria", name: "Tridente de Meria", rarity: "legendary", slot: "weapon", stats: { atk: 20, intel: 8 }, image: IT("tridente_meria"), minLevel: 30, sell: 2800, affinity: ["aetheliano"], weapon: "tridente" },
@@ -60,8 +60,8 @@ export const ITEMS: ItemDef[] = [
 
   // ── Elmos ──
   { id: "capuz_viajante", name: "Capuz do Viajante", rarity: "common", slot: "helmet", stats: { def: 1, dex: 1 }, image: IT("capuz_viajante"), buy: 80, minLevel: 1, sell: 25, weight: "leve" },
-  { id: "elmo_ferro", name: "Elmo de Ferro", rarity: "rare", slot: "helmet", stats: { def: 3, con: 1 }, image: IT("elmo_ferro"), buy: 500, minLevel: 7, sell: 170, affinity: ["anao", "humano"], weight: "pesada" },
-  { id: "tiara_lunar", name: "Tiara Lunar", rarity: "epic", slot: "helmet", stats: { def: 3, intel: 5 }, image: IT("tiara_lunar"), minLevel: 15, sell: 700, affinity: ["elfo", "aetheliano"], weight: "leve" },
+  { id: "elmo_ferro", name: "Elmo de Ferro", rarity: "rare", slot: "helmet", stats: { def: 3, con: 1 }, image: IT("elmo_ferro"), buy: 500, minLevel: 5, sell: 170, affinity: ["anao", "humano"], weight: "pesada" },
+  { id: "tiara_lunar", name: "Tiara Lunar", rarity: "epic", slot: "helmet", stats: { def: 3, intel: 5 }, image: IT("tiara_lunar"), minLevel: 14, sell: 700, affinity: ["elfo", "aetheliano"], weight: "leve" },
   { id: "capuz_sentinela", name: "Capuz da Sentinela", rarity: "rare", slot: "helmet", stats: { def: 3, dex: 2, intel: 1 }, image: NW("capuz_sentinela"), buy: 2400, minLevel: 20, sell: 800, affinity: ["elfo", "aetheliano"], weight: "leve" },
   { id: "coroa_vorlag", name: "Coroa de Vorlag", rarity: "legendary", slot: "helmet", stats: { def: 5, atk: 3, intel: 3 }, image: IT("coroa_vorlag"), minLevel: 24, sell: 2200, weight: "media" },
   { id: "elmo_estelar", name: "Elmo de Aço Estelar", rarity: "epic", slot: "helmet", stats: { def: 7, con: 3 }, image: NW("elmo_estelar"), minLevel: 28, sell: 1600, affinity: ["anao", "gronar"], weight: "pesada" },
@@ -69,28 +69,28 @@ export const ITEMS: ItemDef[] = [
   // ── Armaduras ──
   { id: "gibao_couro", name: "Gibão de Couro", rarity: "common", slot: "armor", stats: { def: 3 }, image: IT("gibao_couro"), buy: 100, minLevel: 1, sell: 30, weight: "leve" },
   { id: "cota_malha", name: "Cota de Malha", rarity: "rare", slot: "armor", stats: { def: 6, con: 1 }, image: IT("cota_malha"), buy: 650, minLevel: 6, sell: 220, affinity: ["humano", "gronar"], weight: "media" },
-  { id: "peitoral_anao", name: "Peitoral de Placas Anão", rarity: "epic", slot: "armor", stats: { def: 8, con: 2 }, image: A("peitoral_de_placas_anao"), buy: 1400, minLevel: 8, sell: 470, affinity: ["anao"], weight: "pesada" },
+  { id: "peitoral_anao", name: "Peitoral de Placas Anão", rarity: "epic", slot: "armor", stats: { def: 8, con: 2 }, image: A("peitoral_de_placas_anao"), buy: 1400, minLevel: 12, sell: 470, affinity: ["anao"], weight: "pesada" },
   { id: "manto_arcano", name: "Manto Arcano", rarity: "epic", slot: "armor", stats: { def: 6, intel: 5 }, image: IT("manto_arcano"), minLevel: 14, sell: 800, affinity: ["aetheliano", "elfo"], weight: "leve" },
   { id: "couraca_escamas", name: "Couraça de Escamas", rarity: "rare", slot: "armor", stats: { def: 10, con: 2 }, image: NW("couraca_escamas"), buy: 2800, minLevel: 18, sell: 900, affinity: ["humano", "gronar"], weight: "media" },
-  { id: "armadura_celeste", name: "Armadura Celeste", rarity: "legendary", slot: "armor", stats: { def: 16, con: 4 }, image: IT("armadura_celeste"), minLevel: 26, sell: 2600, weight: "pesada" },
-  { id: "veste_lunar", name: "Veste Lunar das Sombras", rarity: "legendary", slot: "armor", stats: { def: 11, dex: 5, intel: 4 }, image: NW("veste_lunar"), minLevel: 32, sell: 3000, affinity: ["elfo", "aetheliano"], weight: "leve" },
+  { id: "armadura_celeste", name: "Armadura Celeste", rarity: "legendary", slot: "armor", stats: { def: 16, con: 4 }, image: IT("armadura_celeste"), minLevel: 25, sell: 2600, weight: "pesada" },
+  { id: "veste_lunar", name: "Veste Lunar das Sombras", rarity: "legendary", slot: "armor", stats: { def: 11, dex: 5, intel: 4 }, image: NW("veste_lunar"), minLevel: 30, sell: 3000, affinity: ["elfo", "aetheliano"], weight: "leve" },
 
   // ── Botas ──
   { id: "botas_couro", name: "Botas de Couro", rarity: "common", slot: "boots", stats: { dex: 1, def: 1 }, image: IT("botas_couro"), buy: 80, minLevel: 1, sell: 25, weight: "leve" },
-  { id: "botas_patrulheiro", name: "Botas do Patrulheiro", rarity: "rare", slot: "boots", stats: { dex: 3, def: 1 }, image: IT("botas_patrulheiro"), buy: 520, minLevel: 6, sell: 180, affinity: ["elfo", "humano"], weight: "leve" },
-  { id: "botas_cavaleiro", name: "Botas de Cavaleiro", rarity: "rare", slot: "boots", stats: { def: 2, con: 1, str: 1 }, image: NW("botas_cavaleiro"), buy: 1200, minLevel: 10, sell: 400, affinity: ["humano", "gronar"], weight: "media" },
-  { id: "grevas_runicas", name: "Grevas Rúnicas", rarity: "epic", slot: "boots", stats: { def: 4, dex: 2 }, image: IT("grevas_runicas"), minLevel: 14, sell: 750, affinity: ["anao"], weight: "pesada" },
-  { id: "botas_vento", name: "Botas do Vento Celeste", rarity: "legendary", slot: "boots", stats: { dex: 7, def: 3 }, image: IT("botas_vento"), minLevel: 26, sell: 2400, weight: "leve" },
-  { id: "botas_guardiao", name: "Botas do Guardião", rarity: "epic", slot: "boots", stats: { def: 5, con: 2, dex: 2 }, image: NW("botas_guardiao"), minLevel: 28, sell: 1500, weight: "media" },
-  { id: "grevas_eter", name: "Grevas de Éter", rarity: "epic", slot: "boots", stats: { def: 7, con: 3 }, image: NW("grevas_eter"), minLevel: 32, sell: 1700, affinity: ["anao"], weight: "pesada" },
+  { id: "botas_patrulheiro", name: "Botas do Patrulheiro", rarity: "rare", slot: "boots", stats: { dex: 3, def: 1 }, image: IT("botas_patrulheiro"), buy: 520, minLevel: 5, sell: 180, affinity: ["elfo", "humano"], weight: "leve" },
+  { id: "botas_cavaleiro", name: "Botas de Cavaleiro", rarity: "rare", slot: "boots", stats: { def: 5, con: 2, str: 2 }, image: NW("botas_cavaleiro"), buy: 3530, minLevel: 18, sell: 1180, affinity: ["humano", "gronar"], weight: "media" },
+  { id: "grevas_runicas", name: "Grevas Rúnicas", rarity: "epic", slot: "boots", stats: { def: 4, dex: 2 }, image: IT("grevas_runicas"), minLevel: 12, sell: 750, affinity: ["anao"], weight: "pesada" },
+  { id: "botas_vento", name: "Botas do Vento Celeste", rarity: "legendary", slot: "boots", stats: { dex: 7, def: 3 }, image: IT("botas_vento"), minLevel: 25, sell: 2400, weight: "leve" },
+  { id: "botas_guardiao", name: "Botas do Guardião", rarity: "epic", slot: "boots", stats: { def: 7, con: 3, dex: 2 }, image: NW("botas_guardiao"), minLevel: 32, sell: 1500, weight: "media" },
+  { id: "grevas_eter", name: "Grevas de Éter", rarity: "epic", slot: "boots", stats: { def: 7, con: 3 }, image: NW("grevas_eter"), minLevel: 28, sell: 1700, affinity: ["anao"], weight: "pesada" },
 
   // ── Acessórios ──
   { id: "anel_vigor", name: "Anel do Vigor", rarity: "rare", slot: "accessory", stats: { con: 4, def: 1 }, image: IT("anel_vigor"), buy: 450, minLevel: 4, sell: 160 },
   { id: "estandarte_inspirador", name: "Estandarte Inspirador", rarity: "rare", slot: "accessory", stats: { atk: 2, con: 2 }, image: A("estandarte_inspirador"), buy: 600, minLevel: 5, sell: 220, affinity: ["humano", "gronar"] },
-  { id: "foco_arcano", name: "Foco de Canalização Arcana", rarity: "epic", slot: "accessory", stats: { intel: 6, def: 1 }, image: A("canalizacao_de_magia"), buy: 1800, minLevel: 12, sell: 650, affinity: ["aetheliano"] },
-  { id: "amuleto_serpente", name: "Amuleto da Serpente Sinistra", rarity: "legendary", slot: "accessory", stats: { atk: 4, def: 3, intel: 3 }, image: A("amuleto_da_serpente_sinistra"), buy: 5000, minLevel: 18, sell: 1500 },
-  { id: "anel_tempestade", name: "Anel da Tempestade", rarity: "rare", slot: "accessory", stats: { atk: 2, dex: 3 }, image: NW("anel_tempestade"), buy: 3000, minLevel: 22, sell: 1000, affinity: ["elfo", "humano"] },
-  { id: "talisma_estelar", name: "Talismã Estelar", rarity: "epic", slot: "accessory", stats: { intel: 6, con: 3, def: 2 }, image: NW("talisma_estelar"), minLevel: 30, sell: 1800, affinity: ["aetheliano"] },
+  { id: "foco_arcano", name: "Foco de Canalização Arcana", rarity: "epic", slot: "accessory", stats: { intel: 6, def: 1 }, image: A("canalizacao_de_magia"), buy: 1800, minLevel: 14, sell: 650, affinity: ["aetheliano"] },
+  { id: "amuleto_serpente", name: "Amuleto da Serpente Sinistra", rarity: "legendary", slot: "accessory", stats: { atk: 4, def: 4, intel: 9 }, image: A("amuleto_da_serpente_sinistra"), buy: 5000, minLevel: 30, sell: 1500 },
+  { id: "anel_tempestade", name: "Anel da Tempestade", rarity: "rare", slot: "accessory", stats: { atk: 2, dex: 3 }, image: NW("anel_tempestade"), buy: 3000, minLevel: 23, sell: 1000, affinity: ["elfo", "humano"] },
+  { id: "talisma_estelar", name: "Talismã Estelar", rarity: "epic", slot: "accessory", stats: { intel: 6, con: 3, def: 2 }, image: NW("talisma_estelar"), minLevel: 29, sell: 1800, affinity: ["aetheliano"] },
   { id: "olho_vazio", name: "Olho do Vazio", rarity: "legendary", slot: "accessory", stats: { atk: 6, def: 4, intel: 6, str: 2 }, image: IT("olho_vazio"), minLevel: 34, sell: 3500 },
 
   // ── Progressão completa por classe (níveis 5, 7, 10, 13, 15, 17, 20 … 38) ──
@@ -118,7 +118,7 @@ export const ITEMS: ItemDef[] = [
   { id: "arco_da_aurora_boreal", name: "Arco da Aurora Boreal", rarity: "legendary", slot: "weapon", stats: { atk: 28, dex: 6 }, image: TI("arco_da_aurora_boreal"), minLevel: 35, sell: 4060, affinity: ["elfo"], weapon: "arco" },
   { id: "arco_do_ultimo_luar", name: "Arco do Último Luar", rarity: "legendary", slot: "weapon", stats: { atk: 30, dex: 6 }, image: TI("arco_do_ultimo_luar"), minLevel: 38, sell: 4650, affinity: ["elfo"], weapon: "arco" },
   // Martelos
-  { id: "martelo_de_pedra", name: "Martelo de Pedra", rarity: "rare", slot: "weapon", stats: { atk: 9, str: 2 }, image: TI("martelo_de_pedra"), buy: 1340, minLevel: 10, sell: 450, affinity: ["anao"], weapon: "martelo" },
+  { id: "martelo_de_pedra", name: "Martelo de Pedra", rarity: "rare", slot: "weapon", stats: { atk: 9, str: 2 }, image: TI("martelo_de_pedra"), buy: 1340, minLevel: 7, sell: 450, affinity: ["anao"], weapon: "martelo" },
   { id: "martelo_do_ferreiro", name: "Martelo do Ferreiro", rarity: "rare", slot: "weapon", stats: { atk: 12, str: 3 }, image: TI("martelo_do_ferreiro"), buy: 2620, minLevel: 15, sell: 870, affinity: ["anao"], weapon: "martelo" },
   { id: "malho_de_bronze", name: "Malho de Bronze", rarity: "rare", slot: "weapon", stats: { atk: 14, str: 3 }, image: TI("malho_de_bronze"), buy: 3220, minLevel: 17, sell: 1070, affinity: ["anao"], weapon: "martelo" },
   { id: "martelo_da_montanha", name: "Martelo da Montanha", rarity: "epic", slot: "weapon", stats: { atk: 17, str: 4, con: 1 }, image: TI("martelo_da_montanha"), minLevel: 20, sell: 1510, affinity: ["anao"], weapon: "martelo" },
@@ -179,7 +179,7 @@ export const ITEMS: ItemDef[] = [
   { id: "armadura_do_rei_da_montanha", name: "Armadura do Rei da Montanha", rarity: "legendary", slot: "armor", stats: { def: 22, con: 6 }, image: TI("armadura_do_rei_da_montanha"), minLevel: 35, sell: 4060, affinity: ["anao", "gronar"], weight: "pesada" },
   // Botas leves
   { id: "sapatilhas_do_batedor", name: "Sapatilhas do Batedor", rarity: "rare", slot: "boots", stats: { def: 2, dex: 1 }, image: TI("sapatilhas_do_batedor"), buy: 1340, minLevel: 10, sell: 450, affinity: ["elfo", "aetheliano"], weight: "leve" },
-  { id: "botas_do_andarilho", name: "Botas do Andarilho", rarity: "rare", slot: "boots", stats: { def: 3, dex: 1 }, image: TI("botas_do_andarilho"), buy: 2620, minLevel: 15, sell: 870, affinity: ["elfo", "aetheliano"], weight: "leve" },
+  { id: "botas_do_andarilho", name: "Botas do Andarilho", rarity: "rare", slot: "boots", stats: { def: 3, dex: 1 }, image: TI("botas_do_andarilho"), buy: 2620, minLevel: 14, sell: 870, affinity: ["elfo", "aetheliano"], weight: "leve" },
   { id: "botas_da_brisa", name: "Botas da Brisa", rarity: "epic", slot: "boots", stats: { def: 4, dex: 2 }, image: TI("botas_da_brisa"), minLevel: 20, sell: 1510, affinity: ["elfo", "aetheliano"], weight: "leve" },
   { id: "botas_etereas", name: "Botas Etéreas", rarity: "legendary", slot: "boots", stats: { def: 6, dex: 2 }, image: TI("botas_etereas"), minLevel: 30, sell: 3150, affinity: ["elfo", "aetheliano"], weight: "leve" },
   { id: "botas_do_passo_estelar", name: "Botas do Passo Estelar", rarity: "legendary", slot: "boots", stats: { def: 7, dex: 3 }, image: TI("botas_do_passo_estelar"), minLevel: 35, sell: 4060, affinity: ["elfo", "aetheliano"], weight: "leve" },
@@ -198,10 +198,10 @@ export const ITEMS: ItemDef[] = [
   // Acessórios ágeis
   { id: "anel_da_agilidade", name: "Anel da Agilidade", rarity: "rare", slot: "accessory", stats: { dex: 3, atk: 1 }, image: TI("anel_da_agilidade"), buy: 740, minLevel: 7, sell: 250, affinity: ["elfo"] },
   { id: "bracelete_do_cacador", name: "Bracelete do Caçador", rarity: "rare", slot: "accessory", stats: { dex: 4, atk: 2 }, image: TI("bracelete_do_cacador"), buy: 2620, minLevel: 15, sell: 870, affinity: ["elfo"] },
-  { id: "anel_do_vento_veloz", name: "Anel do Vento Veloz", rarity: "legendary", slot: "accessory", stats: { dex: 9, atk: 3 }, image: TI("anel_do_vento_veloz"), minLevel: 30, sell: 3150, affinity: ["elfo"] },
+  { id: "anel_do_vento_veloz", name: "Anel do Vento Veloz", rarity: "legendary", slot: "accessory", stats: { dex: 9, atk: 3 }, image: TI("anel_do_vento_veloz"), minLevel: 32, sell: 3150, affinity: ["elfo"] },
   { id: "pena_da_fenix_prateada", name: "Pena da Fênix Prateada", rarity: "legendary", slot: "accessory", stats: { dex: 11, atk: 4 }, image: TI("pena_da_fenix_prateada"), minLevel: 38, sell: 4650, affinity: ["elfo"] },
   // Acessórios de força
-  { id: "bracelete_de_couro", name: "Bracelete de Couro", rarity: "rare", slot: "accessory", stats: { str: 2, atk: 2 }, image: TI("bracelete_de_couro"), buy: 740, minLevel: 7, sell: 250, affinity: ["gronar", "humano"] },
+  { id: "bracelete_de_couro", name: "Bracelete de Couro", rarity: "rare", slot: "accessory", stats: { str: 2, atk: 2 }, image: TI("bracelete_de_couro"), buy: 740, minLevel: 5, sell: 250, affinity: ["gronar", "humano"] },
   { id: "anel_do_guerreiro", name: "Anel do Guerreiro", rarity: "rare", slot: "accessory", stats: { str: 4, atk: 3 }, image: TI("anel_do_guerreiro"), buy: 2620, minLevel: 15, sell: 870, affinity: ["gronar", "humano"] },
   // Acessórios dos conjuntos de humano e gronar (artes no Canva).
   { id: "brasao_de_valerion", name: "Brasão de Valerion", rarity: "rare", slot: "accessory", stats: { str: 3, atk: 2, dex: 1 }, image: TI("brasao_de_valerion"), buy: 1340, minLevel: 10, sell: 450, affinity: ["humano"] },
@@ -220,7 +220,12 @@ export const ITEMS: ItemDef[] = [
   { id: "runa_coracao_ferro", name: "Runa do Coração de Ferro", rarity: "legendary", slot: "accessory", stats: { con: 9, def: 4, str: 2 }, image: TI("runa_coracao_ferro"), minLevel: 20, sell: 2600, affinity: ["anao"] },
   { id: "presa_leviata", name: "Presa do Leviatã", rarity: "legendary", slot: "accessory", stats: { str: 7, atk: 5, con: 2 }, image: TI("presa_leviata"), minLevel: 20, sell: 2600, affinity: ["gronar"] },
   { id: "olho_firmamento", name: "Olho do Firmamento", rarity: "legendary", slot: "accessory", stats: { intel: 11, def: 2, con: 2 }, image: TI("olho_firmamento"), minLevel: 20, sell: 2600, affinity: ["aetheliano"] },
-  { id: "insignia_do_campeao", name: "Insígnia do Campeão", rarity: "legendary", slot: "accessory", stats: { str: 8, atk: 6 }, image: TI("insignia_do_campeao"), minLevel: 30, sell: 3150, affinity: ["gronar", "humano"] },
+  // Peças que completam conjuntos com todos os itens no mesmo nível (artes no Canva).
+  { id: "capuz_do_patrulheiro", name: "Capuz do Patrulheiro", rarity: "rare", slot: "helmet", stats: { def: 3, dex: 2 }, image: TI("capuz_do_patrulheiro"), buy: 2330, minLevel: 14, sell: 780, affinity: ["elfo"], weight: "leve" },
+  { id: "pingente_do_arcanista", name: "Pingente do Arcanista", rarity: "rare", slot: "accessory", stats: { intel: 7, def: 1 }, image: TI("pingente_do_arcanista"), buy: 3210, minLevel: 17, sell: 1070, affinity: ["aetheliano"] },
+  { id: "cota_escarlate", name: "Cota Escarlate", rarity: "epic", slot: "armor", stats: { def: 11, con: 3, str: 1 }, image: TI("cota_escarlate"), minLevel: 22, sell: 1500, affinity: ["humano", "gronar"], weight: "media" },
+  { id: "estandarte_escarlate", name: "Estandarte Escarlate", rarity: "epic", slot: "accessory", stats: { atk: 4, str: 4, con: 2 }, image: TI("estandarte_escarlate"), minLevel: 22, sell: 1500, affinity: ["humano", "gronar"] },
+  { id: "insignia_do_campeao", name: "Insígnia do Campeão", rarity: "legendary", slot: "accessory", stats: { str: 8, atk: 6 }, image: TI("insignia_do_campeao"), minLevel: 32, sell: 3150, affinity: ["gronar", "humano"] },
   { id: "medalhao_do_tita", name: "Medalhão do Titã", rarity: "legendary", slot: "accessory", stats: { str: 10, atk: 7 }, image: TI("medalhao_do_tita"), minLevel: 38, sell: 4650, affinity: ["gronar", "humano"] },
   // Acessórios de guarda
   { id: "amuleto_de_pedra", name: "Amuleto de Pedra", rarity: "rare", slot: "accessory", stats: { con: 4, def: 2 }, image: TI("amuleto_de_pedra"), buy: 740, minLevel: 7, sell: 250, affinity: ["anao"] },
