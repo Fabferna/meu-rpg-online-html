@@ -65,6 +65,7 @@ export function sourceText(t: TFn, s: ItemSource) {
     case "quest": return `📜 ${t(s.name)}${pct}`;
     case "story": return `📖 ${t("Capítulo {n}", { n: s.chapter })}: ${t(s.name)}`;
     case "deal": return `🏷️ ${t("Oferta do dia na Loja")}`;
+    case "worldboss": return `🌋 ${t("Chefe do Mundo (21h)")}${pct}`;
   }
 }
 

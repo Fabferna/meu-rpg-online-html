@@ -91,7 +91,16 @@ async function main() {
   const sh = await makeHero({ race: "elfo", level: 3, chapter: 0 });
   await fresh(sh.userId);
   ok((await call(storyBattle, sh.userId, { chapter: 2 })).status >= 400, "história: não pula capítulo");
-  ok((await call(storyBattle, sh.userId, { chapter: 1 })).status === 200, "história: capítulo 1 começou");
+  ok((await call(storyBattle, sh.userId, { chapter: 1 })).status === 409, "história: chefe bloqueado antes dos trechos");
+  ok((await call(storyBattle, sh.userId, { chapter: 1, step: 2 })).status >= 400, "história: não pula trecho");
+  for (const step of [1, 2]) {
+    ok((await call(storyBattle, sh.userId, { chapter: 1, step })).status === 200, `história: trecho ${step} começou`);
+    const tr = await fight(sh.userId);
+    ok(tr.json.outcome === "won" && (await ch(sh.userId)).story_chapter === 0, `história: trecho ${step} vencido (capítulo ainda não concluído)`);
+    await fresh(sh.userId);
+  }
+  ok((await call(storyBattle, sh.userId, { chapter: 1, step: 1 })).status >= 400, "história: trecho já vencido não repete");
+  ok((await call(storyBattle, sh.userId, { chapter: 1 })).status === 200, "história: chefe do capítulo 1 começou");
   const rs = await fight(sh.userId);
   ok(rs.json.outcome === "won" && (await ch(sh.userId)).story_chapter === 1, "história: venceu e o capítulo 1 ficou concluído");
 

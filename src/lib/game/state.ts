@@ -1,5 +1,6 @@
 import "server-only";
 import { dailyCounts } from "./dailyLimits";
+import { trailDone } from "./story";
 import { normalizeLoadout, type SkillLoadout } from "./skills";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data";
@@ -30,6 +31,8 @@ export type PlayerState = {
     pvpRating: number; pvpWins: number; pvpLosses: number; pveWins: number;
     frame: string | null; title: string | null; skin: string | null; loadout: SkillLoadout; xpBoostUntil: string | null;
     storyChapter: number;
+    /** Trechos já vencidos no próximo capítulo (0, 1 ou 2). */
+    storyTrail: number;
   };
   wallet: { gold: number; gems: number };
   quest: { id: string; questId: string; startedAt: string; endsAt: string; rewards: { xp: number; gold: number; item: string | null } } | null;
@@ -44,7 +47,7 @@ export type PlayerState = {
 
 /** Estado completo do jogador, lido com o cliente do usuário (RLS). */
 export async function getPlayerState(supabase: SupabaseClient, userId: string): Promise<PlayerState | null> {
-  const [c, w, q, b, inv, gm, daily, pet] = await Promise.all([
+  const [c, w, q, b, inv, gm, daily, pet, st] = await Promise.all([
     supabase.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     supabase.from("wallets").select("gold, gems").eq("user_id", userId).maybeSingle(),
     supabase.from("quest_runs").select("*").eq("user_id", userId).eq("status", "running").maybeSingle(),
@@ -53,6 +56,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
     supabase.from("guild_members").select("role, guilds(id, name, tag, level)").eq("user_id", userId).maybeSingle(),
     dailyCounts(supabase, userId),
     supabase.from("owned_pets").select("pet_id, level").eq("user_id", userId).eq("active", true).maybeSingle(),
+    supabase.from("user_counters").select("value").eq("user_id", userId).eq("key", "story_trail").eq("day", "2000-01-01").maybeSingle(),
   ]);
   for (const r of [c, w, q, b, inv]) if (r.error) throw r.error;
   const row = c.data;
@@ -71,6 +75,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       pvpRating: row.pvp_rating, pvpWins: row.pvp_wins, pvpLosses: row.pvp_losses, pveWins: row.pve_wins,
       frame: row.equipped_frame, title: row.equipped_title ? COSMETIC_BY_ID[row.equipped_title]?.name ?? null : null,
       loadout: normalizeLoadout(race, row.skills, row.level), skin: row.equipped_skin, xpBoostUntil: row.xp_boost_until, storyChapter: row.story_chapter ?? 0,
+      storyTrail: trailDone((row.story_chapter ?? 0) + 1, Number((st.data as { value?: number } | null)?.value ?? 0)),
     },
     wallet: { gold: Number(w.data?.gold ?? 0), gems: Number(w.data?.gems ?? 0) },
     quest: q.data

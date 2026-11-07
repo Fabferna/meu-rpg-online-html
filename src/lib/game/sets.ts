@@ -104,6 +104,12 @@ export const GEAR_SETS: GearSet[] = [
     bonus: { 2: { intel: 10, def: 6, con: 3 } } },
   { id: "meria", name: "Serpente de Meria", pieces: ["tridente_meria", "amuleto_serpente"],
     bonus: { 2: { intel: 8, def: 5, con: 2 } } },
+  // ── Relíquias do Chefe do Mundo (arma + acessório da mesma raça) ──
+  { id: "relic_eclipse", name: "Relíquias do Eclipse", pieces: ["lamina_eclipse_solar", "selo_rei_dourado"], bonus: { 2: { str: 6, atk: 5, dex: 3 } } },
+  { id: "relic_cometa", name: "Relíquias do Cometa", pieces: ["arco_cometa_errante", "lagrima_lua_prateada"], bonus: { 2: { dex: 7, atk: 5, def: 2 } } },
+  { id: "relic_nucleo", name: "Relíquias do Núcleo", pieces: ["martelo_nucleo_ardente", "runa_coracao_ferro"], bonus: { 2: { con: 6, def: 4, str: 4 } } },
+  { id: "relic_devorador", name: "Relíquias do Devorador", pieces: ["machado_devorador_mundos", "presa_leviata"], bonus: { 2: { str: 6, atk: 5, con: 3 } } },
+  { id: "relic_abismo", name: "Relíquias do Abismo", pieces: ["cajado_abismo_estelar", "olho_firmamento"], bonus: { 2: { intel: 7, def: 2, con: 3 } } },
 ];
 
 export const SET_BY_ID = Object.fromEntries(GEAR_SETS.map((s) => [s.id, s]));

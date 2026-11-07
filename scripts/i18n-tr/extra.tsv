@@ -566,3 +566,105 @@ Gastar 💎 {g} para ganhar +{n} duelos hoje?	Spend 💎 {g} to get +{n} duels t
 Duelos hoje: {a}/{b}	Duels today: {a}/{b}	Duelos hoy: {a}/{b}	今日决斗：{a}/{b}
 Acabaram os duelos de hoje. Renove agora: +{n} duelos por 💎 {g} (1 vez por dia).	You're out of duels today. Renew now: +{n} duels for 💎 {g} (once per day).	Se acabaron los duelos de hoy. Renueva ahora: +{n} duelos por 💎 {g} (1 vez al día).	今天的决斗次数已用完。立即续购：💎 {g} 获得 +{n} 次决斗（每天 1 次）。
 Você já renovou os duelos hoje. Volte amanhã!	You already renewed duels today. Come back tomorrow!	Ya renovaste los duelos hoy. ¡Vuelve mañana!	你今天已经续购过决斗了。明天再来吧！
+Trecho {n}	Stage {n}	Tramo {n}	第 {n} 段
+Enfrentar	Fight	Enfrentar	迎战
+Chefe do capítulo	Chapter boss	Jefe del capítulo	章节首领
+Vença os trechos antes	Win the stages first	Vence los tramos antes	先赢下前面的关卡
+Vença os trechos do capítulo antes de enfrentar o chefe.	Win the chapter's stages before facing the boss.	Vence los tramos del capítulo antes de enfrentar al jefe.	先赢下本章的关卡，再挑战首领。
+Vigia Sombrio	Shadow Watcher	Vigía Sombrío	暗影哨兵
+Sombra do Portão	Gate Shadow	Sombra de la Puerta	城门之影
+Lobo Raivoso	Rabid Wolf	Lobo Rabioso	狂暴之狼
+Sentinela da Matilha	Pack Sentinel	Centinela de la Manada	狼群哨兵
+Acólito da Floresta	Forest Acolyte	Acólito del Bosque	森林侍僧
+Vulto das Ruínas	Ruins Wraith	Espectro de las Ruinas	遗迹魅影
+Javali Corrompido do Carvalho	Corrupted Oak Boar	Jabalí Corrupto del Roble	腐化橡树野猪
+Eco do Selo	Echo of the Seal	Eco del Sello	封印回响
+Escorpião das Dunas	Dune Scorpion	Escorpión de las Dunas	沙丘蝎
+Saqueador do Culto	Cult Raider	Saqueador del Culto	邪教掠夺者
+Acólito do Ritual	Ritual Acolyte	Acólito del Ritual	仪式侍僧
+Guarda do Mestre	Master's Guard	Guardia del Maestro	大师护卫
+Golem de Gelo Menor	Lesser Ice Golem	Gólem de Hielo Menor	小型冰霜魔像
+Lobo da Nevasca	Blizzard Wolf	Lobo de la Ventisca	暴雪之狼
+Cultista das Agulhas	Spires Cultist	Cultista de las Agujas	尖峰邪教徒
+Espreitador do Abismo	Abyss Lurker	Acechador del Abismo	深渊潜伏者
+Guarda do Trono	Throne Guard	Guardia del Trono	王座守卫
+Serpe de Meria	Meria Wyrm	Sierpe de Meria	梅里亚飞蛇
+Cria de Meria	Spawn of Meria	Cría de Meria	梅里亚之子
+Eco de Vorlag	Echo of Vorlag	Eco de Vorlag	沃拉格回响
+Harpia Jovem	Young Harpy	Arpía Joven	幼年鹰身女妖
+Batedora das Harpias	Harpy Scout	Exploradora de las Arpías	鹰身女妖斥候
+Sentinela da Ponte	Bridge Sentinel	Centinela del Puente	桥梁哨兵
+Harpia da Tempestade Furiosa	Raging Storm Harpy	Arpía de la Tormenta Furiosa	狂暴风暴鹰身女妖
+Draconato Celeste	Celestial Drakeling	Dracónido Celeste	天穹幼龙
+Guardião do Ninho	Nest Guardian	Guardián del Nido	巢穴守护者
+Espectro da Fenda	Rift Specter	Espectro de la Grieta	裂隙幽魂
+Devorador Menor	Lesser Devourer	Devorador Menor	小型吞噬者
+Arauto de Nyx	Herald of Nyx	Heraldo de Nyx	尼克斯使者
+Devorador de Estrelas Faminto	Starving Star Devourer	Devorador de Estrellas Hambriento	饥饿的噬星者
+Antes do batedor, há vigias. Limpe o caminho até o portão leste, {heroi}.	Before the scout, there are watchers. Clear the way to the east gate, {heroi}.	Antes del explorador hay vigías. Despeja el camino hasta la puerta este, {heroi}.	斥候之前还有哨兵。{heroi}，清出通往东门的道路。
+Uma sombra maior bloqueia o portão. Ela sibila o seu nome.	A larger shadow blocks the gate. It hisses your name.	Una sombra mayor bloquea la puerta. Sisea tu nombre.	一道更大的影子挡住了城门，嘶嘶地念着你的名字。
+Os lobos da estrada atacam qualquer um. Abra caminho até a toca do alfa.	The road wolves attack anyone. Fight your way to the alpha's den.	Los lobos del camino atacan a cualquiera. Ábrete paso hasta la guarida del alfa.	路上的狼见人就咬。杀出一条通往头狼巢穴的路。
+Um lobo de olhos vermelhos uiva, chamando o alfa.	A red-eyed wolf howls, calling the alpha.	Un lobo de ojos rojos aúlla, llamando al alfa.	一只红眼狼嚎叫着呼唤头狼。
+Acólitos vigiam a trilha das ruínas. Não deixe nenhum avisar o sacerdote.	Acolytes watch the ruins trail. Don't let any of them warn the priest.	Los acólitos vigilan el sendero de las ruinas. No dejes que ninguno avise al sacerdote.	侍僧们守着遗迹小径。别让任何人去通报祭司。
+Das pedras azuis, um vulto se ergue para proteger o ritual.	From the blue stones, a wraith rises to protect the ritual.	De las piedras azules se alza un espectro para proteger el ritual.	蓝色石块中升起一道魅影，守护着仪式。
+Os animais do bosque sagrado foram corrompidos. Liberte-os do feitiço.	The sacred grove's animals were corrupted. Free them from the spell.	Los animales del bosque sagrado fueron corrompidos. Libéralos del hechizo.	圣林中的动物被腐化了。把它们从咒语中解放出来。
+O selo rachado solta ecos sombrios que tomam forma.	The cracked seal releases dark echoes that take shape.	El sello agrietado libera ecos oscuros que toman forma.	裂开的封印释放出化为实体的黑暗回响。
+Escorpiões cercam a cidade soterrada. São os filhotes da Rainha.	Scorpions surround the buried city. They are the Queen's brood.	Escorpiones rodean la ciudad enterrada. Son las crías de la Reina.	蝎子包围了被掩埋的城市。它们是女王的后代。
+Um saqueador do culto tenta roubar o mapa da cidade soterrada.	A cult raider tries to steal the map of the buried city.	Un saqueador del culto intenta robar el mapa de la ciudad enterrada.	一名邪教掠夺者想偷走地下城市的地图。
+Os acólitos alimentam o ritual com a própria vida. Interrompa os círculos!	The acolytes feed the ritual with their own lives. Break the circles!	Los acólitos alimentan el ritual con su propia vida. ¡Rompe los círculos!	侍僧们用生命为仪式献祭。打破法阵！
+O braço direito do Mestre dos Rituais ergue sua lâmina curva.	The Ritual Master's right hand raises his curved blade.	La mano derecha del Maestro de los Rituales alza su hoja curva.	仪式大师的左膀右臂举起了弯刀。
+Nas Agulhas, pedaços do Colosso ganham vida própria.	In the Spires, pieces of the Colossus come to life.	En las Agujas, pedazos del Coloso cobran vida propia.	在尖峰山脉，巨像的碎片获得了生命。
+Lobos brancos caçam na nevasca. Não pare de andar, {heroi}.	White wolves hunt in the blizzard. Keep moving, {heroi}.	Lobos blancos cazan en la ventisca. No dejes de caminar, {heroi}.	白狼在暴风雪中狩猎。{heroi}，别停下脚步。
+O culto abriu um portal no topo da montanha. Os guardas vêm primeiro.	The cult opened a portal on the mountaintop. The guards come first.	El culto abrió un portal en la cima de la montaña. Primero vienen los guardias.	邪教在山顶打开了传送门。守卫们先冲了上来。
+Do portal escorre algo que não é deste mundo.	Something not of this world seeps from the portal.	Del portal brota algo que no es de este mundo.	传送门里渗出了不属于这个世界的东西。
+Meus guardas nunca dormem, peão. Venha descobrir por quê.	My guards never sleep, pawn. Come find out why.	Mis guardias nunca duermen, peón. Ven a descubrir por qué.	我的守卫从不睡觉，小卒。来看看为什么吧。
+As serpes vigiam o caminho até o trono de Vorlag. Cuidado com o veneno.	Wyrms guard the path to Vorlag's throne. Beware the poison.	Las sierpes vigilan el camino al trono de Vorlag. Cuidado con el veneno.	飞蛇守着通往沃拉格王座的道路。小心毒液。
+As crias da Serpente Primordial emergem do mar negro.	The Primordial Serpent's spawn rise from the black sea.	Las crías de la Serpiente Primordial emergen del mar negro.	太古巨蛇的子嗣从黑海中浮现。
+Um eco de Vorlag ainda protege o santuário de Meria.	An echo of Vorlag still guards Meria's sanctuary.	Un eco de Vorlag aún protege el santuario de Meria.	沃拉格的回响仍守护着梅里亚的圣所。
+O céu se partiu e harpias desceram das ilhas. Elas atacam em bando.	The sky split and harpies descended from the islands. They attack in flocks.	El cielo se partió y las arpías bajaron de las islas. Atacan en bandada.	天空裂开，鹰身女妖从浮岛俯冲而下，成群攻击。
+Uma harpia de penas douradas grita, chamando a rainha.	A golden-feathered harpy screams, calling the queen.	Una arpía de plumas doradas grita, llamando a la reina.	一只金羽鹰身女妖尖叫着呼唤女王。
+As pontes de cristal são guardadas por sentinelas antigas.	The crystal bridges are guarded by ancient sentinels.	Los puentes de cristal están custodiados por centinelas antiguos.	水晶桥由远古哨兵把守。
+Raios cercam a última ponte antes das ilhas altas.	Lightning surrounds the last bridge before the high islands.	Los rayos rodean el último puente antes de las islas altas.	闪电环绕着通往高空浮岛的最后一座桥。
+Os filhos de Aurion protegem o ninho. Prove que é digno.	Aurion's children protect the nest. Prove you are worthy.	Los hijos de Aurion protegen el nido. Demuestra que eres digno.	奥里昂的子嗣守护着巢穴。证明你配得上。
+Uma sentinela de éter desperta ao lado do ovo dourado.	An ether sentinel awakens beside the golden egg.	Un centinela de éter despierta junto al huevo dorado.	一名以太哨兵在金蛋旁苏醒。
+Na Fenda do Vazio, até a luz tem medo. Fique perto de mim.	In the Void Rift, even light is afraid. Stay close to me.	En la Grieta del Vacío, hasta la luz tiene miedo. Quédate cerca de mí.	在虚空裂隙，连光都会害怕。靠近我。
+Algo devora as estrelas do céu, uma por uma.	Something devours the stars in the sky, one by one.	Algo devora las estrellas del cielo, una por una.	有什么东西正一颗接一颗地吞噬天上的星星。
+(a voz de Vorlag, agora fraca) Nyx me usou também... Os arautos dela guardam o Olho.	(Vorlag's voice, now weak) Nyx used me too... Her heralds guard the Eye.	(la voz de Vorlag, ahora débil) Nyx también me usó... Sus heraldos guardan el Ojo.	（沃拉格的声音已经虚弱）尼克斯也利用了我……她的使者守护着那只眼。
+Diante do Olho Vazio, a última criatura abre a boca infinita.	Before the Empty Eye, the last creature opens its endless maw.	Ante el Ojo Vacío, la última criatura abre su boca infinita.	在空洞之眼前，最后的怪物张开了无尽的巨口。
+Chefe do Mundo (21h)	World Boss (9 PM)	Jefe del Mundo (21h)	世界首领（21点）
+🌋 O CHEFE DO MUNDO CAIU! Resgate sua recompensa.	🌋 THE WORLD BOSS HAS FALLEN! Claim your reward.	🌋 ¡EL JEFE DEL MUNDO CAYÓ! Reclama tu recompensa.	🌋 世界首领倒下了！领取你的奖励。
+✨ ITEM EXCLUSIVO! {x} · +{g} 🪙{e}	✨ EXCLUSIVE ITEM! {x} · +{g} 🪙{e}	✨ ¡OBJETO EXCLUSIVO! {x} · +{g} 🪙{e}	✨ 专属物品！{x} · +{g} 🪙{e}
+🌋 CHEFE DO MUNDO · TODO DIA ÀS 21H	🌋 WORLD BOSS · EVERY DAY AT 9 PM	🌋 JEFE DEL MUNDO · TODOS LOS DÍAS A LAS 21H	🌋 世界首领 · 每天 21 点
+AO VIVO · termina em {tempo}	LIVE · ends in {tempo}	EN VIVO · termina en {tempo}	进行中 · {tempo} 后结束
+Próximo em {tempo}	Next in {tempo}	Próximo en {tempo}	下次：{tempo} 后
+Errou	Miss	Falló	未命中
+Vida do chefe (todos os jogadores juntos) · {n} participantes	Boss health (all players together) · {n} participants	Vida del jefe (todos los jugadores juntos) · {n} participantes	首领生命（全体玩家共享）· {n} 名参与者
+Resgatar recompensa	Claim reward	Reclamar recompensa	领取奖励
+⚔️ Atacar ({a}/{b})	⚔️ Attack ({a}/{b})	⚔️ Atacar ({a}/{b})	⚔️ 攻击（{a}/{b}）
+✔ Recompensa resgatada. Volte às 21h!	✔ Reward claimed. Come back at 9 PM!	✔ Recompensa reclamada. ¡Vuelve a las 21h!	✔ 奖励已领取。21 点再来！
+O chefe aparece todo dia às 21h (horário de Brasília) e fica 1 hora.	The boss appears every day at 9 PM (Brasília time) and stays for 1 hour.	El jefe aparece todos los días a las 21h (hora de Brasilia) y se queda 1 hora.	首领每天 21 点（巴西利亚时间）出现，持续 1 小时。
+Seu dano: {n} · {p}º lugar	Your damage: {n} · #{p}	Tu daño: {n} · {p}º lugar	你的伤害：{n} · 第 {p} 名
+Cada ataque são {r} golpes com seus atributos e equipamentos (até {a} ataques por evento). Se o chefe cair, quem causou dano ganha 🪙 {g} + 💎 5 (mais 💎 no top 10) e tem chance de um item EXCLUSIVO da sua raça: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).	Each attack is {r} strikes using your attributes and gear (up to {a} attacks per event). If the boss falls, everyone who dealt damage gets 🪙 {g} + 💎 5 (more 💎 in the top 10) and a chance at an EXCLUSIVE item for their race: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).	Cada ataque son {r} golpes con tus atributos y equipo (hasta {a} ataques por evento). Si el jefe cae, quien hizo daño gana 🪙 {g} + 💎 5 (más 💎 en el top 10) y tiene probabilidad de un objeto EXCLUSIVO de su raza: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).	每次攻击会用你的属性和装备打出 {r} 击（每场最多 {a} 次）。首领被击败后，造成伤害的玩家获得 🪙 {g} + 💎 5（前 10 名更多 💎），并有机会获得本种族专属物品：{c}%（第 1 名：{t1}%，前 3：{t3}%，前 10：{t10}%）。
+Maior dano de hoje	Top damage today	Mayor daño de hoy	今日伤害排行
+O Chefe do Mundo só aparece às 21h (horário de Brasília), por 1 hora.	The World Boss only appears at 9 PM (Brasília time), for 1 hour.	El Jefe del Mundo solo aparece a las 21h (hora de Brasilia), durante 1 hora.	世界首领只在 21 点（巴西利亚时间）出现，持续 1 小时。
+Behemoth Rubro	Crimson Behemoth	Behemoth Carmesí	赤红巨兽
+Leviatã das Marés Negras	Leviathan of the Black Tides	Leviatán de las Mareas Negras	黑潮利维坦
+Arauto do Eclipse	Herald of the Eclipse	Heraldo del Eclipse	日蚀使者
+Uma fera colossal de carapaça rachada por lava. Cada passo seu abre fendas de fogo pelo reino.	A colossal beast with a lava-cracked hide. Every step opens rifts of fire across the realm.	Una bestia colosal de caparazón agrietado por la lava. Cada paso abre grietas de fuego por el reino.	一头甲壳布满熔岩裂纹的巨兽，每一步都在王国中撕开火焰裂隙。
+A serpente que dormia sob o Mar Âmbar acordou faminta. Suas ondas engolem vilas inteiras.	The serpent sleeping beneath the Amber Sea woke up hungry. Its waves swallow whole villages.	La serpiente que dormía bajo el Mar Ámbar despertó hambrienta. Sus olas tragan aldeas enteras.	沉睡于琥珀海下的巨蛇饥饿地醒来，它的浪潮吞没整座村庄。
+Quando o sol escurece às 21h, ele desce das estrelas para apagar a última luz de Aethelgard.	When the sun darkens at 9 PM, it descends from the stars to snuff out Aethelgard's last light.	Cuando el sol se oscurece a las 21h, desciende de las estrellas para apagar la última luz de Aethelgard.	每当 21 点太阳变暗，它便从星辰降临，要熄灭艾瑟加德最后的光芒。
+Lâmina do Eclipse Solar	Solar Eclipse Blade	Hoja del Eclipse Solar	日蚀之刃
+Arco do Cometa Errante	Wandering Comet Bow	Arco del Cometa Errante	流浪彗星之弓
+Martelo do Núcleo Ardente	Burning Core Hammer	Martillo del Núcleo Ardiente	炽热核心战锤
+Machado do Devorador de Mundos	World Devourer Axe	Hacha del Devorador de Mundos	噬界者战斧
+Cajado do Abismo Estelar	Stellar Abyss Staff	Báculo del Abismo Estelar	星渊法杖
+Selo do Rei Dourado	Golden King's Seal	Sello del Rey Dorado	黄金王印戒
+Lágrima da Lua Prateada	Silver Moon Tear	Lágrima de la Luna Plateada	银月之泪
+Runa do Coração de Ferro	Iron Heart Rune	Runa del Corazón de Hierro	铁心符文
+Presa do Leviatã	Leviathan's Fang	Colmillo del Leviatán	利维坦之牙
+Olho do Firmamento	Eye of the Firmament	Ojo del Firmamento	苍穹之眼
+Relíquias do Eclipse	Eclipse Relics	Reliquias del Eclipse	日蚀遗物
+Relíquias do Cometa	Comet Relics	Reliquias del Cometa	彗星遗物
+Relíquias do Núcleo	Core Relics	Reliquias del Núcleo	核心遗物
+Relíquias do Devorador	Devourer Relics	Reliquias del Devorador	噬界者遗物
+Relíquias do Abismo	Abyss Relics	Reliquias del Abismo	深渊遗物

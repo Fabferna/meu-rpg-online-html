@@ -13,7 +13,7 @@ async function main() {
   let fights = 0, wins = 0, stunnedTurns = 0;
   for (let i = 0; i < Number(process.env.N ?? 40); i++) {
     const h = await makeHero({
-      race: "elfo", level: 36, chapter: 10, potions: 5,
+      race: "elfo", level: 36, chapter: 10, potions: 5, trail: 2,
       gear: process.env.NOGEAR ? [] : ["arco_lunar", "tiara_lunar", "manto_arcano", "botas_patrulheiro", "anel_vigor"],
       skills: { lv: { e_flecha: 5, e_passo: 5, e_chuva: 5, e_vinculo: 5, e_comunhao: 3 }, eq: ["e_flecha", "e_chuva", "e_vinculo"] },
     });

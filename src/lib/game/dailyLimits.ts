@@ -9,7 +9,7 @@ export async function dailyCounts(db: SupabaseClient, userId: string) {
   const since = startOfUtcDay();
   const [h, q, r, rq, d, rd] = await Promise.all([
     db.from("battles").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("kind", "pve")
-      .gte("created_at", since).is("state->story", null).is("state->dungeon", null),
+      .gte("created_at", since).is("state->story", null).is("state->dungeon", null).is("state->storyTrail", null),
     db.from("quest_runs").select("id", { count: "exact", head: true }).eq("user_id", userId).gte("started_at", since),
     db.from("user_counters").select("value").eq("user_id", userId).eq("key", "hunt_refill").eq("day", since.slice(0, 10)).maybeSingle(),
     db.from("user_counters").select("value").eq("user_id", userId).eq("key", "quest_refill").eq("day", since.slice(0, 10)).maybeSingle(),

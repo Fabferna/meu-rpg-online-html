@@ -8,7 +8,7 @@ export type Hero = { userId: string; race: RaceId; level: number };
 /** Cria conta + herói no nível pedido, com pontos distribuídos como um jogador "típico" da raça. */
 export async function makeHero(opts: {
   race: RaceId; level: number; chapter?: number; gear?: string[]; skills?: { lv: Record<string, number>; eq: string[] };
-  potions?: number; gold?: number; name?: string;
+  potions?: number; gold?: number; name?: string; trail?: number;
 }): Promise<Hero> {
   const { rows } = await pool.query("insert into auth.users (email) values ($1) returning id", [`t${Date.now()}${Math.random()}@x.dev`]);
   const userId = rows[0].id as string;
@@ -25,6 +25,9 @@ export async function makeHero(opts: {
   );
   await pool.query("update public.characters set level=$2, story_chapter=$3, hp=$4, hp_updated_at=now(), skills=$5 where user_id=$1",
     [userId, opts.level, opts.chapter ?? 0, hp, JSON.stringify(opts.skills ?? {})]);
+  // Trechos da história já vencidos no próximo capítulo (para testar direto o chefe).
+  if (opts.trail) await pool.query("insert into public.user_counters (user_id, key, day, value) values ($1, 'story_trail', date '2000-01-01', $2)",
+    [userId, ((opts.chapter ?? 0) + 1) * 10 + opts.trail]);
   if (opts.gold) await pool.query("update public.wallets set gold=$2 where user_id=$1", [userId, opts.gold]);
   for (const it of opts.gear ?? []) {
     await pool.query("select public.give_item($1,$2,1)", [userId, it]);

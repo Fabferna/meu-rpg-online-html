@@ -57,7 +57,7 @@ async function main() {
       let wins = 0;
       for (let i = 0; i < N; i++) {
         const sk = skillSet(race, level);
-        const h = await makeHero({ race, level, chapter, gear: shopGear(race, level), skills: sk, potions: 3 });
+        const h = await makeHero({ race, level, chapter, gear: shopGear(race, level), skills: sk, potions: 3, trail: 2 });
         const s = await begin(h.userId);
         if (s.status !== 200) { errs.push(`${label} ${race}: início ${s.status} ${s.json.error}`); continue; }
         const r = await fight(h.userId, sk.eq);
