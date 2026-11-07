@@ -4,8 +4,8 @@ import { RACES, type Attributes, type RaceId } from "./data";
 
 export const STARTING_GOLD = 50;
 
-/** 1 ponto de energia a cada N segundos. */
-export const ENERGY_REGEN_SECONDS = 180;
+/** 1 ponto de energia a cada N segundos. Espelho de spend_energy/refill_energy no SQL (migração 0031). */
+export const ENERGY_REGEN_SECONDS = 60;
 
 /**
  * XP para ir do nível `level` ao seguinte. Espelho EXATO de public.f_xp_next (migração 0020).
@@ -59,7 +59,7 @@ export const ATTRIBUTE_POINTS_PER_LEVEL = 3;
  */
 export const XP_RATE = 0.75;
 export const xpRate = (xp: number) => Math.round(xp * XP_RATE);
-export const PVE_ENERGY_COST = 4;
+export const PVE_ENERGY_COST = 3;
 /** Teto diário (UTC) além da energia: evita maratonas e mantém o ranking justo. */
 export const DAILY_HUNTS = 30;
 /** Renovação de caçadas com gemas: +30 caçadas no dia, 1 compra por dia (migração 0022). */
@@ -69,7 +69,7 @@ export const DAILY_QUESTS = 30;
 /** Renovação de missões com gemas: +30 missões no dia, 1 compra por dia (migração 0023). */
 export const QUEST_REFILL = { quests: 30, gems: 150, perDay: 1 };
 export const questLimit = (refills: number) => DAILY_QUESTS + refills * QUEST_REFILL.quests;
-export const PVP_ENERGY_COST = 8;
+export const PVP_ENERGY_COST = 6;
 
 /** Resetar/excluir o herói: a 1ª vez de cada é grátis; depois custa ouro. */
 export const RESET_COST = 500;

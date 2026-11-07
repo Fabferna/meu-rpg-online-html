@@ -703,6 +703,7 @@
 "Missões": "任务",
 "Missões hoje: {a}/{b}": "今日任务：{a}/{b}",
 "Missões, caçadas e duelos gastam energia. Ela volta sozinha: 1 ponto a cada 3 minutos, mesmo com o jogo fechado.": "任务、狩猎和决斗会消耗体力。体力会自动恢复：每 3 分钟 1 点，即使关闭游戏也一样。",
+"Missões, caçadas e duelos gastam energia. Ela volta sozinha: 1 ponto por minuto, mesmo com o jogo fechado.": "任务、狩猎和决斗会消耗能量。能量会自动恢复：每分钟 1 点，即使关闭游戏也一样。",
 "Modo demonstração": "演示模式",
 "Modo demonstração: crie uma conta para jogar de verdade!": "演示模式：创建账号开始正式游戏！",
 "Moldura": "头像框",

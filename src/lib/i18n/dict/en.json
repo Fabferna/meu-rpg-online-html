@@ -703,6 +703,7 @@
 "Missões": "Quests",
 "Missões hoje: {a}/{b}": "Quests today: {a}/{b}",
 "Missões, caçadas e duelos gastam energia. Ela volta sozinha: 1 ponto a cada 3 minutos, mesmo com o jogo fechado.": "Quests, hunts and duels cost energy. It refills on its own: 1 point every 3 minutes, even with the game closed.",
+"Missões, caçadas e duelos gastam energia. Ela volta sozinha: 1 ponto por minuto, mesmo com o jogo fechado.": "Quests, hunts and duels cost energy. It refills on its own: 1 point per minute, even with the game closed.",
 "Modo demonstração": "Demo mode",
 "Modo demonstração: crie uma conta para jogar de verdade!": "Demo mode: create an account to play for real!",
 "Moldura": "Frame",
