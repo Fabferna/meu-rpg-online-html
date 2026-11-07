@@ -74,3 +74,17 @@ body {
   button, [role="button"] { min-width: 44px; }
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]) { min-height: 44px; }
 }
+
+/* Reflexo de luz que passa devagar pelas barras (vida, energia, mana, stamina, XP). */
+@keyframes bar-shine {
+  0% { transform: translateX(-120%); }
+  60%, 100% { transform: translateX(220%); }
+}
+.bar-shine {
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.22) 45%, rgba(255, 255, 255, 0.05) 60%, transparent 100%);
+  width: 45%;
+  animation: bar-shine 3.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-shine { animation: none; display: none; }
+}
