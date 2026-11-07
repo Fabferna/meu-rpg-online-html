@@ -17,15 +17,15 @@ export const POST = action("dungeon-enter", z.object({ dungeonId: z.string().max
   if (p.hp < Math.ceil(p.maxHp * 0.5)) throw new HttpError(409, "hp_too_low");
 
   const { data: pass } = await admin.from("season_passes").select("season").eq("user_id", user.id).eq("season", seasonOf().id).maybeSingle();
-  await rpc(admin, "enter_dungeon", { p_user: user.id, p_dungeon: d.id, p_daily_limit: DUNGEON_DAILY + (pass ? PASS_DUNGEON_BONUS : 0), p_energy: d.energy });
-
   const first = ENEMY_BY_ID[d.stages[0]];
   const state: BattleState = {
     enemyId: first.id, enemy: { name: first.name, image: first.image, hp: first.maxHp, maxHp: first.maxHp, boss: first.boss },
     player: battleVitals(p), turn: 0, skillCooldown: 0, log: [],
     dungeon: { id: d.id, name: d.name, stage: 0, total: d.stages.length },
   };
-  const { error } = await admin.from("battles").insert({ user_id: user.id, kind: "pve", state });
-  if (error) throw new HttpError(409, "in_battle");
+  // Energia + entrada do dia + criação da luta numa transação só (migração 0028).
+  await rpc(admin, "enter_dungeon_battle", {
+    p_user: user.id, p_dungeon: d.id, p_daily_limit: DUNGEON_DAILY + (pass ? PASS_DUNGEON_BONUS : 0), p_energy: d.energy, p_state: state,
+  });
   return { ok: true };
 });

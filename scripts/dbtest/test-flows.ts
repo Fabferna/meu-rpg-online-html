@@ -78,6 +78,15 @@ async function main() {
   await fresh(dh.userId);
   ok((await call(dungeonEnter, dh.userId, { dungeonId: d0.id })).json.error === "daily_limit", "masmorra: 2ª entrada no dia recusada");
 
+  // Dois pedidos de entrada ao mesmo tempo: só um entra, a energia e a entrada do dia são gastas uma vez.
+  const race = await makeHero({ race: "humano", level: d0.minLevel + 2, chapter: 3 });
+  await q("update characters set energy=100, energy_updated_at=now(), hp=99999, hp_updated_at=now() where user_id=$1", [race.userId]);
+  const rr = await Promise.all([call(dungeonEnter, race.userId, { dungeonId: d0.id }), call(dungeonEnter, race.userId, { dungeonId: d0.id })]);
+  const en = (await ch(race.userId)).energy;
+  const maxEn = (await loadPlayer(fakeAdmin() as never, race.userId))!.maxEnergy; // energia guardada acima do máximo conta como o máximo
+  const act = Number((await one("select count(*) n from battles where user_id=$1 and status='active'", [race.userId])).n);
+  ok(rr.filter((r) => r.status === 200).length === 1 && act === 1 && en === Math.min(100, maxEn) - d0.energy, `masmorra: dois cliques juntos → 1 luta, energia gasta uma vez (${Math.min(100, maxEn)} → ${en})`);
+
   // ── História ──
   const sh = await makeHero({ race: "elfo", level: 3, chapter: 0 });
   await fresh(sh.userId);
