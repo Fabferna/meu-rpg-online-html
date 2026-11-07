@@ -85,7 +85,7 @@ export function installDemoFetch() {
           { pos: 4, name: "Mirelle", damage: 2650, me: false }, { pos: 5, name: "Aldric", damage: 2210, me: false }, { pos: 6, name: "Kaelen", damage: 1840, me: true }] });
     }
     if (url === "/api/guild-boss") return json({ guild: true, attacksLeft: 2, previous: null, current: {
-      week: "", boss: { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao.webp", lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
+      week: "", boss: { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao-v2.webp", lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
       hp: 9420, maxHp: 20000, defeated: false, myDamage: 3120, claimed: false, isTop: true,
       ranking: [{ pos: 1, name: "Kaelen", damage: 3120, attacks: 4, me: true }, { pos: 2, name: "Lyra", damage: 2980, attacks: 4, me: false },
         { pos: 3, name: "Thorin", damage: 2650, attacks: 3, me: false }, { pos: 4, name: "Mirelle", damage: 1830, attacks: 2, me: false }] } });

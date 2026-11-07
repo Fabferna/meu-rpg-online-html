@@ -1,8 +1,8 @@
 // Chefe de guilda: um por semana (rotação), vida compartilhada pelos membros.
 export const GUILD_BOSSES = [
-  { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao.webp", def: 30, agility: 12, lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
-  { id: "tita_gelo", name: "Titã de Gelo", image: "/assets/raids/tita_gelo.webp", def: 40, agility: 6, lore: "O guardião das Agulhas Congeladas marcha sobre as vilas do vale." },
-  { id: "kraken", name: "Kraken Abissal", image: "/assets/raids/kraken.webp", def: 24, agility: 18, lore: "Das profundezas de Meria, afunda tudo que navega no Mar Âmbar." },
+  { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao-v2.webp", def: 30, agility: 12, lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
+  { id: "tita_gelo", name: "Titã de Gelo", image: "/assets/raids/tita_gelo-v2.webp", def: 40, agility: 6, lore: "O guardião das Agulhas Congeladas marcha sobre as vilas do vale." },
+  { id: "kraken", name: "Kraken Abissal", image: "/assets/raids/kraken-v2.webp", def: 24, agility: 18, lore: "Das profundezas de Meria, afunda tudo que navega no Mar Âmbar." },
 ] as const;
 
 export const GUILD_BOSS_RULES = { energy: 10, attacksPerDay: 3, rounds: 6, baseHp: 2500, hpPerMember: 1100 };
