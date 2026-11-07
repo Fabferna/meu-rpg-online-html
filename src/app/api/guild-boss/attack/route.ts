@@ -4,6 +4,7 @@ import { heroCombatant, loadPlayer } from "@/lib/game/player";
 import { raidDamage } from "@/lib/game/combat";
 import { bossForWeek, bossMaxHp, GUILD_BOSS_RULES, BOSS_BY_ID } from "@/lib/game/guildBoss";
 import { myGuild, weekStart } from "@/lib/game/guildServer";
+import { elementOfArt } from "@/lib/game/elements";
 
 export const POST = action("guild-boss", z.object({}).strict(), async ({ user, admin }) => {
   const g = await myGuild(admin, user.id);
@@ -20,7 +21,7 @@ export const POST = action("guild-boss", z.object({}).strict(), async ({ user, a
 
   // Dano calculado no servidor com os atributos e equipamentos reais.
   const pc = heroCombatant(p, p.maxHp, p.maxHp);
-  const r = raidDamage(pc, boss.def, boss.agility, GUILD_BOSS_RULES.rounds);
+  const r = raidDamage(pc, boss.def, boss.agility, GUILD_BOSS_RULES.rounds, elementOfArt(boss.image));
   const res = await rpc<{ dealt: number; hp: number; defeated: boolean }>(admin, "guild_boss_attack", {
     p_user: user.id, p_week: week, p_boss_id: boss.id, p_max_hp: bossMaxHp(count ?? 1), p_damage: r.total,
     p_daily_limit: GUILD_BOSS_RULES.attacksPerDay, p_energy: GUILD_BOSS_RULES.energy,

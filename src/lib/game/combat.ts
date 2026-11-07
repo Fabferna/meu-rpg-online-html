@@ -1,4 +1,5 @@
 import "server-only";
+import { elementMult, type Element } from "./elements";
 import type { LootResult } from "./loot";
 import { chance, roll } from "./rng";
 import type { Attributes, RaceId } from "./data";
@@ -19,6 +20,8 @@ export type Combatant = {
   /** Bônus de esquiva/crítico vindos do peso das peças (0.02 = +2 p.p.). */
   dodge?: number;
   crit?: number;
+  /** Elemento (elements.ts): +15% contra quem ele vence, −10% contra quem o vence. */
+  element?: Element | null;
 };
 
 export type LogEntry = {
@@ -70,14 +73,14 @@ export const POTION_ITEM = "pocao_vida";
  * sem eles, usa só os bônus somados (compatível com chamadas antigas).
  */
 export function playerCombatant(
-  name: string, a: Attributes, level: number, hp: number, maxHp: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = [],
+  name: string, a: Attributes, level: number, hp: number, maxHp: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = [], element?: Element | null,
 ): Combatant {
   const h = heroStats(a, level, gear, race, pieces);
-  return { name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit };
+  return { name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit, element: element ?? null };
 }
 
 export function enemyCombatant(e: Enemy, hp = e.maxHp): Combatant {
-  return { name: e.name, hp, maxHp: e.maxHp, atk: e.atk, magic: e.atk, def: e.def, agility: e.agility };
+  return { name: e.name, hp, maxHp: e.maxHp, atk: e.atk, magic: e.atk, def: e.def, agility: e.agility, element: e.element ?? null };
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -88,7 +91,7 @@ function strike(att: Combatant, def: Combatant, kind: "attack" | "skill", defend
   const crit = chance(clamp(0.05 + att.agility * 0.004 + (att.crit ?? 0), 0.05, 0.4));
   const base = (kind === "skill" ? roll(...att.magic) * 1.8 : roll(...att.atk)) * mult;
   const armor = kind === "skill" ? def.def * 0.3 : def.def * 0.6;
-  let dmg = Math.max(1, Math.round((base - armor) * (crit ? 1.6 : 1)));
+  let dmg = Math.max(1, Math.round((base - armor) * (crit ? 1.6 : 1) * elementMult(att.element, def.element)));
   if (defending) dmg = Math.max(1, Math.round(dmg * 0.45));
   return { dmg, miss: false, crit };
 }
@@ -227,8 +230,8 @@ export function eloDelta(winner: number, loser: number, k = 32) {
 }
 
 /** Chefe de guilda: N rodadas de golpes (sem contra-ataque). A cada 3ª rodada, habilidade. */
-export function raidDamage(p: Combatant, bossDef: number, bossAgility: number, rounds = 6) {
-  const boss: Combatant = { name: "boss", hp: 1, maxHp: 1, atk: [0, 0], magic: [0, 0], def: bossDef, agility: bossAgility };
+export function raidDamage(p: Combatant, bossDef: number, bossAgility: number, rounds = 6, bossElement?: Element) {
+  const boss: Combatant = { name: "boss", hp: 1, maxHp: 1, atk: [0, 0], magic: [0, 0], def: bossDef, agility: bossAgility, element: bossElement ?? null };
   const hits: { dmg: number; crit: boolean; miss: boolean; skill: boolean }[] = [];
   for (let i = 1; i <= rounds; i++) {
     const skill = i % 3 === 0;

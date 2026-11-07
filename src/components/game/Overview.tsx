@@ -9,6 +9,7 @@ import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
 import HeroManage from "./HeroManage";
 import HeroList from "./HeroList";
+import ElementPicker from "./ElementPicker";
 import { combatSummary, equippedPieces, petStats, setStats } from "./gearView";
 import { ATTR_LABEL } from "@/lib/game/gear";
 import { SLOT_LABEL } from "./Inventory";
@@ -129,6 +130,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
         </Panel>
 
         <CombatStats ctx={ctx} />
+        <ElementPicker ctx={ctx} />
 
         <Panel className="grid grid-cols-2 gap-3 p-5 text-center sm:grid-cols-4">
           <Stat label={t("Vitórias PVE")} value={c.pveWins} />

@@ -16,7 +16,7 @@ export const POST = action("world-boss-attack", z.object({}).strict(), async ({ 
   const boss = existing ? WORLD_BOSS_BY_ID[existing.boss_id] ?? worldBossForDay(sch.day) : worldBossForDay(sch.day);
   const maxHp = existing ? 1 : worldBossMaxHp(await activeLevels(admin)); // só usado na criação do chefe do dia
 
-  const r = raidDamage(heroCombatant(p, p.maxHp, p.maxHp), boss.def, boss.agility, WORLD_BOSS_RULES.rounds);
+  const r = raidDamage(heroCombatant(p, p.maxHp, p.maxHp), boss.def, boss.agility, WORLD_BOSS_RULES.rounds, boss.element);
   const res = await rpc<{ dealt: number; hp: number; defeated: boolean }>(admin, "world_boss_attack", {
     p_user: user.id, p_day: sch.day, p_boss_id: boss.id, p_max_hp: maxHp, p_starts: sch.startsAt, p_ends: sch.endsAt,
     p_damage: r.total, p_limit: WORLD_BOSS_RULES.attacksPerEvent, p_energy: WORLD_BOSS_RULES.energy,

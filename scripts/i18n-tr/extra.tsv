@@ -668,3 +668,19 @@ Relíquias do Cometa	Comet Relics	Reliquias del Cometa	彗星遗物
 Relíquias do Núcleo	Core Relics	Reliquias del Núcleo	核心遗物
 Relíquias do Devorador	Devourer Relics	Reliquias del Devorador	噬界者遗物
 Relíquias do Abismo	Abyss Relics	Reliquias del Abismo	深渊遗物
+Vantagem	Advantage	Ventaja	优势
+Desvantagem	Disadvantage	Desventaja	劣势
+Trocar seu elemento para {x} por 💎 {g}?	Change your element to {x} for 💎 {g}?	¿Cambiar tu elemento a {x} por 💎 {g}?	花费 💎 {g} 将元素换成 {x}？
+Seu elemento agora é {x}!	Your element is now {x}!	¡Tu elemento ahora es {x}!	你的元素现在是 {x}！
+Elemento	Element	Elemento	元素
+Trocar custa 💎 {g}	Changing costs 💎 {g}	Cambiar cuesta 💎 {g}	更换需要 💎 {g}
+Primeira escolha grátis	First choice is free	Primera elección gratis	首次选择免费
+Contra o elemento que o seu vence você causa +{a}% de dano; contra quem vence o seu, −{d}%. Vale também para os inimigos. Fogo › Ar › Terra › Água › Fogo · Luz ⇄ Sombra.	Against the element yours beats you deal +{a}% damage; against the one that beats yours, −{d}%. It works for enemies too. Fire › Air › Earth › Water › Fire · Light ⇄ Shadow.	Contra el elemento que el tuyo vence causas +{a}% de daño; contra el que vence al tuyo, −{d}%. También vale para los enemigos. Fuego › Aire › Tierra › Agua › Fuego · Luz ⇄ Sombra.	对你的元素克制的元素造成 +{a}% 伤害；对克制你的元素 −{d}%。敌人同样适用。火 › 风 › 土 › 水 › 火 · 光 ⇄ 暗。
+Forte contra	Strong against	Fuerte contra	克制
+fraco contra	weak against	débil contra	被克制
+Fogo	Fire	Fuego	火
+Água	Water	Agua	水
+Terra	Earth	Tierra	土
+Ar	Air	Aire	风
+Luz	Light	Luz	光
+Sombra	Shadow	Sombra	暗
