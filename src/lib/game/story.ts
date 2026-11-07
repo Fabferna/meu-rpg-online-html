@@ -138,3 +138,31 @@ export const CHAPTERS: Chapter[] = [
     rewards: { xp: 77400, gold: 12000, gems: 40, item: "olho_vazio", cosmetic: "title_estrelas" } },
 ];
 export const CHAPTER_BY_N = Object.fromEntries(CHAPTERS.map((c) => [c.n, c]));
+
+// ── Trechos: 2 lutas antes do chefe de cada capítulo ─────────────────
+// Liberados no nível exigido pelo capítulo ANTERIOR: depois de vencer um capítulo, o herói já tem
+// 3 lutas pela frente (2 trechos + chefe) e os trechos dão XP para chegar ao nível do chefe.
+// O progresso fica em user_counters ('story_trail' = capítulo×10 + trechos vencidos; migração 0034).
+export type TrailStep = { enemy: string; who: Speaker; text: string };
+export const STORY_TRAILS: Record<number, TrailStep[]> = {
+  1: [{ enemy: "tr_vigia_sombrio", who: "kaelen", text: "Antes do batedor, há vigias. Limpe o caminho até o portão leste, {heroi}." }, { enemy: "tr_sombra_portao", who: "narrador", text: "Uma sombra maior bloqueia o portão. Ela sibila o seu nome." }],
+  2: [{ enemy: "tr_lobo_raivoso", who: "lyra", text: "Os lobos da estrada atacam qualquer um. Abra caminho até a toca do alfa." }, { enemy: "tr_lobo_sentinela", who: "narrador", text: "Um lobo de olhos vermelhos uiva, chamando o alfa." }],
+  3: [{ enemy: "tr_acolito_floresta", who: "roric", text: "Acólitos vigiam a trilha das ruínas. Não deixe nenhum avisar o sacerdote." }, { enemy: "tr_vulto_ruinas", who: "narrador", text: "Das pedras azuis, um vulto se ergue para proteger o ritual." }],
+  4: [{ enemy: "tr_javali_sagrado", who: "lyra", text: "Os animais do bosque sagrado foram corrompidos. Liberte-os do feitiço." }, { enemy: "tr_vulto_selo", who: "narrador", text: "O selo rachado solta ecos sombrios que tomam forma." }],
+  5: [{ enemy: "tr_escorpiao_duna", who: "roric", text: "Escorpiões cercam a cidade soterrada. São os filhotes da Rainha." }, { enemy: "tr_saqueador_ambar", who: "narrador", text: "Um saqueador do culto tenta roubar o mapa da cidade soterrada." }],
+  6: [{ enemy: "tr_acolito_ritual", who: "kaelen", text: "Os acólitos alimentam o ritual com a própria vida. Interrompa os círculos!" }, { enemy: "tr_guarda_mestre", who: "narrador", text: "O braço direito do Mestre dos Rituais ergue sua lâmina curva." }],
+  7: [{ enemy: "tr_golem_menor", who: "narrador", text: "Nas Agulhas, pedaços do Colosso ganham vida própria." }, { enemy: "tr_lobo_gelo", who: "roric", text: "Lobos brancos caçam na nevasca. Não pare de andar, {heroi}." }],
+  8: [{ enemy: "tr_cultista_gelo", who: "kaelen", text: "O culto abriu um portal no topo da montanha. Os guardas vêm primeiro." }, { enemy: "tr_espreitador_abismo", who: "narrador", text: "Do portal escorre algo que não é deste mundo." }],
+  9: [{ enemy: "tr_guarda_trono", who: "vorlag", text: "Meus guardas nunca dormem, peão. Venha descobrir por quê." }, { enemy: "tr_serpe_menor", who: "lyra", text: "As serpes vigiam o caminho até o trono de Vorlag. Cuidado com o veneno." }],
+  10: [{ enemy: "tr_cria_meria", who: "narrador", text: "As crias da Serpente Primordial emergem do mar negro." }, { enemy: "tr_vorlag_eco", who: "lyra", text: "Um eco de Vorlag ainda protege o santuário de Meria." }],
+  11: [{ enemy: "tr_harpia_jovem", who: "roric", text: "O céu se partiu e harpias desceram das ilhas. Elas atacam em bando." }, { enemy: "tr_harpia_batedora", who: "narrador", text: "Uma harpia de penas douradas grita, chamando a rainha." }],
+  12: [{ enemy: "tr_sentinela_ponte", who: "lyra", text: "As pontes de cristal são guardadas por sentinelas antigas." }, { enemy: "tr_harpia_tempestade", who: "narrador", text: "Raios cercam a última ponte antes das ilhas altas." }],
+  13: [{ enemy: "tr_draconato", who: "kaelen", text: "Os filhos de Aurion protegem o ninho. Prove que é digno." }, { enemy: "tr_sentinela_ninho", who: "narrador", text: "Uma sentinela de éter desperta ao lado do ovo dourado." }],
+  14: [{ enemy: "tr_espectro_fenda", who: "lyra", text: "Na Fenda do Vazio, até a luz tem medo. Fique perto de mim." }, { enemy: "tr_devorador_menor", who: "narrador", text: "Algo devora as estrelas do céu, uma por uma." }],
+  15: [{ enemy: "tr_arauto_nyx", who: "vorlag", text: "(a voz de Vorlag, agora fraca) Nyx me usou também... Os arautos dela guardam o Olho." }, { enemy: "tr_devorador_estrelas", who: "narrador", text: "Diante do Olho Vazio, a última criatura abre a boca infinita." }],
+};
+export const trailOf = (n: number) => STORY_TRAILS[n] ?? [];
+/** Nível para os trechos do capítulo n: o do capítulo anterior. */
+export const trailLevel = (n: number) => CHAPTER_BY_N[n - 1]?.minLevel ?? 1;
+/** Trechos já vencidos no capítulo n, a partir do contador salvo (capítulo×10 + trechos). */
+export const trailDone = (n: number, counter: number) => (Math.floor(counter / 10) === n ? counter % 10 : 0);

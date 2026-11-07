@@ -47,7 +47,7 @@ export const POST = action(
     if (outcome === "won") {
       // Inimigos muito abaixo do seu nível rendem menos XP (anti-farm).
       const gap = Math.max(0, p.row.level - enemy.minLevel - 3);
-      if (!state.dungeon && !state.story) {
+      if (!state.dungeon && !state.story && !state.storyTrail) {
         // Caçada: tabela de saque completa (poções, equipamento da faixa, drop especial, proteção contra azar).
         const { data: pc } = await admin.from("user_counters").select("value").eq("user_id", user.id).eq("key", "loot_pity").eq("day", "2000-01-01").maybeSingle();
         const r = rollLoot(enemy, { heroLevel: p.row.level, pity: Number(pc?.value ?? 0) }, { chance, roll });
@@ -108,6 +108,10 @@ export const POST = action(
     });
 
     if (won) { won.levelUps = res.level_ups; won.loot = res.loot ?? []; }
+    // Trecho da história vencido: avança a fila do capítulo (a luta só grava uma vez: stale_battle acima).
+    if (outcome === "won" && next.storyTrail) {
+      await rpc(admin, "advance_story_trail", { p_user: user.id, p_chapter: next.storyTrail.chapter, p_step: next.storyTrail.step });
+    }
     if (ch) {
       if (res.story_done) saved.storyResult = { ...ch.rewards, levelUps: res.story_ups ?? 0 };
       else delete saved.storyResult;
