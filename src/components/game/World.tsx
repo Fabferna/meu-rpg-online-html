@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import { CHAPTERS, SPEAKERS, type Chapter } from "@/lib/game/story";
+import { CHAPTERS, SPEAKERS, trailLevel, trailOf, type Chapter } from "@/lib/game/story";
 import { REGIONS_MAP, REGION_BY_ID } from "@/lib/game/regions";
 import { ENEMY_BY_ID } from "@/lib/game/enemies";
 import { QUEST_BY_ID } from "@/lib/game/quests";
@@ -24,10 +24,14 @@ export default function World({ ctx, onBattle }: { ctx: GameCtx; onBattle: () =>
   const [reading, setReading] = useState<Chapter | null>(null);
   const [busy, setBusy] = useState(false);
 
-  async function fight(ch: Chapter) {
+  const trail = next ? trailOf(next.n) : [];
+  const trailDone = Math.min(c.storyTrail ?? 0, trail.length);
+  const bossReady = trailDone >= trail.length;
+
+  async function fight(ch: Chapter, step?: number) {
     setBusy(true);
     try {
-      await post("/api/story/battle", { chapter: ch.n });
+      await post("/api/story/battle", step ? { chapter: ch.n, step } : { chapter: ch.n });
       play("skill");
       await ctx.refresh();
       setReading(null);
@@ -54,10 +58,40 @@ export default function World({ ctx, onBattle }: { ctx: GameCtx; onBattle: () =>
                 <h2 className="font-display text-2xl text-gold">{t("Capítulo {n}", { n: next.n })}: {t(next.title)}</h2>
                 <p className="text-sm text-white/60">{t(REGION_BY_ID[next.region]?.name ?? "")} · {t("Nível recomendado {n}+", { n: next.minLevel })}</p>
                 <p className="text-sm text-white/80">“{t(next.scenes[0].text, { heroi: c.name })}”</p>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <button className="btn-gold" onClick={() => setReading(next)}>📖 {c.level < next.minLevel ? t("Ler capítulo") : t("Começar capítulo")}</button>
-                  {c.level < next.minLevel && <span className="self-center text-sm text-amber-300">{t("Requer nível {n} para a batalha", { n: next.minLevel })}</span>}
-                </div>
+                {/* Caminho do capítulo: 2 trechos (nível do capítulo anterior) e depois o chefe. */}
+                <ol className="grid gap-2 pt-1 sm:grid-cols-3">
+                  {trail.map((st, i) => {
+                    const e = ENEMY_BY_ID[st.enemy];
+                    const isDone = i < trailDone, isNext = i === trailDone, lvl = trailLevel(next.n);
+                    return (
+                      <li key={st.enemy} className={`rounded-lg p-2 ring-1 ${isDone ? "bg-emerald-500/10 ring-emerald-400/30" : isNext ? "bg-gold/10 ring-gold/40" : "bg-white/5 ring-white/10 opacity-60"}`}>
+                        <div className="flex items-center gap-2">
+                          <Image src={e.image} alt="" width={40} height={40} className="h-10 w-10 rounded object-cover" />
+                          <div className="min-w-0">
+                            <p className="text-[11px] uppercase tracking-wider text-white/50">{t("Trecho {n}", { n: i + 1 })}{isDone ? " ✓" : ""}</p>
+                            <p className="truncate text-sm">{t(e.name)}</p>
+                          </div>
+                        </div>
+                        {isNext && <p className="mt-1 text-xs text-white/70">“{t(st.text, { heroi: c.name })}”</p>}
+                        {isNext && (c.level >= lvl
+                          ? <button disabled={busy} onClick={() => fight(next, i + 1)} className="btn-gold mt-2 min-h-11 w-full !py-1.5 text-xs">⚔️ {t("Enfrentar")} · ✨ {xpRate(e.xp)} XP</button>
+                          : <p className="mt-1 text-xs text-amber-300">{t("Requer nível {n}", { n: lvl })}</p>)}
+                      </li>
+                    );
+                  })}
+                  <li className={`rounded-lg p-2 ring-1 ${bossReady ? "bg-gold/10 ring-gold/40" : "bg-white/5 ring-white/10 opacity-60"}`}>
+                    <div className="flex items-center gap-2">
+                      <Image src={ENEMY_BY_ID[next.enemy].image} alt="" width={40} height={40} className="h-10 w-10 rounded object-cover" />
+                      <div className="min-w-0">
+                        <p className="text-[11px] uppercase tracking-wider text-white/50">👑 {t("Chefe do capítulo")}</p>
+                        <p className="truncate text-sm">{t(ENEMY_BY_ID[next.enemy].name)}</p>
+                      </div>
+                    </div>
+                    {bossReady && <button className="btn-gold mt-2 min-h-11 w-full !py-1.5 text-xs" onClick={() => setReading(next)}>📖 {c.level < next.minLevel ? t("Ler capítulo") : t("Começar capítulo")}</button>}
+                    {!bossReady && <p className="mt-1 text-xs text-white/50">{t("Vença os trechos antes")}</p>}
+                    {bossReady && c.level < next.minLevel && <p className="mt-1 text-xs text-amber-300">{t("Requer nível {n} para a batalha", { n: next.minLevel })}</p>}
+                  </li>
+                </ol>
               </>
             ) : (
               <>
@@ -117,7 +151,7 @@ export default function World({ ctx, onBattle }: { ctx: GameCtx; onBattle: () =>
         </div>
       </section>
 
-      <StoryReader ch={reading} hero={c.name} canFight={!!reading && reading.n === done + 1 && c.level >= reading.minLevel}
+      <StoryReader ch={reading} hero={c.name} canFight={!!reading && reading.n === done + 1 && bossReady && c.level >= reading.minLevel}
         busy={busy} onFight={() => reading && fight(reading)} onClose={() => setReading(null)} replay={!!reading && reading.n <= done} />
     </div>
   );
