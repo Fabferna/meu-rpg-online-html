@@ -6,6 +6,7 @@ import { ITEM_BY_ID, itemStatsFor, upgradedStats, type ItemDef } from "@/lib/gam
 import { heroStats, weaponDamage, type Piece, type WeaponInfo } from "@/lib/game/gear";
 import { petBonus } from "@/lib/game/pets";
 import { setBonuses } from "@/lib/game/sets";
+import { talentMods } from "@/lib/game/talents";
 
 type Ch = PlayerState["character"];
 
@@ -23,7 +24,7 @@ export function equippedPieces(inv: InventoryEntry[], race: string) {
 export const petStats = (state: PlayerState) => (state.pet ? (petBonus(state.pet.petId, state.pet.level) as Record<string, number>) : {});
 
 const summary = (ch: Ch, pieces: Piece[], pet: Record<string, number> = {}) => {
-  const h = heroStats(ch.attributes, ch.level, [...pieces.map((p) => p.stats), ...setStats(pieces), pet], ch.race, pieces);
+  const h = heroStats(ch.attributes, ch.level, [...pieces.map((p) => p.stats), ...setStats(pieces), pet], ch.race, pieces, talentMods(ch.talents ?? {}));
   return {
     h,
     atk: Math.round((h.atk[0] + h.atk[1]) / 2),
@@ -81,7 +82,7 @@ export function combatSummary(state: PlayerState) {
   const ch = state.character;
   const pieces = equippedPieces(state.inventory, ch.race).map((e) => e.piece);
   const extra = [...pieces.map((p) => p.stats), ...setStats(pieces), petStats(state)];
-  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces);
+  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces, talentMods(ch.talents ?? {}));
   const bare = heroStats(ch.attributes, ch.level, [], ch.race, []);
   const pct = (x: number) => Math.round(x * 1000) / 10;
   const dodge = (h: typeof full) => pct(Math.min(0.3, Math.max(0.02, 0.04 + h.dodge)));

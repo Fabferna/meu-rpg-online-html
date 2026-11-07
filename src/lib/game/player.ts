@@ -8,6 +8,7 @@ import { petBonus } from "./pets";
 import { heroStats, type Piece } from "./gear";
 import { setBonuses } from "./sets";
 import { isElement } from "./elements";
+import { normalizeTalents, talentMods, type TalentMods } from "./talents";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -18,6 +19,7 @@ export type CharacterRow = {
   equipped_frame: string | null; equipped_title: string | null; equipped_skin: string | null; xp_boost_until: string | null;
   story_chapter: number;
   element?: string | null;
+  talents?: unknown;
   skills?: unknown;
 };
 
@@ -31,6 +33,8 @@ export type LoadedPlayer = {
   gear: ItemBonus[];
   /** Peças equipadas (do catálogo) com atributos finais: arma com tipo, peças com peso. */
   pieces: Piece[];
+  /** Bônus da árvore de talentos. */
+  talents: TalentMods;
 };
 
 export function deriveVitals(row: CharacterRow, now = new Date()) {
@@ -76,12 +80,13 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
       .concat(setBonuses(pieces.map((x) => x.item.id ?? "")) as ItemBonus[])
       .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
     pieces,
+    talents: talentMods(normalizeTalents(row.talents)),
   };
 }
 
 /** Herói pronto para lutar (arma escala com atributo; peças com peso dão bônus por raça). */
 export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
-  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null);
+  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null, p.talents);
 }
 
 /**
@@ -89,6 +94,6 @@ export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
  * Ao terminar, o banco limita a vida ao máximo normal (set_hp), então o extra é o primeiro a ir embora.
  */
 export function battleVitals(p: LoadedPlayer) {
-  const bonus = Math.round(p.maxHp * heroStats(p.attributes, p.row.level, p.gear, p.row.race as RaceId, p.pieces).hpPct);
+  const bonus = Math.round(p.maxHp * heroStats(p.attributes, p.row.level, p.gear, p.row.race as RaceId, p.pieces, p.talents).hpPct);
   return { hp: p.hp + bonus, maxHp: p.maxHp + bonus };
 }

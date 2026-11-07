@@ -7,6 +7,7 @@
 //                    + bônus por nível do herói
 // • Elmos, armaduras e botas têm peso (leve/média/pesada). Cada raça aproveita melhor um peso.
 import type { Attributes, RaceId } from "./data";
+import { NO_TALENTS, type TalentMods } from "./talents";
 
 export type Attr = "str" | "dex" | "con" | "intel" | "wis";
 export type WeaponType = "espada" | "arco" | "machado" | "martelo" | "cajado" | "tridente";
@@ -131,7 +132,7 @@ export const ARCANE_SHARE = 0.6;
  * Ataque, magia, defesa e bônus do herói. `gear` = bônus somados de todas as peças (e pet);
  * `pieces` = peças equipadas com seus atributos finais (aprimoramento + afinidade).
  */
-export function heroStats(a: Attributes, level: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = []): HeroStats {
+export function heroStats(a: Attributes, level: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = [], tal: TalentMods = NO_TALENTS): HeroStats {
   const b = gear.reduce<Required<ItemBonus>>(
     (acc, g) => ({
       atk: acc.atk + (g.atk ?? 0), def: acc.def + (g.def ?? 0), str: acc.str + (g.str ?? 0),
@@ -151,12 +152,14 @@ export function heroStats(a: Attributes, level: number, gear: ItemBonus[], race?
   // Magia: INT (+ SAB para quem tem SAB como principal) e a parte arcana da arma.
   const wisPart = race && RACE_PROFILE[race].main.includes("wis") ? Math.round(eff.wis * 0.3) : 0;
   const arc = w?.arcane ? Math.round((w.fromAttr + w.fromLevel) * ARCANE_SHARE) : 0;
-  const mk = 1 + mods.magicPct;
+  const mk = 1 + mods.magicPct + tal.magicPct;
+  // Talentos (talents.ts): % de ataque/defesa sobre o total, e pontos de crítico/esquiva/vida somados.
+  const ak = 1 + tal.atkPct;
   return {
-    atk: [Math.round(S * PHYS.lo + level * PHYS.lvlLo) + atkBonus, Math.round(S * PHYS.hi + level * PHYS.lvlHi) + atkBonus],
+    atk: [Math.round((Math.round(S * PHYS.lo + level * PHYS.lvlLo) + atkBonus) * ak), Math.round((Math.round(S * PHYS.hi + level * PHYS.lvlHi) + atkBonus) * ak)],
     magic: [Math.round((eff.intel + wisPart + level + arc) * mk), Math.round((eff.intel * 1.7 + wisPart + level * 2 + arc) * mk)],
-    def: Math.round(eff.con * 0.5 + b.def + matchDef * mods.defPct),
+    def: Math.round((eff.con * 0.5 + b.def + matchDef * mods.defPct) * (1 + tal.defPct)),
     agility: eff.dex,
-    dodge: mods.dodge, crit: mods.crit, hpPct: mods.hpPct, weapon: w, mods,
+    dodge: mods.dodge + tal.dodge, crit: mods.crit + tal.crit, hpPct: mods.hpPct + tal.hpPct, weapon: w, mods,
   };
 }

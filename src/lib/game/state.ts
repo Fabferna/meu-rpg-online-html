@@ -2,6 +2,7 @@ import "server-only";
 import { dailyCounts } from "./dailyLimits";
 import { trailDone } from "./story";
 import { isElement, type Element } from "./elements";
+import { normalizeTalents, type TalentRanks } from "./talents";
 import { normalizeLoadout, type SkillLoadout } from "./skills";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data";
@@ -36,6 +37,8 @@ export type PlayerState = {
     storyTrail: number;
     /** Elemento escolhido (null = ainda não escolheu). */
     element: Element | null;
+    /** Pontos de cada talento (talents.ts). */
+    talents: TalentRanks;
   };
   wallet: { gold: number; gems: number };
   quest: { id: string; questId: string; startedAt: string; endsAt: string; rewards: { xp: number; gold: number; item: string | null } } | null;
@@ -79,6 +82,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       frame: row.equipped_frame, title: row.equipped_title ? COSMETIC_BY_ID[row.equipped_title]?.name ?? null : null,
       loadout: normalizeLoadout(race, row.skills, row.level), skin: row.equipped_skin, xpBoostUntil: row.xp_boost_until, storyChapter: row.story_chapter ?? 0,
       element: isElement(row.element) ? row.element : null,
+      talents: normalizeTalents(row.talents),
       storyTrail: trailDone((row.story_chapter ?? 0) + 1, Number((st.data as { value?: number } | null)?.value ?? 0)),
     },
     wallet: { gold: Number(w.data?.gold ?? 0), gems: Number(w.data?.gems ?? 0) },

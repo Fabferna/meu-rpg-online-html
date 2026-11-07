@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import TalentTree from "./TalentTree";
 import Image from "next/image";
 import type { GameCtx } from "./GameApp";
 import { SKILL_MAX_LEVEL, SKILL_SLOT_LEVELS, SKILL_UPGRADE_COST, skillPower, skillsOf, skillUpgradeLevel, slotsFor, type Skill } from "@/lib/game/skills";
@@ -129,6 +130,7 @@ export default function Skills({ ctx }: { ctx: GameCtx }) {
           );
         })}
       </div>
+      <TalentTree ctx={ctx} />
     </div>
   );
 }

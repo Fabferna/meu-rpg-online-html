@@ -684,3 +684,52 @@ Terra	Earth	Tierra	土
 Ar	Air	Aire	风
 Luz	Light	Luz	光
 Sombra	Shadow	Sombra	暗
+Pontos de talento livres	Free talent points	Puntos de talento libres	可用天赋点
+Devolver todos os {n} pontos de talento por 🪙 {g}?	Refund all {n} talent points for 🪙 {g}?	¿Devolver los {n} puntos de talento por 🪙 {g}?	花费 🪙 {g} 返还全部 {n} 个天赋点？
+Pontos de talento devolvidos!	Talent points refunded!	¡Puntos de talento devueltos!	天赋点已返还！
+🌳 Árvore de talentos	🌳 Talent tree	🌳 Árbol de talentos	🌳 天赋树
+Pontos livres: {a} de {b}	Free points: {a} of {b}	Puntos libres: {a} de {b}	可用点数：{a}/{b}
+Redistribuir · 🪙 {g}	Reset · 🪙 {g}	Redistribuir · 🪙 {g}	重置 · 🪙 {g}
+Você ganha 1 ponto por nível a partir do nível 3. Gaste pontos num ramo para abrir os andares seguintes. Talentos lado a lado com ⚔ se excluem: escolha um OU outro.	You get 1 point per level from level 3. Spend points in a branch to open its next tiers. Side-by-side talents marked ⚔ exclude each other: pick one OR the other.	Ganas 1 punto por nivel a partir del nivel 3. Gasta puntos en una rama para abrir los pisos siguientes. Los talentos lado a lado con ⚔ se excluyen: elige uno U otro.	从 3 级起每级获得 1 点。在某一分支投入点数可解锁后续层级。标有 ⚔ 的并排天赋互斥：只能二选一。
+Andar {n}	Tier {n}	Piso {n}	第 {n} 层
+gaste {n} pontos em {x}	spend {n} points in {x}	gasta {n} puntos en {x}	在{x}投入 {n} 点
+Esse talento ainda não pode ser escolhido.	That talent can't be chosen yet.	Ese talento todavía no se puede elegir.	该天赋暂时无法选择。
+Sua árvore mudou em outra aba. Tente de novo.	Your tree changed in another tab. Try again.	Tu árbol cambió en otra pestaña. Inténtalo de nuevo.	你的天赋树在其他页面中已更改，请重试。
+Fúria	Fury	Furia	狂怒
+Bastião	Bastion	Bastión	壁垒
+Arcano	Arcane	Arcano	奥术
+Lâmina Afiada	Sharp Blade	Hoja Afilada	锋利之刃
++2% de ataque físico por ponto.	+2% physical attack per point.	+2% de ataque físico por punto.	每点 +2% 物理攻击。
+Golpe Certeiro	Precise Strike	Golpe Certero	精准一击
++1% de chance de crítico por ponto.	+1% critical chance per point.	+1% de probabilidad de crítico por punto.	每点 +1% 暴击率。
+Fúria Selvagem	Savage Fury	Furia Salvaje	野性狂怒
++2,5% de ataque físico por ponto.	+2.5% physical attack per point.	+2,5% de ataque físico por punto.	每点 +2.5% 物理攻击。
+Brutalidade	Brutality	Brutalidad	残暴
++1,5% de ataque e +0,5% de crítico por ponto.	+1.5% attack and +0.5% crit per point.	+1,5% de ataque y +0,5% de crítico por punto.	每点 +1.5% 攻击和 +0.5% 暴击。
+Mestre de Armas	Weapon Master	Maestro de Armas	武器大师
++6% de ataque físico.	+6% physical attack.	+6% de ataque físico.	+6% 物理攻击。
+Sede de Sangue	Bloodlust	Sed de Sangre	嗜血
++3% de crítico e +2% de esquiva.	+3% crit and +2% dodge.	+3% de crítico y +2% de esquiva.	+3% 暴击和 +2% 闪避。
+Pele de Ferro	Iron Skin	Piel de Hierro	钢铁之肤
++3% de defesa por ponto.	+3% defense per point.	+3% de defensa por punto.	每点 +3% 防御。
+Vigor	Vigor	Vigor	活力
++2% de vida em combate por ponto.	+2% combat health per point.	+2% de vida en combate por punto.	每点 +2% 战斗生命。
+Reflexos	Reflexes	Reflejos	反射
++1% de esquiva por ponto.	+1% dodge per point.	+1% de esquiva por punto.	每点 +1% 闪避。
+Muralha	Rampart	Muralla	城墙
++2% de defesa e +1,5% de vida por ponto.	+2% defense and +1.5% health per point.	+2% de defensa y +1,5% de vida por punto.	每点 +2% 防御和 +1.5% 生命。
+Inabalável	Unshakable	Inquebrantable	坚不可摧
++8% de vida em combate.	+8% combat health.	+8% de vida en combate.	+8% 战斗生命。
+Fantasma	Phantom	Fantasma	幻影
++4% de esquiva.	+4% dodge.	+4% de esquiva.	+4% 闪避。
+Mente Afiada	Sharp Mind	Mente Aguda	敏锐心智
++2% de poder mágico por ponto.	+2% magic power per point.	+2% de poder mágico por punto.	每点 +2% 法术强度。
+Foco	Focus	Foco	专注
++2,5% de poder mágico por ponto.	+2.5% magic power per point.	+2,5% de poder mágico por punto.	每点 +2.5% 法术强度。
+Canalização	Channeling	Canalización	引导
+Fluxo Arcano	Arcane Flow	Flujo Arcano	奥术之流
++1,5% de magia e +1,5% de vida por ponto.	+1.5% magic and +1.5% health per point.	+1,5% de magia y +1,5% de vida por punto.	每点 +1.5% 法术和 +1.5% 生命。
+Arquimago	Archmage	Archimago	大法师
++6% de poder mágico.	+6% magic power.	+6% de poder mágico.	+6% 法术强度。
+Sabedoria Ancestral	Ancestral Wisdom	Sabiduría Ancestral	先祖智慧
++3% de magia e +4% de defesa.	+3% magic and +4% defense.	+3% de magia y +4% de defensa.	+3% 法术和 +4% 防御。
