@@ -9,7 +9,8 @@ import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
 import HeroManage from "./HeroManage";
 import HeroList from "./HeroList";
-import { equippedPieces, petStats, setStats } from "./gearView";
+import { combatSummary, equippedPieces, petStats, setStats } from "./gearView";
+import { ATTR_LABEL } from "@/lib/game/gear";
 import { SLOT_LABEL } from "./Inventory";
 
 const ATTRS = [
@@ -127,6 +128,8 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
           {used > 0 && <button className="btn-gold mt-4 w-full" disabled={busy} onClick={confirm}>{t("Confirmar distribuição")}</button>}
         </Panel>
 
+        <CombatStats ctx={ctx} />
+
         <Panel className="grid grid-cols-2 gap-3 p-5 text-center sm:grid-cols-4">
           <Stat label={t("Vitórias PVE")} value={c.pveWins} />
           <Stat label={t("Rating PVP")} value={c.pvpRating} />
@@ -146,5 +149,44 @@ function Stat({ label, value }: { label: string; value: number }) {
       <p className="font-display text-2xl text-gold">{value}</p>
       <p className="text-xs text-white/50">{label}</p>
     </div>
+  );
+}
+
+/** Quadro "Status de combate": números finais do herói, com o bônus de equipamentos/conjuntos/pet entre parênteses. */
+function CombatStats({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
+  const s = combatSummary(ctx.state);
+  const plus = (n: number, unit = "") => (n > 0 ? <span className="ml-1 text-sm text-emerald-400">(+{n}{unit})</span> : n < 0 ? <span className="ml-1 text-sm text-red-300">({n}{unit})</span> : null);
+  const rows: { icon: string; label: string; hint: string; value: string; bonus: number; unit?: string }[] = [
+    { icon: "❤️", label: "Vida máxima", hint: "Quanto dano você aguenta", value: String(s.hp.value), bonus: s.hp.bonus },
+    { icon: "⚡", label: "Energia máxima", hint: "Gasta em caçadas e missões", value: String(s.energy.value), bonus: 0 },
+    { icon: "⚔️", label: "Ataque físico", hint: "Dano do ataque básico", value: `${s.atk.range[0]}–${s.atk.range[1]}`, bonus: s.atk.bonus },
+    { icon: "✨", label: "Poder mágico", hint: "Base das habilidades mágicas", value: `${s.magic.range[0]}–${s.magic.range[1]}`, bonus: s.magic.bonus },
+    { icon: "🛡️", label: "Defesa", hint: "Reduz o dano recebido", value: String(s.def.value), bonus: s.def.bonus },
+    { icon: "💨", label: "Esquiva", hint: "Contra inimigo de mesma agilidade", value: `${s.dodge.value}%`, bonus: s.dodge.bonus, unit: "%" },
+    { icon: "🎯", label: "Chance de crítico", hint: "Crítico causa ×1,6 de dano", value: `${s.crit.value}%`, bonus: s.crit.bonus, unit: "%" },
+  ];
+  return (
+    <Panel className="p-5">
+      <h2 className="font-display text-lg text-gold">{t("Status de combate")}</h2>
+      <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+        {rows.map((r) => (
+          <li key={r.label} className="flex items-center gap-3 rounded-lg bg-black/30 px-3 py-2">
+            <span className="text-xl" aria-hidden>{r.icon}</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm">{t(r.label)}</p>
+              <p className="text-[11px] text-white/40">{t(r.hint)}</p>
+            </div>
+            <span className="whitespace-nowrap text-right font-display text-lg">{r.value}{plus(r.bonus, r.unit)}</span>
+          </li>
+        ))}
+      </ul>
+      {s.weapon && (
+        <p className="mt-3 text-[11px] text-white/50">
+          🗡️ {t("Dano efetivo para você: {x} (escala com {a})", { x: s.weapon.total, a: t(ATTR_LABEL[s.weapon.attr]) })}
+        </p>
+      )}
+      <p className="mt-1 text-[11px] text-white/50"><span className="text-emerald-400">(+N)</span> = {t("quanto vem dos equipamentos, conjuntos e pet")}</p>
+    </Panel>
   );
 }

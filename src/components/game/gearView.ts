@@ -72,3 +72,30 @@ function attrsWith(ch: Ch, pieces: Piece[]) {
   for (const s of [...pieces.map((p) => p.stats), ...setStats(pieces)]) for (const k of ["str", "dex", "con", "intel"] as const) a[k] += s[k] ?? 0;
   return a;
 }
+
+/**
+ * Status gerais do herói (quadro "Status de combate" da aba Herói): valor com tudo equipado e
+ * quanto disso vem de equipamentos + conjuntos + pet. Mesma fórmula do servidor (heroStats / battleVitals).
+ */
+export function combatSummary(state: PlayerState) {
+  const ch = state.character;
+  const pieces = equippedPieces(state.inventory, ch.race).map((e) => e.piece);
+  const extra = [...pieces.map((p) => p.stats), ...setStats(pieces), petStats(state)];
+  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces);
+  const bare = heroStats(ch.attributes, ch.level, [], ch.race, []);
+  const pct = (x: number) => Math.round(x * 1000) / 10;
+  const dodge = (h: typeof full) => pct(Math.min(0.3, Math.max(0.02, 0.04 + h.dodge)));
+  const crit = (h: typeof full) => pct(Math.min(0.4, Math.max(0.05, 0.05 + h.agility * 0.004 + h.crit)));
+  const avg = (r: [number, number]) => Math.round((r[0] + r[1]) / 2);
+  const hpBonus = Math.round(ch.maxHp * full.hpPct);
+  return {
+    hp: { value: ch.maxHp + hpBonus, bonus: hpBonus },
+    energy: { value: ch.maxEnergy, bonus: 0 },
+    atk: { range: full.atk, value: avg(full.atk), bonus: avg(full.atk) - avg(bare.atk) },
+    magic: { range: full.magic, value: avg(full.magic), bonus: avg(full.magic) - avg(bare.magic) },
+    def: { value: full.def, bonus: full.def - bare.def },
+    dodge: { value: dodge(full), bonus: Math.round((dodge(full) - dodge(bare)) * 10) / 10 },
+    crit: { value: crit(full), bonus: Math.round((crit(full) - crit(bare)) * 10) / 10 },
+    weapon: full.weapon,
+  };
+}
