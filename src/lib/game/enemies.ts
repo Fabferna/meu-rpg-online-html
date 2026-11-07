@@ -1,3 +1,4 @@
+import { elementOfArt, type Element } from "./elements";
 export type Enemy = {
   id: string;
   name: string;
@@ -15,6 +16,8 @@ export type Enemy = {
   story?: boolean;
   /** Chance de envenenar / atordoar ao acertar. */
   traits?: { poison?: number; stun?: number };
+  /** Elemento (elements.ts). Vem da família da arte se não for definido. */
+  element?: Element;
 };
 
 const RAW: Enemy[] = [
@@ -100,6 +103,7 @@ function tune(e: Enemy): Enemy {
   const mid = atkMid * Math.sqrt(atkP);
   return {
     ...e,
+    element: e.element ?? elementOfArt(e.image),
     maxHp: Math.round(hp * Math.sqrt(e.boss ? Math.min(1, hpP) : hpP)),
     atk: [Math.round(mid * 0.8), Math.round(mid * 1.2)],
     def: Math.round((K.def + K.defL * L) * Math.sqrt(defP)),

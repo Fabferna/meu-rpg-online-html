@@ -7,6 +7,7 @@ import { ITEM_BY_ID, itemStatsFor, upgradedStats } from "./items";
 import { petBonus } from "./pets";
 import { heroStats, type Piece } from "./gear";
 import { setBonuses } from "./sets";
+import { isElement } from "./elements";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -16,6 +17,7 @@ export type CharacterRow = {
   pvp_rating: number; pvp_wins: number; pvp_losses: number; pve_wins: number;
   equipped_frame: string | null; equipped_title: string | null; equipped_skin: string | null; xp_boost_until: string | null;
   story_chapter: number;
+  element?: string | null;
   skills?: unknown;
 };
 
@@ -79,7 +81,7 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
 
 /** Herói pronto para lutar (arma escala com atributo; peças com peso dão bônus por raça). */
 export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
-  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces);
+  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null);
 }
 
 /**

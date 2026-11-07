@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ELEMENT_INFO, matchup, type Element } from "@/lib/game/elements";
 import Image from "next/image";
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import type { GameCtx } from "./GameApp";
@@ -301,6 +302,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               <div className="relative aspect-[3/4] w-full shrink-0">
                 <Image src={e.image} alt="" fill sizes="300px" className="object-cover transition duration-500 group-hover:scale-105" />
                 {e.boss && <span className="absolute right-2 top-2 rounded bg-ember px-2 py-0.5 text-xs font-bold">{t("CHEFE")}</span>}
+                <ElementBadge enemy={e.element} hero={state.character.element} />
               </div>
               <div className="p-3">
                 <p className="font-display text-sm">{t(e.name)}</p>
@@ -313,6 +315,19 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
       </div>
       {state.quest && <p className="mt-4 text-center text-sm text-amber-300">{t("Você está em uma missão. Termine-a para caçar.")}</p>}
     </div>
+  );
+}
+
+/** Elemento do inimigo e se o seu elemento é forte (+15%) ou fraco (−10%) contra ele. */
+function ElementBadge({ enemy, hero }: { enemy?: Element | null; hero: Element | null }) {
+  const t = useT();
+  if (!enemy) return null;
+  const m = matchup(hero, enemy);
+  return (
+    <span className={`absolute left-2 top-2 rounded bg-black/70 px-1.5 py-0.5 text-[11px] ${m === "forte" ? "ring-1 ring-emerald-400" : m === "fraco" ? "ring-1 ring-red-400" : ""}`}
+      title={t(ELEMENT_INFO[enemy].label)}>
+      {ELEMENT_INFO[enemy].icon}{m === "forte" ? ` ${t("Vantagem")}` : m === "fraco" ? ` ${t("Desvantagem")}` : ""}
+    </span>
   );
 }
 

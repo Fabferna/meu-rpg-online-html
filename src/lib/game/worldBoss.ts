@@ -5,11 +5,11 @@
 import type { RaceId } from "./data";
 
 export const WORLD_BOSSES = [
-  { id: "behemoth", name: "Behemoth Rubro", image: "/assets/raids/world_behemoth-v2.webp", def: 30, agility: 10,
+  { id: "behemoth", name: "Behemoth Rubro", image: "/assets/raids/world_behemoth-v2.webp", def: 30, agility: 10, element: "fogo",
     lore: "Uma fera colossal de carapaça rachada por lava. Cada passo seu abre fendas de fogo pelo reino." },
-  { id: "leviata", name: "Leviatã das Marés Negras", image: "/assets/raids/world_leviata-v2.webp", def: 26, agility: 16,
+  { id: "leviata", name: "Leviatã das Marés Negras", image: "/assets/raids/world_leviata-v2.webp", def: 26, agility: 16, element: "agua",
     lore: "A serpente que dormia sob o Mar Âmbar acordou faminta. Suas ondas engolem vilas inteiras." },
-  { id: "eclipse", name: "Arauto do Eclipse", image: "/assets/raids/world_eclipse-v2.webp", def: 34, agility: 14,
+  { id: "eclipse", name: "Arauto do Eclipse", image: "/assets/raids/world_eclipse-v2.webp", def: 34, agility: 14, element: "sombra",
     lore: "Quando o sol escurece às 21h, ele desce das estrelas para apagar a última luz de Aethelgard." },
 ] as const;
 export type WorldBossDef = (typeof WORLD_BOSSES)[number];
