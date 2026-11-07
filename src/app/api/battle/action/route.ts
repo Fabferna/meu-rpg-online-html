@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
-import { ENEMY_BY_ID } from "@/lib/game/enemies";
+import { ENEMY_BY_ID, RARE_ENEMIES, rareOf } from "@/lib/game/enemies";
 import { heroCombatant, loadPlayer } from "@/lib/game/player";
 import { chance, roll } from "@/lib/game/rng";
-import { BAG_LIMIT, rollLoot, type LootDrop, type LootResult } from "@/lib/game/loot";
+import { BAG_LIMIT, rollLoot, rollRareLoot, type LootDrop, type LootResult } from "@/lib/game/loot";
 import { ITEM_BY_ID } from "@/lib/game/items";
 import { normalizeLoadout } from "@/lib/game/skills";
 import type { RaceId } from "@/lib/game/data";
 import { DUNGEON_BY_ID, DUNGEON_REST } from "@/lib/game/dungeons";
 import { CHAPTER_BY_N } from "@/lib/game/story";
+import { RARE_RULES } from "@/lib/game/encounters";
 import { xpRate } from "@/lib/game/rules";
 import { enemyCombatant, POTION_ITEM, resolveTurn, type BattleState } from "@/lib/game/combat";
 
@@ -47,7 +48,10 @@ export const POST = action(
     if (outcome === "won") {
       // Inimigos muito abaixo do seu nível rendem menos XP (anti-farm).
       const gap = Math.max(0, p.row.level - enemy.minLevel - 3);
-      if (!state.dungeon && !state.story && !state.storyTrail) {
+      if (state.rare) {
+        // Errante: poção + 1 equipamento garantido (raro ou melhor).
+        drops = rollRareLoot(enemy, p.row.level, { chance, roll });
+      } else if (!state.dungeon && !state.story && !state.storyTrail) {
         // Caçada: tabela de saque completa (poções, equipamento da faixa, drop especial, proteção contra azar).
         const { data: pc } = await admin.from("user_counters").select("value").eq("user_id", user.id).eq("key", "loot_pity").eq("day", "2000-01-01").maybeSingle();
         const r = rollLoot(enemy, { heroLevel: p.row.level, pity: Number(pc?.value ?? 0) }, { chance, roll });
@@ -108,6 +112,13 @@ export const POST = action(
     });
 
     if (won) { won.levelUps = res.level_ups; won.loot = res.loot ?? []; }
+    // Caçada comum vencida: chance de aparecer um Errante (encontro raro) desse monstro.
+    if (outcome === "won" && !state.dungeon && !state.story && !state.storyTrail && !state.rare && chance(RARE_RULES.spawnChance)) {
+      const idx = rareOf(enemy.id);
+      if (idx >= 0 && await rpc<boolean>(admin, "rare_spawn", { p_user: user.id, p_idx: idx, p_limit: RARE_RULES.perDay })) {
+        saved.rareSpawn = RARE_ENEMIES[idx].id;
+      }
+    }
     // Trecho da história vencido: avança a fila do capítulo (a luta só grava uma vez: stale_battle acima).
     if (outcome === "won" && next.storyTrail) {
       await rpc(admin, "advance_story_trail", { p_user: user.id, p_chapter: next.storyTrail.chapter, p_step: next.storyTrail.step });

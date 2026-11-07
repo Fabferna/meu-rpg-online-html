@@ -9,6 +9,7 @@ import { heroStats, type Piece } from "./gear";
 import { setBonuses } from "./sets";
 import { isElement } from "./elements";
 import { normalizeTalents, talentMods, type TalentMods } from "./talents";
+import { isBlessed, withBlessing } from "./encounters";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -55,10 +56,11 @@ export function deriveVitals(row: CharacterRow, now = new Date()) {
 
 /** Carrega personagem + bônus dos equipamentos. `db` pode ser admin ou cliente com RLS. */
 export async function loadPlayer(db: SupabaseClient, userId: string): Promise<LoadedPlayer | null> {
-  const [{ data: row }, { data: gear }, { data: pet }] = await Promise.all([
+  const [{ data: row }, { data: gear }, { data: pet }, { data: bless }] = await Promise.all([
     db.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     db.from("inventory").select("item_id, upgrade, items(data)").eq("user_id", userId).eq("equipped", true),
     db.from("owned_pets").select("pet_id, level").eq("user_id", userId).eq("active", true).maybeSingle(),
+    db.from("user_counters").select("value").eq("user_id", userId).eq("key", "blessing_until").eq("day", "2000-01-01").maybeSingle(),
   ]);
   if (!row) return null;
   const v = deriveVitals(row);
@@ -80,7 +82,8 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
       .concat(setBonuses(pieces.map((x) => x.item.id ?? "")) as ItemBonus[])
       .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
     pieces,
-    talents: talentMods(normalizeTalents(row.talents)),
+    // Talentos + Bênção dos Ancestrais (24 h, encounters.ts).
+    talents: withBlessing(talentMods(normalizeTalents(row.talents)), isBlessed(Number((bless as { value?: number } | null)?.value ?? 0))),
   };
 }
 

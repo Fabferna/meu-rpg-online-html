@@ -129,3 +129,17 @@ export function rollLoot(e: Enemy, opts: { heroLevel: number; pity: number }, rn
   const pity: "reset" | "bump" | null = !eligible ? (gearDropped ? "reset" : null) : gearDropped ? "reset" : "bump";
   return { drops, pity, pityHit };
 }
+
+/**
+ * Saque do Errante (encontro raro): poção garantida e UM equipamento garantido da faixa,
+ * sorteado só entre raro, épico e lendário (pesos de chefe). Respeita o anti-farm por nível.
+ */
+export function rollRareLoot(e: Enemy, heroLevel: number, rng: Rng): LootDrop[] {
+  const drops: LootDrop[] = [{ item: POTION_ID, qty: rng.roll(1, 2) }];
+  if (gearAllowed(e, heroLevel)) {
+    const g = pick(weighted(gearPool(e), LOOT.weights.boss, ["rare", "epic", "legendary"]), rng)
+      ?? pick(weighted(gearPool(e), LOOT.weights.boss), rng);
+    if (g) drops.push({ item: g.id, qty: 1 });
+  }
+  return drops;
+}

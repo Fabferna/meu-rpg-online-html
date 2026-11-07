@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { GameCtx } from "./GameApp";
-import { post } from "./api";
+import { fmtTime, post } from "./api";
 import { play } from "./sfx";
 import { Bar, Panel } from "./ui";
 import { useT } from "@/lib/i18n/client";
@@ -129,6 +129,7 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
           {used > 0 && <button className="btn-gold mt-4 w-full" disabled={busy} onClick={confirm}>{t("Confirmar distribuição")}</button>}
         </Panel>
 
+        <BlessingChip ctx={ctx} />
         <CombatStats ctx={ctx} />
         <ElementPicker ctx={ctx} />
 
@@ -190,5 +191,25 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
       )}
       <p className="mt-1 text-[11px] text-white/50"><span className="text-emerald-400">(+N)</span> = {t("quanto vem dos equipamentos, conjuntos e pet")}</p>
     </Panel>
+  );
+}
+
+/** Bênção dos Ancestrais: ativa (com tempo restante) ou a chance do próximo sorteio. */
+function BlessingChip({ ctx }: { ctx: GameCtx }) {
+  const t = useT();
+  const d = ctx.state.daily;
+  const left = d.blessedUntil ? Math.max(0, Math.floor((Date.parse(d.blessedUntil) - Date.now()) / 1000)) : 0;
+  return left > 0 ? (
+    <Panel className="flex items-center gap-3 p-3 ring-1 ring-yellow-300/60">
+      <span className="text-2xl">✨</span>
+      <p className="flex-1 text-sm">
+        <b className="text-yellow-200">{t("Bênção dos Ancestrais ativa")}</b> · {t("+10% ataque, magia e defesa, +5% vida")}
+        <span className="block text-xs text-white/60">{t("Termina em {tempo}", { tempo: fmtTime(left) })}</span>
+      </p>
+    </Panel>
+  ) : (
+    <p className="px-1 text-xs text-white/50">
+      {t("✨ Bênção dos Ancestrais: sorteada ao resgatar a recompensa diária. Sua chance {q}: {n}%.", { q: d.blessRolled ? t("amanhã") : t("hoje"), n: Math.round(d.blessChance * 100) })}
+    </p>
   );
 }

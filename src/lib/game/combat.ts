@@ -60,6 +60,10 @@ export type BattleState = {
   storyResult?: { xp: number; gold: number; gems: number; item?: string; cosmetic?: string; levelUps: number };
   /** Trecho da história (luta antes do chefe): capítulo e número do trecho (1 ou 2). */
   storyTrail?: { chapter: number; step: number };
+  /** Luta contra um Errante (encontro raro). */
+  rare?: boolean;
+  /** Ao vencer a caçada, um Errante apareceu (id do inimigo, só para a tela avisar). */
+  rareSpawn?: string;
   /** Masmorra: estágio atual (0 = primeira luta) e total de estágios. */
   dungeon?: { id: string; name: string; stage: number; total: number; chest?: { gold: number; gems: number; item: string | null } };
 };

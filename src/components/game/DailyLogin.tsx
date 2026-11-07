@@ -5,12 +5,14 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import { DAILY_LOGIN, LOGIN_MILESTONES } from "@/lib/shop/catalog";
+import { blessingChance } from "@/lib/game/encounters";
 import { post } from "./api";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 
 export type LoginState = { claimedToday: boolean; streak: number };
-type Result = { streak: number; day: number; gold: number; gems: number; potions: number; milestone: string | null };
+type Result = { streak: number; day: number; gold: number; gems: number; potions: number; milestone: string | null;
+  blessing?: { won: boolean; chance_ppm: number; points: number } | null };
 
 /** Janela da recompensa diária. Abre sozinha quando ainda não foi resgatada hoje. */
 export default function DailyLogin({ ctx, login, open, onClose, onClaimed }: {
@@ -32,7 +34,7 @@ export default function DailyLogin({ ctx, login, open, onClose, onClaimed }: {
     try {
       const r = await post<Result>("/api/daily-login");
       setResult(r);
-      play(r.milestone ? "levelup" : "victory");
+      play(r.milestone || r.blessing?.won ? "levelup" : "victory");
       onClaimed();
       ctx.refresh();
     } catch (e) {
@@ -91,6 +93,13 @@ export default function DailyLogin({ ctx, login, open, onClose, onClaimed }: {
                     {t("🎉 Marco de {n} dias seguidos!", { n: result.streak })} {t(LOGIN_MILESTONES.find((m) => m.streak === result.streak)?.reward ?? "")}
                   </p>
                 )}
+                {result.blessing && (result.blessing.won ? (
+                  <motion.p initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="mt-3 rounded-lg bg-yellow-400/15 px-3 py-2 text-sm ring-1 ring-yellow-300/60">
+                    {t("✨ BÊNÇÃO DOS ANCESTRAIS! Por 24 horas: +10% de ataque, magia e defesa e +5% de vida.")}
+                  </motion.p>
+                ) : (
+                  <p className="mt-3 text-xs text-white/60">{t("Sorteio da Bênção: não foi desta vez ({c}%). Amanhã sua chance sobe para {n}%.", { c: Math.round(result.blessing.chance_ppm / 1e4), n: Math.round(blessingChance(result.blessing.points) * 100) })}</p>
+                ))}
                 <p className="mt-2 text-sm text-white/60">{t("Sequência: {n} dia(s) 🔥 · volte amanhã!", { n: result.streak })}</p>
                 <button className="btn-gold mt-5 w-full" onClick={onClose}>{t("Continuar")}</button>
               </motion.div>
