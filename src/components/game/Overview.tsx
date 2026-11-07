@@ -160,14 +160,15 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
   const t = useT();
   const s = combatSummary(ctx.state);
   const plus = (n: number, unit = "") => (n > 0 ? <span className="ml-1 text-sm text-emerald-400">(+{n}{unit})</span> : n < 0 ? <span className="ml-1 text-sm text-red-300">({n}{unit})</span> : null);
-  const rows: { icon: string; label: string; hint: string; value: string; bonus: number; unit?: string }[] = [
-    { icon: "❤️", label: "Vida máxima", hint: "Quanto dano você aguenta", value: String(s.hp.value), bonus: s.hp.bonus },
-    { icon: "⚡", label: "Energia máxima", hint: "Gasta em caçadas e missões", value: String(s.energy.value), bonus: 0 },
-    { icon: "⚔️", label: "Ataque físico", hint: "Dano do ataque básico", value: `${s.atk.range[0]}–${s.atk.range[1]}`, bonus: s.atk.bonus },
-    { icon: "✨", label: "Poder mágico", hint: "Base das habilidades mágicas", value: `${s.magic.range[0]}–${s.magic.range[1]}`, bonus: s.magic.bonus },
-    { icon: "🛡️", label: "Defesa", hint: "Reduz o dano recebido", value: String(s.def.value), bonus: s.def.bonus },
-    { icon: "💨", label: "Esquiva", hint: "Contra inimigo de mesma agilidade", value: `${s.dodge.value}%`, bonus: s.dodge.bonus, unit: "%" },
-    { icon: "🎯", label: "Chance de crítico", hint: "Crítico causa ×1,6 de dano", value: `${s.crit.value}%`, bonus: s.crit.bonus, unit: "%" },
+  const tal = (n: number, unit = "") => (n > 0 ? <span className="ml-1 text-sm text-violet-300">(🌳+{n}{unit})</span> : null);
+  const rows: { icon: string; label: string; hint: string; value: string; bonus: number; talent: number; unit?: string }[] = [
+    { icon: "❤️", label: "Vida máxima", hint: "Quanto dano você aguenta", value: String(s.hp.value), bonus: s.hp.bonus, talent: s.hp.talent },
+    { icon: "⚡", label: "Energia máxima", hint: "Gasta em caçadas e missões", value: String(s.energy.value), bonus: 0, talent: 0 },
+    { icon: "⚔️", label: "Ataque físico", hint: "Dano do ataque básico", value: `${s.atk.range[0]}–${s.atk.range[1]}`, bonus: s.atk.bonus, talent: s.atk.talent },
+    { icon: "✨", label: "Poder mágico", hint: "Base das habilidades mágicas", value: `${s.magic.range[0]}–${s.magic.range[1]}`, bonus: s.magic.bonus, talent: s.magic.talent },
+    { icon: "🛡️", label: "Defesa", hint: "Reduz o dano recebido", value: String(s.def.value), bonus: s.def.bonus, talent: s.def.talent },
+    { icon: "💨", label: "Esquiva", hint: "Contra inimigo de mesma agilidade", value: `${s.dodge.value}%`, bonus: s.dodge.bonus, talent: s.dodge.talent, unit: "%" },
+    { icon: "🎯", label: "Chance de crítico", hint: "Crítico causa ×1,6 de dano", value: `${s.crit.value}%`, bonus: s.crit.bonus, talent: s.crit.talent, unit: "%" },
   ];
   return (
     <Panel className="p-5">
@@ -180,7 +181,7 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
               <p className="text-sm">{t(r.label)}</p>
               <p className="text-[11px] text-white/40">{t(r.hint)}</p>
             </div>
-            <span className="whitespace-nowrap text-right font-display text-lg">{r.value}{plus(r.bonus, r.unit)}</span>
+            <span className="text-right font-display text-lg leading-tight">{r.value}<span className="block sm:inline">{plus(r.bonus, r.unit)}{tal(r.talent, r.unit)}</span></span>
           </li>
         ))}
       </ul>
@@ -190,6 +191,7 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
         </p>
       )}
       <p className="mt-1 text-[11px] text-white/50"><span className="text-emerald-400">(+N)</span> = {t("quanto vem dos equipamentos, conjuntos e pet")}</p>
+      <p className="text-[11px] text-white/50"><span className="text-violet-300">(🌳+N)</span> = {s.blessed ? t("quanto vem da árvore de talentos e da Bênção") : t("quanto vem da árvore de talentos")}</p>
     </Panel>
   );
 }
