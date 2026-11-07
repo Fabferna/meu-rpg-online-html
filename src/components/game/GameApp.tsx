@@ -26,6 +26,7 @@ import EventBanner from "./EventBanner";
 import SeasonPass from "./SeasonPass";
 import World from "./World";
 import { CHAPTERS, trailLevel, trailOf } from "@/lib/game/story";
+import { worldBossSchedule } from "@/lib/game/worldBoss";
 
 /** Há luta da história disponível agora (trecho ou chefe)? */
 const CHAPTER_READY = (done: number, level: number, trail: number) => {
@@ -249,7 +250,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tb.icon} {t(tb.label)}
             {tb.id === "quests" && questReady && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />}
             {tb.id === "battle" && state.battle && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-ember" />}
-            {tb.id === "world" && CHAPTER_READY(c.storyChapter, c.level, c.storyTrail ?? 0) && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-gold" />}
+            {tb.id === "world" && (CHAPTER_READY(c.storyChapter, c.level, c.storyTrail ?? 0) || worldBossSchedule().open) && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-gold" />}
             {tb.id === "goals" && goalsReady > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{goalsReady}</span>}
             {tb.id === "overview" && c.attributePoints > 0 && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-arcane" />}
           </button>

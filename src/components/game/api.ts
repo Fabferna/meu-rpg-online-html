@@ -13,6 +13,7 @@ export const ERROR_TEXT: Record<string, string> = {
   no_slot: "Sem espaço livre. Compre um espaço de herói com gemas.",
   already_has_character: "Você já está com um herói ativo.",
   story_trail_pending: "Vença os trechos do capítulo antes de enfrentar o chefe.",
+  world_boss_closed: "O Chefe do Mundo só aparece às 21h (horário de Brasília), por 1 hora.",
   daily_duels: "Você atingiu o limite de duelos de hoje. Renove com gemas na Arena ou volte amanhã!",
   daily_hunts: "Você atingiu o limite de caçadas de hoje. Renove com gemas na Caçada ou volte amanhã!",
   daily_quests: "Você atingiu o limite de missões de hoje. Renove com gemas em Missões ou volte amanhã!",

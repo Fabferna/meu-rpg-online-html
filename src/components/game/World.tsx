@@ -15,6 +15,7 @@ import { post } from "./api";
 import { Panel } from "./ui";
 import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
+import WorldBoss from "./WorldBoss";
 
 export default function World({ ctx, onBattle }: { ctx: GameCtx; onBattle: () => void }) {
   const t = useT();
@@ -45,6 +46,9 @@ export default function World({ ctx, onBattle }: { ctx: GameCtx; onBattle: () =>
 
   return (
     <div className="space-y-6">
+      {/* CHEFE DO MUNDO (todo dia às 21h) */}
+      <WorldBoss ctx={ctx} />
+
       {/* HISTÓRIA */}
       <Panel className="overflow-hidden">
         <div className="grid md:grid-cols-[1fr_280px]">

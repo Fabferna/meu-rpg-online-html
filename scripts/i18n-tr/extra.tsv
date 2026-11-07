@@ -631,3 +631,40 @@ Na Fenda do Vazio, até a luz tem medo. Fique perto de mim.	In the Void Rift, ev
 Algo devora as estrelas do céu, uma por uma.	Something devours the stars in the sky, one by one.	Algo devora las estrellas del cielo, una por una.	有什么东西正一颗接一颗地吞噬天上的星星。
 (a voz de Vorlag, agora fraca) Nyx me usou também... Os arautos dela guardam o Olho.	(Vorlag's voice, now weak) Nyx used me too... Her heralds guard the Eye.	(la voz de Vorlag, ahora débil) Nyx también me usó... Sus heraldos guardan el Ojo.	（沃拉格的声音已经虚弱）尼克斯也利用了我……她的使者守护着那只眼。
 Diante do Olho Vazio, a última criatura abre a boca infinita.	Before the Empty Eye, the last creature opens its endless maw.	Ante el Ojo Vacío, la última criatura abre su boca infinita.	在空洞之眼前，最后的怪物张开了无尽的巨口。
+Chefe do Mundo (21h)	World Boss (9 PM)	Jefe del Mundo (21h)	世界首领（21点）
+🌋 O CHEFE DO MUNDO CAIU! Resgate sua recompensa.	🌋 THE WORLD BOSS HAS FALLEN! Claim your reward.	🌋 ¡EL JEFE DEL MUNDO CAYÓ! Reclama tu recompensa.	🌋 世界首领倒下了！领取你的奖励。
+✨ ITEM EXCLUSIVO! {x} · +{g} 🪙{e}	✨ EXCLUSIVE ITEM! {x} · +{g} 🪙{e}	✨ ¡OBJETO EXCLUSIVO! {x} · +{g} 🪙{e}	✨ 专属物品！{x} · +{g} 🪙{e}
+🌋 CHEFE DO MUNDO · TODO DIA ÀS 21H	🌋 WORLD BOSS · EVERY DAY AT 9 PM	🌋 JEFE DEL MUNDO · TODOS LOS DÍAS A LAS 21H	🌋 世界首领 · 每天 21 点
+AO VIVO · termina em {tempo}	LIVE · ends in {tempo}	EN VIVO · termina en {tempo}	进行中 · {tempo} 后结束
+Próximo em {tempo}	Next in {tempo}	Próximo en {tempo}	下次：{tempo} 后
+Errou	Miss	Falló	未命中
+Vida do chefe (todos os jogadores juntos) · {n} participantes	Boss health (all players together) · {n} participants	Vida del jefe (todos los jugadores juntos) · {n} participantes	首领生命（全体玩家共享）· {n} 名参与者
+Resgatar recompensa	Claim reward	Reclamar recompensa	领取奖励
+⚔️ Atacar ({a}/{b})	⚔️ Attack ({a}/{b})	⚔️ Atacar ({a}/{b})	⚔️ 攻击（{a}/{b}）
+✔ Recompensa resgatada. Volte às 21h!	✔ Reward claimed. Come back at 9 PM!	✔ Recompensa reclamada. ¡Vuelve a las 21h!	✔ 奖励已领取。21 点再来！
+O chefe aparece todo dia às 21h (horário de Brasília) e fica 1 hora.	The boss appears every day at 9 PM (Brasília time) and stays for 1 hour.	El jefe aparece todos los días a las 21h (hora de Brasilia) y se queda 1 hora.	首领每天 21 点（巴西利亚时间）出现，持续 1 小时。
+Seu dano: {n} · {p}º lugar	Your damage: {n} · #{p}	Tu daño: {n} · {p}º lugar	你的伤害：{n} · 第 {p} 名
+Cada ataque são {r} golpes com seus atributos e equipamentos (até {a} ataques por evento). Se o chefe cair, quem causou dano ganha 🪙 {g} + 💎 5 (mais 💎 no top 10) e tem chance de um item EXCLUSIVO da sua raça: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).	Each attack is {r} strikes using your attributes and gear (up to {a} attacks per event). If the boss falls, everyone who dealt damage gets 🪙 {g} + 💎 5 (more 💎 in the top 10) and a chance at an EXCLUSIVE item for their race: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).	Cada ataque son {r} golpes con tus atributos y equipo (hasta {a} ataques por evento). Si el jefe cae, quien hizo daño gana 🪙 {g} + 💎 5 (más 💎 en el top 10) y tiene probabilidad de un objeto EXCLUSIVO de su raza: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).	每次攻击会用你的属性和装备打出 {r} 击（每场最多 {a} 次）。首领被击败后，造成伤害的玩家获得 🪙 {g} + 💎 5（前 10 名更多 💎），并有机会获得本种族专属物品：{c}%（第 1 名：{t1}%，前 3：{t3}%，前 10：{t10}%）。
+Maior dano de hoje	Top damage today	Mayor daño de hoy	今日伤害排行
+O Chefe do Mundo só aparece às 21h (horário de Brasília), por 1 hora.	The World Boss only appears at 9 PM (Brasília time), for 1 hour.	El Jefe del Mundo solo aparece a las 21h (hora de Brasilia), durante 1 hora.	世界首领只在 21 点（巴西利亚时间）出现，持续 1 小时。
+Behemoth Rubro	Crimson Behemoth	Behemoth Carmesí	赤红巨兽
+Leviatã das Marés Negras	Leviathan of the Black Tides	Leviatán de las Mareas Negras	黑潮利维坦
+Arauto do Eclipse	Herald of the Eclipse	Heraldo del Eclipse	日蚀使者
+Uma fera colossal de carapaça rachada por lava. Cada passo seu abre fendas de fogo pelo reino.	A colossal beast with a lava-cracked hide. Every step opens rifts of fire across the realm.	Una bestia colosal de caparazón agrietado por la lava. Cada paso abre grietas de fuego por el reino.	一头甲壳布满熔岩裂纹的巨兽，每一步都在王国中撕开火焰裂隙。
+A serpente que dormia sob o Mar Âmbar acordou faminta. Suas ondas engolem vilas inteiras.	The serpent sleeping beneath the Amber Sea woke up hungry. Its waves swallow whole villages.	La serpiente que dormía bajo el Mar Ámbar despertó hambrienta. Sus olas tragan aldeas enteras.	沉睡于琥珀海下的巨蛇饥饿地醒来，它的浪潮吞没整座村庄。
+Quando o sol escurece às 21h, ele desce das estrelas para apagar a última luz de Aethelgard.	When the sun darkens at 9 PM, it descends from the stars to snuff out Aethelgard's last light.	Cuando el sol se oscurece a las 21h, desciende de las estrellas para apagar la última luz de Aethelgard.	每当 21 点太阳变暗，它便从星辰降临，要熄灭艾瑟加德最后的光芒。
+Lâmina do Eclipse Solar	Solar Eclipse Blade	Hoja del Eclipse Solar	日蚀之刃
+Arco do Cometa Errante	Wandering Comet Bow	Arco del Cometa Errante	流浪彗星之弓
+Martelo do Núcleo Ardente	Burning Core Hammer	Martillo del Núcleo Ardiente	炽热核心战锤
+Machado do Devorador de Mundos	World Devourer Axe	Hacha del Devorador de Mundos	噬界者战斧
+Cajado do Abismo Estelar	Stellar Abyss Staff	Báculo del Abismo Estelar	星渊法杖
+Selo do Rei Dourado	Golden King's Seal	Sello del Rey Dorado	黄金王印戒
+Lágrima da Lua Prateada	Silver Moon Tear	Lágrima de la Luna Plateada	银月之泪
+Runa do Coração de Ferro	Iron Heart Rune	Runa del Corazón de Hierro	铁心符文
+Presa do Leviatã	Leviathan's Fang	Colmillo del Leviatán	利维坦之牙
+Olho do Firmamento	Eye of the Firmament	Ojo del Firmamento	苍穹之眼
+Relíquias do Eclipse	Eclipse Relics	Reliquias del Eclipse	日蚀遗物
+Relíquias do Cometa	Comet Relics	Reliquias del Cometa	彗星遗物
+Relíquias do Núcleo	Core Relics	Reliquias del Núcleo	核心遗物
+Relíquias do Devorador	Devourer Relics	Reliquias del Devorador	噬界者遗物
+Relíquias do Abismo	Abyss Relics	Reliquias del Abismo	深渊遗物

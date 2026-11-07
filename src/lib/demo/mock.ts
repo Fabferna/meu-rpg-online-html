@@ -76,6 +76,14 @@ export function installDemoFetch() {
     if (url === "/api/pets") return json({ pets: [{ pet_id: "lobo", level: 3, active: true }, { pet_id: "coruja", level: 1, active: false }] });
     if (url === "/api/dungeons") return json({ limit: 1, premium: false, left: { cripta: 1, minas: 1, fortaleza: 1 } });
     if (url === "/api/events") return json({ events: [{ id: "fim_de_semana_xp", name: "Fim de Semana Heroico", description: "XP em dobro todo sábado e domingo!", kind: "xp", multiplier: 2, endsAt: new Date(Date.now() + 30 * 3600_000).toISOString() }] });
+    if (url === "/api/world-boss") {
+      const n = new Date(); const start = new Date(n.getTime() - 20 * 60_000), end = new Date(n.getTime() + 40 * 60_000);
+      return json({ day: "", open: true, startsAt: start.toISOString(), endsAt: end.toISOString(), nextStartsAt: new Date(n.getTime() + 86_400_000).toISOString(),
+        boss: { id: "behemoth", name: "Behemoth Rubro", image: "/assets/raids/world_behemoth.webp", lore: "Uma fera colossal de carapaça rachada por lava. Cada passo seu abre fendas de fogo pelo reino." },
+        hp: 41250, maxHp: 96000, defeated: false, participants: 38, myDamage: 1840, myAttacks: 2, myPos: 6, claimed: false, attacksLeft: 3, canClaim: false,
+        ranking: [{ pos: 1, name: "Lyra", damage: 4210, me: false }, { pos: 2, name: "Thorin", damage: 3980, me: false }, { pos: 3, name: "Gromak", damage: 3120, me: false },
+          { pos: 4, name: "Mirelle", damage: 2650, me: false }, { pos: 5, name: "Aldric", damage: 2210, me: false }, { pos: 6, name: "Kaelen", damage: 1840, me: true }] });
+    }
     if (url === "/api/guild-boss") return json({ guild: true, attacksLeft: 2, previous: null, current: {
       week: "", boss: { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao.webp", lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
       hp: 9420, maxHp: 20000, defeated: false, myDamage: 3120, claimed: false, isTop: true,
