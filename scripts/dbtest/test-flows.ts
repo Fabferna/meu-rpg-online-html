@@ -17,6 +17,7 @@ import * as guild from "../../src/app/api/guilds/action/route";
 import * as charNew from "../../src/app/api/characters/new/route";
 import * as charSwitch from "../../src/app/api/characters/switch/route";
 import * as charCreate from "../../src/app/api/character/route";
+import * as useItem from "../../src/app/api/inventory/use/route";
 import { call, makeHero } from "./helpers";
 import { fakeAdmin, pool } from "./fakeSupabase";
 import { loadPlayer } from "../../src/lib/game/player";
@@ -74,7 +75,14 @@ async function main() {
   const st = (rd.json.state as { dungeon?: { stage: number; total: number } }).dungeon;
   ok(rd.json.outcome === "won" && st?.stage === d0.stages.length - 1, `masmorra: venceu os ${d0.stages.length} estágios`);
   const claimKey = (await q("select claim_key from reward_claims where user_id=$1 and claim_key like 'dungeon:%'", [dh.userId])).length;
-  ok(claimKey === 1 && (await wallet(dh.userId)).gold - wd.gold >= d0.chest.gold, `masmorra: baú entregue uma vez (+${d0.chest.gold} 🪙 ou mais)`);
+  const chestId = `bau_${d0.id}`;
+  const chestQty = async () => Number((await q("select coalesce(sum(qty),0) n from inventory where user_id=$1 and item_id=$2", [dh.userId, chestId]))[0].n);
+  ok(claimKey === 1 && await chestQty() === 1, `masmorra: baú entregue uma vez, no inventário (${chestId})`);
+  // Abrir o baú pelo inventário: entrega o ouro do baú e gasta o item (uma vez só).
+  const gBefore = (await wallet(dh.userId)).gold;
+  const op = await call(useItem, dh.userId, { itemId: chestId });
+  ok(op.status === 200 && op.json.kind === "chest" && (await wallet(dh.userId)).gold - gBefore === d0.chest.gold && await chestQty() === 0, `baú aberto no inventário: +${d0.chest.gold} 🪙 e o baú some`);
+  ok((await call(useItem, dh.userId, { itemId: chestId })).status >= 400, "baú: não abre de novo sem ter outro");
   await fresh(dh.userId);
   ok((await call(dungeonEnter, dh.userId, { dungeonId: d0.id })).json.error === "daily_limit", "masmorra: 2ª entrada no dia recusada");
 

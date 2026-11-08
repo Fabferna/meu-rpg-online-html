@@ -23,6 +23,8 @@ export function demoState(): PlayerState {
       { id: "i3", itemId: "arco_elfico", qty: 1, equipped: false, slot: "weapon", upgrade: 0, name: "Arco Élfico Elegante", kind: "weapon", rarity: "rare", data: { atk: 7, dex: 2, image: "/assets/arco_elfico_elegante.webp" } },
       { id: "i4", itemId: "amuleto_serpente", qty: 1, equipped: false, slot: "accessory", upgrade: 0, name: "Amuleto da Serpente Sinistra", kind: "accessory", rarity: "legendary", data: { atk: 4, def: 3, intel: 3, image: "/assets/amuleto_da_serpente_sinistra.webp" } },
       { id: "i5", itemId: "pocao_vida", qty: 6, equipped: false, slot: null, upgrade: 0, name: "Poção de Vida", kind: "consumable", rarity: "common", data: { heal: 60, image: "/assets/shop/potion_hp.webp" } },
+      { id: "i8", itemId: "bau_cripta", qty: 1, equipped: false, slot: null, upgrade: 0, name: "Baú da Cripta", kind: "consumable", rarity: "rare", data: { image: "/assets/items/tier/bau_masmorra.webp" } },
+      { id: "i9", itemId: "elixir_xp_2h", qty: 1, equipped: false, slot: null, upgrade: 0, name: "Elixir da Sabedoria (2h)", kind: "consumable", rarity: "epic", data: { image: "/assets/items/tier/elixir_sabedoria.webp" } },
     ],
     guild: { id: "g1", name: "Ordem da Chama", tag: "ODC", level: 3, role: "leader" },
     pet: { petId: "lobo", level: 3 },

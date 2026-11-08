@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ITEM_BY_ID } from "@/lib/game/items";
+import { PET_BY_ID } from "@/lib/game/pets";
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
@@ -110,6 +112,19 @@ export default function SeasonPass({ ctx }: { ctx: GameCtx }) {
         <div className="mt-1 flex gap-4 text-[11px] text-white/50"><span>{t("Linha de cima: grátis")}</span><span>{t("Linha de baixo: 👑 premium")}</span></div>
       </Panel>
 
+      <Panel className="p-4 text-sm ring-1 ring-fuchsia-500/40">
+        <h3 className="font-display text-gold">{t("👑 O que o Passe Premium dá")}</h3>
+        <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
+          <li>💎 {t("{n} gemas no total (mais do que o preço: o passe se paga)", { n: PREMIUM_TOTAL_GEMS })}</li>
+          <li>🧪 {t("2 Elixires da Sabedoria (2h e 3h): +50% de XP em tudo. Ficam no inventário até você usar.")}</li>
+          <li>🐢 {t("Pet Tartaruga de Cristal (nível 10): mais defesa e vida.")}</li>
+          <li>🔥 {t("Pet lendário Fênix (nível 25): fortalece todos os atributos.")}</li>
+          <li>🖼️ {t("Moldura da Temporada (nível 15) e título “Herói da Temporada” (nível 30).")}</li>
+          <li>🧪 {t("Poções de Vida a cada 3 níveis (cada uma cura 60 de vida).")}</li>
+          <li>🗝️ {t("+{n} entrada por dia em cada masmorra enquanto o premium estiver ativo.", { n: PASS_DUNGEON_BONUS })}</li>
+        </ul>
+      </Panel>
+
       <Panel className="p-4 text-sm">
         <h3 className="font-display text-gold">{t("Como ganhar pontos do passe")}</h3>
         <ul className="mt-2 grid gap-1 sm:grid-cols-5">
@@ -125,16 +140,26 @@ export default function SeasonPass({ ctx }: { ctx: GameCtx }) {
   );
 }
 
+/** O que a recompensa faz (item, pet, moldura, título), para mostrar embaixo do nome. */
+function rewardDesc(r: PassReward): string | null {
+  if (r.item) return ITEM_BY_ID[r.item.id]?.description ?? (r.item.id === "pocao_vida" ? "Cada poção cura 60 de vida." : null);
+  if (r.pet) return PET_BY_ID[r.pet]?.description ?? null;
+  if (r.cosmetic?.startsWith("frame")) return "Moldura brilhante no seu retrato.";
+  if (r.cosmetic?.startsWith("title")) return "Título exibido ao lado do seu nome.";
+  return null;
+}
+
 function Cell({ reward, reached, claimed, locked, premium, busy, onClaim }: { reward: PassReward; reached: boolean; claimed: boolean; locked: boolean; premium?: boolean; busy: boolean; onClaim: () => void }) {
   const t = useT();
   const can = reached && !claimed && !locked;
   return (
-    <button disabled={!can || busy} onClick={onClaim} title={t(reward.label)}
-      className={`relative flex h-28 w-28 flex-col items-center justify-center gap-1 rounded-lg p-2 text-center text-[11px] transition
+    <button disabled={!can || busy} onClick={onClaim} title={[t(reward.label), rewardDesc(reward) && t(rewardDesc(reward)!)].filter(Boolean).join(" — ")}
+      className={`relative flex h-32 w-32 flex-col items-center justify-center gap-1 rounded-lg p-2 text-center text-[11px] transition
         ${premium ? "bg-gradient-to-b from-fuchsia-900/50 to-black/40" : "bg-black/40"}
         ${can ? "ring-2 ring-gold hover:-translate-y-0.5" : ""} ${claimed ? "opacity-40" : ""} ${!reached ? "opacity-60" : ""}`}>
       {reward.icon ? <Image src={reward.icon} alt="" width={44} height={44} className="rounded" /> : <span className="text-2xl">{reward.cosmetic ? "🖼️" : "🪙"}</span>}
       <span className="leading-tight">{t(reward.label)}</span>
+      {rewardDesc(reward) && <span className="text-[9px] leading-tight text-white/60">{t(rewardDesc(reward)!)}</span>}
       {claimed && <span className="absolute right-1 top-1 text-emerald-300">✔</span>}
       {locked && <span className="absolute right-1 top-1">🔒</span>}
     </button>

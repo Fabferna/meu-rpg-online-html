@@ -15,10 +15,10 @@ function free(t: number): PassReward {
 }
 function premium(t: number): PassReward {
   const specials: Record<number, PassReward> = {
-    1: { gems: 20, boostMin: 120, label: "💎 20 + Elixir 2h", icon: "/assets/shop/potion_energy.webp" },
+    1: { gems: 20, item: { id: "elixir_xp_2h", qty: 1 }, label: "💎 20 + Elixir da Sabedoria (2h)", icon: "/assets/items/tier/elixir_sabedoria.webp" },
     10: { gems: 20, pet: "tartaruga", label: "Pet: Tartaruga de Cristal", icon: "/assets/pets/tartaruga.webp" },
     15: { gems: 20, cosmetic: "frame_temporada", label: "Moldura da Temporada", icon: "" },
-    20: { gems: 60, boostMin: 180, label: "💎 60 + Elixir 3h", icon: "/assets/shop/gems_large.webp" },
+    20: { gems: 60, item: { id: "elixir_xp_3h", qty: 1 }, label: "💎 60 + Elixir da Sabedoria (3h)", icon: "/assets/items/tier/elixir_sabedoria.webp" },
     25: { gems: 20, pet: "fenix", label: "Pet lendário: Fênix", icon: "/assets/pets/fenix.webp" },
     30: { gems: 100, cosmetic: "title_heroi_temporada", label: "💎 100 + título “Herói da Temporada”", icon: "/assets/shop/gems_large.webp" },
   };

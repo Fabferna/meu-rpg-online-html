@@ -179,10 +179,13 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               </div>
             )}
             {result.state.dungeon?.chest && (
-              <div className="mt-3 rounded-lg bg-gold/10 p-3">
-                <p className="font-display text-gold">{t("🎁 Baú de {nome}", { nome: t(result.state.dungeon.name) })}</p>
-                <p>🪙 {result.state.dungeon.chest.gold}{result.state.dungeon.chest.gems ? ` · 💎 ${result.state.dungeon.chest.gems}` : ""}</p>
-                {result.state.dungeon.chest.item && <p className="text-amber-300">✨ {t(ITEM_BY_ID[result.state.dungeon.chest.item]?.name ?? "")}!</p>}
+              <div className="mt-3 flex items-center gap-3 rounded-lg bg-gold/10 p-3 text-left ring-1 ring-gold/50">
+                <Image src="/assets/items/tier/bau_masmorra.webp" alt="" width={56} height={56} className="shrink-0" />
+                <div className="min-w-0">
+                  <p className="font-display text-gold">{t("🎁 {x} foi para o seu inventário!", { x: t(ITEM_BY_ID[result.state.dungeon.chest.item ?? ""]?.name ?? result.state.dungeon.name) })}</p>
+                  <p className="text-xs text-white/70">{t("Abra quando quiser: ouro, gemas e chance de item raro.")}</p>
+                  <button className="mt-1 text-xs text-gold underline" onClick={() => { setResult(null); setBattle(null); ctx.go?.("inventory"); }}>{t("🎒 Ir para o inventário")}</button>
+                </div>
               </div>
             )}
             {r.levelUps > 0 && <p className="font-display text-xl text-arcane">{t("⭐ Subiu de nível!")}</p>}
