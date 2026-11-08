@@ -78,6 +78,11 @@ export function installDemoFetch() {
     if (url === "/api/pets") return json({ pets: [{ pet_id: "lobo", level: 3, active: true }, { pet_id: "coruja", level: 1, active: false }] });
     if (url === "/api/dungeons") return json({ limit: 1, premium: false, left: { cripta: 1, minas: 1, fortaleza: 1 } });
     if (url === "/api/events") return json({ events: [{ id: "fim_de_semana_xp", name: "Fim de Semana Heroico", description: "XP em dobro todo sábado e domingo!", kind: "xp", multiplier: 2, endsAt: new Date(Date.now() + 30 * 3600_000).toISOString() }] });
+    if (url.startsWith("/api/profile")) return json({
+      name: "Lyra", level: 7, raceName: "Elfo de Sylvandell", portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", title: "Lenda de Aethelgard", online: true,
+      pvpRating: 1102, pvpWins: 9, pvpLosses: 3, pveWins: 41, storyChapter: 4, bossesSlain: 3, questsDone: 12,
+      gear: [{ item_id: "arco_elfico", slot: "weapon", upgrade: 2 }], pet: { pet_id: "coruja", level: 2 },
+      guild: { name: "Ordem da Chama", tag: "ODC", role: "officer" }, me: false, friend: "none" });
     if (url === "/api/world-boss") {
       const n = new Date(); const start = new Date(n.getTime() - 20 * 60_000), end = new Date(n.getTime() + 40 * 60_000);
       return json({ day: "", open: true, startsAt: start.toISOString(), endsAt: end.toISOString(), nextStartsAt: new Date(n.getTime() + 86_400_000).toISOString(),
