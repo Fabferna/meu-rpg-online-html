@@ -144,6 +144,7 @@ export default function WorldBoss({ ctx }: { ctx: GameCtx }) {
             {t("Cada ataque são {r} golpes com seus atributos e equipamentos (até {a} ataques por evento). Se o chefe cair, quem causou dano ganha 🪙 {g} + 💎 5 (mais 💎 no top 10) e tem chance de um item EXCLUSIVO da sua raça: {c}% (top 1: {t1}%, top 3: {t3}%, top 10: {t10}%).",
               { r: WORLD_BOSS_RULES.rounds, a: WORLD_BOSS_RULES.attacksPerEvent, g: rw.gold, c: Math.round(itemChance(99) * 100), t1: Math.round(itemChance(1) * 100), t3: Math.round(itemChance(3) * 100), t10: Math.round(itemChance(10) * 100) })}
           </p>
+          <p className="mb-2 text-amber-200/90">{t("🛡️ Chefe de grupo: cada ataque tira no máximo {p}% da vida dele. Sozinho ninguém derruba — chame a guilda e os amigos!", { p: Math.round(WORLD_BOSS_RULES.maxHitPct * 100) })}</p>
           <div className="flex flex-wrap gap-2">
             {myItems.map((id) => ITEM_BY_ID[id] && (
               <span key={id} className="flex items-center gap-2 rounded-md bg-amber-500/10 px-2 py-1 ring-1 ring-amber-400/30">

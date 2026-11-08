@@ -19,12 +19,19 @@ export const WORLD_BOSS_RULES = {
   /** Hora de início no horário de Brasília (UTC−3) e duração em minutos. */
   startHourBrt: 21, durationMin: 60,
   attacksPerEvent: 5, energy: 5, rounds: 6,
-  /** Vida = 2,5 × dano esperado de todos os jogadores ativos (1 ataque cada), mínimo 800. */
-  hpFactor: 2.5, minHp: 800,
+  /**
+   * Vida = 8 × dano esperado de 1 ataque de cada jogador ativo (≈ todos atacando as 5 vezes, com folga
+   * para quem tem bom equipamento), mínimo 40.000. Chefe de grupo: ninguém derruba sozinho.
+   */
+  hpFactor: 8, minHp: 40000,
+  /** Um ataque tira no máximo esta fração da vida máxima (5 ataques = no máximo 25%: precisa de 4+ jogadores). */
+  maxHitPct: 0.05,
 } as const;
 
 /** Dano esperado de 1 ataque de um herói típico do nível (medido com raidDamage). */
 export const expectedHit = (level: number) => 25 + 21 * level;
+/** Dano de um ataque depois do teto (nenhum ataque tira mais que maxHitPct da vida máxima). */
+export const capHit = (damage: number, maxHp: number) => Math.min(damage, Math.ceil(maxHp * WORLD_BOSS_RULES.maxHitPct));
 export const worldBossMaxHp = (levels: number[]) =>
   Math.max(WORLD_BOSS_RULES.minHp, Math.round(WORLD_BOSS_RULES.hpFactor * levels.reduce((s, l) => s + expectedHit(l), 0)));
 

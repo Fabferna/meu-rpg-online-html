@@ -4,7 +4,7 @@ import * as attack from "../../src/app/api/world-boss/attack/route";
 import * as claim from "../../src/app/api/world-boss/claim/route";
 import { call, makeHero } from "./helpers";
 import { pool } from "./fakeSupabase";
-import { WORLD_BOSS_ITEMS, worldBossSchedule, worldBossReward } from "../../src/lib/game/worldBoss";
+import { WORLD_BOSS_ITEMS, WORLD_BOSS_RULES, capHit, worldBossMaxHp, worldBossSchedule, worldBossReward } from "../../src/lib/game/worldBoss";
 import type { RaceId } from "../../src/lib/game/data";
 
 const ok = (c: boolean, m: string) => { console.log(`${c ? "✅" : "❌"} ${m}`); if (!c) process.exitCode = 1; };
@@ -18,6 +18,13 @@ async function main() {
   ok(b.day === "2026-11-07" && b.open && b.endsAt === "2026-11-08T01:00:00.000Z", "horário: 21h30 → aberto (evento de 07/11 até 22h)");
   const c = worldBossSchedule(new Date("2026-11-08T01:00:00Z")); // 22:00
   ok(c.day === "2026-11-07" && !c.open && c.nextStartsAt === "2026-11-09T00:00:00.000Z", "horário: 22h → fechado, próximo amanhã às 21h");
+
+  // ── Dificuldade: vida mínima alta e teto por ataque (ninguém derruba sozinho) ──
+  const hp1 = worldBossMaxHp([20]);
+  ok(hp1 >= 40000, `chefe com 1 jogador ativo: ${hp1.toLocaleString("pt-BR")} de vida`);
+  ok(capHit(999999, hp1) === Math.ceil(hp1 * WORLD_BOSS_RULES.maxHitPct), `um ataque tira no máximo ${WORLD_BOSS_RULES.maxHitPct * 100}% da vida`);
+  ok(capHit(999999, hp1) * WORLD_BOSS_RULES.attacksPerEvent < hp1, "um jogador sozinho, com os 5 ataques no máximo, não derruba o chefe");
+  ok(worldBossMaxHp(Array(30).fill(25)) > worldBossMaxHp([25]), "mais jogadores ativos → mais vida");
 
   const sch = worldBossSchedule();
   const h = await makeHero({ race: "elfo", level: 20 });
