@@ -9,6 +9,7 @@ import { Bar, Panel } from "./ui";
 import Avatar from "./Avatar";
 import { play } from "./sfx";
 import ChatBox from "./ChatBox";
+import ProfileCard from "./ProfileCard";
 import GuildBoss from "./GuildBoss";
 import GuildWar from "./GuildWar";
 import { useT } from "@/lib/i18n/client";
@@ -22,6 +23,8 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
   const [mine, setMine] = useState<MyGuild | null | undefined>(undefined);
   const [busy, setBusy] = useState(false);
   const [view, setView] = useState<"home" | "boss" | "war">("home");
+  // Perfil de um membro (o mesmo cartão do Ranking/Chat: ver herói, adicionar amigo, mandar mensagem).
+  const [profile, setProfile] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const r = await fetch("/api/guilds/mine", { cache: "no-store" });
@@ -93,14 +96,17 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
           <ul className="space-y-2">
             {mine.members.map((m) => (
               <motion.li layout key={m.name} className={`flex flex-wrap items-center gap-3 rounded-lg px-3 py-2 ${m.me ? "bg-gold/10" : "bg-black/30"}`}>
-                <div className="relative">
-                  <Avatar src={m.portrait} frame={m.frame} size={40} />
-                  <span title={m.active ? t("Ativo nas últimas 24h") : t("Inativo")} className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ring-2 ring-panel ${m.active ? "bg-emerald-400" : "bg-white/20"}`} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-display text-sm">{m.name} <span className="text-white/50">· {t("Nv.")} {m.level}</span></p>
-                  <p className="text-[11px] text-white/50">{t(ROLE_LABEL[m.role])} · {t("doou")} 🪙 {m.contributed.toLocaleString(t.locale)}</p>
-                </div>
+                <button onClick={() => setProfile(m.name)} aria-label={t("Ver perfil de {x}", { x: m.name })}
+                  className="flex min-h-11 min-w-0 flex-1 basis-full items-center gap-3 rounded-lg text-left transition hover:bg-white/5 sm:basis-auto">
+                  <span className="relative shrink-0">
+                    <Avatar src={m.portrait} frame={m.frame} size={40} />
+                    <span title={m.active ? t("Ativo nas últimas 24h") : t("Inativo")} className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ring-2 ring-panel ${m.active ? "bg-emerald-400" : "bg-white/20"}`} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-display text-sm underline-offset-2 hover:underline">{m.name} <span className="text-white/50">· {t("Nv.")} {m.level}</span></span>
+                    <span className="block text-[11px] text-white/50">{t(ROLE_LABEL[m.role])} · {t("doou")} 🪙 {m.contributed.toLocaleString(t.locale)}</span>
+                  </span>
+                </button>
                 {!m.me && staff && (
                   <div className="flex flex-wrap gap-1 text-[11px]">
                     {lead && m.role === "member" && <Btn onClick={() => act({ type: "manage", target: m.name, op: "promote" }, t("{x} agora é Oficial.", { x: m.name }))} busy={busy}>{t("Promover")}</Btn>}
@@ -117,8 +123,9 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
 
       <Panel className="flex h-[560px] flex-col p-4 lg:sticky lg:top-24">
         <h3 className="mb-2 font-display text-lg text-gold">{t("💬 Chat da guilda")}</h3>
-        <ChatBox channel="guild" ctx={ctx} />
+        <ChatBox channel="guild" ctx={ctx} onName={setProfile} />
       </Panel>
+      <ProfileCard name={profile} onClose={() => setProfile(null)} onError={(m) => ctx.toast(m, "error")} />
     </div>
     </>
   );
