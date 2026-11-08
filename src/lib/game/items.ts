@@ -20,6 +20,13 @@ export type ItemDef = {
   weapon?: WeaponType;
   /** Peso de elmo/armadura/botas. */
   weight?: Weight;
+  /**
+   * Consumível usado pelo inventário (botão Usar/Abrir): elixir de XP (minutos de bônus)
+   * ou baú de masmorra (sorteia o conteúdo do baú daquela masmorra ao abrir).
+   */
+  use?: { kind: "boost"; minutes: number } | { kind: "chest"; dungeon: string };
+  /** Texto curto do que o consumível faz. */
+  description?: string;
 };
 
 /** Bônus de afinidade de raça. */
@@ -34,6 +41,15 @@ const NW = (f: string) => `/assets/items/${f}-v2.webp`;
 const TI = (f: string) => `/assets/items/tier/${f}.webp`;
 
 export const ITEMS: ItemDef[] = [
+  // Consumíveis que ficam no inventário até o jogador usar (loja, passe e masmorras).
+  { id: "elixir_xp_1h", name: "Elixir da Sabedoria (1h)", rarity: "rare", stats: {}, image: TI("elixir_sabedoria"), sell: 10, use: { kind: "boost", minutes: 60 }, description: "+50% de XP em tudo por 1 hora." },
+  { id: "elixir_xp_2h", name: "Elixir da Sabedoria (2h)", rarity: "epic", stats: {}, image: TI("elixir_sabedoria"), sell: 20, use: { kind: "boost", minutes: 120 }, description: "+50% de XP em tudo por 2 horas." },
+  { id: "elixir_xp_3h", name: "Elixir da Sabedoria (3h)", rarity: "epic", stats: {}, image: TI("elixir_sabedoria"), sell: 30, use: { kind: "boost", minutes: 180 }, description: "+50% de XP em tudo por 3 horas." },
+  { id: "bau_cripta", name: "Baú da Cripta", rarity: "rare", stats: {}, image: TI("bau_masmorra"), sell: 50, use: { kind: "chest", dungeon: "cripta" }, description: "Abra no inventário: ouro e chance de item raro." },
+  { id: "bau_minas", name: "Baú das Minas", rarity: "rare", stats: {}, image: TI("bau_masmorra"), sell: 100, use: { kind: "chest", dungeon: "minas" }, description: "Abra no inventário: ouro, gemas e chance de item." },
+  { id: "bau_fortaleza", name: "Baú da Fortaleza", rarity: "epic", stats: {}, image: TI("bau_masmorra"), sell: 200, use: { kind: "chest", dungeon: "fortaleza" }, description: "Abra no inventário: ouro, gemas e chance de item." },
+  { id: "bau_santuario", name: "Baú do Santuário", rarity: "epic", stats: {}, image: TI("bau_masmorra"), sell: 300, use: { kind: "chest", dungeon: "santuario" }, description: "Abra no inventário: ouro, gemas e chance de item." },
+  { id: "bau_abismo", name: "Baú do Abismo", rarity: "legendary", stats: {}, image: TI("bau_masmorra"), sell: 400, use: { kind: "chest", dungeon: "abismo" }, description: "Abra no inventário: ouro, gemas e chance de item." },
   { id: "pocao_vida", name: "Poção de Vida", rarity: "common", stats: { heal: 60 }, image: "/assets/shop/potion_hp.webp", sell: 8 },
 
   // ── Armas ──

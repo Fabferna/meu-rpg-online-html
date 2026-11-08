@@ -121,16 +121,16 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
           </button>
         </Panel>
         <Panel className="flex items-center gap-4 p-4">
-          <Image src="/assets/shop/potion_energy.webp" alt="" width={64} height={64} className="rounded-lg hue-rotate-[200deg]" />
+          <Image src="/assets/items/tier/elixir_sabedoria.webp" alt="" width={64} height={64} className="rounded-lg" />
           <div className="flex-1">
             <p className="font-display">{t("Elixir da Sabedoria")}</p>
-            <p className="text-xs text-white/60">{boostLeft > 0 ? t("Ativo! +50% XP por mais {tempo}", { tempo: fmtTime(boostLeft) }) : t("+50% de XP por 1 hora.")}</p>
+            <p className="text-xs text-white/60">{boostLeft > 0 ? t("Ativo! +50% XP por mais {tempo}", { tempo: fmtTime(boostLeft) }) : t("+50% de XP por 1 hora. Vai para o inventário: use quando quiser.")}</p>
           </div>
           {(() => {
-            const d = shop.convenience.find((x) => x.boostMinutes)!;
+            const d = shop.convenience.find((x) => x.item?.id === "elixir_xp_1h")!;
             return (
               <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || d.boughtToday >= d.limit}
-                onClick={() => run(() => post("/api/shop/buy", { type: "deal", id: d.key }), "✨ Elixir ativado!")}>
+                onClick={() => run(() => post("/api/shop/buy", { type: "deal", id: d.key }), "🎒 Elixir guardado no inventário!")}>
                 💎 {d.price}
               </button>
             );
@@ -256,7 +256,7 @@ export default function Shop({ ctx }: { ctx: GameCtx }) {
       <section>
         <h2 className="mb-3 font-display text-xl text-gold">{t("🎒 Suprimentos")}</h2>
         <div className="grid gap-4 sm:grid-cols-3">
-          {shop.convenience.filter((d) => !d.boostMinutes).map((d) => (
+          {shop.convenience.filter((d) => d.item?.id !== "elixir_xp_1h").map((d) => (
             <DealCard key={d.key} deal={d} busy={busy} onBuy={() => run(() => post("/api/shop/buy", { type: "deal", id: d.key }), "🛍️ Compra realizada!")} />
           ))}
         </div>

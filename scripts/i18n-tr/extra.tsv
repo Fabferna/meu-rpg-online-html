@@ -778,3 +778,39 @@ Ataque, esquiva, defesa e golpes físicos (CON e DES)	Attack, dodge, defense and
 Esquiva, crítico, energia e stamina	Dodge, crit, energy and stamina	Esquiva, crítico, energía y aguante	闪避、暴击、能量和体力
 Vida, defesa e stamina	Health, defense and stamina	Vida, defensa y aguante	生命、防御和体力
 Magia e mana	Magic and mana	Magia y maná	法术和法力
+🎁 {x} foi para o seu inventário!	🎁 {x} went to your inventory!	🎁 ¡{x} fue a tu inventario!	🎁 {x} 已放入你的背包！
+Abra quando quiser: ouro, gemas e chance de item raro.	Open it whenever you want: gold, gems and a chance of a rare item.	Ábrelo cuando quieras: oro, gemas y probabilidad de objeto raro.	随时打开：金币、宝石，还有机会获得稀有物品。
+🎒 Ir para o inventário	🎒 Go to inventory	🎒 Ir al inventario	🎒 前往背包
+✨ Elixir ativado: +50% de XP por {n} min!	✨ Elixir activated: +50% XP for {n} min!	✨ ¡Elixir activado: +50% de XP por {n} min!	✨ 药剂已生效：{n} 分钟内经验 +50%！
+❤️ +{n} de vida	❤️ +{n} health	❤️ +{n} de vida	❤️ 生命 +{n}
+🎁 Abrir	🎁 Open	🎁 Abrir	🎁 打开
+{x} aberto!	{x} opened!	¡{x} abierto!	{x} 已打开！
+Desta vez não veio item raro.	No rare item this time.	Esta vez no salió objeto raro.	这次没有开出稀有物品。
+👑 O que o Passe Premium dá	👑 What the Premium Pass gives	👑 Lo que da el Pase Premium	👑 高级通行证包含
+{n} gemas no total (mais do que o preço: o passe se paga)	{n} gems in total (more than the price: the pass pays for itself)	{n} gemas en total (más que el precio: el pase se paga solo)	共 {n} 宝石（超过售价：通行证回本）
+2 Elixires da Sabedoria (2h e 3h): +50% de XP em tudo. Ficam no inventário até você usar.	2 Elixirs of Wisdom (2h and 3h): +50% XP on everything. They stay in your inventory until you use them.	2 Elixires de la Sabiduría (2h y 3h): +50% de XP en todo. Quedan en el inventario hasta que los uses.	2 瓶智慧药剂（2 小时和 3 小时）：所有经验 +50%。会留在背包里直到你使用。
+Pet Tartaruga de Cristal (nível 10): mais defesa e vida.	Crystal Turtle pet (tier 10): more defense and health.	Mascota Tortuga de Cristal (nivel 10): más defensa y vida.	水晶龟宠物（第 10 级）：更多防御和生命。
+Pet lendário Fênix (nível 25): fortalece todos os atributos.	Legendary Phoenix pet (tier 25): boosts every attribute.	Mascota legendaria Fénix (nivel 25): fortalece todos los atributos.	传说宠物凤凰（第 25 级）：强化所有属性。
+Moldura da Temporada (nível 15) e título “Herói da Temporada” (nível 30).	Season Frame (tier 15) and the “Season Hero” title (tier 30).	Marco de Temporada (nivel 15) y título “Héroe de la Temporada” (nivel 30).	赛季头像框（第 15 级）和“赛季英雄”称号（第 30 级）。
+Poções de Vida a cada 3 níveis (cada uma cura 60 de vida).	Health Potions every 3 tiers (each heals 60 health).	Pociones de Vida cada 3 niveles (cada una cura 60 de vida).	每 3 级获得生命药水（每瓶恢复 60 生命）。
++{n} entrada por dia em cada masmorra enquanto o premium estiver ativo.	+{n} daily entry in each dungeon while premium is active.	+{n} entrada diaria en cada mazmorra mientras el premium esté activo.	高级有效期间，每个地下城每天 +{n} 次进入。
++50% de XP por 1 hora. Vai para o inventário: use quando quiser.	+50% XP for 1 hour. Goes to your inventory: use it whenever you want.	+50% de XP por 1 hora. Va al inventario: úsalo cuando quieras.	1 小时内经验 +50%。放入背包：随时使用。
++50% de XP em tudo por 1 hora. Vai para o inventário: use quando quiser.	+50% XP on everything for 1 hour. Goes to your inventory: use it whenever you want.	+50% de XP en todo por 1 hora. Va al inventario: úsalo cuando quieras.	1 小时内所有经验 +50%。放入背包：随时使用。
+-40% só hoje! Vai para o inventário.	-40% today only! Goes to your inventory.	¡-40% solo hoy! Va al inventario.	仅限今天 -40%！放入背包。
+Elixir da Sabedoria (2h)	Elixir of Wisdom (2h)	Elixir de la Sabiduría (2h)	智慧药剂（2 小时）
+Elixir da Sabedoria (3h)	Elixir of Wisdom (3h)	Elixir de la Sabiduría (3h)	智慧药剂（3 小时）
+💎 20 + Elixir da Sabedoria (2h)	💎 20 + Elixir of Wisdom (2h)	💎 20 + Elixir de la Sabiduría (2h)	💎 20 + 智慧药剂（2 小时）
+💎 60 + Elixir da Sabedoria (3h)	💎 60 + Elixir of Wisdom (3h)	💎 60 + Elixir de la Sabiduría (3h)	💎 60 + 智慧药剂（3 小时）
+Cada poção cura 60 de vida.	Each potion heals 60 health.	Cada poción cura 60 de vida.	每瓶药水恢复 60 生命。
++50% de XP em tudo por 2 horas.	+50% XP on everything for 2 hours.	+50% de XP en todo por 2 horas.	2 小时内所有经验 +50%。
++50% de XP em tudo por 3 horas.	+50% XP on everything for 3 hours.	+50% de XP en todo por 3 horas.	3 小时内所有经验 +50%。
+Moldura brilhante no seu retrato.	A glowing frame around your portrait.	Marco brillante en tu retrato.	为你的头像加上发光边框。
+Título exibido ao lado do seu nome.	A title shown next to your name.	Título que se muestra junto a tu nombre.	显示在你名字旁的称号。
+🎒 Elixir guardado no inventário!	🎒 Elixir stored in your inventory!	🎒 ¡Elixir guardado en el inventario!	🎒 药剂已放入背包！
+Baú da Cripta	Crypt Chest	Cofre de la Cripta	地穴宝箱
+Baú das Minas	Mines Chest	Cofre de las Minas	矿坑宝箱
+Baú da Fortaleza	Fortress Chest	Cofre de la Fortaleza	要塞宝箱
+Baú do Santuário	Sanctuary Chest	Cofre del Santuario	圣所宝箱
+Baú do Abismo	Abyss Chest	Cofre del Abismo	深渊宝箱
+Abra no inventário: ouro e chance de item raro.	Open it in your inventory: gold and a chance of a rare item.	Ábrelo en el inventario: oro y probabilidad de objeto raro.	在背包中打开：金币，还有机会获得稀有物品。
+Abra no inventário: ouro, gemas e chance de item.	Open it in your inventory: gold, gems and a chance of an item.	Ábrelo en el inventario: oro, gemas y probabilidad de objeto.	在背包中打开：金币、宝石，还有机会获得物品。

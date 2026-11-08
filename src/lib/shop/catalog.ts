@@ -113,13 +113,13 @@ export type DailyDeal = {
 export const CONVENIENCE: DailyDeal[] = [
   { key: "potions_5", name: "5 Poções de Vida", description: "Cura 60 de vida cada.", image: "/assets/shop/potion_hp.webp", currency: "gold", price: 110, limit: 3, item: { id: "pocao_vida", qty: 5 } },
   { key: "potions_20", name: "Caixa com 20 Poções", description: "Para longas caçadas.", image: "/assets/shop/potion_hp.webp", currency: "gems", price: 40, limit: 5, item: { id: "pocao_vida", qty: 20 } },
-  { key: "xp_boost_60", name: "Elixir da Sabedoria (1h)", description: "+50% de XP em tudo por 1 hora.", image: "/assets/shop/potion_energy.webp", currency: "gems", price: 60, limit: 5, boostMinutes: 60 },
+  { key: "xp_boost_60", name: "Elixir da Sabedoria (1h)", description: "+50% de XP em tudo por 1 hora. Vai para o inventário: use quando quiser.", image: "/assets/items/tier/elixir_sabedoria.webp", currency: "gems", price: 60, limit: 5, item: { id: "elixir_xp_1h", qty: 1 } },
 ];
 
 /** Ofertas do dia: rotação determinística por data (UTC) com desconto. */
 export const DAILY_POOL: DailyDeal[] = [
   { key: "daily_potions", name: "Oferta: 10 Poções", description: "-50% só hoje!", image: "/assets/shop/potion_hp.webp", currency: "gems", price: 10, limit: 1, item: { id: "pocao_vida", qty: 10 } },
-  { key: "daily_boost", name: "Oferta: Elixir 3h", description: "-40% só hoje!", image: "/assets/shop/potion_energy.webp", currency: "gems", price: 110, limit: 1, boostMinutes: 180 },
+  { key: "daily_boost", name: "Oferta: Elixir 3h", description: "-40% só hoje! Vai para o inventário.", image: "/assets/items/tier/elixir_sabedoria.webp", currency: "gems", price: 110, limit: 1, item: { id: "elixir_xp_3h", qty: 1 } },
   { key: "daily_bow", name: "Oferta: Arco Élfico", description: "Arma rara -30%.", image: "/assets/arco_elfico_elegante.webp", currency: "gold", price: 290, limit: 1, item: { id: "arco_elfico", qty: 1 } },
   { key: "daily_staff", name: "Oferta: Cajado Luminoso", description: "Arma rara -30%.", image: "/assets/cajado_magico_luminoso.webp", currency: "gold", price: 290, limit: 1, item: { id: "cajado_luminoso", qty: 1 } },
   { key: "daily_boots", name: "Oferta: Botas de Cavaleiro", description: "Botas médias -30%.", image: "/assets/items/botas_cavaleiro-v2.webp", currency: "gold", price: 840, limit: 1, item: { id: "botas_cavaleiro", qty: 1 } },

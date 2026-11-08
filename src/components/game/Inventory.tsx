@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
 import { type ItemDef, ITEM_BY_ID, SLOTS, itemStatsFor, sellPrice, upgradedStats, type Slot } from "@/lib/game/items";
 import type { InventoryEntry } from "@/lib/game/state";
@@ -34,6 +34,24 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
       await post(url, body);
       play("coin");
       ctx.toast(ok);
+      await ctx.refresh();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Usar consumível: poção, elixir (bônus de XP) ou baú (abre e mostra o que saiu).
+  const [opened, setOpened] = useState<{ name: string; gold: number; gems: number; item: string | null } | null>(null);
+  async function useItem(it: InventoryEntry) {
+    const d = ITEM_BY_ID[it.itemId];
+    setBusy(true);
+    try {
+      const r = await post<{ kind: string; heal?: number; minutes?: number; gold?: number; gems?: number; item?: string | null }>("/api/inventory/use", { itemId: it.itemId });
+      if (r.kind === "chest") { play("victory"); setOpened({ name: d?.name ?? it.name, gold: r.gold ?? 0, gems: r.gems ?? 0, item: r.item ?? null }); }
+      else if (r.kind === "boost") { play("skill"); ctx.toast(t("✨ Elixir ativado: +50% de XP por {n} min!", { n: r.minutes ?? 0 }), "reward"); }
+      else { play("heal"); ctx.toast(t("❤️ +{n} de vida", { n: r.heal ?? 0 }), "reward"); }
       await ctx.refresh();
     } catch (e) {
       ctx.toast((e as Error).message, "error");
@@ -149,7 +167,13 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                   <ItemTags def={def} race={race} level={ctx.state.character.level} />
                   <SetTag itemId={it.itemId} state={ctx.state} />
                   {def?.slot && <GearInsight state={ctx.state} def={def} upgrade={it.upgrade} entry={it} />}
+                  {def?.description && <p className="mt-1 text-center text-[11px] text-white/60">{t(def.description)}</p>}
                   {!picking && <div className="mt-auto flex gap-1.5 pt-2">
+                    {!it.slot && (def?.use || it.itemId === "pocao_vida") && (
+                      <button disabled={busy} onClick={() => useItem(it)} className="min-h-11 flex-1 rounded-md bg-gold/90 py-1.5 text-xs text-ink">
+                        {def?.use?.kind === "chest" ? t("🎁 Abrir") : t("Usar")}
+                      </button>
+                    )}
                     {it.slot && (
                       <button disabled={busy || (!it.equipped && ctx.state.character.level < (def?.minLevel ?? 1))} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
                         className={`min-h-11 flex-1 rounded-md py-1.5 text-xs ${it.equipped ? "bg-white/10" : "bg-gold/90 text-ink"}`}>
@@ -167,6 +191,25 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
               );
             })}
           </div>
+          <AnimatePresence>
+            {opened && (
+              <motion.div className="fixed inset-0 z-[60] grid place-items-center bg-black/75 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpened(null)}>
+                <motion.div initial={{ scale: 0.7, rotate: -4 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring" }} className="panel w-full max-w-sm p-6 text-center" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+                  <Image src="/assets/items/tier/bau_masmorra.webp" alt="" width={96} height={96} className="mx-auto" />
+                  <p className="mt-2 font-display text-xl text-gold">{t("{x} aberto!", { x: t(opened.name) })}</p>
+                  <p className="mt-3 text-lg">🪙 +{opened.gold.toLocaleString(t.locale)}{opened.gems ? ` · 💎 +${opened.gems}` : ""}</p>
+                  {opened.item && ITEM_BY_ID[opened.item] && (
+                    <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-amber-500/15 p-2 ring-1 ring-amber-400/50">
+                      <Image src={ITEM_BY_ID[opened.item].image} alt="" width={40} height={40} className="rounded" />
+                      <span className="font-display text-amber-200">✨ {t(ITEM_BY_ID[opened.item].name)}</span>
+                    </div>
+                  )}
+                  {!opened.item && <p className="mt-2 text-xs text-white/50">{t("Desta vez não veio item raro.")}</p>}
+                  <button className="btn-gold mt-5 w-full" onClick={() => setOpened(null)}>{t("Continuar")}</button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {picking && (
             <div className="sticky bottom-2 z-30 flex flex-wrap items-center gap-2 rounded-xl border border-gold/30 bg-ink/95 p-2 shadow-[0_-8px_24px_#0008] backdrop-blur"
               style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>

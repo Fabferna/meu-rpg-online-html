@@ -94,7 +94,8 @@ export const POST = action(
         rewards: undefined,
       };
     } else if (outcome === "won" && d && dg) {
-      chest = { gold: d.chest.gold, gems: d.chest.gems, item: d.chest.item && chance(d.chest.item.chance) ? d.chest.item.id : null };
+      // O baú vai para o inventário como item; o conteúdo é sorteado quando o jogador abrir (inventory/use).
+      chest = { gold: 0, gems: 0, item: `bau_${d.id}` };
       saved.dungeon = { ...dg, chest };
     }
     if (ch) saved.storyResult = { ...ch.rewards, levelUps: 0 };
