@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import { PETS, PET_MAX_LEVEL, petBonus, petTrainCost } from "@/lib/game/pets";
+import { PETS, PET_MAX_LEVEL, petBonus, petTrainCost, PET_ABILITY, petChance } from "@/lib/game/pets";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { Panel } from "./ui";
 import type { TFn } from "@/lib/i18n/translate";
@@ -55,6 +55,12 @@ export default function Pets({ ctx }: { ctx: GameCtx }) {
               <p className="mt-3 text-center font-display">{t(p.name)}</p>
               <p className="text-center text-[11px] text-white/40">{t(RARITY_LABEL[p.rarity])}</p>
               <p className="mt-1 flex-1 text-center text-xs text-white/70">{t(p.description)}</p>
+              {PET_ABILITY[p.id] && (
+                <div className="mt-2 rounded-lg bg-orange-500/10 px-2 py-1.5 text-center ring-1 ring-orange-300/20">
+                  <p className="font-display text-xs text-orange-200">⚔️ {t(PET_ABILITY[p.id].name)} · {Math.round(petChance(lvl) * 100)}%</p>
+                  <p className="text-[11px] leading-tight text-white/60">{t(PET_ABILITY[p.id].description)}</p>
+                </div>
+              )}
               <p className="mt-2 text-center text-[11px] text-emerald-300">{txt(t, petBonus(p.id, lvl))}{o && lvl < PET_MAX_LEVEL ? <span className="text-white/40"> → {txt(t, petBonus(p.id, lvl + 1))}</span> : null}</p>
               <div className="mt-3 space-y-1.5">
                 {!o ? (

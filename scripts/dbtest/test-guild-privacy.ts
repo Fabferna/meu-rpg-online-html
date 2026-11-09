@@ -62,9 +62,13 @@ async function main() {
   const req = await call(guild, outsider.userId, { type: "request", guildId: open.json.id, message: "" });
   ok(req.status === 409, "não há pedido para guilda aberta (é só entrar)");
 
-  // Líder muda a privacidade; oficial não.
-  ok((await call(guild, a.userId, { type: "privacy", privacy: "open" })).status === 409, "oficial não muda a privacidade");
-  ok((await call(guild, leader.userId, { type: "privacy", privacy: "open" })).status === 200, "líder deixou a guilda aberta");
+  // Capitão e Vice-Capitão mudam a privacidade (0043); Membro não.
+  const plain = await makeHero({ race: "humano", level: 5 });
+  await call(guild, plain.userId, { type: "request", guildId: gid, message: "" });
+  await call(guild, leader.userId, { type: "decide", target: await nameOf(plain.userId), accept: true });
+  ok((await call(guild, plain.userId, { type: "privacy", privacy: "open" })).status === 409, "membro comum não muda a privacidade");
+  ok((await call(guild, a.userId, { type: "privacy", privacy: "open" })).status === 200, "vice-capitão (oficial) deixou a guilda aberta");
+  ok((await call(guild, leader.userId, { type: "privacy", privacy: "open" })).status === 200, "capitão (líder) também muda a privacidade");
   ok((await call(guild, outsider.userId, { type: "join", guildId: gid })).status === 200, "depois de aberta, qualquer um entra");
 
   // Mensagem com link é recusada.

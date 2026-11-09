@@ -10,6 +10,7 @@ import { setBonuses } from "./sets";
 import { isElement } from "./elements";
 import { normalizeTalents, talentMods, type TalentMods } from "./talents";
 import { isBlessed, withBlessing } from "./encounters";
+import { withGuildBuff } from "./guilds";
 
 export type CharacterRow = {
   user_id: string; name: string; race: string; region: string; gender: string;
@@ -36,6 +37,8 @@ export type LoadedPlayer = {
   pieces: Piece[];
   /** Bônus da árvore de talentos. */
   talents: TalentMods;
+  /** Pet ativo (age sozinho nas lutas). */
+  pet: { id: string; level: number } | null;
 };
 
 export function deriveVitals(row: CharacterRow, now = new Date()) {
@@ -56,12 +59,14 @@ export function deriveVitals(row: CharacterRow, now = new Date()) {
 
 /** Carrega personagem + bônus dos equipamentos. `db` pode ser admin ou cliente com RLS. */
 export async function loadPlayer(db: SupabaseClient, userId: string): Promise<LoadedPlayer | null> {
-  const [{ data: row }, { data: gear }, { data: pet }, { data: bless }] = await Promise.all([
+  const [{ data: row }, { data: gear }, { data: pet }, { data: bless }, { data: gm }] = await Promise.all([
     db.from("characters").select("*").eq("user_id", userId).maybeSingle<CharacterRow>(),
     db.from("inventory").select("item_id, upgrade, items(data)").eq("user_id", userId).eq("equipped", true),
     db.from("owned_pets").select("pet_id, level").eq("user_id", userId).eq("active", true).maybeSingle(),
     db.from("user_counters").select("value").eq("user_id", userId).eq("key", "blessing_until").eq("day", "2000-01-01").maybeSingle(),
+    db.from("guild_members").select("guilds(level)").eq("user_id", userId).maybeSingle(),
   ]);
+  const guildLevel = (gm as unknown as { guilds: { level: number } | null } | null)?.guilds?.level ?? null;
   if (!row) return null;
   const v = deriveVitals(row);
   const pieces: Piece[] = ((gear ?? []) as unknown as { item_id: string; upgrade: number; items: { data: Record<string, number | string> } }[])
@@ -82,14 +87,15 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
       .concat(setBonuses(pieces.map((x) => x.item.id ?? "")) as ItemBonus[])
       .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
     pieces,
-    // Talentos + Bênção dos Ancestrais (24 h, encounters.ts).
-    talents: withBlessing(talentMods(normalizeTalents(row.talents)), isBlessed(Number((bless as { value?: number } | null)?.value ?? 0))),
+    pet: pet ? { id: String(pet.pet_id), level: Number(pet.level) } : null,
+    // Talentos + Bênção dos Ancestrais (24 h, encounters.ts) + bônus do nível da guilda (guilds.ts).
+    talents: withGuildBuff(withBlessing(talentMods(normalizeTalents(row.talents)), isBlessed(Number((bless as { value?: number } | null)?.value ?? 0))), guildLevel),
   };
 }
 
 /** Herói pronto para lutar (arma escala com atributo; peças com peso dão bônus por raça). */
 export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
-  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null, p.talents);
+  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null, p.talents, p.pet);
 }
 
 /**

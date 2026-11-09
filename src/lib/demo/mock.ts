@@ -5,6 +5,8 @@ import type { PlayerState } from "@/lib/game/state";
 import { COSMETICS, CONVENIENCE, todaysDeals, secondsToUtcMidnight } from "@/lib/shop/catalog";
 import { ACHIEVEMENTS, DAILY_BONUS, DAILY_GOALS } from "@/lib/game/goals";
 import { collectorOrders } from "@/lib/game/collector";
+import { guildPerks, guildPerms } from "@/lib/game/guilds";
+import { ITEM_BY_ID } from "@/lib/game/items";
 
 export function demoState(): PlayerState {
   return {
@@ -43,6 +45,7 @@ export function installDemoFetch() {
     const url = typeof input === "string" ? input : input instanceof URL ? input.pathname : input.url;
     if (!url.startsWith("/api/")) return real(input, init);
     if ((init?.method ?? "GET") !== "GET") return json({ error: "demo" }, 403);
+    if (url === "/api/stats") return json({ registered: 12480, online: 137 });
     if (url === "/api/characters") return json({
       active: { name: "Kaelen", raceName: "Humano", level: 6, portrait: "/assets/aventureiro_de_aethelgard.webp" },
       stashed: [{ id: "demo", name: "Lyra", raceName: "Elfo de Sylvandell", level: 3, portrait: "/assets/elfo_de_sylvandell_mulher.webp" }],
@@ -101,7 +104,21 @@ export function installDemoFetch() {
       rows: [{ pos: 1, name: "Lâminas do Deserto", tag: "LDD", level: 5, score: 688, mine: false }, { pos: 2, name: "Ordem da Chama", tag: "ODC", level: 3, score: 412, mine: true },
         { pos: 3, name: "Filhos da Montanha", tag: "FDM", level: 2, score: 230, mine: false }] });
     if (url.startsWith("/api/guilds/mine")) return json({ guild: {
-      id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: 20, myRole: "leader", private: true,
+      id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: guildPerks(3).memberLimit, myRole: "leader", private: true,
+      perms: guildPerms("leader"), perks: guildPerks(3), nextPerks: guildPerks(4),
+      vault: {
+        slots: guildPerks(3).vaultSlots, lockedUntil: null,
+        items: [
+          { id: "v1", itemId: "elmo_ferro", qty: 1, upgrade: 3, name: "Elmo de Ferro", kind: "armor", rarity: "rare", image: ITEM_BY_ID.elmo_ferro.image, slot: "helmet", fee: 149 },
+          { id: "v2", itemId: "espada_capitao", qty: 1, upgrade: 0, name: "Espada do Capitão", kind: "weapon", rarity: "epic", image: ITEM_BY_ID.espada_capitao.image, slot: "weapon", fee: 550 },
+          { id: "v3", itemId: "pocao_vida", qty: 12, upgrade: 0, name: "Poção de Vida", kind: "consumable", rarity: "common", image: ITEM_BY_ID.pocao_vida.image, slot: null, fee: 10 },
+        ],
+        log: [
+          { id: 3, name: "Lyra", action: "withdraw", item: "Arco Longo", qty: 1, upgrade: 2, fee: 180, at: new Date(Date.now() - 3600_000).toISOString() },
+          { id: 2, name: "Thorin", action: "deposit", item: "Elmo de Ferro", qty: 1, upgrade: 3, fee: 0, at: new Date(Date.now() - 2 * 3600_000).toISOString() },
+          { id: 1, name: "Kaelen", action: "deposit", item: "Poção de Vida", qty: 12, upgrade: 0, fee: 0, at: new Date(Date.now() - 5 * 3600_000).toISOString() },
+        ],
+      },
       requests: [
         { name: "Gromak", level: 5, message: "Jogo todo dia à noite e quero ajudar no Chefe do Mundo!", at: new Date().toISOString(), portrait: "/assets/retratodegronar.webp", frame: null },
         { name: "Aria", level: 4, message: "", at: new Date().toISOString(), portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_bronze" },
@@ -109,7 +126,7 @@ export function installDemoFetch() {
       members: [
         { name: "Kaelen", level: 6, role: "leader", contributed: 4200, me: true, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", active: true },
         { name: "Lyra", level: 7, role: "officer", contributed: 2900, me: false, portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", active: true },
-        { name: "Thorin", level: 6, role: "member", contributed: 1050, me: false, portrait: "/assets/anaodasrochosas.webp", frame: "frame_bronze", active: false },
+        { name: "Thorin", level: 6, role: "squad_leader", contributed: 1050, me: false, portrait: "/assets/anaodasrochosas.webp", frame: "frame_bronze", active: false },
         { name: "Mirelle", level: 5, role: "member", contributed: 500, me: false, portrait: "/assets/retrato_aetheliana.webp", frame: null, active: true },
       ] } });
     if (url.startsWith("/api/guilds")) return json({ guilds: [

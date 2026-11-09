@@ -10,7 +10,8 @@ import { play } from "./sfx";
 import { useT } from "@/lib/i18n/client";
 
 type Data = { owned: string[]; equipped: Record<CosmeticKind, string | null> };
-const KINDS: [CosmeticKind, string][] = [["title", "🏷️ Títulos"], ["frame", "🖼️ Molduras"], ["skin", "🎭 Visuais do herói"]];
+// Títulos têm painel próprio (Titles.tsx); aqui ficam só molduras e visuais.
+const KINDS: [CosmeticKind, string][] = [["frame", "🖼️ Molduras"], ["skin", "🎭 Visuais do herói"]];
 
 /** Coleção de cosméticos: tudo que o jogador ganhou ou comprou, para escolher o que usar. */
 export default function Cosmetics({ ctx }: { ctx: GameCtx }) {
@@ -40,14 +41,17 @@ export default function Cosmetics({ ctx }: { ctx: GameCtx }) {
   }
 
   if (!d) return <p className="text-sm text-white/60">{t("Carregando...")}</p>;
-  const fits = COSMETICS.filter((x) => skinFits(x, c.race, c.gender));
+  const fits = COSMETICS.filter((x) => x.kind !== "title" && skinFits(x, c.race, c.gender));
   const total = fits.filter((x) => d.owned.includes(x.id)).length;
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-white/70">
-        {t("Sua coleção: {a} de {b} cosméticos. Títulos aparecem no seu perfil, no ranking e no chat.", { a: total, b: fits.length })}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-white/70">{t("Sua coleção: {a} de {b} molduras e visuais.", { a: total, b: fits.length })}</p>
+        <button onClick={() => ctx.openTitles?.()} className="min-h-10 rounded-md bg-gold/15 px-3 text-sm text-gold ring-1 ring-gold/30 hover:bg-gold/25">
+          🏷️ {t("Títulos")}{c.title ? <span className="ml-1 text-amber-200/80">· « {t(c.title)} »</span> : null}
+        </button>
+      </div>
       {KINDS.map(([kind, label]) => {
         const list = fits.filter((x) => x.kind === kind)
           .sort((a, b) => Number(d.owned.includes(b.id)) - Number(d.owned.includes(a.id)));
@@ -64,8 +68,7 @@ export default function Cosmetics({ ctx }: { ctx: GameCtx }) {
                     {on && <span className="absolute right-2 top-2 rounded bg-emerald-600 px-1.5 text-[10px] font-bold">{t("EM USO")}</span>}
                     <div className="mx-auto grid h-20 place-items-center">
                       {kind === "frame" ? <Avatar src={c.portrait} frame={x.id} size={76} /> :
-                        kind === "skin" ? <Image src={x.image!} alt="" width={64} height={80} className={`h-20 w-16 rounded-lg object-cover ${owned ? "" : "grayscale"}`} /> :
-                        <span className="rounded-md bg-black/40 px-2 py-1.5 font-display text-sm text-amber-200">« {t(x.name)} »</span>}
+                        <Image src={x.image!} alt="" width={64} height={80} className={`h-20 w-16 rounded-lg object-cover ${owned ? "" : "grayscale"}`} />}
                     </div>
                     <p className="mt-1 line-clamp-2 text-sm leading-tight">{owned ? "" : "🔒 "}{t(x.name)}</p>
                     <p className="text-[11px] text-white/40">{t(RARITY_LABEL[x.rarity])}</p>

@@ -6,6 +6,7 @@ import { ELEMENT_INFO, matchup, type Element } from "@/lib/game/elements";
 import Image from "next/image";
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import type { GameCtx } from "./GameApp";
+import { PET_ABILITY, PET_BY_ID } from "@/lib/game/pets";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
 import { ENEMIES, ENEMY_BY_ID } from "@/lib/game/enemies";
@@ -53,9 +54,9 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
 
   function showFloats(entries: LogEntry[]) {
     const fl: Float[] = entries.map((l, i) => {
-      const target = l.target ?? (l.action === "defend" || l.action === "potion" || ((l.action === "racial" || l.action === "skill") && l.heal && !l.dmg) ? l.actor : l.actor === "player" ? "enemy" : "player");
-      const text = l.action === "stunned" ? t("Atordoado!") : l.miss ? t("Esquivou!") : l.heal ? `+${l.heal}` : l.action === "poison" ? `☠️ -${l.dmg}` : `${l.crit ? `${t("CRÍTICO")} ` : ""}-${l.dmg}`;
-      const color = l.action === "poison" ? "text-lime-300" : l.action === "stunned" ? "text-sky-300" : l.heal ? "text-emerald-300" : l.crit ? "text-amber-300 text-3xl" : l.miss ? "text-white/70" : "text-red-400";
+      const target = l.target ?? (l.action === "defend" || l.action === "potion" || ((l.action === "racial" || l.action === "skill" || l.action === "pet") && l.heal && !l.dmg) ? l.actor : l.actor === "player" ? "enemy" : "player");
+      const text = l.action === "pet" ? (l.dmg ? `🐾 -${l.dmg}` : `🐾 +${l.heal ?? 0}`) : l.action === "stunned" ? t("Atordoado!") : l.miss ? t("Esquivou!") : l.heal ? `+${l.heal}` : l.action === "poison" ? `☠️ -${l.dmg}` : `${l.crit ? `${t("CRÍTICO")} ` : ""}-${l.dmg}`;
+      const color = l.action === "pet" ? (l.dmg ? "text-orange-300" : "text-emerald-300") : l.action === "poison" ? "text-lime-300" : l.action === "stunned" ? "text-sky-300" : l.heal ? "text-emerald-300" : l.crit ? "text-amber-300 text-3xl" : l.miss ? "text-white/70" : "text-red-400";
       return { id: Date.now() + i, side: target, text, color };
     });
     setFloats((f) => [...f, ...fl]);
@@ -63,6 +64,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     entries.forEach((l, i) => setTimeout(() => {
       if (l.action === "stunned") play("miss");
       else if (l.action === "poison") play("hurt");
+      else if (l.action === "pet") play(l.dmg ? "hit" : "heal");
       else if (l.action === "racial") play(l.heal ? "defend" : "skill");
       else if (l.action === "defend") play("defend");
       else if (l.action === "potion") play("heal");
@@ -203,6 +205,9 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
     const last = battle.log.slice(-8).reverse();
     const fx = battle.effects ?? {};
     const lo = state.character.loadout;
+    // Pet ativo: aparece ao lado do herói e "pula" no turno em que agiu.
+    const petDef = state.pet ? PET_BY_ID[state.pet.petId] : undefined;
+    const petActed = battle.log.some((l) => l.turn === battle.turn && l.action === "pet");
     return (
       <div className="space-y-3 pb-40 sm:space-y-4 sm:pb-0">
         {battle.dungeon && (
@@ -217,9 +222,10 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
           <Fighter refEl={playerRef} name={state.character.name} image={state.character.portrait} hp={battle.player.hp} max={battle.player.maxHp} floats={floats.filter((f) => f.side === "player")}
             mp={battle.player.mp} maxMp={battle.player.maxMp} sp={battle.player.sp} maxSp={battle.player.maxSp}
+            pet={petDef && state.pet ? { name: petDef.name, image: petDef.image, level: state.pet.level, ability: PET_ABILITY[petDef.id]?.name, acted: petActed, turn: battle.turn } : undefined}
             badges={[fx.pPoison ? `☠️ ${t("Veneno")} ${fx.pPoison}` : "", fx.pStun ? `💫 ${t("Atordoado")}` : "", fx.pStone ? `🪨 ${t("Pele de Pedra")} ${fx.pStone}` : ""]} />
           <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={ENEMY_BY_ID[battle.enemyId]?.image ?? battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
-            badges={[fx.ePoison ? `☠️ ${t("Veneno")} ${fx.ePoison}` : "", fx.eStun ? `💫 ${t("Atordoado")}` : ""]} />
+            badges={[fx.ePoison ? `☠️ ${t("Veneno")} ${fx.ePoison}` : "", fx.eStun ? `💫 ${t("Atordoado")}` : "", fx.eWeak ? `📉 ${t("Enfraquecido")}` : ""]} />
         </div>
         {/* Celular: ações fixas no rodapé, sempre ao alcance do polegar. */}
         <div className="fixed inset-x-0 bottom-0 z-40 space-y-1.5 rounded-t-2xl border-t border-white/10 bg-ink/95 p-2 shadow-[0_-8px_24px_#0008] backdrop-blur sm:static sm:z-auto sm:rounded-xl sm:border sm:bg-panel/60 sm:p-4 sm:shadow-none"
@@ -262,7 +268,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           <p className="mb-2 font-display text-gold">{t("Turno {n}", { n: battle.turn })}</p>
           <ul className="max-h-36 space-y-1 overflow-y-auto pr-1 text-white/70 sm:max-h-none" aria-live="polite">
             {last.map((l, i) => (
-              <li key={`${l.turn}-${i}`}>{describe(t, l, state.character.name, t(battle.enemy.name))}</li>
+              <li key={`${l.turn}-${i}`} className={l.action === "pet" ? "text-orange-200" : undefined}>{describe(t, l, state.character.name, t(battle.enemy.name))}</li>
             ))}
           </ul>
         </Panel>
@@ -449,8 +455,10 @@ function LootList({ loot, onBag }: { loot: LootResult[]; onBag: () => void }) {
 }
 
 function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image: string; hp: number; max: number; boss?: boolean; floats: Float[]; badges?: string[];
-  mp?: number; maxMp?: number; sp?: number; maxSp?: number }) {
+  mp?: number; maxMp?: number; sp?: number; maxSp?: number;
+  pet?: { name: string; image: string; level: number; ability?: string; acted: boolean; turn: number } }) {
   const t = useT();
+  const pet = props.pet;
   return (
     <div ref={props.refEl} className={`panel relative overflow-hidden p-2 sm:p-3 ${props.boss ? "ring-2 ring-ember/70" : ""}`}>
       <div className="relative aspect-[4/3] overflow-hidden rounded-lg sm:aspect-square">
@@ -458,6 +466,13 @@ function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image:
         <div className="absolute left-1 top-1 flex flex-col gap-1 sm:left-2 sm:top-2">
           {props.badges?.filter(Boolean).map((b) => <span key={b} className="rounded bg-black/70 px-1.5 py-0.5 text-[10px] sm:px-2 sm:text-[11px]">{b}</span>)}
         </div>
+        {pet && (
+          <motion.div key={pet.acted ? `act-${pet.turn}` : "idle"} title={`${t(pet.name)} · ${t("Nv.")} ${pet.level}`}
+            initial={pet.acted ? { y: 0, scale: 1 } : false} animate={pet.acted ? { y: [0, -14, 0], scale: [1, 1.18, 1] } : {}} transition={{ duration: 0.5 }}
+            className={`absolute bottom-1 right-1 h-12 w-12 overflow-hidden rounded-full bg-black/60 ring-2 sm:bottom-2 sm:right-2 sm:h-20 sm:w-20 ${pet.acted ? "ring-orange-300 shadow-[0_0_16px_#fdba74]" : "ring-gold/60"}`}>
+            <Image src={pet.image} alt={t(pet.name)} fill sizes="80px" className="object-cover" />
+          </motion.div>
+        )}
         <AnimatePresence>
           {props.floats.map((f) => (
             <motion.span key={f.id} initial={{ y: 0, opacity: 1, scale: 0.6 }} animate={{ y: -60, opacity: 0, scale: 1.2 }} exit={{ opacity: 0 }} transition={{ duration: 1.1 }}
@@ -468,6 +483,7 @@ function Fighter(props: { refEl: React.Ref<HTMLDivElement>; name: string; image:
         </AnimatePresence>
       </div>
       <p className="mt-1.5 truncate font-display text-xs sm:mt-2 sm:text-sm">{props.name}</p>
+      {pet && <p className="truncate text-[10px] text-orange-200/90 sm:text-[11px]">🐾 {t(pet.name)} · {t("Nv.")} {pet.level}{pet.ability ? <span className="hidden text-white/50 sm:inline"> · {t(pet.ability)}</span> : null}</p>}
       <Bar value={props.hp} max={props.max} color="bg-life" label={t("Vida")} />
       {/* Herói: mana (habilidades mágicas/suporte) e stamina (ataque, esquiva, defesa, habilidades físicas). */}
       {!!props.maxMp && <div className="mt-1"><Bar value={props.mp ?? props.maxMp} max={props.maxMp} color="bg-mana" label={t("Mana")} /></div>}
@@ -489,6 +505,16 @@ function describe(t: TFn, l: LogEntry, me: string, foe: string) {
   const who = l.actor === "player" ? me : foe;
   const other = l.actor === "player" ? foe : me;
   const target = l.target === "player" ? me : foe;
+  if (l.action === "pet") {
+    const pet = t(PET_BY_ID[l.petId ?? ""]?.name ?? "Pet");
+    const ab = t(PET_ABILITY[l.petId ?? ""]?.name ?? "");
+    const parts = [
+      l.dmg ? t("causa {d} de dano em {b}", { d: l.dmg, b: other }) : "",
+      l.effect === "weak" ? t("enfraquece o próximo ataque de {b}", { b: other }) : "",
+      l.heal ? t("cura {h} de vida de {a}", { h: l.heal, a: who }) : "",
+    ].filter(Boolean).join(` ${t("e")} `);
+    return `🐾 ${t("{p} de {a}", { p: pet, a: who })}${ab ? ` [${ab}]` : ""}: ${parts || t("protege {a}", { a: who })}.`;
+  }
   if (l.action === "stunned") return t("💫 {a} está atordoado e perde o turno.", { a: target });
   if (l.action === "poison") return t("☠️ O veneno causa {d} de dano em {a}.", { d: l.dmg ?? 0, a: target });
   const sk = l.skillId ? SKILL_BY_ID[l.skillId] : undefined;

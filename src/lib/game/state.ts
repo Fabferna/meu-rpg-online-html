@@ -9,6 +9,7 @@ import { RACES, REGIONS, type Gender, type RaceId, type RegionId } from "./data"
 import { xpForNextLevel } from "./rules";
 import { deriveVitals, type CharacterRow } from "./player";
 import type { BattleState } from "./combat";
+import type { GuildRole } from "./guilds";
 import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
 
 export type InventoryEntry = {
@@ -44,7 +45,7 @@ export type PlayerState = {
   quest: { id: string; questId: string; startedAt: string; endsAt: string; rewards: { xp: number; gold: number; item: string | null } } | null;
   battle: { id: string; state: BattleState } | null;
   inventory: InventoryEntry[];
-  guild: { id: string; name: string; tag: string; level: number; role: "leader" | "officer" | "member" } | null;
+  guild: { id: string; name: string; tag: string; level: number; role: GuildRole } | null;
   /** Pet ativo (o bônus dele soma aos atributos e ao combate). */
   pet: { petId: string; level: number } | null;
   daily: { hunts: number; quests: number; huntRefills: number; huntLimit: number; questRefills: number; questLimit: number; duels: number; duelRefills: number; duelLimit: number;
@@ -96,7 +97,7 @@ export async function getPlayerState(supabase: SupabaseClient, userId: string): 
       items: { name: string; kind: string; rarity: InventoryEntry["rarity"]; data: InventoryEntry["data"] };
     }[]).map((i) => ({ id: i.id, itemId: i.item_id, qty: i.qty, equipped: i.equipped, slot: i.slot, upgrade: i.upgrade ?? 0, ...i.items })),
     guild: gm.data?.guilds
-      ? { ...(gm.data.guilds as unknown as { id: string; name: string; tag: string; level: number }), role: gm.data.role as "leader" | "officer" | "member" }
+      ? { ...(gm.data.guilds as unknown as { id: string; name: string; tag: string; level: number }), role: gm.data.role as GuildRole }
       : null,
     daily,
     pet: pet.data ? { petId: pet.data.pet_id as string, level: Number(pet.data.level) } : null,

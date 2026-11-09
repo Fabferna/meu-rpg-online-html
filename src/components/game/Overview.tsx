@@ -13,6 +13,7 @@ import ElementPicker from "./ElementPicker";
 import { openInventoryView } from "./Inventory";
 import { combatSummary, equippedPieces, petStats, setStats } from "./gearView";
 import { ATTR_LABEL } from "@/lib/game/gear";
+import { guildPerks } from "@/lib/game/guilds";
 import { SLOT_LABEL } from "./Inventory";
 
 const ATTRS = [
@@ -73,15 +74,20 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
         <div className="relative mx-auto aspect-[3/4] w-full max-w-60 overflow-hidden rounded-lg ring-2 ring-gold/40 md:max-w-none">
           <Image src={c.portrait} alt={c.name} fill sizes="320px" className="object-cover" priority />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4">
-            {c.title && <p className="font-display text-sm text-amber-200">« {t(c.title)} »</p>}
+            <button onClick={() => ctx.openTitles?.()} className="font-display text-sm text-amber-200 underline-offset-2 hover:underline">{c.title ? `« ${t(c.title)} »` : `＋ ${t("Escolher título")}`}</button>
             <h1 className="font-display text-2xl">{c.name}</h1>
             <p className="text-sm text-white/70">{t(c.raceName)} · {t(c.regionName)}</p>
           </div>
         </div>
-        <button className="mt-2 w-full rounded-md bg-white/5 py-1.5 text-xs text-white/80 hover:bg-white/10"
-          onClick={() => { openInventoryView("looks"); ctx.go?.("inventory"); }}>
-          🏷️ {t("Títulos e cosméticos")}
-        </button>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <button className="min-h-10 rounded-md bg-gold/15 px-2 text-xs text-gold ring-1 ring-gold/30 hover:bg-gold/25" onClick={() => ctx.openTitles?.()}>
+            🏷️ {t("Títulos")}
+          </button>
+          <button className="min-h-10 rounded-md bg-white/5 px-2 text-xs text-white/80 hover:bg-white/10"
+            onClick={() => { openInventoryView("looks"); ctx.go?.("inventory"); }}>
+            🖼️ {t("Molduras e visuais")}
+          </button>
+        </div>
         <div className="mt-4 space-y-3">
           <Bar label={t("Vida")} value={c.hp} max={c.maxHp} color="bg-life" />
           <Bar label={t("Energia")} value={c.energy} max={c.maxEnergy} color="bg-energy" hint={energyHint} />
@@ -199,7 +205,7 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
         </p>
       )}
       <p className="mt-1 text-[11px] text-white/50"><span className="text-emerald-400">(+N)</span> = {t("quanto vem dos equipamentos, conjuntos e pet")}</p>
-      <p className="text-[11px] text-white/50"><span className="text-violet-300">(🌳+N)</span> = {s.blessed ? t("quanto vem da árvore de talentos e da Bênção") : t("quanto vem da árvore de talentos")}</p>
+      <p className="text-[11px] text-white/50"><span className="text-violet-300">(🌳+N)</span> = {s.blessed ? t("quanto vem da árvore de talentos e da Bênção") : t("quanto vem da árvore de talentos")}{ctx.state.guild ? ` ${t("(+ bônus da guilda: ⚔️ +{a}% · 🛡️ +{d}%)", { a: guildPerks(ctx.state.guild.level).atkPct, d: guildPerks(ctx.state.guild.level).defPct })}` : ""}</p>
     </Panel>
   );
 }
