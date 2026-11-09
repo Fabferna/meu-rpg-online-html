@@ -22,6 +22,7 @@ import LevelUp from "./LevelUp";
 import InstallButton from "./InstallButton";
 import Guild from "./Guild";
 import PlayerCounters from "./PlayerCounters";
+import Titles from "./Titles";
 import ChatDock from "./ChatDock";
 import EventBanner from "./EventBanner";
 import SeasonPass from "./SeasonPass";
@@ -46,6 +47,8 @@ export type GameCtx = {
   state: PlayerState;
   refresh: () => Promise<void>;
   toast: (text: string, kind?: Toast["kind"]) => void;
+  /** Abre o painel de Títulos. */
+  openTitles?: () => void;
   /** Diferença relógio servidor − cliente, para timers visuais precisos. */
   skew: number;
   /** Vai para outra aba (ex.: "Ver no inventário" depois de uma vitória). */
@@ -161,9 +164,10 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const questReady = state.quest && new Date(state.quest.endsAt).getTime() <= Date.now() + skew;
-  const ctx: GameCtx = { state, refresh, toast, skew, go: (id) => { if (TABS.some((x) => x.id === id)) setTab(id as TabId); } };
+  const ctx: GameCtx = { state, refresh, toast, skew, openTitles: () => setTitlesOpen(true), go: (id) => { if (TABS.some((x) => x.id === id)) setTab(id as TabId); } };
   const [muted, setMutedState] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [titlesOpen, setTitlesOpen] = useState(false);
   const compact = new Intl.NumberFormat(t.locale, { notation: "compact", maximumFractionDigits: 1 });
   useEffect(() => setMutedState(isMuted()), []);
   useQuestAlerts(state.quest?.endsAt ?? null, skew);
@@ -174,7 +178,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
         <Avatar src={c.portrait} frame={c.frame} size={44} />
         <div className="min-w-0 flex-1 sm:flex-none">
           <p className="truncate font-display leading-tight">{c.name}</p>
-          <p className="truncate text-xs text-gold">{state.guild && <span className="mr-1 hidden rounded bg-white/10 px-1 font-semibold sm:inline">[{state.guild.tag}]</span>}{t("Nv.")} {c.level}{c.title ? <span className="ml-1 hidden text-amber-200/80 sm:inline">« {t(c.title)} »</span> : null}</p>
+          <p className="truncate text-xs text-gold">{state.guild && <span className="mr-1 hidden rounded bg-white/10 px-1 font-semibold sm:inline">[{state.guild.tag}]</span>}{t("Nv.")} {c.level}{c.title ? <button onClick={() => setTitlesOpen(true)} title={t("Trocar título")} className="ml-1 hidden text-amber-200/80 underline-offset-2 hover:underline sm:inline">« {t(c.title)} »</button> : null}</p>
         </div>
         <div className="ml-auto hidden w-56 space-y-1 sm:block">
           <div title={t("Vida")}><Bar value={c.hp} max={c.maxHp} color="bg-life" inside /></div>
@@ -285,6 +289,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       <ChatDock ctx={ctx} hideFabOnMobile={tab === "battle" && !!state.battle} />
       <LevelUp level={levelUp?.to ?? null} from={levelUp?.from ?? 0} onClose={() => setLevelUp(null)}
         onSpend={() => { setLevelUp(null); setTab("overview"); }} />
+      <Titles ctx={ctx} open={titlesOpen} onClose={() => setTitlesOpen(false)} />
       <Tutorial name={c.name} onNavigate={setTab} onDone={() => setTutorialDone(true)} />
       {login && (
         <DailyLogin ctx={ctx} login={login} open={loginOpen} onClose={() => setLoginOpen(false)}

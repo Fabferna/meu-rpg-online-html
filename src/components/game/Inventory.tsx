@@ -148,7 +148,7 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
       )}
 
       <div className="flex flex-wrap gap-2">
-        {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"], ["looks", "✨ Cosméticos e títulos"]] as const).map(([k, l]) => (
+        {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"], ["looks", "✨ Molduras e visuais"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
         ))}
         <span className={`ml-auto self-center text-sm ${bagUsed >= BAG_LIMIT ? "text-amber-300" : "text-white/70"}`} title={t("Itens não equipados. Com a bolsa cheia, itens encontrados viram ouro.")}>🎒 {bagUsed}/{BAG_LIMIT}</span>
