@@ -1725,5 +1725,9 @@
 "O cofre da guilda está cheio. Subam o nível da guilda para abrir mais espaços.": "The guild vault is full. Level up the guild to open more slots.",
 "Este item não está mais no cofre.": "This item is no longer in the vault.",
 "Membros novos só podem retirar itens depois de 24 horas na guilda.": "New members can only withdraw items after 24 hours in the guild.",
-"Passar o comando da guilda para {x}? Você vira Vice-Capitão.": "Hand over command of the guild to {x}? You become Vice-Captain."
+"Passar o comando da guilda para {x}? Você vira Vice-Capitão.": "Hand over command of the guild to {x}? You become Vice-Captain.",
+"Jogadores Online": "Players Online",
+"Jogadores Registrados": "Registered Players",
+"Jogadores com o jogo aberto agora": "Players with the game open right now",
+"Total de contas criadas": "Total accounts created"
 }

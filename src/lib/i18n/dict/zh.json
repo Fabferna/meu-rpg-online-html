@@ -1725,5 +1725,9 @@
 "O cofre da guilda está cheio. Subam o nível da guilda para abrir mais espaços.": "公会仓库已满。提升公会等级可解锁更多格子。",
 "Este item não está mais no cofre.": "该物品已不在仓库中。",
 "Membros novos só podem retirar itens depois de 24 horas na guilda.": "新成员入会 24 小时后才能取出物品。",
-"Passar o comando da guilda para {x}? Você vira Vice-Capitão.": "将公会指挥权移交给 {x}？你将成为副团长。"
+"Passar o comando da guilda para {x}? Você vira Vice-Capitão.": "将公会指挥权移交给 {x}？你将成为副团长。",
+"Jogadores Online": "在线玩家",
+"Jogadores Registrados": "注册玩家",
+"Jogadores com o jogo aberto agora": "当前正在游戏中的玩家",
+"Total de contas criadas": "已创建的账号总数"
 }

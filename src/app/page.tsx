@@ -3,6 +3,7 @@ import Image from "next/image";
 import { RACES } from "@/lib/game/data";
 import { SiteFooter } from "@/components/site/LegalPage";
 import EventBanner from "@/components/game/EventBanner";
+import PlayerCounters from "@/components/game/PlayerCounters";
 import { LanguageSwitcher } from "@/lib/i18n/client";
 import { getT } from "@/lib/i18n/server";
 
@@ -25,6 +26,7 @@ export default async function Home() {
             <Link href="/login" className="rounded-[10px] border border-white/20 px-5 py-3 font-display hover:bg-white/5">{t("Entrar")}</Link>
             <Link href="/demo" className="rounded-[10px] border border-arcane/60 bg-arcane/20 px-5 py-3 font-display hover:bg-arcane/30">{t("Ver Demonstração")}</Link>
           </div>
+          <PlayerCounters />
         </div>
       </section>
 

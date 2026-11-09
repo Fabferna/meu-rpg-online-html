@@ -21,6 +21,7 @@ import Tutorial from "./Tutorial";
 import LevelUp from "./LevelUp";
 import InstallButton from "./InstallButton";
 import Guild from "./Guild";
+import PlayerCounters from "./PlayerCounters";
 import ChatDock from "./ChatDock";
 import EventBanner from "./EventBanner";
 import SeasonPass from "./SeasonPass";
@@ -238,6 +239,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
       </header>
 
       <EventBanner />
+      <div className="mt-2"><PlayerCounters heartbeat compact /></div>
       {/* Celular: abas deslizam para o lado (com sombra na borda indicando que há mais).
           Tablet e computador: 2 linhas iguais (7 + 6), nada cortado. */}
       <nav className="mt-3 flex gap-1 overflow-x-auto pb-1 pt-2 [mask-image:linear-gradient(to_right,#000_88%,transparent)] [scrollbar-width:none] sm:mt-4 sm:grid sm:grid-cols-7 sm:overflow-visible sm:[mask-image:none] [&::-webkit-scrollbar]:hidden">
