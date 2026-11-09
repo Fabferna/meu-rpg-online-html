@@ -8,6 +8,7 @@ import type { Attributes, RaceId } from "./data";
 import { SKILL_BY_ID, skillPower, type SkillLoadout } from "./skills";
 import type { Enemy } from "./enemies";
 import { heroStats, type ItemBonus, type Piece } from "./gear";
+import { PET_ABILITY, PET_RULES, petChance, petDamageMult, petHealPct } from "./pets";
 
 export type { ItemBonus } from "./gear";
 
@@ -29,12 +30,18 @@ export type Combatant = {
   maxSp?: number;
   /** Nível do herói (custos de stamina escalam com ele). */
   level?: number;
+  /** Pet ativo do herói: age sozinho na luta (pets.ts). */
+  pet?: PetRef | null;
 };
+
+export type PetRef = { id: string; level: number };
 
 export type LogEntry = {
   turn: number;
   actor: "player" | "enemy";
-  action: "attack" | "skill" | "defend" | "potion" | "racial" | "poison" | "stunned";
+  /** "pet": ação automática do pet de `actor` (petId diz qual). */
+  action: "attack" | "skill" | "defend" | "potion" | "racial" | "poison" | "stunned" | "pet";
+  petId?: string;
   /** Habilidade usada (id). */
   skillId?: string;
   /** Quem recebe o efeito (para veneno/atordoamento). */
@@ -44,10 +51,11 @@ export type LogEntry = {
   crit?: boolean;
   miss?: boolean;
   /** Efeito aplicado por este golpe. */
-  effect?: "poison" | "stun" | "stone" | "rage";
+  effect?: "poison" | "stun" | "stone" | "rage" | "weak";
 };
 
-export type Effects = { pPoison?: number; pStun?: number; pStone?: number; ePoison?: number; eStun?: number };
+/** eWeak: inimigo enfraquecido pelo pet (o próximo ataque dele causa menos dano). */
+export type Effects = { pPoison?: number; pStun?: number; pStone?: number; ePoison?: number; eStun?: number; eWeak?: number };
 
 export type BattleState = {
   enemyId: string;
@@ -86,7 +94,7 @@ export const POTION_ITEM = "pocao_vida";
  */
 export function playerCombatant(
   name: string, a: Attributes, level: number, hp: number, maxHp: number, gear: ItemBonus[], race?: RaceId, pieces: Piece[] = [], element?: Element | null,
-  tal: TalentMods = NO_TALENTS,
+  tal: TalentMods = NO_TALENTS, pet: PetRef | null = null,
 ): Combatant {
   const h = heroStats(a, level, gear, race, pieces, tal);
   // Mana e stamina usam os atributos com bônus dos equipamentos.
@@ -94,7 +102,7 @@ export function playerCombatant(
   for (const g of gear) { intel += g.intel ?? 0; con += g.con ?? 0; dex += g.dex ?? 0; }
   return {
     name, hp, maxHp, atk: h.atk, magic: h.magic, def: h.def, agility: h.agility, dodge: h.dodge, crit: h.crit, element: element ?? null,
-    maxMp: maxMana({ intel, wis: a.wis }, level), maxSp: maxStamina({ con, dex }, level), level,
+    maxMp: maxMana({ intel, wis: a.wis }, level), maxSp: maxStamina({ con, dex }, level), level, pet,
   };
 }
 
@@ -114,6 +122,25 @@ function strike(att: Combatant, def: Combatant, kind: "attack" | "skill", defend
   if (defending) dmg = Math.max(1, Math.round(dmg * defendMult));
   return { dmg, miss: false, crit };
 }
+
+/**
+ * Ação automática do pet no turno: sorteia se ele age e calcula o efeito (pets.ts).
+ * Devolve null quando o pet não age. Não altera nada: quem chama aplica dano, cura e enfraquecimento.
+ */
+export function petAct(owner: Combatant, foe: Combatant): { petId: string; dmg: number; heal: number; weak: boolean } | null {
+  const pet = owner.pet;
+  const ab = pet ? PET_ABILITY[pet.id] : undefined;
+  if (!pet || !ab || !chance(petChance(pet.level))) return null;
+  let dmg = 0, heal = 0;
+  if (ab.dmg) {
+    const base = roll(...(ab.dmg === "magic" ? owner.magic : owner.atk)) * petDamageMult(pet.level) * (ab.power ?? 1);
+    dmg = Math.max(1, Math.round(base - foe.def * 0.3));
+  }
+  if (ab.heal) heal += Math.round(owner.maxHp * petHealPct(pet.level) / 100);
+  if (ab.drain && dmg) heal += Math.round(dmg * PET_RULES.drainPct / 100);
+  return { petId: pet.id, dmg, heal, weak: !!ab.weak };
+}
+const weakened = (dmg: number) => Math.max(1, Math.round(dmg * (1 - PET_RULES.weakPct / 100)));
 
 export type EnemyTraits = { poison?: number; stun?: number };
 
@@ -197,6 +224,18 @@ export function resolveTurn(
     log({ actor: "player", action: "potion", heal });
   }
 
+  // ── Pet ativo: age sozinho depois do dono (mesmo com o dono atordoado) ──
+  if (s.enemy.hp > 0 && s.player.hp > 0) {
+    const pa = petAct({ ...p, maxHp: s.player.maxHp }, e);
+    if (pa) {
+      if (pa.dmg) s.enemy.hp = Math.max(0, s.enemy.hp - pa.dmg);
+      const heal = Math.min(pa.heal, s.player.maxHp - s.player.hp);
+      if (heal > 0) s.player.hp += heal;
+      if (pa.weak && s.enemy.hp > 0) fx.eWeak = 1;
+      log({ actor: "player", action: "pet", petId: pa.petId, ...(pa.dmg ? { dmg: pa.dmg } : {}), ...(heal > 0 ? { heal } : {}), ...(pa.weak && s.enemy.hp > 0 ? { effect: "weak" as const } : {}) });
+    }
+  }
+
   // Veneno no inimigo.
   if (s.enemy.hp > 0 && fx.ePoison) {
     const dmg = Math.max(3, Math.round(s.enemy.maxHp * 0.04));
@@ -215,6 +254,8 @@ export function resolveTurn(
       const r = strike(e, { ...p, hp: s.player.hp }, "attack", defending, 1, P.sp < dodgeSp, defendMult);
       if (r.miss) P.sp = Math.max(0, P.sp - dodgeSp);
       if (fx.pStone && !r.miss) r.dmg = Math.max(1, Math.round(r.dmg * 0.5));
+      // Enfraquecido pelo pet: este ataque sai mais fraco (o efeito dura um ataque).
+      if (fx.eWeak) { if (!r.miss) r.dmg = weakened(r.dmg); fx.eWeak = 0; }
       s.player.hp = Math.max(0, s.player.hp - r.dmg);
       let effect: LogEntry["effect"];
       if (!r.miss && traits.poison && !fx.pPoison && chance(traits.poison)) { fx.pPoison = 3; effect = "poison"; }
@@ -249,14 +290,28 @@ export function simulateDuel(a: Combatant, b: Combatant) {
   const B = { ...b, hp: b.maxHp };
   const log: (LogEntry & { side: "a" | "b" })[] = [];
   const first = A.agility >= B.agility ? "a" : "b";
+  // Enfraquecido pelo pet do adversário: o próximo ataque deste lado causa menos dano.
+  const weak = { a: false, b: false };
   for (let turn = 1; turn <= 30 && A.hp > 0 && B.hp > 0; turn++) {
     for (const side of first === "a" ? (["a", "b"] as const) : (["b", "a"] as const)) {
       const [att, def] = side === "a" ? [A, B] : [B, A];
       if (att.hp <= 0 || def.hp <= 0) continue;
       const kind = turn % 3 === 0 ? "skill" : "attack";
       const r = strike(att, def, kind, false);
+      if (weak[side]) { if (!r.miss) r.dmg = weakened(r.dmg); weak[side] = false; }
       def.hp = Math.max(0, def.hp - r.dmg);
-      log.push({ turn, side, actor: side === "a" ? "player" : "enemy", action: kind, ...r });
+      const actor = side === "a" ? "player" : "enemy";
+      log.push({ turn, side, actor, action: kind, ...r });
+      // O pet de quem atacou age em seguida.
+      const pa = def.hp > 0 ? petAct(att, def) : null;
+      if (pa) {
+        if (pa.dmg) def.hp = Math.max(0, def.hp - pa.dmg);
+        const heal = Math.min(pa.heal, att.maxHp - att.hp);
+        if (heal > 0) att.hp += heal;
+        const w = pa.weak && def.hp > 0;
+        if (w) weak[side === "a" ? "b" : "a"] = true;
+        log.push({ turn, side, actor, action: "pet", petId: pa.petId, ...(pa.dmg ? { dmg: pa.dmg } : {}), ...(heal > 0 ? { heal } : {}), ...(w ? { effect: "weak" as const } : {}) });
+      }
     }
   }
   // Empate por tempo: vence quem tiver mais % de vida.

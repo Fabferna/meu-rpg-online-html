@@ -1750,5 +1750,19 @@
 "Compre na Loja por {n}": "在商店以 {n} 购买",
 "Em breve": "即将推出",
 "Ir para a Loja": "前往商店",
-"Você já desbloqueou todos os títulos!": "你已解锁所有称号！"
+"Você já desbloqueou todos os títulos!": "你已解锁所有称号！",
+"Mordida Espiritual": "灵魂撕咬",
+"Olhar Arcano": "奥术凝视",
+"Bênção de Cristal": "水晶祝福",
+"Chama Renascida": "重生之焰",
+"Em combate: chance de morder o inimigo a cada turno.": "战斗中：每回合有几率撕咬敌人。",
+"Em combate: chance de lançar um raio arcano que também enfraquece o próximo ataque do inimigo.": "战斗中：有几率释放奥术射线，并削弱敌人的下一次攻击。",
+"Em combate: chance de curar você a cada turno.": "战斗中：每回合有几率为你治疗。",
+"Em combate: chance de queimar o inimigo e curar você com metade do dano.": "战斗中：有几率灼烧敌人，并以一半伤害为你治疗。",
+"{p} de {a}": "{a} 的{p}",
+"causa {d} de dano em {b}": "对 {b} 造成 {d} 点伤害",
+"enfraquece o próximo ataque de {b}": "削弱 {b} 的下一次攻击",
+"cura {h} de vida de {a}": "为 {a} 恢复 {h} 点生命",
+"Enfraquecido": "虚弱",
+"protege {a}": "保护 {a}"
 }

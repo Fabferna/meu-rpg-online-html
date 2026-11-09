@@ -1,5 +1,6 @@
 "use client";
 
+import { PET_BY_ID } from "@/lib/game/pets";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -14,8 +15,8 @@ import { useT } from "@/lib/i18n/client";
 type Opp = { name: string; level: number; rating: number; wins: number; losses: number; raceName: string; portrait: string; frame: string | null; title: string | null };
 type Fight = {
   won: boolean; delta: number; rewards: { xp: number; gold: number; levelUps: number };
-  me: { name: string; maxHp: number; hp: number }; them: { name: string; maxHp: number; hp: number };
-  log: { turn: number; side: "a" | "b"; dmg?: number; crit?: boolean; miss?: boolean; action: string }[];
+  me: { name: string; maxHp: number; hp: number; pet?: PetRef | null }; them: { name: string; maxHp: number; hp: number; pet?: PetRef | null };
+  log: { turn: number; side: "a" | "b"; dmg?: number; heal?: number; crit?: boolean; miss?: boolean; action: string; petId?: string; effect?: string }[];
 };
 
 export default function Arena({ ctx }: { ctx: GameCtx }) {
@@ -35,7 +36,7 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
     if (step >= fight.log.length) { if (step > 0) play(fight.won ? "victory" : "defeat"); return; }
     const t = setTimeout(() => {
       const l = fight.log[step];
-      play(l.miss ? "miss" : l.side === "a" ? (l.crit ? "crit" : l.action === "skill" ? "skill" : "hit") : "hurt");
+      play(l.action === "pet" && !l.dmg ? "heal" : l.miss ? "miss" : l.side === "a" ? (l.crit ? "crit" : l.action === "skill" ? "skill" : "hit") : "hurt");
       setStep((s) => s + 1);
     }, 380);
     return () => clearTimeout(t);
@@ -72,17 +73,37 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
 
   if (fight) {
     const shown = fight.log.slice(0, step);
-    const hpA = fight.me.maxHp - shown.filter((l) => l.side === "b").reduce((a, l) => a + (l.dmg ?? 0), 0);
-    const hpB = fight.them.maxHp - shown.filter((l) => l.side === "a").reduce((a, l) => a + (l.dmg ?? 0), 0);
+    // Vida de cada lado refeita passo a passo: dano do adversário (golpe ou pet) e cura do próprio pet.
+    let hpA = fight.me.maxHp, hpB = fight.them.maxHp;
+    for (const l of shown) {
+      if (l.side === "a") { hpB = Math.max(0, hpB - (l.dmg ?? 0)); hpA = Math.min(fight.me.maxHp, hpA + (l.heal ?? 0)); }
+      else { hpA = Math.max(0, hpA - (l.dmg ?? 0)); hpB = Math.min(fight.them.maxHp, hpB + (l.heal ?? 0)); }
+    }
     const done = step >= fight.log.length;
     const cur = shown.at(-1);
     return (
       <Panel className="mx-auto max-w-3xl p-6">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-          <Side name={fight.me.name} image={ctx.state.character.portrait} hp={Math.max(0, hpA)} max={fight.me.maxHp} hit={cur?.side === "b" && !cur.miss} />
+          <Side name={fight.me.name} image={ctx.state.character.portrait} hp={Math.max(0, hpA)} max={fight.me.maxHp} hit={cur?.side === "b" && !cur.miss && !!cur.dmg} pet={fight.me.pet} petActed={cur?.action === "pet" && cur.side === "a"} />
           <span className="font-display text-3xl text-gold">{t("VS")}</span>
-          <Side name={fight.them.name} image={fight.opp.portrait} hp={Math.max(0, hpB)} max={fight.them.maxHp} hit={cur?.side === "a" && !cur.miss} />
+          <Side name={fight.them.name} image={fight.opp.portrait} hp={Math.max(0, hpB)} max={fight.them.maxHp} hit={cur?.side === "a" && !cur.miss && !!cur.dmg} pet={fight.them.pet} petActed={cur?.action === "pet" && cur.side === "b"} />
         </div>
+        {/* Log do duelo: últimas ações (as do pet em destaque). */}
+        <ul className="mt-4 h-24 space-y-0.5 overflow-hidden text-center text-xs text-white/60" aria-live="polite">
+          {shown.slice(-5).reverse().map((l, i) => {
+            const [who, other] = l.side === "a" ? [fight.me.name, fight.them.name] : [fight.them.name, fight.me.name];
+            const pet = l.action === "pet";
+            const text = pet
+              ? `🐾 ${t("{p} de {a}", { p: t(PET_BY_ID[l.petId ?? ""]?.name ?? "Pet"), a: who })}: ${[
+                  l.dmg ? t("causa {d} de dano em {b}", { d: l.dmg, b: other }) : "",
+                  l.effect === "weak" ? t("enfraquece o próximo ataque de {b}", { b: other }) : "",
+                  l.heal ? t("cura {h} de vida de {a}", { h: l.heal, a: who }) : "",
+                ].filter(Boolean).join(` ${t("e")} `)}.`
+              : l.miss ? t("💨 {b} esquiva do ataque de {a}.", { a: who, b: other })
+              : `${l.action === "skill" ? "✨" : "⚔️"} ${l.crit ? t("{a} causa {d} de dano CRÍTICO em {b}", { a: who, d: l.dmg ?? 0, b: other }) : t("{a} causa {d} de dano em {b}", { a: who, d: l.dmg ?? 0, b: other })}.`;
+            return <li key={shown.length - i} className={`${i === 0 ? "text-sm text-white/90" : ""} ${pet ? "text-orange-200" : ""}`}>{text}</li>;
+          })}
+        </ul>
         {done && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 text-center">
             <p className={`font-display text-4xl font-black ${fight.won ? "text-gold" : "text-red-400"}`}>{fight.won ? t("VITÓRIA!") : t("DERROTA")}</p>
@@ -138,13 +159,24 @@ export default function Arena({ ctx }: { ctx: GameCtx }) {
   );
 }
 
-function Side({ name, image, hp, max, hit }: { name: string; image: string; hp: number; max: number; hit?: boolean }) {
+type PetRef = { id: string; level: number };
+
+function Side({ name, image, hp, max, hit, pet, petActed }: { name: string; image: string; hp: number; max: number; hit?: boolean; pet?: PetRef | null; petActed?: boolean }) {
+  const t = useT();
+  const def = pet ? PET_BY_ID[pet.id] : undefined;
   return (
     <div className="text-center">
       <motion.div animate={hit ? { x: [0, -8, 8, 0] } : {}} transition={{ duration: 0.3 }} className="relative mx-auto aspect-square w-full max-w-48 overflow-hidden rounded-xl ring-2 ring-gold/40">
         <Image src={image} alt="" fill sizes="200px" className={`object-cover ${hp <= 0 ? "grayscale" : ""}`} />
+        {def && (
+          <motion.div animate={petActed ? { y: [0, -10, 0], scale: [1, 1.2, 1] } : {}} transition={{ duration: 0.35 }} title={t(def.name)}
+            className={`absolute bottom-1 right-1 h-10 w-10 overflow-hidden rounded-full bg-black/60 ring-2 sm:h-14 sm:w-14 ${petActed ? "ring-orange-300 shadow-[0_0_14px_#fdba74]" : "ring-gold/60"}`}>
+            <Image src={def.image} alt={t(def.name)} fill sizes="56px" className="object-cover" />
+          </motion.div>
+        )}
       </motion.div>
       <p className="mt-2 truncate font-display">{name}</p>
+      {def && pet && <p className="truncate text-[11px] text-orange-200/90">🐾 {t(def.name)} · {t("Nv.")} {pet.level}</p>}
       <Bar value={hp} max={max} color="bg-life" />
     </div>
   );

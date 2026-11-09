@@ -54,7 +54,7 @@ export const POST = action(
 
     return {
       won: duel.aWins, delta, rewards: { xp, gold, levelUps },
-      me: { name: a.name, maxHp: a.maxHp, hp: duel.hpA }, them: { name: b.name, maxHp: b.maxHp, hp: duel.hpB },
+      me: { name: a.name, maxHp: a.maxHp, hp: duel.hpA, pet: me.pet }, them: { name: b.name, maxHp: b.maxHp, hp: duel.hpB, pet: them.pet },
       log: duel.log,
     };
   },

@@ -1750,5 +1750,19 @@
 "Compre na Loja por {n}": "Buy it in the Shop for {n}",
 "Em breve": "Coming soon",
 "Ir para a Loja": "Go to the Shop",
-"Você já desbloqueou todos os títulos!": "You have unlocked every title!"
+"Você já desbloqueou todos os títulos!": "You have unlocked every title!",
+"Mordida Espiritual": "Spirit Bite",
+"Olhar Arcano": "Arcane Gaze",
+"Bênção de Cristal": "Crystal Blessing",
+"Chama Renascida": "Reborn Flame",
+"Em combate: chance de morder o inimigo a cada turno.": "In combat: chance to bite the enemy every turn.",
+"Em combate: chance de lançar um raio arcano que também enfraquece o próximo ataque do inimigo.": "In combat: chance to cast an arcane bolt that also weakens the enemy's next attack.",
+"Em combate: chance de curar você a cada turno.": "In combat: chance to heal you every turn.",
+"Em combate: chance de queimar o inimigo e curar você com metade do dano.": "In combat: chance to burn the enemy and heal you for half the damage.",
+"{p} de {a}": "{a}'s {p}",
+"causa {d} de dano em {b}": "deals {d} damage to {b}",
+"enfraquece o próximo ataque de {b}": "weakens {b}'s next attack",
+"cura {h} de vida de {a}": "heals {a} for {h}",
+"Enfraquecido": "Weakened",
+"protege {a}": "protects {a}"
 }

@@ -23,6 +23,7 @@
     "test:db:consumables": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-consumables.ts",
     "test:db:guild": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-guild-privacy.ts",
     "test:db:counters": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-counters.ts",
+    "test:pets": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-pets-combat.ts",
     "test:db:squads": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-guild-squads.ts",
     "test:db:collector": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/test-collector-sets.ts",
     "sim:act2": "TSX_TSCONFIG_PATH=scripts/dbtest/tsconfig.json tsx --conditions=react-server scripts/dbtest/sim-act2.ts"

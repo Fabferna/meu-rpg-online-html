@@ -37,6 +37,8 @@ export type LoadedPlayer = {
   pieces: Piece[];
   /** Bônus da árvore de talentos. */
   talents: TalentMods;
+  /** Pet ativo (age sozinho nas lutas). */
+  pet: { id: string; level: number } | null;
 };
 
 export function deriveVitals(row: CharacterRow, now = new Date()) {
@@ -85,6 +87,7 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
       .concat(setBonuses(pieces.map((x) => x.item.id ?? "")) as ItemBonus[])
       .concat(pet ? [petBonus(pet.pet_id, pet.level) as ItemBonus] : []),
     pieces,
+    pet: pet ? { id: String(pet.pet_id), level: Number(pet.level) } : null,
     // Talentos + Bênção dos Ancestrais (24 h, encounters.ts) + bônus do nível da guilda (guilds.ts).
     talents: withGuildBuff(withBlessing(talentMods(normalizeTalents(row.talents)), isBlessed(Number((bless as { value?: number } | null)?.value ?? 0))), guildLevel),
   };
@@ -92,7 +95,7 @@ export async function loadPlayer(db: SupabaseClient, userId: string): Promise<Lo
 
 /** Herói pronto para lutar (arma escala com atributo; peças com peso dão bônus por raça). */
 export function heroCombatant(p: LoadedPlayer, hp: number, maxHp: number) {
-  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null, p.talents);
+  return playerCombatant(p.row.name, p.attributes, p.row.level, hp, maxHp, p.gear, p.row.race as RaceId, p.pieces, isElement(p.row.element) ? p.row.element : null, p.talents, p.pet);
 }
 
 /**

@@ -1750,5 +1750,19 @@
 "Compre na Loja por {n}": "Cómpralo en la Tienda por {n}",
 "Em breve": "Próximamente",
 "Ir para a Loja": "Ir a la Tienda",
-"Você já desbloqueou todos os títulos!": "¡Ya desbloqueaste todos los títulos!"
+"Você já desbloqueou todos os títulos!": "¡Ya desbloqueaste todos los títulos!",
+"Mordida Espiritual": "Mordida Espiritual",
+"Olhar Arcano": "Mirada Arcana",
+"Bênção de Cristal": "Bendición de Cristal",
+"Chama Renascida": "Llama Renacida",
+"Em combate: chance de morder o inimigo a cada turno.": "En combate: probabilidad de morder al enemigo cada turno.",
+"Em combate: chance de lançar um raio arcano que também enfraquece o próximo ataque do inimigo.": "En combate: probabilidad de lanzar un rayo arcano que además debilita el próximo ataque del enemigo.",
+"Em combate: chance de curar você a cada turno.": "En combate: probabilidad de curarte cada turno.",
+"Em combate: chance de queimar o inimigo e curar você com metade do dano.": "En combate: probabilidad de quemar al enemigo y curarte con la mitad del daño.",
+"{p} de {a}": "{p} de {a}",
+"causa {d} de dano em {b}": "causa {d} de daño a {b}",
+"enfraquece o próximo ataque de {b}": "debilita el próximo ataque de {b}",
+"cura {h} de vida de {a}": "cura {h} de vida a {a}",
+"Enfraquecido": "Debilitado",
+"protege {a}": "protege a {a}"
 }
