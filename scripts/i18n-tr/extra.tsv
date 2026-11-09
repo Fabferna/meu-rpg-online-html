@@ -870,3 +870,8 @@ Esta guilda é privada: envie um pedido para entrar.	This guild is private: send
 Esse pedido não existe mais.	That request no longer exists.	Esa solicitud ya no existe.	该申请已不存在。
 Você já tem 5 pedidos pendentes. Cancele algum para pedir outro.	You already have 5 pending requests. Cancel one to send another.	Ya tienes 5 solicitudes pendientes. Cancela alguna para enviar otra.	你已有 5 个待处理申请。取消一个才能再申请。
 Mensagem não permitida. Tente outro texto.	Message not allowed. Try another text.	Mensaje no permitido. Prueba otro texto.	不允许该留言，请换个内容。
+🔒 Não dá para equipar {x}: precisa ser nível {n} (você está no nível {l}). Suba mais {f} nível(is) para usar.	🔒 Can't equip {x}: requires level {n} (you are level {l}). Gain {f} more level(s) to use it.	🔒 No puedes equipar {x}: requiere nivel {n} (estás en el nivel {l}). Sube {f} nivel(es) más para usarlo.	🔒 无法装备 {x}：需要 {n} 级（你目前 {l} 级）。再升 {f} 级即可使用。
+Item removido	Item removed	Objeto quitado	已卸下物品
+Item equipado	Item equipped	Objeto equipado	已装备物品
+Não foi possível equipar {x}: {m}	Couldn't equip {x}: {m}	No se pudo equipar {x}: {m}	无法装备 {x}：{m}
+Nv. {n}	Lv. {n}	Nv. {n}	{n} 级

@@ -45,6 +45,20 @@ async function main() {
   ok(fails === 0 && Number(wb.hp) === 40000 - 12 * 1000 && Number(n.n) === 4 && Number(n.mn) === 3,
     `4 jogadores atacaram o mesmo chefe (12 ataques, ${fails} falhas, vida ${wb.hp})`);
 
+  // ── 20 jogadores atacando no mesmo instante (ninguém fica bloqueado) e o golpe final não passa da vida ──
+  await pool.query("delete from public.world_bosses where day = '2031-01-02'");
+  const crowd = await Promise.all(Array.from({ length: 20 }, () => makeHero({ race: "elfo", level: 20 })));
+  const hit = (u: string, dmg: number) => pool.query(
+    "select public.world_boss_attack($1, '2031-01-02', 'leviata', 40000, now() - interval '5 min', now() + interval '50 min', $2, 5, 5) j", [u, dmg]);
+  const t0 = Date.now();
+  const res = await Promise.allSettled(crowd.map((x) => hit(x.userId, 1500)));
+  res.filter((p) => p.status === "rejected").slice(0, 3).forEach((p) => console.log("   motivo:", String((p as PromiseRejectedResult).reason?.message ?? p)));
+  ok(res.every((p) => p.status === "fulfilled"), `20 ataques simultâneos: todos aceitos (${Date.now() - t0} ms)`);
+  ok(Number((await one("select hp from public.world_bosses where day = '2031-01-02'")).hp) === 10000, "vida descontada certinho (40.000 − 20×1.500)");
+  const last = await Promise.allSettled(crowd.slice(0, 8).map((x) => hit(x.userId, 1500)));
+  const dealt = (await one("select sum(damage) s from public.world_boss_hits where day = '2031-01-02'")).s;
+  ok(Number(dealt) === 40000 && last.some((p) => p.status === "rejected"), "chefe cai em 0: dano total = vida máxima, ataques depois disso são recusados");
+
   // ── Resgate: monta um chefe derrotado no evento atual com 40 participantes ──
   await pool.query("delete from public.world_bosses where day = $1", [sch.day]);
   await pool.query("insert into public.world_bosses (day, boss_id, hp, max_hp, starts_at, ends_at, defeated_at) values ($1, 'behemoth', 0, 5000, now() - interval '30 min', now() + interval '30 min', now())", [sch.day]);
