@@ -13,6 +13,7 @@ import ElementPicker from "./ElementPicker";
 import { openInventoryView } from "./Inventory";
 import { combatSummary, equippedPieces, petStats, setStats } from "./gearView";
 import { ATTR_LABEL } from "@/lib/game/gear";
+import { guildPerks } from "@/lib/game/guilds";
 import { SLOT_LABEL } from "./Inventory";
 
 const ATTRS = [
@@ -199,7 +200,7 @@ function CombatStats({ ctx }: { ctx: GameCtx }) {
         </p>
       )}
       <p className="mt-1 text-[11px] text-white/50"><span className="text-emerald-400">(+N)</span> = {t("quanto vem dos equipamentos, conjuntos e pet")}</p>
-      <p className="text-[11px] text-white/50"><span className="text-violet-300">(🌳+N)</span> = {s.blessed ? t("quanto vem da árvore de talentos e da Bênção") : t("quanto vem da árvore de talentos")}</p>
+      <p className="text-[11px] text-white/50"><span className="text-violet-300">(🌳+N)</span> = {s.blessed ? t("quanto vem da árvore de talentos e da Bênção") : t("quanto vem da árvore de talentos")}{ctx.state.guild ? ` ${t("(+ bônus da guilda: ⚔️ +{a}% · 🛡️ +{d}%)", { a: guildPerks(ctx.state.guild.level).atkPct, d: guildPerks(ctx.state.guild.level).defPct })}` : ""}</p>
     </Panel>
   );
 }

@@ -8,6 +8,7 @@ import { petBonus } from "@/lib/game/pets";
 import { setBonuses } from "@/lib/game/sets";
 import { talentMods } from "@/lib/game/talents";
 import { withBlessing } from "@/lib/game/encounters";
+import { withGuildBuff } from "@/lib/game/guilds";
 import { maxMana, maxStamina } from "@/lib/game/resources";
 
 type Ch = PlayerState["character"];
@@ -86,7 +87,7 @@ export function combatSummary(state: PlayerState) {
   const extra = [...pieces.map((p) => p.stats), ...setStats(pieces), petStats(state)];
   // Três camadas: só atributos (bare) → + equipamentos/conjuntos/pet (gear) → + talentos e Bênção (full).
   const blessed = !!state.daily.blessedUntil && Date.parse(state.daily.blessedUntil) > Date.now();
-  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces, withBlessing(talentMods(ch.talents ?? {}), blessed));
+  const full = heroStats(ch.attributes, ch.level, extra, ch.race, pieces, withGuildBuff(withBlessing(talentMods(ch.talents ?? {}), blessed), state.guild?.level));
   const gear = heroStats(ch.attributes, ch.level, extra, ch.race, pieces);
   const bare = heroStats(ch.attributes, ch.level, [], ch.race, []);
   const pct = (x: number) => Math.round(x * 1000) / 10;
