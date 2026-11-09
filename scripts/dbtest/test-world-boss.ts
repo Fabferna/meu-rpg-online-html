@@ -31,6 +31,20 @@ async function main() {
   const r = await call(attack, h.userId, {});
   ok(sch.open ? r.status === 200 : r.status === 409 && r.json.error === "world_boss_closed", `ataque ${sch.open ? "no horário funciona" : "fora do horário é recusado"} (${r.status})`);
 
+  // ── Vários jogadores no MESMO chefe, intercalando e ao mesmo tempo ──
+  await pool.query("delete from public.world_bosses where day = '2031-01-01'");
+  const atk = (u: string) => pool.query(
+    "select public.world_boss_attack($1, '2031-01-01', 'behemoth', 40000, now() - interval '5 min', now() + interval '50 min', 1000, 5, 5) j", [u]);
+  const team = await Promise.all([1, 2, 3, 4].map(() => makeHero({ race: "humano", level: 20 })));
+  let fails = 0;
+  for (const x of [...team, ...team]) await atk(x.userId).catch(() => fails++);
+  const together = await Promise.allSettled(team.map((x) => atk(x.userId)));
+  fails += together.filter((p) => p.status === "rejected").length;
+  const wb = await one("select hp from public.world_bosses where day = '2031-01-01'");
+  const n = await one("select count(*) n, min(attacks) mn from public.world_boss_hits where day = '2031-01-01'");
+  ok(fails === 0 && Number(wb.hp) === 40000 - 12 * 1000 && Number(n.n) === 4 && Number(n.mn) === 3,
+    `4 jogadores atacaram o mesmo chefe (12 ataques, ${fails} falhas, vida ${wb.hp})`);
+
   // ── Resgate: monta um chefe derrotado no evento atual com 40 participantes ──
   await pool.query("delete from public.world_bosses where day = $1", [sch.day]);
   await pool.query("insert into public.world_bosses (day, boss_id, hp, max_hp, starts_at, ends_at, defeated_at) values ($1, 'behemoth', 0, 5000, now() - interval '30 min', now() + interval '30 min', now())", [sch.day]);

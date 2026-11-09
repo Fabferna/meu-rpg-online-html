@@ -10,6 +10,7 @@ import { useT } from "@/lib/i18n/client";
 import HeroManage from "./HeroManage";
 import HeroList from "./HeroList";
 import ElementPicker from "./ElementPicker";
+import { openInventoryView } from "./Inventory";
 import { combatSummary, equippedPieces, petStats, setStats } from "./gearView";
 import { ATTR_LABEL } from "@/lib/game/gear";
 import { SLOT_LABEL } from "./Inventory";
@@ -72,10 +73,15 @@ export default function Overview({ ctx, energyHint }: { ctx: GameCtx; energyHint
         <div className="relative mx-auto aspect-[3/4] w-full max-w-60 overflow-hidden rounded-lg ring-2 ring-gold/40 md:max-w-none">
           <Image src={c.portrait} alt={c.name} fill sizes="320px" className="object-cover" priority />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4">
+            {c.title && <p className="font-display text-sm text-amber-200">« {t(c.title)} »</p>}
             <h1 className="font-display text-2xl">{c.name}</h1>
             <p className="text-sm text-white/70">{t(c.raceName)} · {t(c.regionName)}</p>
           </div>
         </div>
+        <button className="mt-2 w-full rounded-md bg-white/5 py-1.5 text-xs text-white/80 hover:bg-white/10"
+          onClick={() => { openInventoryView("looks"); ctx.go?.("inventory"); }}>
+          🏷️ {t("Títulos e cosméticos")}
+        </button>
         <div className="mt-4 space-y-3">
           <Bar label={t("Vida")} value={c.hp} max={c.maxHp} color="bg-life" />
           <Bar label={t("Energia")} value={c.energy} max={c.maxEnergy} color="bg-energy" hint={energyHint} />

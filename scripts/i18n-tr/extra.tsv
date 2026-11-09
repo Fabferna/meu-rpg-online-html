@@ -816,3 +816,57 @@ Abra no inventário: ouro e chance de item raro.	Open it in your inventory: gold
 Abra no inventário: ouro, gemas e chance de item.	Open it in your inventory: gold, gems and a chance of an item.	Ábrelo en el inventario: oro, gemas y probabilidad de objeto.	在背包中打开：金币、宝石，还有机会获得物品。
 Ver perfil de {x}	View {x}'s profile	Ver perfil de {x}	查看 {x} 的资料
 🛡️ Chefe de grupo: cada ataque tira no máximo {p}% da vida dele. Sozinho ninguém derruba — chame a guilda e os amigos!	🛡️ Group boss: each attack removes at most {p}% of its health. Nobody can beat it alone — call your guild and friends!	🛡️ Jefe de grupo: cada ataque quita como máximo {p}% de su vida. Nadie lo derrota solo: ¡llama a tu gremio y amigos!	🛡️ 团队首领：每次攻击最多削减它 {p}% 的生命。没人能单挑——叫上公会和好友！
+Equipado!	Equipped!	¡Equipado!	已装备！
+Removido	Removed	Quitado	已移除
+Carregando...	Loading...	Cargando...	加载中...
+Sua coleção: {a} de {b} cosméticos. Títulos aparecem no seu perfil, no ranking e no chat.	Your collection: {a} of {b} cosmetics. Titles show on your profile, in the ranking and in chat.	Tu colección: {a} de {b} cosméticos. Los títulos aparecen en tu perfil, en el ranking y en el chat.	你的收藏：{a}/{b} 个外观。称号会显示在你的资料、排行榜和聊天中。
+EM USO	IN USE	EN USO	使用中
+Na Loja	In the Shop	En la Tienda	在商店
+Quem pode entrar:	Who can join:	Quién puede entrar:	谁可以加入：
+Guilda agora é privada.	Guild is now private.	El gremio ahora es privado.	公会现在是私密的。
+Guilda agora é aberta.	Guild is now open.	El gremio ahora es abierto.	公会现在是开放的。
+📨 Pedidos para entrar ({n})	📨 Join requests ({n})	📨 Solicitudes para entrar ({n})	📨 入会申请（{n}）
+Nenhum pedido no momento.	No requests right now.	No hay solicitudes por ahora.	暂无申请。
+(sem mensagem)	(no message)	(sin mensaje)	（无留言）
+{x} entrou na guilda!	{x} joined the guild!	¡{x} entró al gremio!	{x} 加入了公会！
+Aceitar	Accept	Aceptar	接受
+Recusar	Decline	Rechazar	拒绝
+Pedido recusado.	Request declined.	Solicitud rechazada.	已拒绝申请。
+Pedido cancelado.	Request cancelled.	Solicitud cancelada.	已取消申请。
+Pedir para entrar	Ask to join	Pedir para entrar	申请加入
+Conte um pouco sobre você para o líder (opcional)	Tell the leader a bit about yourself (optional)	Cuéntale al líder un poco sobre ti (opcional)	向会长简单介绍一下自己（可选）
+Mensagem do pedido	Request message	Mensaje de la solicitud	申请留言
+Pedido enviado para {x}!	Request sent to {x}!	¡Solicitud enviada a {x}!	已向 {x} 发送申请！
+Pedido enviado	Request sent	Solicitud enviada	已发送申请
+Enviar pedido	Send request	Enviar solicitud	发送申请
+Cancelar	Cancel	Cancelar	取消
+Quem pode entrar	Who can join	Quién puede entrar	谁可以加入
+🔒 PRIVADA · entra com pedido	🔒 PRIVATE · join by request	🔒 PRIVADO · entra con solicitud	🔒 私密 · 需申请加入
+🔓 ABERTA · qualquer um entra	🔓 OPEN · anyone can join	🔓 ABIERTO · cualquiera entra	🔓 开放 · 任何人可加入
+🔓 Aberta (qualquer um entra)	🔓 Open (anyone can join)	🔓 Abierto (cualquiera entra)	🔓 开放（任何人可加入）
+🔒 Privada (só com pedido aceito)	🔒 Private (accepted requests only)	🔒 Privado (solo con solicitud aceptada)	🔒 私密（仅限通过申请）
+🔓 Aberta	🔓 Open	🔓 Abierto	🔓 开放
+🔒 Privada	🔒 Private	🔒 Privado	🔒 私密
+Qualquer um entra	Anyone can join	Cualquiera entra	任何人可加入
+Só com pedido aceito	Accepted requests only	Solo con solicitud aceptada	仅限通过申请
+Títulos e cosméticos	Titles and cosmetics	Títulos y cosméticos	称号与外观
+✨ Cosméticos e títulos	✨ Cosmetics and titles	✨ Cosméticos y títulos	✨ 外观与称号
+🏷️ Títulos	🏷️ Titles	🏷️ Títulos	🏷️ 称号
+🖼️ Molduras	🖼️ Frames	🖼️ Marcos	🖼️ 头像框
+🎭 Visuais do herói	🎭 Hero looks	🎭 Aspectos del héroe	🎭 英雄外观
+Oferta de lançamento (já encerrada)	Launch offer (ended)	Oferta de lanzamiento (finalizada)	上线优惠（已结束）
+Comprar o Pacote Inicial	Buy the Starter Pack	Comprar el Paquete Inicial	购买新手礼包
+Objetivo: derrote 25 chefes	Goal: defeat 25 bosses	Objetivo: derrota 25 jefes	目标：击败 25 个首领
+Objetivo: vença 50 duelos na Arena	Goal: win 50 Arena duels	Objetivo: gana 50 duelos en la Arena	目标：在竞技场赢得 50 场决斗
+Termine em 1º lugar no ranking semanal	Finish 1st in the weekly ranking	Termina 1º en el ranking semanal	在周排行榜中获得第 1 名
+Entre no jogo 30 dias seguidos	Log in 30 days in a row	Entra al juego 30 días seguidos	连续登录 30 天
+História: derrote Meria (capítulo 10)	Story: defeat Meria (chapter 10)	Historia: derrota a Meria (capítulo 10)	剧情：击败梅莉亚（第 10 章）
+História: derrote Nyx (último capítulo)	Story: defeat Nyx (last chapter)	Historia: derrota a Nyx (último capítulo)	剧情：击败尼克斯（最终章）
+Passe da Temporada: nível 30	Season Pass: level 30	Pase de Temporada: nivel 30	赛季通行证：30 级
+Passe da Temporada: nível 15	Season Pass: level 15	Pase de Temporada: nivel 15	赛季通行证：15 级
+Você já usou seus {n} ataques deste evento. Os outros jogadores ainda podem atacar!	You've used your {n} attacks for this event. Other players can still attack!	Ya usaste tus {n} ataques de este evento. ¡Los demás jugadores aún pueden atacar!	你已用完本次活动的 {n} 次攻击。其他玩家仍可攻击！
+Sem energia: cada ataque gasta ⚡ {n} e você tem ⚡ {e}. A energia volta com o tempo.	Not enough energy: each attack costs ⚡ {n} and you have ⚡ {e}. Energy refills over time.	Sin energía: cada ataque cuesta ⚡ {n} y tienes ⚡ {e}. La energía se recupera con el tiempo.	能量不足：每次攻击消耗 ⚡ {n}，你有 ⚡ {e}。能量会随时间恢复。
+Esta guilda é privada: envie um pedido para entrar.	This guild is private: send a request to join.	Este gremio es privado: envía una solicitud para entrar.	该公会是私密的：请发送申请加入。
+Esse pedido não existe mais.	That request no longer exists.	Esa solicitud ya no existe.	该申请已不存在。
+Você já tem 5 pedidos pendentes. Cancele algum para pedir outro.	You already have 5 pending requests. Cancel one to send another.	Ya tienes 5 solicitudes pendientes. Cancela alguna para enviar otra.	你已有 5 个待处理申请。取消一个才能再申请。
+Mensagem não permitida. Tente outro texto.	Message not allowed. Try another text.	Mensaje no permitido. Prueba otro texto.	不允许该留言，请换个内容。

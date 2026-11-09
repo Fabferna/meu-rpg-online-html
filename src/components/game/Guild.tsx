@@ -15,8 +15,12 @@ import GuildWar from "./GuildWar";
 import { useT } from "@/lib/i18n/client";
 
 type Member = { name: string; level: number; role: GuildRole; contributed: number; me: boolean; portrait: string; frame: string | null; active: boolean };
-type MyGuild = { id: string; name: string; tag: string; description: string; level: number; xp: number; treasury: number; limit: number; myRole: GuildRole; members: Member[] };
-type ListItem = { id: string; name: string; tag: string; description: string; level: number; limit: number; members: number };
+type JoinRequest = { name: string; level: number; message: string; at: string; portrait: string; frame: string | null };
+type MyGuild = {
+  id: string; name: string; tag: string; description: string; level: number; xp: number; treasury: number; limit: number; myRole: GuildRole;
+  members: Member[]; private: boolean; requests: JoinRequest[];
+};
+type ListItem = { id: string; name: string; tag: string; description: string; level: number; limit: number; members: number; private: boolean; requested: boolean };
 
 export default function Guild({ ctx }: { ctx: GameCtx }) {
   const t = useT();
@@ -70,6 +74,7 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
             <div className="grid h-16 w-16 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-gold to-ember font-display text-xl font-black text-ink shadow-lg">{mine.tag}</div>
             <div className="min-w-0 flex-1">
               <h2 className="font-display text-2xl">{mine.name}</h2>
+              <PrivacyBadge priv={mine.private} />
               <p className="text-sm text-white/60">{mine.description || t("Sem descrição.")}</p>
             </div>
           </div>
@@ -85,8 +90,44 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
             </div>
           </div>
           <Donate busy={busy} gold={ctx.state.wallet.gold} onDonate={(amount) => act({ type: "donate", amount }, t("Doou 🪙 {n} para a guilda!", { n: amount }))} />
+          {lead && (
+            <div className="relative mt-4 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-white/70">{t("Quem pode entrar:")}</span>
+              {([[false, "🔓 Aberta (qualquer um entra)"], [true, "🔒 Privada (só com pedido aceito)"]] as const).map(([p, l]) => (
+                <button key={String(p)} disabled={busy || mine.private === p}
+                  onClick={() => act({ type: "privacy", privacy: p ? "private" : "open" }, p ? t("Guilda agora é privada.") : t("Guilda agora é aberta."))}
+                  className={`rounded-md px-3 py-1 text-xs ${mine.private === p ? "bg-gold text-ink" : "bg-white/10 hover:bg-white/20"}`}>{t(l)}</button>
+              ))}
+            </div>
+          )}
           <p className="relative mt-3 text-[11px] text-white/40">{t("A guilda também ganha XP quando os membros jogam: missão +10, caçada +5, chefe +30, vitória na Arena +15.")}</p>
         </Panel>
+
+        {staff && (mine.private || mine.requests.length > 0) && (
+          <Panel className="p-4">
+            <h3 className="mb-3 font-display text-lg text-gold">{t("📨 Pedidos para entrar ({n})", { n: mine.requests.length })}</h3>
+            {mine.requests.length === 0 ? <p className="text-sm text-white/50">{t("Nenhum pedido no momento.")}</p> : (
+              <ul className="space-y-2">
+                {mine.requests.map((r) => (
+                  <li key={r.name} className="flex flex-wrap items-center gap-3 rounded-lg bg-black/30 px-3 py-2">
+                    <button onClick={() => setProfile(r.name)} className="flex min-w-0 flex-1 basis-full items-center gap-3 text-left sm:basis-auto">
+                      <Avatar src={r.portrait} frame={r.frame} size={40} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-display text-sm hover:underline">{r.name} <span className="text-white/50">· {t("Nv.")} {r.level}</span></span>
+                        <span className="block break-words text-xs text-white/70">{r.message ? `“${r.message}”` : t("(sem mensagem)")}</span>
+                      </span>
+                    </button>
+                    <div className="flex gap-1 text-xs">
+                      <button disabled={busy || mine.members.length >= mine.limit} onClick={() => act({ type: "decide", target: r.name, accept: true }, t("{x} entrou na guilda!", { x: r.name }))}
+                        className="rounded bg-emerald-600 px-3 py-1.5 hover:bg-emerald-500">{t("Aceitar")}</button>
+                      <Btn danger busy={busy} onClick={() => act({ type: "decide", target: r.name, accept: false }, t("Pedido recusado."))}>{t("Recusar")}</Btn>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+        )}
 
         <Panel className="p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -154,14 +195,18 @@ function NoGuild({ ctx, busy, act }: { ctx: GameCtx; busy: boolean; act: (b: obj
   const t = useT();
   const [list, setList] = useState<ListItem[] | null>(null);
   const [q, setQ] = useState("");
-  const [form, setForm] = useState({ name: "", tag: "", description: "" });
+  const [form, setForm] = useState({ name: "", tag: "", description: "", privacy: "open" as "open" | "private" });
+  const [asking, setAsking] = useState<string | null>(null);
+  const [msg, setMsg] = useState("");
+  const [reload, setReload] = useState(0);
+  const send = async (b: object, ok: string) => { await act(b, ok); setAsking(null); setMsg(""); setReload((n) => n + 1); };
 
   useEffect(() => {
     const t = setTimeout(() => {
       fetch(`/api/guilds?q=${encodeURIComponent(q)}`, { cache: "no-store" }).then((r) => r.json()).then((d) => setList(d.guilds ?? []));
     }, 250);
     return () => clearTimeout(t);
-  }, [q]);
+  }, [q, reload]);
 
   const valid = /^[A-Za-zÀ-ÿ0-9 _]{3,20}$/.test(form.name) && /^[A-Za-z0-9]{2,4}$/.test(form.tag);
   return (
@@ -182,11 +227,31 @@ function NoGuild({ ctx, busy, act }: { ctx: GameCtx; busy: boolean; act: (b: obj
             <div className="min-w-0 flex-1">
               <p className="font-display">{g.name} <span className="text-xs text-white/50">· {t("Nv.")} {g.level} · +{g.level}% XP</span></p>
               <p className="truncate text-xs text-white/60">{g.description || t("Sem descrição.")}</p>
+              <PrivacyBadge priv={g.private} />
             </div>
             <span className="text-xs text-white/60">{g.members}/{g.limit}</span>
-            <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy || g.members >= g.limit} onClick={() => act({ type: "join", guildId: g.id }, t("Bem-vindo à {x}!", { x: g.name }))}>
-              {g.members >= g.limit ? t("Cheia") : t("Entrar")}
-            </button>
+            {g.members >= g.limit ? (
+              <button className="btn-gold !px-4 !py-2 text-sm" disabled>{t("Cheia")}</button>
+            ) : !g.private ? (
+              <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy} onClick={() => act({ type: "join", guildId: g.id }, t("Bem-vindo à {x}!", { x: g.name }))}>{t("Entrar")}</button>
+            ) : g.requested ? (
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-emerald-300">✔ {t("Pedido enviado")}</span>
+                <button disabled={busy} onClick={() => send({ type: "cancel_request", guildId: g.id }, t("Pedido cancelado."))} className="rounded bg-white/10 px-2 py-1 hover:bg-white/20">{t("Cancelar")}</button>
+              </div>
+            ) : (
+              <button className="btn-gold !px-4 !py-2 text-sm" disabled={busy} onClick={() => { setAsking(asking === g.id ? null : g.id); setMsg(""); }}>{t("Pedir para entrar")}</button>
+            )}
+            {asking === g.id && (
+              <div className="basis-full space-y-2">
+                <textarea className="input text-sm" rows={2} maxLength={200} value={msg} onChange={(e) => setMsg(e.target.value)} autoFocus
+                  placeholder={t("Conte um pouco sobre você para o líder (opcional)")} aria-label={t("Mensagem do pedido")} />
+                <div className="flex justify-end gap-2">
+                  <button onClick={() => setAsking(null)} className="rounded-md bg-white/10 px-3 py-1.5 text-sm">{t("Cancelar")}</button>
+                  <button disabled={busy} onClick={() => send({ type: "request", guildId: g.id, message: msg }, t("Pedido enviado para {x}!", { x: g.name }))} className="btn-gold !px-4 !py-1.5 text-sm">{t("Enviar pedido")}</button>
+                </div>
+              </div>
+            )}
           </Panel>
         ))}
       </section>
@@ -205,11 +270,32 @@ function NoGuild({ ctx, busy, act }: { ctx: GameCtx; busy: boolean; act: (b: obj
           <span className="mb-1 block text-white/70">{t("Descrição (opcional)")}</span>
           <textarea id="guild-desc" className="input" rows={3} maxLength={200} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </label>
+        <div className="text-sm">
+          <span className="mb-1 block text-white/70">{t("Quem pode entrar")}</span>
+          <div className="grid grid-cols-2 gap-2">
+            {([["open", "🔓 Aberta", "Qualquer um entra"], ["private", "🔒 Privada", "Só com pedido aceito"]] as const).map(([k, l, d]) => (
+              <button key={k} type="button" onClick={() => setForm({ ...form, privacy: k })}
+                className={`rounded-lg px-2 py-2 text-left ${form.privacy === k ? "bg-gold/20 ring-1 ring-gold" : "bg-white/5"}`}>
+                <span className="block font-display text-sm">{t(l)}</span>
+                <span className="block text-[11px] text-white/60">{t(d)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
         <button className="btn-gold w-full" disabled={busy || !valid || ctx.state.wallet.gold < GUILD.createCost}
           onClick={() => act({ type: "create", ...form }, t("Guilda {x} fundada!", { x: form.name }))}>
           {t("Fundar por 🪙 {n}", { n: GUILD.createCost })}
         </button>
       </Panel>
     </div>
+  );
+}
+
+function PrivacyBadge({ priv }: { priv: boolean }) {
+  const t = useT();
+  return (
+    <span className={`mt-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-bold ${priv ? "bg-violet-500/20 text-violet-200" : "bg-emerald-500/15 text-emerald-200"}`}>
+      {priv ? t("🔒 PRIVADA · entra com pedido") : t("🔓 ABERTA · qualquer um entra")}
+    </span>
   );
 }

@@ -101,7 +101,11 @@ export function installDemoFetch() {
       rows: [{ pos: 1, name: "Lâminas do Deserto", tag: "LDD", level: 5, score: 688, mine: false }, { pos: 2, name: "Ordem da Chama", tag: "ODC", level: 3, score: 412, mine: true },
         { pos: 3, name: "Filhos da Montanha", tag: "FDM", level: 2, score: 230, mine: false }] });
     if (url.startsWith("/api/guilds/mine")) return json({ guild: {
-      id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: 20, myRole: "leader",
+      id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: 20, myRole: "leader", private: true,
+      requests: [
+        { name: "Gromak", level: 5, message: "Jogo todo dia à noite e quero ajudar no Chefe do Mundo!", at: new Date().toISOString(), portrait: "/assets/retratodegronar.webp", frame: null },
+        { name: "Aria", level: 4, message: "", at: new Date().toISOString(), portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_bronze" },
+      ],
       members: [
         { name: "Kaelen", level: 6, role: "leader", contributed: 4200, me: true, portrait: "/assets/guerreiro_fantastico_determinado.webp", frame: "frame_arcano", active: true },
         { name: "Lyra", level: 7, role: "officer", contributed: 2900, me: false, portrait: "/assets/elfo_de_sylvandell_mulher.webp", frame: "frame_dragao", active: true },
@@ -109,9 +113,9 @@ export function installDemoFetch() {
         { name: "Mirelle", level: 5, role: "member", contributed: 500, me: false, portrait: "/assets/retrato_aetheliana.webp", frame: null, active: true },
       ] } });
     if (url.startsWith("/api/guilds")) return json({ guilds: [
-      { id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion.", level: 3, limit: 20, members: 4 },
-      { id: "g2", name: "Lâminas do Deserto", tag: "LDD", description: "PVP todo dia às 21h.", level: 5, limit: 20, members: 17 },
-      { id: "g3", name: "Filhos da Montanha", tag: "FDM", description: "Anões e amigos. Iniciantes bem-vindos!", level: 2, limit: 20, members: 9 },
+      { id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion.", level: 3, limit: 20, members: 4, private: true, requested: true },
+      { id: "g2", name: "Lâminas do Deserto", tag: "LDD", description: "PVP todo dia às 21h.", level: 5, limit: 20, members: 17, private: true, requested: false },
+      { id: "g3", name: "Filhos da Montanha", tag: "FDM", description: "Anões e amigos. Iniciantes bem-vindos!", level: 2, limit: 20, members: 9, private: false, requested: false },
     ] });
     if (url.startsWith("/api/chat")) {
       const guild = url.includes("channel=guild");
@@ -144,6 +148,10 @@ export function installDemoFetch() {
         collector: collectorOrders(new Date().toISOString().slice(0, 10), stats.level).map((o) => ({ ...o, claimed: false })),
       });
     }
+    if (url === "/api/cosmetics") return json({
+      owned: ["frame_arcano", "frame_bronze", "title_cacador", "title_fiel", "title_matador", "skin_kaelen"],
+      equipped: { frame: "frame_arcano", title: "title_cacador", skin: null },
+    });
     if (url === "/api/shop") return json({
       owned: ["frame_arcano", "title_cacador"], equipped: { frame: "frame_arcano", title: "title_cacador", skin: null }, xpBoostUntil: null, energyRefillPrice: 10,
       convenience: CONVENIENCE.map((d) => ({ ...d, boughtToday: 0 })),
