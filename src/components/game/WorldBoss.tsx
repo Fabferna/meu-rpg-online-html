@@ -37,7 +37,7 @@ export default function WorldBoss({ ctx }: { ctx: GameCtx }) {
   // Relógio da contagem e atualização da vida compartilhada enquanto o evento está aberto.
   useEffect(() => {
     const tick = setInterval(() => setNow(Date.now()), 1000);
-    const poll = setInterval(() => { if (d?.open && !d.defeated) load(); }, 15_000);
+    const poll = setInterval(() => { if (d?.open && !d.defeated) load(); }, 5_000);
     return () => { clearInterval(tick); clearInterval(poll); };
   }, [d?.open, d?.defeated, load]);
   // Abre/fecha sozinho na virada do horário.
@@ -135,6 +135,13 @@ export default function WorldBoss({ ctx }: { ctx: GameCtx }) {
             <p className="text-sm text-white/70">
               {d.claimed ? t("✔ Recompensa resgatada. Volte às 21h!") : t("O chefe aparece todo dia às 21h (horário de Brasília) e fica 1 hora.")}
             </p>
+          )}
+          {live && !d.canClaim && (d.attacksLeft <= 0 || noEnergy) && (
+            <span className="basis-full text-xs text-amber-200">
+              {d.attacksLeft <= 0
+                ? t("Você já usou seus {n} ataques deste evento. Os outros jogadores ainda podem atacar!", { n: WORLD_BOSS_RULES.attacksPerEvent })
+                : t("Sem energia: cada ataque gasta ⚡ {n} e você tem ⚡ {e}. A energia volta com o tempo.", { n: WORLD_BOSS_RULES.energy, e: c.energy })}
+            </span>
           )}
           {d.myDamage > 0 && <span className="text-sm text-white/70">{t("Seu dano: {n} · {p}º lugar", { n: d.myDamage.toLocaleString(t.locale), p: d.myPos })}</span>}
         </div>

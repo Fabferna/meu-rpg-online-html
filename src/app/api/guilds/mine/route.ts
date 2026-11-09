@@ -18,7 +18,11 @@ export async function GET() {
     admin.from("guilds").select("*").eq("id", me.guild_id).single(),
     admin.from("guild_members").select("user_id, role, contributed, joined_at").eq("guild_id", me.guild_id),
   ]);
-  const ids = (members ?? []).map((m) => m.user_id);
+  const staff = me.role === "leader" || me.role === "officer";
+  const { data: reqs } = staff
+    ? await admin.from("guild_requests").select("user_id, message, created_at").eq("guild_id", me.guild_id).order("created_at").limit(50)
+    : { data: [] };
+  const ids = [...(members ?? []).map((m) => m.user_id), ...(reqs ?? []).map((r) => r.user_id)];
   const { data: chars } = await admin.from("characters").select("user_id, name, level, race, gender, equipped_frame, equipped_skin, updated_at").in("user_id", ids);
   const byId = new Map((chars ?? []).map((c) => [c.user_id, c]));
   const order = { leader: 0, officer: 1, member: 2 } as const;
@@ -26,7 +30,15 @@ export async function GET() {
   return NextResponse.json({
     guild: {
       id: g.id, name: g.name, tag: g.tag, description: g.description, level: g.level, xp: Number(g.xp),
-      treasury: Number(g.treasury), limit: g.member_limit, myRole: me.role,
+      treasury: Number(g.treasury), limit: g.member_limit, myRole: me.role, private: g.privacy === "private",
+      requests: (reqs ?? []).flatMap((r) => {
+        const c = byId.get(r.user_id);
+        if (!c) return [];
+        return [{
+          name: c.name, level: c.level, message: r.message, at: r.created_at, frame: c.equipped_frame ?? null,
+          portrait: (c.equipped_skin && COSMETIC_BY_ID[c.equipped_skin]?.image) || RACES[c.race as RaceId].portraits[c.gender as Gender],
+        }];
+      }),
       members: (members ?? [])
         .map((m) => {
           const c = byId.get(m.user_id);

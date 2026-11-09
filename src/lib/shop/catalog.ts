@@ -54,6 +54,8 @@ export type Cosmetic = {
   /** Skin exclusiva de uma raça (e, opcionalmente, de um gênero). */
   race?: string;
   gender?: "male" | "female";
+  /** Como conseguir (cosméticos sem preço, ganhos jogando). */
+  how?: string;
 };
 
 /** A skin serve para este herói? (sem raça = serve para todos) */
@@ -63,19 +65,19 @@ export const skinFits = (c: Cosmetic, race: string, gender: string) =>
 export const COSMETICS: Cosmetic[] = [
   { id: "frame_bronze", kind: "frame", name: "Moldura de Bronze", rarity: "common", price: { currency: "gold", amount: 800 }, ring: "ring-4 ring-amber-700" },
   { id: "frame_arcano", kind: "frame", name: "Moldura Arcana", rarity: "epic", price: { currency: "gems", amount: 250 }, image: "/assets/shop/frame_arcano.webp" },
-  { id: "frame_dragao", kind: "frame", name: "Moldura do Dragão Dourado", rarity: "legendary", image: "/assets/shop/frame_dragao.webp" },
+  { id: "frame_dragao", kind: "frame", name: "Moldura do Dragão Dourado", rarity: "legendary", image: "/assets/shop/frame_dragao.webp", how: "Oferta de lançamento (já encerrada)" },
   { id: "title_destemido", kind: "title", name: "O Destemido", rarity: "common", price: { currency: "gold", amount: 1500 } },
   { id: "title_cacador", kind: "title", name: "Caçador de Sombras", rarity: "rare", price: { currency: "gems", amount: 120 } },
   { id: "title_lenda", kind: "title", name: "Lenda de Aethelgard", rarity: "legendary", price: { currency: "gems", amount: 600 } },
-  { id: "title_pioneiro", kind: "title", name: "Pioneiro", rarity: "epic" },
-  { id: "title_matador", kind: "title", name: "Matador de Chefes", rarity: "legendary" },
-  { id: "title_veterano", kind: "title", name: "Veterano da Arena", rarity: "epic" },
-  { id: "title_campeao", kind: "title", name: "Campeão Semanal", rarity: "legendary" },
-  { id: "title_fiel", kind: "title", name: "Fiel ao Reino", rarity: "epic" },
-  { id: "title_salvador", kind: "title", name: "Salvador de Aethelgard", rarity: "legendary" },
-  { id: "title_estrelas", kind: "title", name: "Guardião das Estrelas", rarity: "legendary" },
-  { id: "title_heroi_temporada", kind: "title", name: "Herói da Temporada", rarity: "legendary" },
-  { id: "frame_temporada", kind: "frame", name: "Moldura da Temporada", rarity: "epic", ring: "ring-4 ring-fuchsia-400 shadow-[0_0_14px_#e879f9]" },
+  { id: "title_pioneiro", kind: "title", name: "Pioneiro", rarity: "epic", how: "Comprar o Pacote Inicial" },
+  { id: "title_matador", kind: "title", name: "Matador de Chefes", rarity: "legendary", how: "Objetivo: derrote 25 chefes" },
+  { id: "title_veterano", kind: "title", name: "Veterano da Arena", rarity: "epic", how: "Objetivo: vença 50 duelos na Arena" },
+  { id: "title_campeao", kind: "title", name: "Campeão Semanal", rarity: "legendary", how: "Termine em 1º lugar no ranking semanal" },
+  { id: "title_fiel", kind: "title", name: "Fiel ao Reino", rarity: "epic", how: "Entre no jogo 30 dias seguidos" },
+  { id: "title_salvador", kind: "title", name: "Salvador de Aethelgard", rarity: "legendary", how: "História: derrote Meria (capítulo 10)" },
+  { id: "title_estrelas", kind: "title", name: "Guardião das Estrelas", rarity: "legendary", how: "História: derrote Nyx (último capítulo)" },
+  { id: "title_heroi_temporada", kind: "title", name: "Herói da Temporada", rarity: "legendary", how: "Passe da Temporada: nível 30" },
+  { id: "frame_temporada", kind: "frame", name: "Moldura da Temporada", rarity: "epic", ring: "ring-4 ring-fuchsia-400 shadow-[0_0_14px_#e879f9]", how: "Passe da Temporada: nível 15" },
   { id: "skin_kaelen", kind: "skin", race: "humano", gender: "male", name: "Kaelen, Guardião da Chama", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/kaelen_guardiao_da_chama.webp" },
   { id: "skin_lyra", kind: "skin", race: "elfo", gender: "female", name: "Lyra, Sacerdotisa da Lua", rarity: "epic", price: { currency: "gems", amount: 450 }, image: "/assets/lyra_a_sacerdotisa_da_lua.webp" },
   { id: "skin_roric", kind: "skin", race: "humano", gender: "male", name: "Roric Corvo Blackwood", rarity: "rare", price: { currency: "gems", amount: 300 }, image: "/assets/roric_corvo__blackwood.webp" },
@@ -99,7 +101,7 @@ export const COSMETICS: Cosmetic[] = [
   { id: "skin_aetheliano_andarilho_m", kind: "skin", name: "Andarilho Astral", rarity: "rare", race: "aetheliano", gender: "male", price: { currency: "gold", amount: 6000 }, image: "/assets/skins/aetheliano_andarilho_male.webp" },
   { id: "skin_aetheliano_oraculo_f", kind: "skin", name: "Oráculo do Éter", rarity: "epic", race: "aetheliano", gender: "female", price: { currency: "gems", amount: 300 }, image: "/assets/skins/aetheliano_oraculo_female.webp" },
   { id: "skin_aetheliano_oraculo_m", kind: "skin", name: "Oráculo do Éter", rarity: "epic", race: "aetheliano", gender: "male", price: { currency: "gems", amount: 300 }, image: "/assets/skins/aetheliano_oraculo_male.webp" },
-  { id: "skin_vorlag", kind: "skin", name: "Lorde Vorlag Sombrio", rarity: "legendary", image: "/assets/lord_vorlag_sombrio.webp" },
+  { id: "skin_vorlag", kind: "skin", name: "Lorde Vorlag Sombrio", rarity: "legendary", image: "/assets/lord_vorlag_sombrio.webp", how: "Oferta de lançamento (já encerrada)" },
 ];
 export const COSMETIC_BY_ID = Object.fromEntries(COSMETICS.map((c) => [c.id, c]));
 

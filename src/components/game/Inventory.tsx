@@ -8,6 +8,7 @@ import { type ItemDef, ITEM_BY_ID, SLOTS, itemStatsFor, sellPrice, upgradedStats
 import type { InventoryEntry } from "@/lib/game/state";
 import type { TFn } from "@/lib/i18n/translate";
 import Pets from "./Pets";
+import Cosmetics from "./Cosmetics";
 import { post, RARITY_LABEL, RARITY_STYLE } from "./api";
 import { Panel } from "./ui";
 import { play } from "./sfx";
@@ -22,10 +23,14 @@ const STAT_LABEL: Record<string, string> = { atk: "ATQ", def: "DEF", str: "FOR",
 export const statText = (t: TFn, d: Record<string, unknown>) =>
   Object.entries(d).filter(([k]) => k in STAT_LABEL).map(([k, v]) => `${t(STAT_LABEL[k])} +${v}`).join(" · ");
 
+/** Abre o Inventário direto em uma aba (ex.: atalho "Escolher título" na tela do Herói). */
+let nextView: "bag" | "pets" | "looks" | null = null;
+export const openInventoryView = (v: "bag" | "pets" | "looks") => { nextView = v; };
+
 export default function Inventory({ ctx }: { ctx: GameCtx }) {
   const t = useT();
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState<"bag" | "pets">("bag");
+  const [view, setView] = useState<"bag" | "pets" | "looks">(() => { const v = nextView ?? "bag"; nextView = null; return v; });
   const items = ctx.state.inventory;
 
   async function run(url: string, body: object, ok: string) {
@@ -120,15 +125,15 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
         </Panel>
       )}
 
-      <div className="flex gap-2">
-        {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"]] as const).map(([k, l]) => (
+      <div className="flex flex-wrap gap-2">
+        {([["bag", "🎒 Minha bolsa"], ["pets", "🐾 Pets"], ["looks", "✨ Cosméticos e títulos"]] as const).map(([k, l]) => (
           <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
         ))}
         <span className={`ml-auto self-center text-sm ${bagUsed >= BAG_LIMIT ? "text-amber-300" : "text-white/70"}`} title={t("Itens não equipados. Com a bolsa cheia, itens encontrados viram ouro.")}>🎒 {bagUsed}/{BAG_LIMIT}</span>
         <span className="self-center text-sm">🪙 <b>{ctx.state.wallet.gold.toLocaleString(t.locale)}</b></span>
       </div>
 
-      {view === "pets" ? <Pets ctx={ctx} /> : (
+      {view === "pets" ? <Pets ctx={ctx} /> : view === "looks" ? <Cosmetics ctx={ctx} /> : (
         items.length === 0 ? (
           <Panel className="p-8 text-center text-white/60">{t("Sua bolsa está vazia. Complete missões e caçadas para encontrar itens!")}</Panel>
         ) : (
