@@ -47,6 +47,28 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
     }
   }
 
+  // Equipar: se não puder, explica o motivo (nível, item sem espaço de equipamento ou erro do servidor).
+  async function equip(it: InventoryEntry, def: ItemDef | undefined) {
+    const lv = ctx.state.character.level;
+    const need = def?.minLevel ?? 1;
+    if (!it.equipped && lv < need) {
+      play("miss");
+      ctx.toast(t("🔒 Não dá para equipar {x}: precisa ser nível {n} (você está no nível {l}). Suba mais {f} nível(is) para usar.", { x: t(def?.name ?? ""), n: need, l: lv, f: need - lv }), "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      await post("/api/inventory/equip", { inventoryId: it.id });
+      play("coin");
+      ctx.toast(it.equipped ? t("Item removido") : t("Item equipado"));
+      await ctx.refresh();
+    } catch (e) {
+      ctx.toast(t("Não foi possível equipar {x}: {m}", { x: t(def?.name ?? ""), m: (e as Error).message }), "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   // Usar consumível: poção, elixir (bônus de XP) ou baú (abre e mostra o que saiu).
   const [opened, setOpened] = useState<{ name: string; gold: number; gems: number; item: string | null } | null>(null);
   async function useItem(it: InventoryEntry) {
@@ -180,9 +202,9 @@ export default function Inventory({ ctx }: { ctx: GameCtx }) {
                       </button>
                     )}
                     {it.slot && (
-                      <button disabled={busy || (!it.equipped && ctx.state.character.level < (def?.minLevel ?? 1))} onClick={() => run("/api/inventory/equip", { inventoryId: it.id }, it.equipped ? "Item removido" : "Item equipado")}
-                        className={`min-h-11 flex-1 rounded-md py-1.5 text-xs ${it.equipped ? "bg-white/10" : "bg-gold/90 text-ink"}`}>
-                        {it.equipped ? t("Remover") : t("Equipar")}
+                      <button disabled={busy} onClick={() => equip(it, def)}
+                        className={`min-h-11 flex-1 rounded-md py-1.5 text-xs ${it.equipped ? "bg-white/10" : ctx.state.character.level < (def?.minLevel ?? 1) ? "bg-red-900/50 text-red-100" : "bg-gold/90 text-ink"}`}>
+                        {it.equipped ? t("Remover") : ctx.state.character.level < (def?.minLevel ?? 1) ? `🔒 ${t("Nv. {n}", { n: def?.minLevel ?? 1 })}` : t("Equipar")}
                       </button>
                     )}
                     {def && !it.equipped && (

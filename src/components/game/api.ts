@@ -22,7 +22,7 @@ export const ERROR_TEXT: Record<string, string> = {
   quest_already_running: "Você já está em uma missão.",
   quest_not_finished: "A missão ainda não terminou.",
   in_battle: "Termine a batalha atual primeiro.",
-  level_too_low: "Nível insuficiente.",
+  level_too_low: "Seu nível ainda é baixo para este item.",
   hp_too_low: "Vida muito baixa. Descanse ou use uma poção.",
   hp_full: "Sua vida já está cheia.",
   no_item: "Você não tem esse item.",
@@ -89,7 +89,7 @@ export const ERROR_TEXT: Record<string, string> = {
 export async function post<T = { ok: true }>(url: string, body: unknown = {}): Promise<T> {
   const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(ERROR_TEXT[data.error] ?? "Algo deu errado. Tente novamente.");
+  if (!res.ok) throw new Error(ERROR_TEXT[data.error] ?? `Algo deu errado (${data.error ?? res.status}). Tente novamente.`);
   return data as T;
 }
 
