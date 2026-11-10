@@ -875,3 +875,9 @@ Item removido	Item removed	Objeto quitado	已卸下物品
 Item equipado	Item equipped	Objeto equipado	已装备物品
 Não foi possível equipar {x}: {m}	Couldn't equip {x}: {m}	No se pudo equipar {x}: {m}	无法装备 {x}：{m}
 Nv. {n}	Lv. {n}	Nv. {n}	{n} 级
+Escolher itens	Choose items	Elegir objetos	选择物品
+Escolha {n} itens para entregar	Choose {n} items to deliver	Elige {n} objetos para entregar	选择 {n} 件物品上交
+Os itens escolhidos serão consumidos. Itens equipados não aparecem aqui.	The chosen items will be consumed. Equipped items don't appear here.	Los objetos elegidos se consumirán. Los objetos equipados no aparecen aquí.	所选物品将被消耗。已装备的物品不会显示在这里。
+Vale {n} 🪙 na venda	Sells for {n} 🪙	Se vende por {n} 🪙	出售可得 {n} 🪙
+Escolhidos: {a}/{b}	Chosen: {a}/{b}	Elegidos: {a}/{b}	已选：{a}/{b}
+Você já desbloqueou todos os títulos!	You have unlocked every title!	¡Ya desbloqueaste todos los títulos!	你已解锁所有称号！
