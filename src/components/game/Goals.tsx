@@ -128,9 +128,32 @@ function Collector({ ctx, orders, onDone }: { ctx: GameCtx; orders: (Order & { c
   const [busy, setBusy] = useState(false);
   const inv = ctx.state.inventory.filter((i) => !i.equipped);
 
+  // Encomenda "qualquer equipamento da raridade": o jogador escolhe quais itens da bolsa entregar.
+  const [choosing, setChoosing] = useState<Order | null>(null);
+  const [sel, setSel] = useState<string[]>([]);
+  const value = (i: (typeof inv)[number]) => { const d = ITEM_BY_ID[i.itemId]; return d ? sellPrice(d, i.upgrade) : 0; };
+  const options = choosing ? inv.filter((x) => orderAccepts(choosing, x.itemId)).sort((a, b) => a.upgrade - b.upgrade || value(a) - value(b)) : [];
+  const units = options.filter((i) => sel.includes(i.id)).reduce((n, i) => n + i.qty, 0);
+  const toggle = (id: string) => setSel((cur) => cur.includes(id) ? cur.filter((x) => x !== id) : choosing && units >= choosing.qty ? cur : [...cur, id]);
+
+  async function send(o: Order, ids: string[]) {
+    setBusy(true);
+    try {
+      const r = await post<{ gold: number; gems: number; xp: number }>("/api/goals/collector", { idx: o.idx, inventoryIds: ids });
+      play("coin");
+      ctx.toast(`📦 ${[`+${r.gold} 🪙`, r.gems ? `+${r.gems} 💎` : "", `+${r.xp} XP`].filter(Boolean).join(" · ")}`, "reward");
+      setChoosing(null);
+      await onDone();
+    } catch (e) {
+      ctx.toast((e as Error).message, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function deliver(o: Order) {
+    if (o.kind === "rarity") { setSel([]); setChoosing(o); return; }
     // Escolhe os itens que valem MENOS (sem aprimoramento primeiro) até completar a quantidade.
-    const value = (i: (typeof inv)[number]) => { const d = ITEM_BY_ID[i.itemId]; return d ? sellPrice(d, i.upgrade) : 0; };
     const pick: typeof inv = [];
     let left = o.qty;
     for (const i of inv.filter((x) => orderAccepts(o, x.itemId)).sort((a, b) => a.upgrade - b.upgrade || value(a) - value(b))) {
@@ -139,17 +162,7 @@ function Collector({ ctx, orders, onDone }: { ctx: GameCtx; orders: (Order & { c
     }
     const names = pick.map((i) => `• ${t(i.name)}${i.upgrade ? ` +${i.upgrade}` : ""}`).join("\n");
     if (!confirm(`${t("Entregar estes itens? Eles serão consumidos.")}\n\n${names}`)) return;
-    setBusy(true);
-    try {
-      const r = await post<{ gold: number; gems: number; xp: number }>("/api/goals/collector", { idx: o.idx, inventoryIds: pick.map((i) => i.id) });
-      play("coin");
-      ctx.toast(`📦 ${[`+${r.gold} 🪙`, r.gems ? `+${r.gems} 💎` : "", `+${r.xp} XP`].filter(Boolean).join(" · ")}`, "reward");
-      await onDone();
-    } catch (e) {
-      ctx.toast((e as Error).message, "error");
-    } finally {
-      setBusy(false);
-    }
+    await send(o, pick.map((i) => i.id));
   }
 
   return (
@@ -175,11 +188,47 @@ function Collector({ ctx, orders, onDone }: { ctx: GameCtx; orders: (Order & { c
             </div>
             <button disabled={busy || o.claimed || !ready} onClick={() => deliver(o)}
               className={`min-h-11 min-w-24 rounded-lg px-3 text-xs font-semibold ${o.claimed ? "bg-white/5 text-white/40" : ready ? "btn-gold" : "bg-white/5 text-white/60"}`}>
-              {o.claimed ? t("✔ Entregue") : t("Entregar")}
+              {o.claimed ? t("✔ Entregue") : o.kind === "rarity" && ready ? t("Escolher itens") : t("Entregar")}
             </button>
           </Panel>
         );
       })}
+
+      {choosing && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-4" onClick={() => !busy && setChoosing(null)}>
+          <div role="dialog" aria-modal="true" className="panel flex max-h-[85vh] w-full max-w-md flex-col p-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-display text-lg text-gold">{t("Escolha {n} itens para entregar", { n: choosing.qty })}</h3>
+            <p className="mb-3 text-xs text-white/60">{t("Os itens escolhidos serão consumidos. Itens equipados não aparecem aqui.")}</p>
+            <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+              {options.map((i) => {
+                const d = ITEM_BY_ID[i.itemId];
+                const on = sel.includes(i.id);
+                const full = !on && units >= choosing.qty;
+                return (
+                  <li key={i.id}>
+                    <button disabled={busy || full} aria-pressed={on} onClick={() => toggle(i.id)}
+                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left ${on ? "bg-emerald-600/25 ring-2 ring-emerald-400" : "bg-black/30 ring-1 ring-white/10"} ${full ? "opacity-40" : ""}`}>
+                      <span className={`relative grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-black/40 ring-1 ${RARITY_STYLE[d?.rarity ?? "common"]}`}>
+                        {d && <Image src={d.image} alt="" fill sizes="44px" className="object-contain p-1" />}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm">{t(i.name)}{i.upgrade ? <b className="text-gold"> +{i.upgrade}</b> : null}{i.qty > 1 ? ` ×${i.qty}` : ""}</span>
+                        <span className="block text-[11px] text-white/50">{t("Vale {n} 🪙 na venda", { n: value(i) })}</span>
+                      </span>
+                      <span className="text-lg">{on ? "✅" : "⬜"}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="flex-1 text-sm text-white/70">{t("Escolhidos: {a}/{b}", { a: Math.min(units, choosing.qty), b: choosing.qty })}</span>
+              <button disabled={busy} onClick={() => setChoosing(null)} className="min-h-11 rounded-lg bg-white/10 px-4 text-sm">{t("Cancelar")}</button>
+              <button disabled={busy || units < choosing.qty} onClick={() => send(choosing, sel)} className="btn-gold min-h-11 !px-4 text-sm">{t("Entregar")}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
