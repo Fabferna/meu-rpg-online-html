@@ -79,10 +79,12 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
             <div className="grid h-16 w-16 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-gold to-ember font-display text-xl font-black text-ink shadow-lg">{mine.tag}</div>
             <div className="min-w-0 flex-1">
               <h2 className="font-display text-2xl">{mine.name}</h2>
-              <PrivacyBadge priv={mine.private} />
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                <PrivacyBadge priv={mine.private} />
+                <span className="rounded bg-black/40 px-1.5 py-0.5 text-[11px] text-white/80">{t("Seu cargo:")} <b className="text-gold">{ROLE_ICON[mine.myRole]} {t(ROLE_LABEL[mine.myRole])}</b></span>
+              </div>
               <Description text={mine.description} canEdit={perms.settings} busy={busy} onSave={(description) => act({ type: "describe", description }, t("Descrição atualizada."))} />
             </div>
-            <span className="rounded-lg bg-black/30 px-3 py-1.5 text-xs text-white/80">{t("Seu cargo:")} <b className="text-gold">{ROLE_ICON[mine.myRole]} {t(ROLE_LABEL[mine.myRole])}</b></span>
           </div>
           <div className="relative mt-5 grid gap-4 sm:grid-cols-3">
             <div className="sm:col-span-2">
@@ -225,7 +227,7 @@ function Description({ text, canEdit, busy, onSave }: { text: string; canEdit: b
   const t = useT();
   const [draft, setDraft] = useState<string | null>(null);
   if (draft === null) return (
-    <p className="text-sm text-white/60">
+    <p className="mt-1 break-words text-sm text-white/60">
       {text || t("Sem descrição.")}
       {canEdit && <button onClick={() => setDraft(text)} className="ml-2 rounded bg-white/10 px-1.5 py-0.5 text-[11px] text-white/80 hover:bg-white/20">✏️ {t("Editar")}</button>}
     </p>
@@ -322,7 +324,7 @@ function NoGuild({ ctx, busy, act }: { ctx: GameCtx; busy: boolean; act: (b: obj
             <div className="min-w-0 flex-1">
               <p className="font-display">{g.name} <span className="text-xs text-white/50">· {t("Nv.")} {g.level} · +{guildPerks(g.level).xpPct}% XP · ⚔️+{guildPerks(g.level).atkPct}% · 🛡️+{guildPerks(g.level).defPct}%</span></p>
               <p className="truncate text-xs text-white/60">{g.description || t("Sem descrição.")}</p>
-              <PrivacyBadge priv={g.private} />
+              <div className="mt-1"><PrivacyBadge priv={g.private} /></div>
             </div>
             <span className="text-xs text-white/60">{g.members}/{g.limit}</span>
             {g.members >= g.limit ? (
@@ -389,7 +391,7 @@ function NoGuild({ ctx, busy, act }: { ctx: GameCtx; busy: boolean; act: (b: obj
 function PrivacyBadge({ priv }: { priv: boolean }) {
   const t = useT();
   return (
-    <span className={`mt-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-bold ${priv ? "bg-violet-500/20 text-violet-200" : "bg-emerald-500/15 text-emerald-200"}`}>
+    <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-bold ${priv ? "bg-violet-500/20 text-violet-200" : "bg-emerald-500/15 text-emerald-200"}`}>
       {priv ? t("🔒 PRIVADA · entra com pedido") : t("🔓 ABERTA · qualquer um entra")}
     </span>
   );
