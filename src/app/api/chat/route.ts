@@ -22,6 +22,7 @@ export async function GET(request: Request) {
   else if (channel === "guild") q = q.like("channel", "guild:%"); // RLS filtra para a guilda do jogador
   else q = q.eq("channel", channel); // DM: o RLS só deixa ler se a amizade for sua
   if (after) q = q.gt("id", after);
+  if (url.searchParams.get("peek")) q = q.limit(1); // só a última (para o aviso de mensagens novas)
   const { data, error } = await q;
   if (error) return jsonError(500, "internal_error");
   return NextResponse.json({ messages: (data ?? []).reverse() }, { headers: { "Cache-Control": "no-store" } });

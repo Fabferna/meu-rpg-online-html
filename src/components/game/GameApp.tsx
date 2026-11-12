@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { PlayerState } from "@/lib/game/state";
+import { useGuildUnread } from "./guildUnread";
 import { fmtTime } from "./api";
 import { Bar } from "./ui";
 import Overview from "./Overview";
@@ -80,6 +81,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
   const [skew, setSkew] = useState(() => new Date(initial.serverTime).getTime() - Date.now());
   const [tick, setTick] = useState(0);
   const [goalsReady, setGoalsReady] = useState(0);
+  const guildNew = useGuildUnread(initial.guild?.id ?? state.guild?.id, initial.character.name, true);
   const [login, setLogin] = useState<LoginState | null>(null);
   const [tutorialDone, setTutorialDone] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -259,6 +261,7 @@ export default function GameApp({ initial }: { initial: PlayerState }) {
             {tb.id === "battle" && state.battle && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-ember" />}
             {tb.id === "skills" && spent(c.talents ?? {}) < talentPoints(c.level) && <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-emerald-400" title={t("Pontos de talento livres")} />}
             {tb.id === "world" && (CHAPTER_READY(c.storyChapter, c.level, c.storyTrail ?? 0) || worldBossSchedule().open) && <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-gold" />}
+            {tb.id === "guild" && guildNew > 0 && tab !== "guild" && <span title={t("Mensagens novas no chat da guilda")} className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-ember px-1 text-[10px] font-bold text-white">{guildNew > 9 ? "9+" : guildNew}</span>}
             {tb.id === "goals" && goalsReady > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{goalsReady}</span>}
             {tb.id === "overview" && c.attributePoints > 0 && <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-arcane" />}
           </button>

@@ -7,6 +7,7 @@ import ChatBox, { type ChatMsg } from "./ChatBox";
 import ProfileCard from "./ProfileCard";
 import Avatar from "./Avatar";
 import { post } from "./api";
+import { useGuildUnread } from "./guildUnread";
 import { useT } from "@/lib/i18n/client";
 
 type Friend = { name: string; level: number; raceName: string; portrait: string; frame: string | null; online: boolean; channel: `dm:${string}` };
@@ -42,6 +43,7 @@ export default function ChatDock({ ctx, hideFabOnMobile = false }: { ctx: GameCt
     if (f) { setDm(f); setTab("friends"); setOpen(true); setProfile(null); }
   };
   const pending = fr?.incoming.length ?? 0;
+  const guildNew = useGuildUnread(ctx.state.guild?.id, ctx.state.character.name);
 
   return (
     <>
@@ -50,7 +52,7 @@ export default function ChatDock({ ctx, hideFabOnMobile = false }: { ctx: GameCt
         data-fab="chat"
         style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}>
         💬
-        {unread + pending > 0 && <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ember px-1 text-xs font-bold">{unread + pending > 9 ? "9+" : unread + pending}</span>}
+        {unread + pending + guildNew > 0 && <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ember px-1 text-xs font-bold">{unread + pending + guildNew > 9 ? "9+" : unread + pending + guildNew}</span>}
       </button>
       <AnimatePresence>
         {open && (
@@ -60,6 +62,7 @@ export default function ChatDock({ ctx, hideFabOnMobile = false }: { ctx: GameCt
               {(["global", "guild", "friends"] as const).map((k) => (
                 <button key={k} onClick={() => { setTab(k); setDm(null); }} className={`relative rounded-md px-2.5 py-1 text-xs font-display ${tab === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>
                   {k === "global" ? `🌍 ${t("Global")}` : k === "guild" ? `🏰 ${t("Guilda")}` : `👥 ${t("Amigos")}`}
+                  {k === "guild" && guildNew > 0 && tab !== "guild" && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-ember px-1 text-[10px] font-bold text-white">{guildNew > 9 ? "9+" : guildNew}</span>}
                   {k === "friends" && pending > 0 && <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-ember" />}
                 </button>
               ))}
