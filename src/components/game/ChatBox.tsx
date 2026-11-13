@@ -5,6 +5,7 @@ import type { GameCtx } from "./GameApp";
 import { COSMETIC_BY_ID } from "@/lib/shop/catalog";
 import { post } from "./api";
 import { useT } from "@/lib/i18n/client";
+import { markGuildRead } from "./guildUnread";
 
 export type ChatMsg = { id: number; channel: string; name: string; tag: string | null; title: string | null; frame: string | null; body: string; created_at: string; hidden?: boolean };
 
@@ -21,6 +22,8 @@ export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel:
   const [reported, setReported] = useState<Set<number>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
   const lastId = useRef(0);
+  const firstLoad = useRef(true);
+  const [below, setBelow] = useState(0); // mensagens novas abaixo enquanto o jogador lê as antigas
   const guildId = ctx.state.guild?.id;
   const dbChannel = channel === "global" || channel.startsWith("dm:") ? channel : guildId ? `guild:${guildId}` : null;
 
@@ -42,7 +45,7 @@ export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel:
 
   // Carga inicial + consulta de reserva (mais espaçada quando o tempo real está ligado).
   useEffect(() => {
-    setMsgs([]); lastId.current = 0;
+    setMsgs([]); lastId.current = 0; firstLoad.current = true;
     poll();
     const t = setInterval(poll, live ? 60_000 : 8_000);
     return () => clearInterval(t);
@@ -64,11 +67,24 @@ export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel:
     return () => cleanup();
   }, [dbChannel, add]);
 
-  // Rola para o fim quando chegam mensagens (se o jogador já estava no fim).
+  // Abre sempre na ÚLTIMA mensagem. Depois, só desce sozinho se o jogador já estava no fim;
+  // se estiver lendo mensagens antigas, mostra o aviso "↓ novas mensagens".
+  const prevLen = useRef(0);
   useEffect(() => {
     const el = listRef.current;
-    if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 120) el.scrollTop = el.scrollHeight;
-  }, [msgs]);
+    if (!el || !msgs.length) { prevLen.current = msgs.length; return; }
+    const atEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 160;
+    if (firstLoad.current || atEnd) {
+      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+      firstLoad.current = false;
+      setBelow(0);
+    } else if (msgs.length > prevLen.current) {
+      setBelow((n) => n + (msgs.length - prevLen.current));
+    }
+    prevLen.current = msgs.length;
+    if (channel === "guild" && guildId) markGuildRead(guildId, msgs[msgs.length - 1].id);
+  }, [msgs, channel, guildId]);
+  const toEnd = () => { const el = listRef.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }); setBelow(0); };
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -78,6 +94,7 @@ export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel:
     try {
       await post("/api/chat", { channel, body });
       setText("");
+      firstLoad.current = true; // a própria mensagem: desce até ela
       if (!live) await poll();
     } catch (err) {
       ctx.toast((err as Error).message, "error");
@@ -101,8 +118,9 @@ export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel:
   if (channel === "guild" && !guildId) return <p className="p-4 text-sm text-white/60">{t("Entre em uma guilda para usar este chat.")}</p>;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div ref={listRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1" aria-live="polite">
+    <div className="relative flex min-h-0 flex-1 flex-col">
+      <div ref={listRef} onScroll={(e) => { const el = e.currentTarget; if (below && el.scrollHeight - el.scrollTop - el.clientHeight < 40) setBelow(0); }}
+        className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1" aria-live="polite">
         {msgs.length === 0 && <p className="py-8 text-center text-sm text-white/40">{t("Nenhuma mensagem ainda. Diga olá!")}</p>}
         {msgs.map((m) => {
           const mine = m.name === ctx.state.character.name;
@@ -132,6 +150,11 @@ export default function ChatBox({ channel, ctx, onIncoming, onName }: { channel:
           );
         })}
       </div>
+      {below > 0 && (
+        <button type="button" onClick={toEnd} className="absolute bottom-16 left-1/2 z-10 -translate-x-1/2 rounded-full bg-ember px-3 py-1 text-xs font-bold shadow-lg">
+          ↓ {t("{n} mensagem(ns) nova(s)", { n: below })}
+        </button>
+      )}
       <form onSubmit={send} className="mt-2 flex gap-2">
         <input id={`chat-input-${channel}`} value={text} onChange={(e) => setText(e.target.value)} maxLength={300} placeholder={t("Escreva uma mensagem…")} autoComplete="off"
           className="input min-w-0 flex-1 !py-2 text-sm" aria-label={t("Mensagem")} />

@@ -881,3 +881,77 @@ Os itens escolhidos serão consumidos. Itens equipados não aparecem aqui.	The c
 Vale {n} 🪙 na venda	Sells for {n} 🪙	Se vende por {n} 🪙	出售可得 {n} 🪙
 Escolhidos: {a}/{b}	Chosen: {a}/{b}	Elegidos: {a}/{b}	已选：{a}/{b}
 Você já desbloqueou todos os títulos!	You have unlocked every title!	¡Ya desbloqueaste todos los títulos!	你已解锁所有称号！
+{p} de {a}	{p} of {a}	{p} de {a}	{a} 的 {p}
+causa {d} de dano em {b}	deals {d} damage to {b}	inflige {d} de daño a {b}	对 {b} 造成 {d} 点伤害
+enfraquece o próximo ataque de {b}	weakens {b}'s next attack	debilita el próximo ataque de {b}	削弱 {b} 的下一次攻击
+cura {h} de vida de {a}	heals {a} for {h}	cura {h} de vida a {a}	为 {a} 恢复 {h} 生命
+Enfraquecido	Weakened	Debilitado	虚弱
+protege {a}	protects {a}	protege a {a}	保护 {a}
+{n} mensagem(ns) nova(s)	{n} new message(s)	{n} mensaje(s) nuevo(s)	{n} 条新消息
+Sua coleção: {a} de {b} molduras e visuais.	Your collection: {a} of {b} frames and looks.	Tu colección: {a} de {b} marcos y aspectos.	你的收藏：{a}/{b} 个头像框与外观。
+Títulos	Titles	Títulos	称号
+Trocar título	Change title	Cambiar título	更换称号
+Mensagens novas no chat da guilda	New messages in guild chat	Mensajes nuevos en el chat del gremio	公会聊天有新消息
+Seu cargo:	Your rank:	Tu cargo:	你的职位：
+Descrição atualizada.	Description updated.	Descripción actualizada.	描述已更新。
+Cada 🪙 doado vale 1 XP de guilda.	Each 🪙 donated is worth 1 guild XP.	Cada 🪙 donado vale 1 XP de gremio.	每捐献 1 🪙 获得 1 点公会经验。
+Membros	Members	Miembros	成员
+Cargo de {x}	{x}'s rank	Cargo de {x}	{x} 的职位
+{x} agora é {y}.	{x} is now {y}.	{x} ahora es {y}.	{x} 现在是{y}。
+cheio	full	lleno	已满
+Passar o comando da guilda para {x}? Você vira Vice-Capitão.	Hand guild command to {x}? You become Vice-Captain.	¿Pasar el mando del gremio a {x}? Pasas a ser Vicecapitán.	将公会指挥权交给 {x}？你将成为副队长。
+{x} agora é o Capitão.	{x} is now the Captain.	{x} ahora es el Capitán.	{x} 现在是队长。
+Passar o comando	Hand over command	Pasar el mando	移交指挥权
+Benefícios da guilda (todos os membros)	Guild perks (all members)	Beneficios del gremio (todos los miembros)	公会福利（全体成员）
+▲ = o que o nível {n} libera. O bônus de ataque e defesa vale em caçadas, masmorras, chefes e na Arena.	▲ = what level {n} unlocks. The attack and defense bonus applies in hunts, dungeons, bosses and the Arena.	▲ = lo que desbloquea el nivel {n}. El bono de ataque y defensa vale en cacerías, mazmorras, jefes y la Arena.	▲ = {n} 级解锁的内容。攻防加成适用于狩猎、地下城、首领和竞技场。
+Nível máximo! O bônus de ataque e defesa vale em caçadas, masmorras, chefes e na Arena.	Max level! The attack and defense bonus applies in hunts, dungeons, bosses and the Arena.	¡Nivel máximo! El bono de ataque y defensa vale en cacerías, mazmorras, jefes y la Arena.	已满级！攻防加成适用于狩猎、地下城、首领和竞技场。
+Editar	Edit	Editar	编辑
+Descrição da guilda	Guild description	Descripción del gremio	公会描述
+Salvar	Save	Guardar	保存
+Cargos e permissões	Ranks and permissions	Cargos y permisos	职位与权限
+até {n}	up to {n}	hasta {n}	最多 {n}
+Entre numa guilda para ganhar bônus de XP, ataque e defesa, um cofre de itens compartilhado e um chat próprio.	Join a guild to get XP, attack and defense bonuses, a shared item vault and your own chat.	Únete a un gremio para ganar bonos de XP, ataque y defensa, un cofre de objetos compartido y un chat propio.	加入公会可获得经验、攻击和防御加成、共享物品仓库和专属聊天。
+🎒 Cofre da guilda	🎒 Guild vault	🎒 Cofre del gremio	🎒 公会仓库
+Guardar é grátis. Para retirar, você paga uma taxa em ouro que vai para o tesouro da guilda.	Storing is free. To withdraw, you pay a gold fee that goes to the guild treasury.	Guardar es gratis. Para retirar, pagas una tasa en oro que va al tesoro del gremio.	存入免费。取出需支付金币手续费，归入公会金库。
+{a}/{b} espaços	{a}/{b} slots	{a}/{b} espacios	{a}/{b} 格
+Seu cargo paga {n}% a menos de taxa.	Your rank pays {n}% less fee.	Tu cargo paga {n}% menos de tasa.	你的职位手续费减少 {n}%。
+Membros novos só retiram depois de {n}h na guilda. Falta {x}.	New members can only withdraw after {n}h in the guild. {x} left.	Los miembros nuevos solo retiran tras {n}h en el gremio. Faltan {x}.	新成员需加入公会 {n} 小时后才能取出。还需 {x}。
+O cofre está vazio. Guarde um item da sua bolsa para ajudar a guilda!	The vault is empty. Store an item from your bag to help the guild!	El cofre está vacío. ¡Guarda un objeto de tu bolsa para ayudar al gremio!	仓库是空的。存入背包里的物品来帮助公会吧！
+Retirou {x} do cofre por 🪙 {n}.	Withdrew {x} from the vault for 🪙 {n}.	Retiraste {x} del cofre por 🪙 {n}.	花费 🪙 {n} 从仓库取出 {x}。
+Guardar da sua bolsa	Store from your bag	Guardar de tu bolsa	从背包存入
+Itens equipados não aparecem aqui. Depois de guardado, o item passa a ser da guilda.	Equipped items don't appear here. Once stored, the item belongs to the guild.	Los objetos equipados no aparecen aquí. Una vez guardado, el objeto pasa a ser del gremio.	已装备的物品不会显示。存入后物品归公会所有。
+Cofre cheio: só dá para empilhar consumíveis que já estão lá. Subam o nível da guilda para abrir espaços.	Vault full: you can only stack consumables already there. Level up the guild to open slots.	Cofre lleno: solo se pueden apilar consumibles que ya estén allí. Suban el nivel del gremio para abrir espacios.	仓库已满：只能叠加已有的消耗品。提升公会等级以解锁格子。
+Sua bolsa não tem itens para guardar.	Your bag has no items to store.	Tu bolsa no tiene objetos para guardar.	你的背包没有可存入的物品。
+{x} guardado no cofre.	{x} stored in the vault.	{x} guardado en el cofre.	{x} 已存入仓库。
+📜 Histórico do cofre	📜 Vault history	📜 Historial del cofre	📜 仓库记录
+Nenhuma movimentação ainda.	No activity yet.	Sin movimientos aún.	暂无记录。
+guardou	stored	guardó	存入了
+retirou	withdrew	retiró	取出了
+Aguarde o tempo mínimo de guilda	Wait for the minimum guild time	Espera el tiempo mínimo de gremio	请等待最低入会时间
+Sua bolsa está cheia	Your bag is full	Tu bolsa está llena	你的背包已满
+Ouro insuficiente para a taxa	Not enough gold for the fee	Oro insuficiente para la tasa	金币不足以支付手续费
+Quantidade	Quantity	Cantidad	数量
+Taxa de retirada: 🪙 {n}	Withdrawal fee: 🪙 {n}	Tasa de retiro: 🪙 {n}	取出手续费：🪙 {n}
+Retirar	Withdraw	Retirar	取出
+O cofre está cheio	The vault is full	El cofre está lleno	仓库已满
+Escolher título	Choose title	Elegir título	选择称号
+Molduras e visuais	Frames and looks	Marcos y aspectos	头像框与外观
+(+ bônus da guilda: ⚔️ +{a}% · 🛡️ +{d}%)	(+ guild bonus: ⚔️ +{a}% · 🛡️ +{d}%)	(+ bono del gremio: ⚔️ +{a}% · 🛡️ +{d}%)	（+ 公会加成：⚔️ +{a}% · 🛡️ +{d}%）
+Jogadores com o jogo aberto agora	Players with the game open right now	Jugadores con el juego abierto ahora	当前打开游戏的玩家
+Jogadores Online	Players Online	Jugadores en línea	在线玩家
+Total de contas criadas	Total accounts created	Total de cuentas creadas	已创建账号总数
+Jogadores Registrados	Registered Players	Jugadores registrados	注册玩家
+Título « {x} » equipado!	Title « {x} » equipped!	¡Título « {x} » equipado!	已装备称号「{x}」！
+Título removido.	Title removed.	Título quitado.	已移除称号。
+O título aparece ao lado do seu nome no perfil, no ranking e no chat.	The title shows next to your name on your profile, in the ranking and in chat.	El título aparece junto a tu nombre en el perfil, el ranking y el chat.	称号会显示在你的资料、排行榜和聊天中的名字旁边。
+Em uso agora	In use now	En uso ahora	当前使用
+sem título	no title	sin título	无称号
+Desequipar	Unequip	Desequipar	卸下
+Filtrar títulos	Filter titles	Filtrar títulos	筛选称号
+Meus títulos	My titles	Mis títulos	我的称号
+Você ainda não tem títulos. Veja abaixo como conseguir o primeiro!	You don't have any titles yet. See below how to get your first one!	Aún no tienes títulos. ¡Mira abajo cómo conseguir el primero!	你还没有称号。看看下面如何获得第一个！
+Bloqueados	Locked	Bloqueados	未解锁
+Como desbloquear:	How to unlock:	Cómo desbloquear:	解锁方式：
+Compre na Loja por {n}	Buy in the Shop for {n}	Cómpralo en la Tienda por {n}	在商店以 {n} 购买
+Em breve	Coming soon	Próximamente	即将推出
+Ir para a Loja	Go to the Shop	Ir a la Tienda	前往商店
