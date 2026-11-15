@@ -96,18 +96,35 @@ const RAW: Enemy[] = [
 // (scripts de teste): comuns ~90% de vitória, chefes ~55–75% no nível recomendado.
 const K = { hp: 100, hpL: 28, atk: 14, atkL: 3.6, def: 1, defL: 0.9, bossHp: 1.3, bossAtk: 0.85 };
 
-function tune(e: Enemy): Enemy {
+/**
+ * Caçada e Errantes: o herói fica bem mais forte com o nível (equipamento, talentos, pet, guilda),
+ * então os monstros da Caçada ganham vida e ataque extras que crescem até o nível `full` e param ali.
+ * Nível 1–2 quase não muda (início igual).
+ */
+export const HUNT_POWER = { hp: 0.35, atk: 0.12, full: 13 } as const;
+// Chefes já são calibrados à parte (~55–75% de vitória no nível deles): não ganham o extra, só sobem de nível.
+const huntBoost = (e: Enemy, scaled: boolean) => {
+  if ((e.story && !e.rare) || e.boss) return { hp: 1, atk: 1 };
+  const f = Math.min(1, Math.max(0, (e.minLevel - 1) / (HUNT_POWER.full - 1)));
+  return { hp: 1 + HUNT_POWER.hp * f, atk: 1 + HUNT_POWER.atk * f };
+};
+
+function tune(e: Enemy, scaled = false): Enemy {
   const L = e.minLevel;
   const hp = (K.hp + K.hpL * L) * (e.boss ? K.bossHp : 1);
   const atkMid = (K.atk + K.atkL * L) * (e.boss ? K.bossAtk : 1);
   // Personalidade: proporções relativas da tabela RAW (ex.: golem = muita defesa, lobo = rápido).
   const ref = RAW_REF(L);
-  const hpP = e.maxHp / ref.hp, atkP = (e.atk[0] + e.atk[1]) / 2 / ref.atk, defP = (e.def + 1) / ref.def;
-  const mid = atkMid * Math.sqrt(atkP);
+  let hpP = e.maxHp / ref.hp, atkP = (e.atk[0] + e.atk[1]) / 2 / ref.atk;
+  const defP = (e.def + 1) / ref.def;
+  // Monstro escalado: mantém o jeito dele, mas um bicho "fraquinho" não fica fraco demais no nível alto.
+  if (scaled) { hpP = Math.max(0.9, hpP); atkP = Math.max(0.9, atkP); }
+  const b = huntBoost(e, scaled);
+  const mid = atkMid * Math.sqrt(atkP) * b.atk;
   return {
     ...e,
     element: e.element ?? elementOfArt(e.image),
-    maxHp: Math.round(hp * Math.sqrt(e.boss ? Math.min(1, hpP) : hpP)),
+    maxHp: Math.round(hp * Math.sqrt(e.boss ? Math.min(1, hpP) : hpP) * b.hp),
     atk: [Math.round(mid * 0.8), Math.round(mid * 1.2)],
     def: Math.round((K.def + K.defL * L) * Math.sqrt(defP)),
   };
@@ -124,9 +141,33 @@ const RARE_RAW: Enemy[] = RAW.filter((e) => !e.story).map((e) => ({
   xp: e.xp * RARE_RULES.xpMult, gold: e.gold * RARE_RULES.goldMult,
 }));
 
-export const ENEMIES: Enemy[] = [...RAW, ...RARE_RAW].map(tune);
+export const ENEMIES: Enemy[] = [...RAW, ...RARE_RAW].map((e) => tune(e));
 /** Errantes na ordem fixa (o índice é o que fica salvo no banco). */
 export const RARE_ENEMIES = ENEMIES.filter((e) => e.rare);
 export const rareOf = (baseId: string) => RARE_ENEMIES.findIndex((e) => e.id === `rare_${baseId}`);
 
 export const ENEMY_BY_ID = Object.fromEntries(ENEMIES.map((e) => [e.id, e]));
+
+// ── Escala por nível (Caçada e Errantes) ────────────────────────────
+// Um monstro mais fraco que o herói "sobe" até perto do nível dele: mesma personalidade
+// (o golem continua com muita defesa, o lobo continua rápido), mas vida/ataque/defesa do nível novo.
+// XP e ouro sobem junto, então caçar qualquer monstro continua valendo a pena.
+export const SCALE = {
+  /** O monstro fica no máximo este número de níveis abaixo do herói. */
+  gap: 1,
+} as const;
+const RAW_BY_ID: Record<string, Enemy> = Object.fromEntries([...RAW, ...RARE_RAW].map((e) => [e.id, e]));
+
+/** Nível em que o monstro luta contra um herói deste nível (nunca abaixo do nível dele). */
+export const huntLevel = (e: Enemy, heroLevel: number) => Math.max(e.minLevel, heroLevel - SCALE.gap);
+
+/** O monstro no nível `level` (sem mudar quem ele é). Nível igual ao dele = ele mesmo. */
+export function enemyAt(e: Enemy, level: number): Enemy {
+  const raw = RAW_BY_ID[e.id];
+  if (!raw || level <= e.minLevel) return e;
+  const t = tune({ ...raw, minLevel: level }, true);
+  // Recompensa proporcional ao esforço (vida × ataque do monstro escalado).
+  const effort = (t.maxHp * (t.atk[0] + t.atk[1])) / (e.maxHp * (e.atk[0] + e.atk[1]));
+  const k = Math.sqrt(effort);
+  return { ...t, minLevel: level, xp: Math.round(e.xp * k), gold: Math.round(e.gold * k) };
+}

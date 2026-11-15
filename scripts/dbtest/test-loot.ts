@@ -4,6 +4,7 @@
 import * as start from "../../src/app/api/battle/start/route";
 import * as action from "../../src/app/api/battle/action/route";
 import { call, makeHero } from "./helpers";
+import { enemyAt, huntLevel } from "../../src/lib/game/enemies";
 import { pool } from "./fakeSupabase";
 import { ITEM_BY_ID } from "../../src/lib/game/items";
 import { ENEMY_BY_ID } from "../../src/lib/game/enemies";
@@ -61,7 +62,9 @@ async function main() {
   const gearL = r2.loot.filter((l) => ITEM_BY_ID[l.item].slot);
   ok(gearL.length >= 1 && gearL.every((l) => l.gold === ITEM_BY_ID[l.item].sell), `bolsa cheia (${BAG_LIMIT}/${BAG_LIMIT}): equipamento virou ouro (${conv.map((l) => `${l.item}=${l.gold}`).join(", ")})`);
   ok(r2.loot.filter((l) => !ITEM_BY_ID[l.item].slot).every((l) => l.gold === 0), "poção entra na pilha que já existe (não ocupa espaço novo)");
-  ok((await gold(f.userId)) - g0 === ENEMY_BY_ID.sombra_fraca.gold + expected, `ouro: +${ENEMY_BY_ID.sombra_fraca.gold} da luta + ${expected} dos itens`);
+  // Escala por nível: o herói nível 5 luta contra a sombra no nível 4 (enemies.ts → enemyAt).
+  const sg = enemyAt(ENEMY_BY_ID.sombra_fraca, huntLevel(ENEMY_BY_ID.sombra_fraca, 5)).gold;
+  ok((await gold(f.userId)) - g0 === sg + expected, `ouro: +${sg} da luta (sombra escalada) + ${expected} dos itens`);
   ok((await bag(f.userId)) === BAG_LIMIT, "a bolsa não passou do limite");
   const led = Number((await q1("select count(*) n from ledger where user_id=$1 and reason like 'loot_bag_full:%'", [f.userId])).n);
   ok(led === conv.length, `extrato registra cada conversão (${led})`);

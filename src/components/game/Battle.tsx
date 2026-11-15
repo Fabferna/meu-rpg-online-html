@@ -9,7 +9,7 @@ import type { GameCtx } from "./GameApp";
 import { PET_ABILITY, PET_BY_ID } from "@/lib/game/pets";
 import type { BattleState, LogEntry, PlayerAction } from "@/lib/game/combat";
 import type { TFn } from "@/lib/i18n/translate";
-import { ENEMIES, ENEMY_BY_ID } from "@/lib/game/enemies";
+import { ENEMIES, ENEMY_BY_ID, enemyAt, huntLevel } from "@/lib/game/enemies";
 import { HUNT_REFILL, PVE_ENERGY_COST, xpRate } from "@/lib/game/rules";
 import { SKILL_BY_ID, skillPower } from "@/lib/game/skills";
 import Dungeons from "./Dungeons";
@@ -224,7 +224,7 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
             mp={battle.player.mp} maxMp={battle.player.maxMp} sp={battle.player.sp} maxSp={battle.player.maxSp}
             pet={petDef && state.pet ? { name: petDef.name, image: petDef.image, level: state.pet.level, ability: PET_ABILITY[petDef.id]?.name, acted: petActed, turn: battle.turn } : undefined}
             badges={[fx.pPoison ? `☠️ ${t("Veneno")} ${fx.pPoison}` : "", fx.pStun ? `💫 ${t("Atordoado")}` : "", fx.pStone ? `🪨 ${t("Pele de Pedra")} ${fx.pStone}` : ""]} />
-          <Fighter refEl={enemyRef} name={t(battle.enemy.name)} image={ENEMY_BY_ID[battle.enemyId]?.image ?? battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
+          <Fighter refEl={enemyRef} name={battle.lvl ? `${t(battle.enemy.name)} · ${t("Nv. {n}", { n: battle.lvl })}` : t(battle.enemy.name)} image={ENEMY_BY_ID[battle.enemyId]?.image ?? battle.enemy.image} hp={battle.enemy.hp} max={battle.enemy.maxHp} boss={battle.enemy.boss} floats={floats.filter((f) => f.side === "enemy")}
             badges={[fx.ePoison ? `☠️ ${t("Veneno")} ${fx.ePoison}` : "", fx.eStun ? `💫 ${t("Atordoado")}` : "", fx.eWeak ? `📉 ${t("Enfraquecido")}` : ""]} />
         </div>
         {/* Celular: ações fixas no rodapé, sempre ao alcance do polegar. */}
@@ -321,6 +321,9 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
           const region = REGION_OF_ENEMY[e.id];
           const regionLocked = !regionUnlocked(region, state.character.storyChapter);
           const locked = state.character.level < e.minLevel || regionLocked;
+          // Como o monstro vai lutar contra você (escala por nível): mesmos números que o servidor usa.
+          const lv = locked ? e.minLevel : huntLevel(e, state.character.level);
+          const sc = enemyAt(e, lv);
           return (
             <motion.button key={e.id} disabled={busy || locked || cantHunt} onClick={() => start(e.id)}
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -332,7 +335,8 @@ export default function Battle({ ctx }: { ctx: GameCtx }) {
               </div>
               <div className="p-3">
                 <p className="font-display text-sm">{t(e.name)}</p>
-                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${t(region!.name)} · ${t("Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: e.minLevel }) : `❤️ ${e.maxHp} · ✨ ${xpRate(e.xp)} XP · 🪙 ${e.gold}`}</p>
+                <p className="text-xs text-white/50">{regionLocked ? `🔒 ${t(region!.name)} · ${t("Capítulo {n}", { n: region!.unlockChapter })}` : locked ? t("Requer nível {n}", { n: e.minLevel }) : `${t("Nv. {n}", { n: lv })} · ❤️ ${sc.maxHp} · ✨ ${xpRate(sc.xp)} XP · 🪙 ${sc.gold}`}</p>
+                {!locked && lv > e.minLevel && <p className="text-[10px] text-sky-300/80" title={t("Monstros abaixo do seu nível ficam mais fortes e dão mais XP e ouro.")}>⤴ {t("acompanha seu nível")}</p>}
                 <DropHint enemyId={e.id} level={state.character.level} />
               </div>
             </motion.button>

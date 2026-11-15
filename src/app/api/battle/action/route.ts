@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
-import { ENEMY_BY_ID, RARE_ENEMIES, rareOf } from "@/lib/game/enemies";
+import { ENEMY_BY_ID, RARE_ENEMIES, enemyAt, rareOf } from "@/lib/game/enemies";
 import { heroCombatant, loadPlayer } from "@/lib/game/player";
 import { chance, roll } from "@/lib/game/rng";
 import { BAG_LIMIT, rollLoot, rollRareLoot, type LootDrop, type LootResult } from "@/lib/game/loot";
@@ -27,7 +27,9 @@ export const POST = action(
     if (!battle) throw new HttpError(404, "no_battle");
 
     const state = battle.state as BattleState;
-    const enemy = ENEMY_BY_ID[state.enemyId];
+    const baseEnemy = ENEMY_BY_ID[state.enemyId];
+    // Caçada/Errante: o monstro no nível gravado no começo da luta (escala por nível).
+    const enemy = baseEnemy && state.lvl ? enemyAt(baseEnemy, state.lvl) : baseEnemy;
     const p = await loadPlayer(admin, user.id);
     if (!p || !enemy) throw new HttpError(404, "no_character");
 
@@ -50,11 +52,11 @@ export const POST = action(
       const gap = Math.max(0, p.row.level - enemy.minLevel - 3);
       if (state.rare) {
         // Errante: poção + 1 equipamento garantido (raro ou melhor).
-        drops = rollRareLoot(enemy, p.row.level, { chance, roll });
+        drops = rollRareLoot(baseEnemy, p.row.level, { chance, roll });
       } else if (!state.dungeon && !state.story && !state.storyTrail) {
         // Caçada: tabela de saque completa (poções, equipamento da faixa, drop especial, proteção contra azar).
         const { data: pc } = await admin.from("user_counters").select("value").eq("user_id", user.id).eq("key", "loot_pity").eq("day", "2000-01-01").maybeSingle();
-        const r = rollLoot(enemy, { heroLevel: p.row.level, pity: Number(pc?.value ?? 0) }, { chance, roll });
+        const r = rollLoot(baseEnemy, { heroLevel: p.row.level, pity: Number(pc?.value ?? 0) }, { chance, roll });
         drops = r.drops; pity = r.pity;
       } else if (enemy.drop && chance(enemy.drop.chance)) {
         // Masmorra/história: só o drop especial do inimigo (o baú e o capítulo têm recompensa própria).

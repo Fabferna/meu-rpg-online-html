@@ -955,3 +955,62 @@ Como desbloquear:	How to unlock:	Cómo desbloquear:	解锁方式：
 Compre na Loja por {n}	Buy in the Shop for {n}	Cómpralo en la Tienda por {n}	在商店以 {n} 购买
 Em breve	Coming soon	Próximamente	即将推出
 Ir para a Loja	Go to the Shop	Ir a la Tienda	前往商店
+acompanha seu nível	scales with your level	sigue tu nivel	随你的等级成长
+Monstros abaixo do seu nível ficam mais fortes e dão mais XP e ouro.	Monsters below your level get stronger and give more XP and gold.	Los monstruos por debajo de tu nivel se vuelven más fuertes y dan más XP y oro.	低于你等级的怪物会变强，并给予更多经验和金币。
+Expedição da Guilda	Guild Expedition	Expedición del Gremio	公会远征
+Tesouro da guilda	Guild treasury	Tesoro del gremio	公会金库
+Usar em expedições	Use on expeditions	Usar en expediciones	用于远征
+Carregando expedições…	Loading expeditions…	Cargando expediciones…	正在加载远征…
+As expedições não estão disponíveis agora. Tente de novo em instantes.	Expeditions aren't available right now. Try again in a moment.	Las expediciones no están disponibles ahora. Inténtalo de nuevo en un momento.	远征暂时不可用，请稍后再试。
+Expedições da Guilda	Guild Expeditions	Expediciones del Gremio	公会远征
+Use o ouro do tesouro para mandar o esquadrão em caçadas, missões e incursões. Todos que forem ganham a recompensa inteira.	Use treasury gold to send the squad on hunts, missions and raids. Everyone who goes gets the full reward.	Usa el oro del tesoro para enviar al escuadrón a cacerías, misiones e incursiones. Todos los que vayan reciben la recompensa completa.	用金库金币派小队去狩猎、任务和突袭。参与者都能获得全额奖励。
+Seu poder	Your power	Tu poder	你的战力
+Como funciona	How it works	Cómo funciona	玩法说明
+Capitão, Vice-Capitão ou Líder de Esquadrão escolhe a expedição e a estratégia. O custo sai do tesouro da guilda.	The Captain, Vice-Captain or Squad Leader picks the expedition and strategy. The cost comes from the guild treasury.	El Capitán, Vicecapitán o Líder de Escuadrón elige la expedición y la estrategia. El costo sale del tesoro del gremio.	队长、副队长或小队长选择远征和策略，费用从公会金库扣除。
+Em grupo: abre um saguão de {n} minutos para os membros entrarem. Sozinho: parte na hora.	Group: opens a {n}-minute lobby for members to join. Solo: leaves right away.	En grupo: abre una sala de {n} minutos para que entren los miembros. Solo: parte al instante.	组队：开启 {n} 分钟大厅供成员加入。单人：立即出发。
+Quanto maior o poder do grupo, maior a chance de sucesso. Raças que conhecem o terreno dão +15% e cada raça diferente no grupo dá +4%.	The more group power, the higher the success chance. Races that know the terrain give +15% and each different race in the group gives +4%.	Cuanto mayor el poder del grupo, mayor la probabilidad de éxito. Las razas que conocen el terreno dan +15% y cada raza distinta en el grupo da +4%.	队伍战力越高成功率越高。熟悉地形的种族 +15%，队伍中每多一个不同种族 +4%。
+Enquanto o grupo viaja você continua jogando normalmente. Na volta, cada um resgata a sua parte: XP, ouro, poções, baús e chance de equipamento da sua raça.	While the group travels you keep playing normally. When it returns, everyone claims their share: XP, gold, potions, chests and a chance at gear for their race.	Mientras el grupo viaja sigues jugando normalmente. Al volver, cada uno reclama su parte: XP, oro, pociones, cofres y chance de equipo de su raza.	队伍出发期间你可正常游戏。返回后每人领取自己的奖励：经验、金币、药水、宝箱以及本种族装备的机会。
+Triunfo dá 50% a mais e dobra a chance de itens. No fracasso volta só 25% e nenhum item.	Triumph gives 50% more and doubles item chance. On failure only 25% comes back and no items.	El triunfo da 50% más y duplica la probabilidad de objetos. En el fracaso vuelve solo el 25% y ningún objeto.	大胜奖励多 50% 且物品几率翻倍。失败只返回 25% 且没有物品。
+Só Capitão, Vice-Capitão e Líder de Esquadrão organizam expedições. Você pode entrar em qualquer uma durante o saguão.	Only the Captain, Vice-Captain and Squad Leader organize expeditions. You can join any of them during the lobby.	Solo el Capitán, Vicecapitán y Líder de Escuadrón organizan expediciones. Puedes unirte a cualquiera durante la sala.	只有队长、副队长和小队长能组织远征。大厅开放期间你可以加入任意一个。
+Prontas para resgatar	Ready to claim	Listas para reclamar	可领取
+Em andamento	In progress	En curso	进行中
+Você partiu sozinho. Boa sorte!	You set off alone. Good luck!	Partiste solo. ¡Buena suerte!	你独自出发了，祝好运！
+Saguão aberto! Avise a guilda.	Lobby open! Tell the guild.	¡Sala abierta! Avisa al gremio.	大厅已开放！通知公会吧。
+Últimas expedições	Recent expeditions	Últimas expediciones	最近的远征
+participante(s)	participant(s)	participante(s)	名参与者
+Cancelada (ouro devolvido)	Cancelled (gold refunded)	Cancelada (oro devuelto)	已取消（金币已退还）
+Bolsa cheia: virou 🪙 {n}	Bag full: turned into 🪙 {n}	Bolsa llena: se convirtió en 🪙 {n}	背包已满：换成 🪙 {n}
+O grupo voltou de mãos quase vazias. Juntem mais gente ou mais poder na próxima!	The group came back nearly empty-handed. Bring more people or more power next time!	El grupo volvió casi con las manos vacías. ¡Junten más gente o más poder la próxima vez!	队伍几乎空手而归。下次多叫些人或提升战力吧！
+Poder do grupo	Group power	Poder del grupo	队伍战力
+Sucesso	Success	Éxito	成功
+triunfo	triumph	triunfo	大胜
+organizada por {x}	organized by {x}	organizada por {x}	由 {x} 组织
+Saguão aberto: o grupo parte em {x}	Lobby open: the group leaves in {x}	Sala abierta: el grupo parte en {x}	大厅开放：队伍将在 {x} 后出发
+Em viagem: volta em {x}	Traveling: returns in {x}	De viaje: vuelve en {x}	远征中：{x} 后返回
+vaga livre	open slot	plaza libre	空位
+Bônus de {n} raças diferentes: +{p}% de poder	Bonus for {n} different races: +{p}% power	Bono de {n} razas distintas: +{p}% de poder	{n} 个不同种族加成：战力 +{p}%
+Você entrou no grupo!	You joined the group!	¡Entraste al grupo!	你加入了队伍！
+Você já está em outra expedição	You're already on another expedition	Ya estás en otra expedición	你已在另一个远征中
+Grupo cheio	Group full	Grupo lleno	队伍已满
+Entrar no grupo	Join group	Entrar al grupo	加入队伍
+Você saiu do grupo.	You left the group.	Saliste del grupo.	你离开了队伍。
+Sair do grupo	Leave group	Salir del grupo	离开队伍
+O grupo partiu!	The group set off!	¡El grupo partió!	队伍出发了！
+Partir agora	Leave now	Partir ahora	立即出发
+Cancelar a expedição? O ouro volta para o tesouro.	Cancel the expedition? The gold goes back to the treasury.	¿Cancelar la expedición? El oro vuelve al tesoro.	取消远征？金币将退回金库。
+Expedição cancelada. O ouro voltou para o tesouro.	Expedition cancelled. The gold went back to the treasury.	Expedición cancelada. El oro volvió al tesoro.	远征已取消，金币已退回金库。
+Você está neste grupo. Pode continuar jogando enquanto espera.	You're in this group. You can keep playing while you wait.	Estás en este grupo. Puedes seguir jugando mientras esperas.	你在这个队伍中，等待时可以继续游戏。
+Guilda nível {n} necessária	Guild level {n} required	Se requiere gremio nivel {n}	需要公会 {n} 级
+Faltam 🪙 {n} no tesouro	🪙 {n} short in the treasury	Faltan 🪙 {n} en el tesoro	金库还差 🪙 {n}
+Você já está em uma expedição	You're already on an expedition	Ya estás en una expedición	你已在远征中
+Limite de expedições ao mesmo tempo	Limit of simultaneous expeditions	Límite de expediciones simultáneas	同时进行的远征已达上限
+do tesouro	from the treasury	del tesoro	来自金库
+Guilda Nv. {n}	Guild Lv. {n}	Gremio Nv. {n}	公会 {n} 级
+poder {n}	power {n}	poder {n}	战力 {n}
+Cada participante:	Each participant:	Cada participante:	每位参与者：
+equipamento de {x}	{x} gear	equipo de {x}	{x}装备
+Organizar	Organize	Organizar	组织
+Estratégia	Strategy	Estrategia	策略
+A chance acima é só com você. Cada membro que entrar soma o poder dele.	The chance above is with you alone. Each member who joins adds their power.	La probabilidad de arriba es solo contigo. Cada miembro que entre suma su poder.	上面的几率仅按你一人计算。每位加入的成员都会叠加战力。
+Em grupo	Group	En grupo	组队
+Ir sozinho	Go solo	Ir solo	单人出发
