@@ -98,15 +98,27 @@ const K = { hp: 100, hpL: 28, atk: 14, atkL: 3.6, def: 1, defL: 0.9, bossHp: 1.3
 
 /**
  * Caçada e Errantes: o herói fica bem mais forte com o nível (equipamento, talentos, pet, guilda),
- * então os monstros da Caçada ganham vida e ataque extras que crescem até o nível `full` e param ali.
- * Nível 1–2 quase não muda (início igual).
+ * então os monstros da Caçada ganham vida e ataque extras em TODOS os níveis:
+ *  • desde o nível 1 (`base`), crescendo até o nível `full` (`grow`) e, depois, devagar (`late`, por nível);
+ *  • chefes ganham uma parte menor (`boss`), porque já são mais fortes por natureza.
  */
-export const HUNT_POWER = { hp: 0.35, atk: 0.12, full: 13 } as const;
-// Chefes já são calibrados à parte (~55–75% de vitória no nível deles): não ganham o extra, só sobem de nível.
-const huntBoost = (e: Enemy, scaled: boolean) => {
-  if ((e.story && !e.rare) || e.boss) return { hp: 1, atk: 1 };
-  const f = Math.min(1, Math.max(0, (e.minLevel - 1) / (HUNT_POWER.full - 1)));
-  return { hp: 1 + HUNT_POWER.hp * f, atk: 1 + HUNT_POWER.atk * f };
+export const HUNT_POWER = {
+  base: { hp: 0.15, atk: 0.06 },
+  grow: { hp: 0.3, atk: 0.1 },
+  late: { hp: 0, atk: 0 },
+  full: 13,
+  boss: 0.25,
+} as const;
+const huntBoost = (e: Enemy) => {
+  if (e.story && !e.rare) return { hp: 1, atk: 1 };
+  const P = HUNT_POWER;
+  const f = Math.min(1, Math.max(0, (e.minLevel - 1) / (P.full - 1)));
+  const late = Math.max(0, e.minLevel - P.full);
+  const k = e.boss ? P.boss : 1;
+  return {
+    hp: 1 + k * (P.base.hp + P.grow.hp * f + P.late.hp * late),
+    atk: 1 + k * (P.base.atk + P.grow.atk * f + P.late.atk * late),
+  };
 };
 
 function tune(e: Enemy, scaled = false): Enemy {
@@ -119,7 +131,7 @@ function tune(e: Enemy, scaled = false): Enemy {
   const defP = (e.def + 1) / ref.def;
   // Monstro escalado: mantém o jeito dele, mas um bicho "fraquinho" não fica fraco demais no nível alto.
   if (scaled) { hpP = Math.max(0.9, hpP); atkP = Math.max(0.9, atkP); }
-  const b = huntBoost(e, scaled);
+  const b = huntBoost(e);
   const mid = atkMid * Math.sqrt(atkP) * b.atk;
   return {
     ...e,
