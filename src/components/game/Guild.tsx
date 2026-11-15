@@ -13,6 +13,7 @@ import ProfileCard from "./ProfileCard";
 import GuildBoss from "./GuildBoss";
 import GuildWar from "./GuildWar";
 import GuildVault, { type Vault } from "./GuildVault";
+import GuildExpeditions from "./GuildExpeditions";
 import { useT } from "@/lib/i18n/client";
 
 type Member = { name: string; level: number; role: GuildRole; contributed: number; me: boolean; portrait: string; frame: string | null; active: boolean };
@@ -29,7 +30,7 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
   const t = useT();
   const [mine, setMine] = useState<MyGuild | null | undefined>(undefined);
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState<"home" | "vault" | "boss" | "war">("home");
+  const [view, setView] = useState<"home" | "expeditions" | "vault" | "boss" | "war">("home");
   // Perfil de um membro (o mesmo cartão do Ranking/Chat: ver herói, adicionar amigo, mandar mensagem).
   const [profile, setProfile] = useState<string | null>(null);
 
@@ -61,11 +62,12 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
   const roleFull = (r: GuildRole) => (r === "officer" && roleCount(r) >= GUILD.maxVice) || (r === "squad_leader" && roleCount(r) >= GUILD.maxSquadLeaders);
   const nav = (
     <div className="mb-4 flex flex-wrap gap-2">
-      {([["home", `🏰 ${mine.name}`], ["vault", "🎒 Cofre"], ["boss", "🐉 Chefe da Guilda"], ["war", "⚔️ Guerra de Guildas"]] as const).map(([k, l]) => (
+      {([["home", `🏰 ${mine.name}`], ["expeditions", "🧭 Expedições"], ["vault", "🎒 Cofre"], ["boss", "🐉 Chefe da Guilda"], ["war", "⚔️ Guerra de Guildas"]] as const).map(([k, l]) => (
         <button key={k} onClick={() => setView(k)} className={`rounded-lg px-4 py-2 text-sm font-display ${view === k ? "bg-gold text-ink" : "bg-white/5 text-white/70"}`}>{t(l)}</button>
       ))}
     </div>
   );
+  if (view === "expeditions") return <>{nav}<GuildExpeditions ctx={ctx} /></>;
   if (view === "vault") return <>{nav}<GuildVault ctx={ctx} vault={mine.vault} role={mine.myRole} busy={busy} act={act} /></>;
   if (view === "boss") return <>{nav}<GuildBoss ctx={ctx} /></>;
   if (view === "war") return <>{nav}<GuildWar ctx={ctx} /></>;
@@ -92,8 +94,9 @@ export default function Guild({ ctx }: { ctx: GameCtx }) {
                 max={mine.level >= GUILD.maxLevel ? 1 : guildXpNext(mine.level)} color="bg-gold" />
             </div>
             <div className="rounded-lg bg-black/30 p-3 text-center">
-              <p className="text-xs text-white/50">{t("Cofre")}</p>
+              <p className="text-xs text-white/50">{t("Tesouro da guilda")}</p>
               <p className="font-display text-xl text-gold">🪙 {mine.treasury.toLocaleString(t.locale)}</p>
+              <button onClick={() => setView("expeditions")} className="mt-1 rounded bg-gold/15 px-2 py-1 text-[11px] text-gold ring-1 ring-gold/30 hover:bg-gold/25">🧭 {t("Usar em expedições")}</button>
             </div>
           </div>
           <Perks level={mine.level} perks={mine.perks} next={mine.nextPerks} />

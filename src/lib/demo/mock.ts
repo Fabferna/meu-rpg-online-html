@@ -103,6 +103,22 @@ export function installDemoFetch() {
       mine: { pos: 2, name: "Ordem da Chama", tag: "ODC", level: 3, score: 412, mine: true },
       rows: [{ pos: 1, name: "Lâminas do Deserto", tag: "LDD", level: 5, score: 688, mine: false }, { pos: 2, name: "Ordem da Chama", tag: "ODC", level: 3, score: 412, mine: true },
         { pos: 3, name: "Filhos da Montanha", tag: "FDM", level: 2, score: 230, mine: false }] });
+    if (url === "/api/guild-expeditions") {
+      const at = (min: number) => new Date(Date.now() + min * 60000).toISOString();
+      return json({ guild: true, level: 6, treasury: 8650, canOrganize: true, myPower: 412, myRace: "humano", busy: true, activeCount: 2, serverTime: new Date().toISOString(),
+        ready: [{ id: "x3", key: "trilha_lobos", strategy: "balanced", phase: "done", cost: 600, createdAt: at(-40), departsAt: at(-35), endsAt: at(-20), organizer: "Lyra", mine: false, joined: true, claimed: false, reward: null,
+          outcome: "triumph", power: 980, report: ["O grupo pegou {foe} de surpresa e não deu chance de reação.", "No caminho de volta ainda acharam um esconderijo cheio de suprimentos."],
+          members: [{ name: "Lyra", race: "elfo", level: 7, power: 520, me: false, claimed: true }, { name: "Kaelen", race: "humano", level: 6, power: 412, me: true, claimed: false }] }],
+        open: [
+          { id: "x1", key: "caravana_ambar", strategy: "bold", phase: "lobby", cost: 2800, createdAt: at(-2), departsAt: at(3.2), endsAt: at(63.2), organizer: "Lyra", mine: false, joined: false, claimed: false, reward: null, outcome: null, power: null, report: [],
+            members: [{ name: "Lyra", race: "elfo", level: 7, power: 520, me: false, claimed: false }, { name: "Thorin", race: "anao", level: 6, power: 465, me: false, claimed: false }, { name: "Gromak", race: "gronar", level: 5, power: 390, me: false, claimed: false }] },
+          { id: "x2", key: "ninho_harpias", strategy: "cautious", phase: "running", cost: 1400, createdAt: at(-17), departsAt: at(-12), endsAt: at(18), organizer: "Kaelen", mine: true, joined: true, claimed: false, reward: null, outcome: null, power: null, report: [],
+            members: [{ name: "Kaelen", race: "humano", level: 6, power: 412, me: true, claimed: false }, { name: "Mirelle", race: "aetheliano", level: 5, power: 380, me: false, claimed: false }] },
+        ],
+        history: [{ id: "x0", key: "trilha_lobos", strategy: "balanced", phase: "done", cost: 600, createdAt: at(-300), departsAt: at(-295), endsAt: at(-280), organizer: "Kaelen", mine: true, joined: true, claimed: true,
+          reward: { xp: 120, gold: 90, levelUps: 0, items: [{ item: "pocao_vida", qty: 2, name: "Poção de Vida", image: ITEM_BY_ID.pocao_vida.image, rarity: "common" }] }, outcome: "success", power: 412, report: [],
+          members: [{ name: "Kaelen", race: "humano", level: 6, power: 412, me: true, claimed: true }] }] });
+    }
     if (url.startsWith("/api/guilds/mine")) return json({ guild: {
       id: "g1", name: "Ordem da Chama", tag: "ODC", description: "Caçadores de sombras de Valerion. Ativos todo dia, foco em chefes e Arena!", level: 3, xp: 1240, treasury: 8650, limit: guildPerks(3).memberLimit, myRole: "leader", private: true,
       perms: guildPerms("leader"), perks: guildPerks(3), nextPerks: guildPerks(4),

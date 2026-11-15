@@ -39,6 +39,8 @@ const IT = (f: string) => `/assets/items/${f}-v2.webp`;
 const NW = (f: string) => `/assets/items/${f}-v2.webp`;
 // Progressão por classe (níveis 5…38): artes do Canva, nomes novos.
 const TI = (f: string) => `/assets/items/tier/${f}.webp`;
+// Relíquias das Expedições da Guilda (expeditions.ts): artes do Canva.
+const EX = (f: string) => `/assets/items/expedition/${f}.webp`;
 
 export const ITEMS: ItemDef[] = [
   // Consumíveis que ficam no inventário até o jogador usar (loja, passe e masmorras).
@@ -120,6 +122,12 @@ export const ITEMS: ItemDef[] = [
   { id: "lamina_do_juramento", name: "Lâmina do Juramento", rarity: "epic", slot: "weapon", stats: { atk: 16, str: 4, dex: 1 }, image: TI("lamina_do_juramento"), minLevel: 20, sell: 1510, affinity: ["humano"], weapon: "espada" },
   { id: "espada_runica", name: "Espada Rúnica", rarity: "epic", slot: "weapon", stats: { atk: 18, str: 4, dex: 2 }, image: TI("espada_runica"), minLevel: 23, sell: 1910, affinity: ["humano"], weapon: "espada" },
   { id: "espada_do_alvorecer", name: "Espada do Alvorecer", rarity: "epic", slot: "weapon", stats: { atk: 20, str: 5, dex: 2 }, image: TI("espada_do_alvorecer"), minLevel: 26, sell: 2330, affinity: ["humano"], weapon: "espada" },
+  // Relíquias lendárias de expedição: só saem nas incursões da guilda, uma por raça.
+  { id: "gladio_esquadrao", name: "Gládio do Esquadrão", rarity: "legendary", slot: "weapon", stats: { atk: 23, str: 4, dex: 3 }, image: EX("gladio_esquadrao"), minLevel: 26, sell: 2900, affinity: ["humano"], weapon: "espada" },
+  { id: "arco_batedor_mor", name: "Arco do Batedor-Mor", rarity: "legendary", slot: "weapon", stats: { atk: 22, dex: 7 }, image: EX("arco_batedor_mor"), minLevel: 26, sell: 2900, affinity: ["elfo"], weapon: "arco" },
+  { id: "martelo_vanguarda", name: "Martelo da Vanguarda", rarity: "legendary", slot: "weapon", stats: { atk: 24, str: 4, con: 3 }, image: EX("martelo_vanguarda"), minLevel: 26, sell: 2900, affinity: ["anao"], weapon: "martelo" },
+  { id: "machado_incursor", name: "Machado do Incursor", rarity: "legendary", slot: "weapon", stats: { atk: 26, str: 5 }, image: EX("machado_incursor"), minLevel: 26, sell: 2900, affinity: ["gronar"], weapon: "machado" },
+  { id: "cajado_expedicionario", name: "Cajado do Expedicionário", rarity: "legendary", slot: "weapon", stats: { atk: 10, intel: 15 }, image: EX("cajado_expedicionario"), minLevel: 26, sell: 2900, affinity: ["aetheliano"], weapon: "cajado" },
   { id: "montante_real", name: "Montante Real", rarity: "legendary", slot: "weapon", stats: { atk: 26, str: 6, dex: 2 }, image: TI("montante_real"), minLevel: 32, sell: 3500, affinity: ["humano"], weapon: "espada" },
   { id: "lamina_do_firmamento", name: "Lâmina do Firmamento", rarity: "legendary", slot: "weapon", stats: { atk: 28, str: 6, dex: 2 }, image: TI("lamina_do_firmamento"), minLevel: 35, sell: 4060, affinity: ["humano"], weapon: "espada" },
   { id: "espada_do_rei_eterno", name: "Espada do Rei Eterno", rarity: "legendary", slot: "weapon", stats: { atk: 30, str: 6, dex: 3 }, image: TI("espada_do_rei_eterno"), minLevel: 38, sell: 4650, affinity: ["humano"], weapon: "espada" },
