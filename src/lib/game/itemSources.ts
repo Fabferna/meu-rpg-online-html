@@ -7,6 +7,7 @@ import { QUESTS } from "./quests";
 import { CHAPTERS } from "./story";
 import { DAILY_POOL } from "../shop/catalog";
 import { ALL_WORLD_BOSS_ITEMS, itemChance } from "./worldBoss";
+import { EXPEDITIONS, EXPEDITION_RELICS } from "./expeditions";
 
 export type ItemSource =
   | { kind: "enemy"; name: string; chance: number; minLevel: number; boss?: boolean }
@@ -14,7 +15,8 @@ export type ItemSource =
   | { kind: "quest"; name: string; chance: number; minLevel: number }
   | { kind: "story"; name: string; chapter: number; minLevel: number }
   | { kind: "deal"; name: string }
-  | { kind: "worldboss"; name: string; chance: number; minLevel: number };
+  | { kind: "worldboss"; name: string; chance: number; minLevel: number }
+  | { kind: "expedition"; name: string; chance: number; minLevel: number };
 
 function build() {
   const map: Record<string, ItemSource[]> = {};
@@ -27,6 +29,8 @@ function build() {
   for (const d of DAILY_POOL) if (d.item) add(d.item.id, { kind: "deal", name: d.name });
   // Chefe do Mundo: chance de quem não está no top 10, dividida entre arma e acessório da raça.
   for (const id of ALL_WORLD_BOSS_ITEMS) add(id, { kind: "worldboss", name: "Chefe do Mundo (21h)", chance: itemChance(99) / 2, minLevel: 1 });
+  // Expedições da Guilda: a relíquia lendária da raça sai nas incursões.
+  for (const e of EXPEDITIONS) if (e.relic) for (const id of Object.values(EXPEDITION_RELICS)) add(id, { kind: "expedition", name: e.name, chance: e.relic, minLevel: 1 });
   // Garantidos primeiro (história), depois por chance.
   for (const list of Object.values(map)) list.sort((a, b) => (b.kind === "story" ? 2 : "chance" in b ? b.chance : 0) - (a.kind === "story" ? 2 : "chance" in a ? a.chance : 0));
   return map;
