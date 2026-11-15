@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { action, HttpError, rpc } from "@/lib/api";
-import { RARE_ENEMIES } from "@/lib/game/enemies";
+import { RARE_ENEMIES, enemyAt, huntLevel } from "@/lib/game/enemies";
 import { battleVitals, loadPlayer } from "@/lib/game/player";
 import { RARE_RULES } from "@/lib/game/encounters";
 import type { BattleState } from "@/lib/game/combat";
@@ -19,11 +19,13 @@ export const POST = action("rare-start", z.object({}).strict(), async ({ user, a
   if (fights) throw new HttpError(409, "in_battle");
 
   const idx = await rpc<number>(admin, "rare_start", { p_user: user.id, p_limit: RARE_RULES.perDay });
-  const e = RARE_ENEMIES[idx];
-  if (!e) throw new HttpError(409, "no_encounter");
+  const r = RARE_ENEMIES[idx];
+  if (!r) throw new HttpError(409, "no_encounter");
+  const lvl = huntLevel(r, p.row.level);
+  const e = enemyAt(r, lvl);
   const state: BattleState = {
     enemyId: e.id, enemy: { name: e.name, image: e.image, hp: e.maxHp, maxHp: e.maxHp, boss: e.boss },
-    player: battleVitals(p), turn: 0, skillCooldown: 0, log: [], rare: true,
+    player: battleVitals(p), turn: 0, skillCooldown: 0, log: [], rare: true, lvl,
   };
   const { error } = await admin.from("battles").insert({ user_id: user.id, kind: "pve", state });
   if (error) throw new HttpError(409, "in_battle");

@@ -75,6 +75,8 @@ export type BattleState = {
   storyResult?: { xp: number; gold: number; gems: number; item?: string; cosmetic?: string; levelUps: number };
   /** Trecho da história (luta antes do chefe): capítulo e número do trecho (1 ou 2). */
   storyTrail?: { chapter: number; step: number };
+  /** Nível em que o monstro luta (escala por nível da Caçada/Errantes). Sem o campo = nível dele. */
+  lvl?: number;
   /** Luta contra um Errante (encontro raro). */
   rare?: boolean;
   /** Ao vencer a caçada, um Errante apareceu (id do inimigo, só para a tela avisar). */
