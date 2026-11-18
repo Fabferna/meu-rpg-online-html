@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import type { GameCtx } from "./GameApp";
-import {
+import { expeditionPower,
   EXPEDITIONS, EXPEDITION_BY_ID, EXPEDITION_RELICS, EXPEDITION_RULES, KIND_ICON, KIND_LABEL, OUTCOME_LABEL, STRATEGIES,
   expeditionOdds, expeditionPayout, gearPool, partyPower, type Expedition, type ExpeditionKind, type Outcome, type Strategy,
 } from "@/lib/game/expeditions";
@@ -214,7 +214,7 @@ function Odds({ e, power, strategy }: { e: Expedition; power: number; strategy: 
   return (
     <div>
       <div className="flex justify-between text-[11px] text-white/60">
-        <span>{t("Poder do grupo")} <b className="text-white/90">{power.toLocaleString(t.locale)}</b> / {e.power.toLocaleString(t.locale)}</span>
+        <span>{t("Poder do grupo")} <b className="text-white/90">{power.toLocaleString(t.locale)}</b> / {expeditionPower(e).toLocaleString(t.locale)}</span>
         <span>{t("Sucesso")} <b className="text-white/90">{pct(o.success)}</b> · {t("triunfo")} {pct(o.success * o.triumph)}</span>
       </div>
       <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuenow={Math.round(o.success * 100)} aria-valuemin={0} aria-valuemax={100}>
@@ -333,7 +333,7 @@ function CatalogCard({ e, d, race, busy, onStart }: { e: Expedition; d: Data; ra
           <span className={`rounded px-1.5 py-0.5 ${poor ? "bg-red-900/50 text-red-200" : "bg-gold/15 text-gold"}`}>🪙 {e.cost.toLocaleString(t.locale)} {t("do tesouro")}</span>
           <span className={`rounded px-1.5 py-0.5 ${locked ? "bg-red-900/50 text-red-200" : "bg-white/5 text-white/70"}`}>🏰 {t("Guilda Nv. {n}", { n: e.guildLevel })}</span>
           <span className="rounded bg-white/5 px-1.5 py-0.5 text-white/70">👥 {t("até {n}", { n: e.party })}</span>
-          <span className="rounded bg-white/5 px-1.5 py-0.5 text-white/70">⚔️ {t("poder {n}", { n: e.power.toLocaleString(t.locale) })}</span>
+          <span className="rounded bg-white/5 px-1.5 py-0.5 text-white/70">⚔️ {t("poder {n}", { n: expeditionPower(e).toLocaleString(t.locale) })}</span>
           <span className={`rounded px-1.5 py-0.5 ${e.favored.includes(race as RaceId) ? "bg-emerald-800/60 text-emerald-200" : "bg-white/5 text-white/50"}`}>★ {e.favored.map((r) => t(raceName(r))).join(", ")}</span>
         </div>
         <p className="text-[11px] text-white/70">

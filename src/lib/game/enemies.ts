@@ -121,6 +121,12 @@ const huntBoost = (e: Enemy) => {
   };
 };
 
+/**
+ * Dificuldade geral de TODOS os monstros (Caçada, Errantes, Masmorras, História e trechos):
+ * multiplica vida e ataque depois de todo o resto. 1 = como era; 1.2 = 20% mais forte.
+ */
+export const MONSTER_DIFFICULTY = { hp: 1.2, atk: 1.1 } as const;
+
 function tune(e: Enemy, scaled = false): Enemy {
   const L = e.minLevel;
   const hp = (K.hp + K.hpL * L) * (e.boss ? K.bossHp : 1);
@@ -132,11 +138,11 @@ function tune(e: Enemy, scaled = false): Enemy {
   // Monstro escalado: mantém o jeito dele, mas um bicho "fraquinho" não fica fraco demais no nível alto.
   if (scaled) { hpP = Math.max(0.9, hpP); atkP = Math.max(0.9, atkP); }
   const b = huntBoost(e);
-  const mid = atkMid * Math.sqrt(atkP) * b.atk;
+  const mid = atkMid * Math.sqrt(atkP) * b.atk * MONSTER_DIFFICULTY.atk;
   return {
     ...e,
     element: e.element ?? elementOfArt(e.image),
-    maxHp: Math.round(hp * Math.sqrt(e.boss ? Math.min(1, hpP) : hpP) * b.hp),
+    maxHp: Math.round(hp * Math.sqrt(e.boss ? Math.min(1, hpP) : hpP) * b.hp * MONSTER_DIFFICULTY.hp),
     atk: [Math.round(mid * 0.8), Math.round(mid * 1.2)],
     def: Math.round((K.def + K.defL * L) * Math.sqrt(defP)),
   };
