@@ -1,4 +1,5 @@
 // Chefe de guilda: um por semana (rotação), vida compartilhada pelos membros.
+import { MONSTER_DIFFICULTY } from "./enemies";
 export const GUILD_BOSSES = [
   { id: "dragao", name: "Dragão Ancestral", image: "/assets/raids/dragao-v2.webp", def: 30, agility: 12, lore: "Desperto sob as ruínas de Valerion, cospe fogo que derrete muralhas." },
   { id: "tita_gelo", name: "Titã de Gelo", image: "/assets/raids/tita_gelo-v2.webp", def: 40, agility: 6, lore: "O guardião das Agulhas Congeladas marcha sobre as vilas do vale." },
@@ -13,7 +14,9 @@ export function bossForWeek(weekStart: string) {
   const n = Math.floor(new Date(weekStart + "T00:00:00Z").getTime() / (7 * 86_400_000));
   return GUILD_BOSSES[((n % GUILD_BOSSES.length) + GUILD_BOSSES.length) % GUILD_BOSSES.length];
 }
-export const bossMaxHp = (members: number) => GUILD_BOSS_RULES.baseHp + GUILD_BOSS_RULES.hpPerMember * Math.max(1, members);
+/** Vida do chefe da semana (+20% junto com os demais monstros: enemies.ts → MONSTER_DIFFICULTY). */
+export const bossMaxHp = (members: number) =>
+  Math.round((GUILD_BOSS_RULES.baseHp + GUILD_BOSS_RULES.hpPerMember * Math.max(1, members)) * MONSTER_DIFFICULTY.hp);
 export const BOSS_BY_ID = Object.fromEntries(GUILD_BOSSES.map((b) => [b.id, b]));
 
 export const GUILD_WAR_REWARDS = [

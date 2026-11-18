@@ -5,7 +5,7 @@ import * as exp from "../../src/app/api/guild-expeditions/action/route";
 import * as expList from "../../src/app/api/guild-expeditions/route";
 import { call, makeHero } from "./helpers";
 import { pool } from "./fakeSupabase";
-import {
+import { expeditionPower,
   EXPEDITIONS, EXPEDITION_BY_ID, EXPEDITION_RELICS, EXPEDITION_RULES, STRATEGIES, expeditionOdds, expeditionPayout, gearPool, guildXpFor, partyPower,
 } from "../../src/lib/game/expeditions";
 import { rollExpeditionReward } from "../../src/lib/game/expeditionServer";
@@ -33,8 +33,10 @@ async function main() {
   const worst = EXPEDITIONS.map((e) => ({ id: e.id, pct: expeditionPayout(e, "triumph", "bold").gold * e.party / e.cost }));
   ok(worst.every((w) => w.pct < 1), `ouro pago nunca passa do custo (pior caso: ${worst.map((w) => `${Math.round(w.pct * 100)}%`).join(", ")})`);
   const e1 = EXPEDITION_BY_ID.trilha_lobos;
-  ok(expeditionOdds(e1, e1.power, "balanced").success === 0.95 && expeditionOdds(e1, e1.power / 2, "balanced").success < 0.4
-    && expeditionOdds(e1, e1.power, "bold").success < expeditionOdds(e1, e1.power, "cautious").success, "chance de sucesso cresce com o poder e muda com a estratégia");
+  const pw = expeditionPower(e1); // poder recomendado com os monstros mais fortes (MONSTER_DIFFICULTY)
+  ok(expeditionOdds(e1, pw, "balanced").success === 0.95 && expeditionOdds(e1, pw / 2, "balanced").success < 0.4
+    && expeditionOdds(e1, e1.power, "balanced").success < 0.95
+    && expeditionOdds(e1, pw, "bold").success < expeditionOdds(e1, pw, "cautious").success, "chance de sucesso cresce com o poder e muda com a estratégia (precisa de 20% mais poder)");
   const pp = partyPower(e1, [{ power: 100, race: "elfo" }, { power: 100, race: "anao" }]);
   ok(pp.total === Math.round((115 + 100) * 1.04), "poder do grupo: +15% para raça favorecida e +4% por raça diferente");
 

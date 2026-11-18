@@ -1,4 +1,5 @@
 // Expedições da Guilda: caçadas, missões e incursões pagas com o OURO DO TESOURO da guilda.
+import { MONSTER_DIFFICULTY } from "./enemies";
 // Quem organiza abre um saguão de alguns minutos para os membros entrarem (ou parte sozinho);
 // o grupo viaja por 15 min a 2 h e, na volta, cada participante resgata a sua recompensa.
 // Tudo aqui é regra pura (sem banco): o servidor usa para sortear, a tela para explicar.
@@ -129,10 +130,14 @@ export function partyPower(e: Expedition, members: Member[]) {
   return { total: Math.round(base * (1 + diversity)), diversity, races };
 }
 
+/** Poder recomendado de verdade (com os monstros mais fortes). */
+export const expeditionPower = (e: Expedition) => Math.round(e.power * MONSTER_DIFFICULTY.hp);
+
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 /** Chances de sucesso e de triunfo (triunfo = parte dos sucessos) para um poder de grupo e uma estratégia. */
 export function expeditionOdds(e: Expedition, power: number, strategy: Strategy) {
-  const ratio = power / e.power;
+  // Monstros 20% mais fortes (enemies.ts → MONSTER_DIFFICULTY): o grupo precisa de 20% mais poder.
+  const ratio = power / expeditionPower(e);
   const s = STRATEGIES[strategy];
   const success = clamp(0.95 * Math.min(1, ratio) ** 1.6 + s.success, 0.05, 0.97);
   const triumph = clamp(0.1 + 0.4 * (ratio - 1) + s.triumph, 0.1, 0.6);
